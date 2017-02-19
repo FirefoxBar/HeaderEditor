@@ -1,0 +1,9 @@
+{
+	"extName": {
+		"message": "Header Editor",
+		"description": "Extension name"
+	},
+	"description": {
+		"message": "A extension which you can modify the request header"
+	}
+}

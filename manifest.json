@@ -1,0 +1,35 @@
+{
+	"applications": {
+		"gecko": {
+			"id": "headereditor@addon.firefoxcn.net",
+			"strict_min_version": "52.0",
+			"strict_max_version": "55.0"
+		}
+	},
+	"name": "__MSG_extName__",
+	"short_name": "HeaderEditor",
+	"version": "1.1.0",
+	"description": "__MSG_description__",
+	"homepage_url": "http://team.firefoxcn.net",
+	"manifest_version": 2,
+	"icons": {
+		"128": "images/128.png"
+	},
+	"permissions": [
+		"webRequest",
+		"webRequestBlocking",
+		"storage"
+	],
+	"background": {
+		"scripts": ["src/storage.js", "src/background.js"]
+	},
+	"content_scripts": [
+		{
+			"matches": ["http://*.firefoxcn.net/*", "https://*.firefoxcn.net/*"],
+			"run_at": "document_end",
+			"all_frames": false,
+			"js": ["src/inject/install.js"]
+		}
+	],
+	"default_locale": "en"
+}
