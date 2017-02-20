@@ -141,11 +141,23 @@ $('#rulesList').on('click', '.j_edit', function() {
 		if (rule.ruleType === 'redirect') {
 			$('#redirectTo').val(rule.to);
 		}
-		if (ruleType === 'modifySendHeader' || ruleType === 'modifyReceiveHeader') {
+		if (rule.ruleType === 'modifySendHeader' || rule.ruleType === 'modifyReceiveHeader') {
 			$('#headerName').val(rule.action.name);
 			$('#headerValue').val(rule.action.value);
 		}
 		$('#ruleType').trigger('change');
 		$('#addDialog').modal('show');
 	});
-})
+});
+//remove
+$('#rulesList').on('click', '.j_remove', function() {
+	var id = $(this).parents('tr').attr('data-id');
+	var table = ruleType2tableName($(this).parents('tr').attr('data-type'));
+	browser.runtime.sendMessage({"method": "deleteRule", "type": SaveTable, "id": id}).then(function(response) {
+		var _t = setTimeout(function() {
+			loadRulesList();
+			clearTimeout(_t);
+			_t = null;
+		}, 300);
+	});
+});

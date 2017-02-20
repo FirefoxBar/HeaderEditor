@@ -58,7 +58,7 @@ function filterRules(rules, options) {
 		return rules;
 	}
 	var url = typeof(options.url) !== 'undefined' ? options.url: null;
-	var id = typeof(options.id) !== 'id' ? Number(options.id) : null;
+	var id = typeof(options.id) !== 'undefined' ? Number(options.id) : null;
 
 	if (id != null) {
 		rules = rules.filter(function(rule) {
@@ -71,7 +71,7 @@ function filterRules(rules, options) {
 				var reg = new RegExp(rule.pattern);
 				return reg.test(url);
 			} else if (rule.type === 'prefix') {
-				return url.indexOf(rule.pattern) >= 0;
+				return url.indexOf(rule.pattern) === 0;
 			} else if (rule.type === 'domain') {
 				return getDomain(url) === rule.pattern;
 			}
