@@ -1,0 +1,76 @@
+{
+	"action": {
+		"message": "操作"
+	},
+	"add": {
+		"message": "添加"
+	},
+	"cancel": {
+		"message": "取消"
+	},
+	"description": {
+		"message": "修改请求头的扩展"
+	},
+	"edit": {
+		"message": "编辑"
+	},
+	"export": {
+		"message": "导出"
+	},
+	"extName": {
+		"message": "Header Editor",
+		"description": "Extension name"
+	},
+	"headerName": {
+		"message": "头名称"
+	},
+	"headerValue": {
+		"message": "头内容"
+	},
+	"import": {
+		"message": "导入"
+	},
+	"manageTitle": {
+		"message": "管理",
+		"description": "Manage page title"
+	},
+	"matchRule": {
+		"message": "匹配规则"
+	},
+	"matchType": {
+		"message": "匹配类型"
+	},
+	"match_prefix": {
+		"message": "网址前缀"
+	},
+	"match_regexp": {
+		"message": "正则表达式"
+	},
+	"match_url": {
+		"message": "网址"
+	},
+	"name": {
+		"message": "名称"
+	},
+	"redirectTo": {
+		"message": "重定向至"
+	},
+	"ruleType": {
+		"message": "规则类型"
+	},
+	"rule_cancel": {
+		"message": "阻止请求"
+	},
+	"rule_modifyReceiveHeader": {
+		"message": "修改响应头"
+	},
+	"rule_modifySendHeader": {
+		"message": "修改请求头"
+	},
+	"rule_redirect": {
+		"message": "重定向请求"
+	},
+	"save": {
+		"message": "保存"
+	}
+}
