@@ -24,44 +24,41 @@ var cachedRules = {
 	"sendHeader": null,
 	"receiveHeader": null
 };
-function getRules(type, options) {
-	return new Promise(function(resolve) {
-		if (cachedRules[type] != null) {
-			resolve(filterRules(cachedRules[type], options));
-			return;
-		}
-		getDatabase(function(db) {
-			var tx = db.transaction([type], "readonly");
-			var os = tx.objectStore(type);
-			var all = [];
-			os.openCursor().onsuccess = function(event) {
-				var cursor = event.target.result;
-				if (cursor) {
-					var s = cursor.value;
-					s.id = cursor.key;
-					all.push(cursor.value);
-					cursor.continue();
-				} else {
-					cachedRules[type] = all;
-					resolve(filterRules(all, options));
-				}
-			};
-		}, null);
-	});
+function getRules(type, options, callback) {
+	if (cachedRules[type] != null) {
+		callback(filterRules(cachedRules[type], options));
+		return;
+	}
+	getDatabase(function(db) {
+		var tx = db.transaction([type], "readonly");
+		var os = tx.objectStore(type);
+		var all = [];
+		os.openCursor().onsuccess = function(event) {
+			var cursor = event.target.result;
+			if (cursor) {
+				var s = cursor.value;
+				s.id = cursor.key;
+				all.push(cursor.value);
+				cursor.continue();
+			} else {
+				cachedRules[type] = all;
+				callback(filterRules(all, options));
+			}
+		};
+	}, null);
 }
 
 
-function invalidateCache(andNotify) {
-	cachedStyles = {
-		"request": null,
-		"sendHeader": null,
-		"receiveHeader": null
-	};
+function invalidateCache(type) {
+	cachedRules[type] = null;
 }
 
 function filterRules(rules, options) {
-	var url = "url" in options ? options.url: null;
-	var id = "id" in options ? Number(options.id) : null;
+	if (options === null || typeof(options) !== 'object') {
+		return rules;
+	}
+	var url = typeof(options.url) !== 'undefined' ? options.url: null;
+	var id = typeof(options.url) !== 'id' ? Number(options.id) : null;
 
 	if (id != null) {
 		rules = rules.filter(function(rule) {
@@ -83,10 +80,7 @@ function filterRules(rules, options) {
 	return rules;
 }
 
-function saveRule(o, callback) {
-	var tableName = o.saveType;
-	delete o["method"];
-	delete o["saveType"];
+function saveRule(tableName, o, callback) {
 	getDatabase(function(db) {
 		var tx = db.transaction([tableName], "readwrite");
 		var os = tx.objectStore(tableName);
@@ -103,7 +97,7 @@ function saveRule(o, callback) {
 				}
 				request = os.put(rule);
 				request.onsuccess = function(event) {
-					invalidateCache(true);
+					invalidateCache(tableName);
 					if (callback) {
 						callback(rule);
 					}
@@ -116,7 +110,7 @@ function saveRule(o, callback) {
 		delete o["id"];
 		var request = os.add(o);
 		request.onsuccess = function(event) {
-			invalidateCache(true);
+			invalidateCache(tableName);
 			// Give it the ID that was generated
 			o.id = event.target.result;
 			if (callback) {
@@ -126,18 +120,15 @@ function saveRule(o, callback) {
 	});
 }
 
-function deleteRule(id) {
-	var tableName = o.saveType;
-	return new Promise(function(resolve){
-		getDatabase(function(db) {
-			var tx = db.transaction([saveType], "readwrite");
-			var os = tx.objectStore(saveType);
-			var request = os.delete(Number(id));
-			request.onsuccess = function(event) {
-				invalidateCache(true);
-				resolve();
-			};
-		});
+function deleteRule(tableName, id, callback) {
+	getDatabase(function(db) {
+		var tx = db.transaction([tableName], "readwrite");
+		var os = tx.objectStore(tableName);
+		var request = os.delete(Number(id));
+		request.onsuccess = function(event) {
+			invalidateCache(tableName);
+			callback();
+		};
 	});
 }
 

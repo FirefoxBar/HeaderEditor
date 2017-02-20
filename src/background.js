@@ -21,6 +21,12 @@ browser.runtime.onMessage.addListener(function(request, sender, sendResponse) {
 		case "getRules":
 			getRules(request.type, request.options, sendResponse);
 			break;
+		case "saveRule":
+			saveRule(request.type, request.content, sendResponse);
+			break;
+		case "deleteRule":
+			deleteRule(request.type, request.id, sendResponse);
+			break;
 	}
 });
 
@@ -42,8 +48,10 @@ function openURL(options) {
 
 function onBeforeRequest(e) {
 	//可用：重定向，阻止加载
+	console.log(e);
   	return new Promise(function(resolve) {
-		getRules('request', {"url": e.url}).then(function(rules) {
+		getRules('request', {"url": e.url}, function(rules) {
+			console.log(rules);
 			var redirectTo = null;
 			for (var i in rules) {
 				if (rules[i].action === 'cancel') {
@@ -70,7 +78,7 @@ function onBeforeSendHeaders(e) {
 		return;
 	}
   	return new Promise(function(resolve) {
-		getRules('sendHeader', {"url": e.url}).then(function(rules) {
+		getRules('sendHeader', {"url": e.url}, function(rules) {
 			var headers = {};
 			for (var i = 0; i < rules.length; i++) {
 				headers[rules[i].action.name] = rules[i].action.value;
@@ -94,7 +102,7 @@ function onBeforeSendHeaders(e) {
 function onHeadersReceived(e) {
 	//可用：修改响应头
   	return new Promise(function(resolve) {
-		getRules('receiveHeader', {"url": e.url}).then(function(rules) {
+		getRules('receiveHeader', {"url": e.url}, function(rules) {
 			var headers = {};
 			for (var i = 0; i < rules.length; i++) {
 				headers[rules[i].action.name] = rules[i].action.value;

@@ -31,5 +31,8 @@
 			"js": ["src/inject/install.js"]
 		}
 	],
+	"options_ui": {
+    	"page": "manage.html"
+ 	},
 	"default_locale": "en"
 }

@@ -1,0 +1,109 @@
+<html>
+<head>
+	<meta http-equiv="Content-Type" content="text/html;charset=UTF-8">
+	<title i18n-text="manageTitle"></title>
+	<link rel="stylesheet" href="src/third-party/bootstrap/css/bootstrap.min.css">
+	<script src="src/localization.js"></script>
+	<style>
+	#rulesList .btn {
+		padding: 6px;
+		margin-right: 6px;
+	}
+	</style>
+</head>
+<body>
+<div class="container">
+	<h1 i18n-text="manageTitle"></h1>
+	<p><button class="btn btn-default" id="addRule" i18n-text="add"></button></p>
+	<table class="table table-hover">
+		<thead>
+			<tr>
+				<th i18n-text="name"></th>
+				<th i18n-text="ruleType"></th>
+				<th i18n-text="matchRule"></th>
+				<th i18n-text="matchType"></th>
+				<th i18n-text="action"></th>
+			</tr>
+		</thead>
+		<tbody id="rulesList"></tbody>
+	</table>
+</div>
+<div id="addDialog" class="modal fade" tabindex="-1" role="dialog">
+  	<div class="modal-dialog" role="document">
+		<div class="modal-content">
+	  		<div class="modal-header">
+				<button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+				<h4 class="modal-title" i18n-text="add"></h4>
+	 		</div>
+			<div class="modal-body form-horizontal">
+				<input id="ruleId" type="hidden">
+				<!-- Rule name -->
+				<div class="form-group">
+					<label for="name" class="col-sm-2 control-label" i18n-text="name"></label>
+					<div class="col-sm-10">
+						<input type="text" class="form-control" id="name">
+					</div>
+				</div>
+				<!-- Rule type -->
+				<div class="form-group">
+					<label for="ruleType" class="col-sm-2 control-label" i18n-text="ruleType"></label>
+					<div class="col-sm-10">
+						<select class="form-control" id="ruleType">
+							<option value="cancel" i18n-text="rule_cancel"></option>
+							<option value="redirect" i18n-text="rule_redirect"></option>
+							<option value="modifySendHeader" i18n-text="rule_modifySendHeader"></option>
+							<option value="modifyReceiveHeader" i18n-text="rule_modifyReceiveHeader"></option>
+						</select>
+					</div>
+				</div>
+				<!-- Rule match type -->
+				<div class="form-group">
+					<label for="matchType" class="col-sm-2 control-label" i18n-text="matchType"></label>
+					<div class="col-sm-10">
+						<select class="form-control" id="matchType">
+							<option value="regexp" i18n-text="match_regexp"></option>
+							<option value="prefix" i18n-text="match_prefix"></option>
+							<option value="url" i18n-text="match_url"></option>
+						</select>
+					</div>
+				</div>
+				<!-- Rule match rule -->
+				<div class="form-group">
+					<label for="matchRule" class="col-sm-2 control-label" i18n-text="matchRule"></label>
+					<div class="col-sm-10">
+						<input type="text" class="form-control" id="matchRule">
+					</div>
+				</div>
+				<!-- redirect to -->
+				<div class="form-group redirect_to">
+					<label for="redirectTo" class="col-sm-2 control-label" i18n-text="redirectTo"></label>
+					<div class="col-sm-10">
+						<input type="text" class="form-control" id="redirectTo">
+					</div>
+				</div>
+				<!-- header mondify -->
+				<div class="form-group header_mondify">
+					<label for="headerName" class="col-sm-2 control-label" i18n-text="headerName"></label>
+					<div class="col-sm-10">
+						<input type="text" class="form-control" id="headerName">
+					</div>
+				</div>
+				<div class="form-group header_mondify">
+					<label for="headerValue" class="col-sm-2 control-label" i18n-text="headerValue"></label>
+					<div class="col-sm-10">
+						<input type="text" class="form-control" id="headerValue">
+					</div>
+				</div>
+	  		</div>
+	  		<div class="modal-footer">
+				<button type="button" class="btn btn-default" data-dismiss="modal" i18n-text="cancel"></button>
+				<button id="ruleSave" type="button" class="btn btn-primary" i18n-text="save"></button>
+	  		</div>
+		</div><!-- /.modal-content -->
+  	</div><!-- /.modal-dialog -->
+</div><!-- /.modal -->
+<script src="src/third-party/jquery.min.js"></script>
+<script src="src/third-party/bootstrap/js/bootstrap.min.js"></script>
+<script src="src/manage.js"></script>
+</body>
+</html>

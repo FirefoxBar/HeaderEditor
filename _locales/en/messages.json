@@ -1,9 +1,67 @@
 {
+	"add": {
+		"message": "Add"
+	},
+	"save": {
+		"message": "Save"
+	},
+	"cancel": {
+		"message": "Cancel"
+	},
 	"extName": {
 		"message": "Header Editor",
 		"description": "Extension name"
 	},
 	"description": {
 		"message": "A extension which you can modify the request header"
+	},
+	"manageTitle": {
+		"message": "Manage",
+		"description": "Manage page title"
+	},
+	"name": {
+		"message": "Name"
+	},
+	"ruleType": {
+		"message": "Rule type"
+	},
+	"matchRule": {
+		"message": "Match rules"
+	},
+	"matchType": {
+		"message": "Match type"
+	},
+	"action": {
+		"message": "Action"
+	},
+	"rule_cancel": {
+		"message": "Cancel request"
+	},
+	"rule_redirect": {
+		"message": "Redirect request"
+	},
+	"rule_modifySendHeader": {
+		"message": "Modify the request header"
+	},
+	"rule_modifyReceiveHeader": {
+		"message": "Modify the response header"
+	},
+	"match_regexp": {
+		"message": "Regular expression"
+	},
+	"match_prefix": {
+		"message": "URL prefix"
+	},
+	"match_url": {
+		"message": "URL"
+	},
+	"redirectTo": {
+		"message": "Redirect to"
+	},
+	"headerName": {
+		"message": "Header name"
+	},
+	"headerValue": {
+		"message": "Header value"
 	}
 }
