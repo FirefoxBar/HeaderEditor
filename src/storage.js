@@ -58,7 +58,7 @@ function filterRules(rules, options) {
 		return rules;
 	}
 	var url = typeof(options.url) !== 'undefined' ? options.url: null;
-	var id = typeof(options.url) !== 'id' ? Number(options.id) : null;
+	var id = typeof(options.id) !== 'id' ? Number(options.id) : null;
 
 	if (id != null) {
 		rules = rules.filter(function(rule) {

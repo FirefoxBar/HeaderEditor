@@ -16,6 +16,7 @@
 		"128": "images/128.png"
 	},
 	"permissions": [
+		"tabs",
 		"webRequest",
 		"webRequestBlocking",
 		"storage"
@@ -31,6 +32,13 @@
 			"js": ["src/inject/install.js"]
 		}
 	],
+	"browser_action": {
+		"default_icon": {
+			"128": "images/128.png"
+		},
+		"default_title": "Header Editor",
+		"default_popup": "popup.html"
+	},
 	"options_ui": {
     	"page": "manage.html"
  	},

@@ -2,16 +2,27 @@
 loadRulesList();
 function loadRulesList() {
 	$('#rulesList').html('');
-	var rulesType = ['request', 'sendHeader', 'receiveHeader'];
-	for (var i = 0; i < rulesType.length; i++) {
-		browser.runtime.sendMessage({"method": 'getRules', "type": rulesType[i]}).then(function(response) {
-			console.log(response);
-			for (var i = 0; i < response.length; i++) {
-				var text = '<tr data-id="' + response[i].id + '" data-type="' + response[i].ruleType + '"><td>' + response[i].name + '</td><td>' + t('rule_' + response[i].ruleType) + '</td><td>' + response[i].pattern + '</td><td>' + t('match_' + response[i].type) + '</td><td><button class="j_edit btn btn-default"><i class="glyphicon glyphicon-pencil"></i></button><button class="j_remove btn btn-default"><i class="glyphicon glyphicon-remove"></i></button></td></tr>';
-				$('#rulesList').append(text);
-			}
+	function appendRule(response) {
+		for (var i = 0; i < response.length; i++) {
+			var text = '<tr data-id="' + response[i].id + '" data-type="' + response[i].ruleType + '"><td>' + response[i].name + '</td><td>' + t('rule_' + response[i].ruleType) + '</td><td>' + response[i].pattern + '</td><td>' + t('match_' + response[i].type) + '</td><td><button class="j_edit btn btn-default"><i class="glyphicon glyphicon-pencil"></i></button><button class="j_remove btn btn-default"><i class="glyphicon glyphicon-remove"></i></button></td></tr>';
+			$('#rulesList').append(text);
+		}
+	}
+	function checkResult(type, response) {
+		if (!response) { // Firefox is starting up
+			requestRules(type);
+			return;
+		}
+		appendRule(response);
+	}
+	function requestRules(type) {
+		browser.runtime.sendMessage({"method": 'getRules', "type": type}).then(function(response){
+			checkResult(type, response);
 		});
 	}
+	requestRules('request');
+	requestRules('sendHeader');
+	requestRules('receiveHeader');
 }
 
 function ruleType2tableName(ruleType) {
@@ -26,9 +37,17 @@ function ruleType2tableName(ruleType) {
 	}
 }
 
-$('#addRule').bind('click', function() {
-	$('#addRule').find('input[type="text"]').val('');
+function clearModal() {
 	$('#ruleId').val('');
+	$('#addDialog').find('input[type="text"]').val('');
+	$('#ruleType').find('option').removeAttr('selected');
+	$('#matchType').find('option').removeAttr('selected');
+	$('#ruleType').removeAttr('disabled');
+}
+
+$('#addRule').bind('click', function() {
+	clearModal();
+	$('#addDialog').find('.modal-title').html(t('add'));
 	$('#addDialog').modal('show');
 	$('#ruleType').trigger('change');
 });
@@ -85,14 +104,9 @@ $('#ruleSave').bind('click', function() {
 	}
 	if (ruleType === 'redirect') {
 		SaveData.action = 'redirect';
+		SaveData.to = redirectTo;
 	}
-	if (ruleType === 'modifySendHeader') {
-		SaveData.action = {
-			"name": headerName,
-			"value": headerValue
-		};
-	}
-	if (ruleType === 'modifyReceiveHeader') {
+	if (ruleType === 'modifySendHeader' || ruleType === 'modifyReceiveHeader') {
 		SaveData.action = {
 			"name": headerName,
 			"value": headerValue
@@ -103,17 +117,35 @@ $('#ruleSave').bind('click', function() {
 	}
 	browser.runtime.sendMessage({"method": "saveRule", "type": SaveTable, "content": SaveData}).then(function(response) {
 		$('#addDialog').modal('hide');
-		loadRulesList();
+		var _t = setTimeout(function() {
+			loadRulesList();
+			clearTimeout(_t);
+			_t = null;
+		}, 300);
 	});
 });
 //edit
 $('#rulesList').on('click', '.j_edit', function() {
 	var id = $(this).parents('tr').attr('data-id');
-	var table = ruleType2tableName($(this).parents('tr').attr('data-id'));
+	var table = ruleType2tableName($(this).parents('tr').attr('data-type'));
 	browser.runtime.sendMessage({"method": "getRules", "options": {"id": id}, "type": table}).then(function(response) {
+		clearModal();
+		$('#addDialog').find('.modal-title').html(t('edit'));
 		var rule = response[0];
 		$('#ruleId').val(id);
-		$('#ruleType').find('option[value="' + rule.ruleType + '"]').selected();
-		$('#matchType').find('option[value="' + rule.type + '"]').selected();
+		$('#name').val(rule.name);
+		$('#matchRule').val(rule.pattern);
+		$('#ruleType').find('option[value="' + rule.ruleType + '"]').prop('selected', true);
+		$('#ruleType').attr('disabled', 'true');
+		$('#matchType').find('option[value="' + rule.type + '"]').prop('selected', true);
+		if (rule.ruleType === 'redirect') {
+			$('#redirectTo').val(rule.to);
+		}
+		if (ruleType === 'modifySendHeader' || ruleType === 'modifyReceiveHeader') {
+			$('#headerName').val(rule.action.name);
+			$('#headerValue').val(rule.action.value);
+		}
+		$('#ruleType').trigger('change');
+		$('#addDialog').modal('show');
 	});
 })

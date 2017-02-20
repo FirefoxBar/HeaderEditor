@@ -5,6 +5,9 @@
 	"save": {
 		"message": "Save"
 	},
+	"edit": {
+		"message": "Edit"
+	},
 	"cancel": {
 		"message": "Cancel"
 	},

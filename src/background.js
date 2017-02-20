@@ -30,6 +30,11 @@ browser.runtime.onMessage.addListener(function(request, sender, sendResponse) {
 	}
 });
 
+function getActiveTab(callback) {
+	browser.tabs.query({currentWindow: true, active: true}).then(function(tabs) {
+		callback(tabs[0]);
+	});
+}
 
 function openURL(options) {
 	// Firefox do not support highlight a tab or switch to a tab
@@ -48,10 +53,8 @@ function openURL(options) {
 
 function onBeforeRequest(e) {
 	//可用：重定向，阻止加载
-	console.log(e);
   	return new Promise(function(resolve) {
 		getRules('request', {"url": e.url}, function(rules) {
-			console.log(rules);
 			var redirectTo = null;
 			for (var i in rules) {
 				if (rules[i].action === 'cancel') {
