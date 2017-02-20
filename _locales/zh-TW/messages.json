@@ -1,0 +1,76 @@
+{
+	"action": {
+		"message": "操作"
+	},
+	"add": {
+		"message": "新增"
+	},
+	"cancel": {
+		"message": "取消"
+	},
+	"description": {
+		"message": "修改請求頭的擴展"
+	},
+	"edit": {
+		"message": "編輯"
+	},
+	"export": {
+		"message": "匯出"
+	},
+	"extName": {
+		"message": "Header Editor",
+		"description": "Extension name"
+	},
+	"headerName": {
+		"message": "頭名稱"
+	},
+	"headerValue": {
+		"message": "頭內容"
+	},
+	"import": {
+		"message": "匯入"
+	},
+	"manageTitle": {
+		"message": "管理",
+		"description": "Manage page title"
+	},
+	"matchRule": {
+		"message": "匹配規則"
+	},
+	"matchType": {
+		"message": "匹配類型"
+	},
+	"match_prefix": {
+		"message": "網址前綴"
+	},
+	"match_regexp": {
+		"message": "正規表示式"
+	},
+	"match_url": {
+		"message": "網址"
+	},
+	"name": {
+		"message": "名稱"
+	},
+	"redirectTo": {
+		"message": "重定向到"
+	},
+	"ruleType": {
+		"message": "規則類型"
+	},
+	"rule_cancel": {
+		"message": "取消請求"
+	},
+	"rule_modifyReceiveHeader": {
+		"message": "修改響應頭"
+	},
+	"rule_modifySendHeader": {
+		"message": "修改請求頭"
+	},
+	"rule_redirect": {
+		"message": "重定向請求"
+	},
+	"save": {
+		"message": "儲存"
+	}
+}
