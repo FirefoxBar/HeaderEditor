@@ -66,5 +66,11 @@
 	},
 	"headerValue": {
 		"message": "Header value"
+	},
+	"export": {
+		"message": "Export"
+	},
+	"import": {
+		"message": "Import"
 	}
 }

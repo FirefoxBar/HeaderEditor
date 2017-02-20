@@ -6,6 +6,9 @@
 	<script src="src/localization.js"></script>
 	<script src="src/storage.js"></script>
 	<style>
+	#globalAction .btn {
+		margin-right: 6px;
+	}
 	#rulesList .btn {
 		padding: 6px;
 		margin-right: 6px;
@@ -15,7 +18,7 @@
 <body>
 <div class="container">
 	<h1 i18n-text="manageTitle"></h1>
-	<p><button class="btn btn-default" id="addRule" i18n-text="add"></button></p>
+	<p id="globalAction"><button class="btn btn-default" id="addRule" i18n-text="add"></button><button class="btn btn-default" id="export" i18n-text="export"></button><button class="btn btn-default" id="import" i18n-text="import"></button></p>
 	<table class="table table-hover">
 		<thead>
 			<tr>
@@ -105,6 +108,7 @@
 </div><!-- /.modal -->
 <script src="src/third-party/jquery.min.js"></script>
 <script src="src/third-party/bootstrap/js/bootstrap.min.js"></script>
+<script src="src/fileSaveLoad.js"></script>
 <script src="src/manage.js"></script>
 </body>
 </html>

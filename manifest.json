@@ -19,7 +19,8 @@
 		"tabs",
 		"webRequest",
 		"webRequestBlocking",
-		"storage"
+		"storage",
+		"downloads"
 	],
 	"background": {
 		"scripts": ["src/storage.js", "src/background.js"]

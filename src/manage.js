@@ -153,11 +153,65 @@ $('#rulesList').on('click', '.j_edit', function() {
 $('#rulesList').on('click', '.j_remove', function() {
 	var id = $(this).parents('tr').attr('data-id');
 	var table = ruleType2tableName($(this).parents('tr').attr('data-type'));
-	browser.runtime.sendMessage({"method": "deleteRule", "type": SaveTable, "id": id}).then(function(response) {
+	browser.runtime.sendMessage({"method": "deleteRule", "type": table, "id": id}).then(function(response) {
 		var _t = setTimeout(function() {
 			loadRulesList();
 			clearTimeout(_t);
 			_t = null;
 		}, 300);
+	});
+});
+//export
+$('#export').bind('click', function() {
+	var allResult = {};
+	function checkResult(type, response) {
+		if (!response) { // Firefox is starting up
+			requestRules(type);
+			return;
+		}
+		allResult[type] = response;
+		if (allResult.request && allResult.sendHeader && allResult.receiveHeader) {
+			saveResult(allResult);
+		}
+	}
+	function requestRules(type) {
+		browser.runtime.sendMessage({"method": 'getRules', "type": type}).then(function(response){
+			checkResult(type, response);
+		});
+	}
+	function saveResult(result) {
+		saveAsFile(JSON.stringify(result), 'headereditor-' + new Date().getTime().toString() + '.json');
+	}
+	requestRules('request');
+	requestRules('sendHeader');
+	requestRules('receiveHeader');
+});
+//import
+$('#import').bind('click', function() {
+	var total = 0;
+	var finish = 0;
+	function checkFinish() {
+		if (total === finish) {
+			window.location.reload();
+		}
+	}
+	loadFromFile('.json').then(function(content) {
+		content = JSON.parse(content);
+		var types = ['request', 'sendHeader', 'receiveHeader'];
+		for (var k in types) {
+			key = types[k];
+			for (var i in content[key]) {
+				delete content[key][i].id;
+				total++;
+				browser.runtime.sendMessage({"method": "saveRule", "type": key, "content": content[key][i]}).then(function() {
+					var _t = setTimeout(function() {
+						clearTimeout(_t);
+						_t = null;
+						finish++;
+						checkFinish();
+					}, 300);
+				});
+			}
+		}
 	});
 });
