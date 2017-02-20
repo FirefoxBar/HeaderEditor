@@ -1,65 +1,25 @@
 {
+	"action": {
+		"message": "Action"
+	},
 	"add": {
 		"message": "Add"
-	},
-	"save": {
-		"message": "Save"
-	},
-	"edit": {
-		"message": "Edit"
 	},
 	"cancel": {
 		"message": "Cancel"
 	},
-	"extName": {
-		"message": "Header Editor",
-		"description": "Extension name"
-	},
 	"description": {
 		"message": "A extension which you can modify the request header"
 	},
-	"manageTitle": {
-		"message": "Manage",
-		"description": "Manage page title"
+	"edit": {
+		"message": "Edit"
 	},
-	"name": {
-		"message": "Name"
+	"export": {
+		"message": "Export"
 	},
-	"ruleType": {
-		"message": "Rule type"
-	},
-	"matchRule": {
-		"message": "Match rules"
-	},
-	"matchType": {
-		"message": "Match type"
-	},
-	"action": {
-		"message": "Action"
-	},
-	"rule_cancel": {
-		"message": "Cancel request"
-	},
-	"rule_redirect": {
-		"message": "Redirect request"
-	},
-	"rule_modifySendHeader": {
-		"message": "Modify the request header"
-	},
-	"rule_modifyReceiveHeader": {
-		"message": "Modify the response header"
-	},
-	"match_regexp": {
-		"message": "Regular expression"
-	},
-	"match_prefix": {
-		"message": "URL prefix"
-	},
-	"match_url": {
-		"message": "URL"
-	},
-	"redirectTo": {
-		"message": "Redirect to"
+	"extName": {
+		"message": "Header Editor",
+		"description": "Extension name"
 	},
 	"headerName": {
 		"message": "Header name"
@@ -67,10 +27,50 @@
 	"headerValue": {
 		"message": "Header value"
 	},
-	"export": {
-		"message": "Export"
-	},
 	"import": {
 		"message": "Import"
+	},
+	"manageTitle": {
+		"message": "Manage",
+		"description": "Manage page title"
+	},
+	"matchRule": {
+		"message": "Match rules"
+	},
+	"matchType": {
+		"message": "Match type"
+	},
+	"match_prefix": {
+		"message": "URL prefix"
+	},
+	"match_regexp": {
+		"message": "Regular expression"
+	},
+	"match_url": {
+		"message": "URL"
+	},
+	"name": {
+		"message": "Name"
+	},
+	"redirectTo": {
+		"message": "Redirect to"
+	},
+	"ruleType": {
+		"message": "Rule type"
+	},
+	"rule_cancel": {
+		"message": "Cancel request"
+	},
+	"rule_modifyReceiveHeader": {
+		"message": "Modify the response header"
+	},
+	"rule_modifySendHeader": {
+		"message": "Modify the request header"
+	},
+	"rule_redirect": {
+		"message": "Redirect request"
+	},
+	"save": {
+		"message": "Save"
 	}
 }
