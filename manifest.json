@@ -3,7 +3,7 @@
 		"gecko": {
 			"id": "headereditor@addon.firefoxcn.net",
 			"strict_min_version": "51.0",
-			"strict_max_version": "57.0"
+			"strict_max_version": "56.0"
 		}
 	},
 	"name": "__MSG_extName__",
