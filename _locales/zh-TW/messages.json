@@ -31,8 +31,7 @@
 		"message": "匯入"
 	},
 	"manageTitle": {
-		"message": "管理",
-		"description": "Manage page title"
+		"message": "管理"
 	},
 	"matchRule": {
 		"message": "匹配規則"
@@ -72,5 +71,17 @@
 	},
 	"save": {
 		"message": "儲存"
+	},
+	"name_empty": {
+		"message": "名稱不能為空"
+	},
+	"match_rule_empty": {
+		"message": "匹配規則不能為空"
+	},
+	"redirect_empty": {
+		"message": "重定向目標不能為空"
+	},
+	"header_empty": {
+		"message": "頭名稱不能為空"
 	}
 }

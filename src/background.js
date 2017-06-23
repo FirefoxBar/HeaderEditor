@@ -129,4 +129,4 @@ function onHeadersReceived(e) {
 
 browser.webRequest.onBeforeRequest.addListener(onBeforeRequest, {urls: ["<all_urls>"]}, ['blocking']);
 browser.webRequest.onBeforeSendHeaders.addListener(onBeforeSendHeaders, {urls: ["<all_urls>"]}, ['blocking', 'requestHeaders']);
-browser.webRequest.onHeadersReceived.addListener(onBeforeSendHeaders, {urls: ["<all_urls>"]}, ['blocking', 'responseHeaders']);
+browser.webRequest.onHeadersReceived.addListener(onHeadersReceived, {urls: ["<all_urls>"]}, ['blocking', 'responseHeaders']);

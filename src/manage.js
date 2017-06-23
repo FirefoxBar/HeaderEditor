@@ -1,4 +1,3 @@
-
 loadRulesList();
 function loadRulesList() {
 	$('#rulesList').html('');
@@ -76,19 +75,19 @@ $('#ruleSave').bind('click', function() {
 	var headerValue = $('#headerValue').val().trim();
 	var ruleId = $('#ruleId').val();
 	if (name === '') {
-		alert('Name is empty');
+		alert(t('name_empty'));
 		return;
 	}
 	if (matchRule === '') {
-		alert('Match rule is empty');
+		alert(t('match_rule_empty'));
 		return;
 	}
 	if (ruleType === 'redirect' && redirectTo === '') {
-		alert('Redirect to is empty');
+		alert(t('redirect_empty'));
 		return;
 	}
-	if ((ruleType === 'modifySendHeader' || ruleType === 'modifyReceiveHeader') && (headerName === '' || headerValue === '')) {
-		alert('Header name or Header value is empty');
+	if ((ruleType === 'modifySendHeader' || ruleType === 'modifyReceiveHeader') && headerName === '') {
+		alert(t('header_empty'));
 		return;
 	}
 	//make save data

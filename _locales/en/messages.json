@@ -31,8 +31,7 @@
 		"message": "Import"
 	},
 	"manageTitle": {
-		"message": "Manage",
-		"description": "Manage page title"
+		"message": "Manage"
 	},
 	"matchRule": {
 		"message": "Match rules"
@@ -72,5 +71,17 @@
 	},
 	"save": {
 		"message": "Save"
+	},
+	"name_empty": {
+		"message": "Name can not be empty"
+	},
+	"match_rule_empty": {
+		"message": "Match rule can not be empty"
+	},
+	"redirect_empty": {
+		"message": "Redirect target can not be empty"
+	},
+	"header_empty": {
+		"message": "Header name can not be empty"
 	}
 }
