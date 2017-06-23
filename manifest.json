@@ -3,12 +3,12 @@
 		"gecko": {
 			"id": "headereditor@addon.firefoxcn.net",
 			"strict_min_version": "51.0",
-			"strict_max_version": "55.0"
+			"strict_max_version": "57.0"
 		}
 	},
 	"name": "__MSG_extName__",
 	"short_name": "HeaderEditor",
-	"version": "1.0.0",
+	"version": "1.0.1",
 	"description": "__MSG_description__",
 	"homepage_url": "http://team.firefoxcn.net",
 	"manifest_version": 2,
