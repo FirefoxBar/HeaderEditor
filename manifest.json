@@ -3,7 +3,7 @@
 		"gecko": {
 			"id": "headereditor@addon.firefoxcn.net",
 			"update_url": "https://ext.firefoxcn.net/headereditor/install/update.json",
-			"strict_min_version": "51.0",
+			"strict_min_version": "51.0"
 		}
 	},
 	"name": "__MSG_extName__",
