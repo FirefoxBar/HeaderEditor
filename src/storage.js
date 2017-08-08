@@ -19,6 +19,11 @@ function getDatabase(ready, error) {
 	}
 };
 
+function runTryCatch(func) {
+	try { return func() }
+	catch(e) {}
+}
+
 var cachedRules = {
 	"request": null,
 	"sendHeader": null,
@@ -68,8 +73,11 @@ function filterRules(rules, options) {
 	if (url != null) {
 		rules = rules.filter(function(rule) {
 			if (rule.type === 'regexp') {
-				var reg = new RegExp(rule.pattern);
-				return reg.test(url);
+				var r = runTryCatch(function() {
+					var reg = new RegExp(rule.pattern);
+					return reg.test(url);
+				});
+				return r === undefined ? false : r;
 			} else if (rule.type === 'prefix') {
 				return url.indexOf(rule.pattern) === 0;
 			} else if (rule.type === 'domain') {

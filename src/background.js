@@ -1,4 +1,4 @@
-var frameIdMessageable, backStorage = localStorage;
+var backStorage = localStorage;
 
 function appId() {
     function genRand() {
