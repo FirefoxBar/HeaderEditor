@@ -51,7 +51,7 @@ function openURL(options) {
 }
 
 
-function onBeforeRequest(e) {
+browser.webRequest.onBeforeRequest.addListener(function(e) {
 	//可用：重定向，阻止加载
   	return new Promise(function(resolve) {
 		getRules('request', {"url": e.url}, function(rules) {
@@ -74,8 +74,9 @@ function onBeforeRequest(e) {
 			}
 		});
   	});
-}
-function onBeforeSendHeaders(e) {
+}, {urls: ["<all_urls>"]}, ['blocking']);
+
+browser.webRequest.onBeforeSendHeaders.addListener(function(e) {
 	//可用：修改请求头
 	if (!e.requestHeaders) {
 		return;
@@ -101,32 +102,28 @@ function onBeforeSendHeaders(e) {
 			resolve({"requestHeaders": e.requestHeaders});
 		});
   	});
-}
-function onHeadersReceived(e) {
-	//可用：修改响应头
-  	return new Promise(function(resolve) {
-		getRules('receiveHeader', {"url": e.url}, function(rules) {
-			var headers = {};
-			for (var i = 0; i < rules.length; i++) {
-				headers[rules[i].action.name] = rules[i].action.value;
-			}
-			for (var i = 0; i < e.responseHeaders.length; i++) {
-				if (typeof(headers[e.responseHeaders[i].name]) !== 'undefined') {
-					e.responseHeaders[i].value = headers[e.responseHeaders[i].name];
-					delete headers[e.responseHeaders[i].name];
-				}
-			}
-			for (var k in headers) {
-				e.responseHeaders.push({
-					"name": k,
-					"value": headers[k]
-				});
-			}
-			resolve({"responseHeaders": e.responseHeaders});
-		});
-  	});
-}
+}, {urls: ["<all_urls>"]}, ['blocking', 'requestHeaders']);
 
-browser.webRequest.onBeforeRequest.addListener(onBeforeRequest, {urls: ["<all_urls>"]}, ['blocking']);
-browser.webRequest.onBeforeSendHeaders.addListener(onBeforeSendHeaders, {urls: ["<all_urls>"]}, ['blocking', 'requestHeaders']);
-browser.webRequest.onHeadersReceived.addListener(onHeadersReceived, {urls: ["<all_urls>"]}, ['blocking', 'responseHeaders']);
+browser.webRequest.onHeadersReceived.addListener(function(e) {
+	return new Promise(function(resolve) {
+	  getRules('receiveHeader', {"url": e.url}, function(rules) {
+		  var headers = {};
+		  for (var i = 0; i < rules.length; i++) {
+			  headers[rules[i].action.name] = rules[i].action.value;
+		  }
+		  for (var i = 0; i < e.responseHeaders.length; i++) {
+			  if (typeof(headers[e.responseHeaders[i].name]) !== 'undefined') {
+				  e.responseHeaders[i].value = headers[e.responseHeaders[i].name];
+				  delete headers[e.responseHeaders[i].name];
+			  }
+		  }
+		  for (var k in headers) {
+			  e.responseHeaders.push({
+				  "name": k,
+				  "value": headers[k]
+			  });
+		  }
+		  resolve({"responseHeaders": e.responseHeaders});
+	  });
+	});
+}, {urls: ["<all_urls>"]}, ['blocking', 'responseHeaders']);

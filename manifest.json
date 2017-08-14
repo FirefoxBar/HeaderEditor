@@ -20,7 +20,8 @@
 		"webRequest",
 		"webRequestBlocking",
 		"storage",
-		"downloads"
+		"downloads",
+		"*://*/*"
 	],
 	"background": {
 		"scripts": ["src/storage.js", "src/background.js"]
@@ -32,8 +33,5 @@
 		"default_title": "Header Editor",
 		"default_popup": "popup.html"
 	},
-	"options_ui": {
-    	"page": "manage.html"
- 	},
 	"default_locale": "en"
 }
