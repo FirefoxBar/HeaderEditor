@@ -6,7 +6,7 @@ This is a WebExtension. Require Firefox 52 or later.
 
 ## Releases
 
-Lastest: [1.0.1](https://github.com/FirefoxBar/HeaderEditor/releases/tag/1.0.1)
+Lastest: [1.0.3](https://github.com/FirefoxBar/HeaderEditor/releases/tag/1.0.3)
 
 ## License
 
