@@ -1,13 +1,10 @@
 # Header Editor
 
-A extension which can modify the request, include request headers, response headers, redirect requests, and cancel requests.
+[![GitHub release](https://img.shields.io/github/release/FirefoxBar/HeaderEditor.svg)](https://github.com/FirefoxBar/HeaderEditor/releases)
+[![license](https://img.shields.io/github/license/FirefoxBar/HeaderEditor.svg)](https://github.com/FirefoxBar/HeaderEditor/blob/master/LICENSE)
+
+An extension which can modify the request, include request headers, response headers, redirect requests, and cancel requests.
+
+You can install from [AMO](https://addons.mozilla.org/zh-CN/firefox/addon/header-editor/) or install [our self-distribution version](https://github.com/FirefoxBar/HeaderEditor/releases).
 
 This is a WebExtension. Require Firefox 52 or later.
-
-## Releases
-
-Lastest: [1.0.3](https://github.com/FirefoxBar/HeaderEditor/releases/tag/1.0.3)
-
-## License
-
-GPLv2.
