@@ -21,6 +21,10 @@
 		"message": "Header Editor",
 		"description": "Extension name"
 	},
+	"extButtonTitle": {
+		"message": "Header Editor",
+		"description": "Toolbar tooltip"
+	},
 	"headerName": {
 		"message": "Header name"
 	},

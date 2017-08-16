@@ -30,8 +30,12 @@
 		"default_icon": {
 			"128": "images/128.png"
 		},
-		"default_title": "Header Editor",
-		"default_popup": "popup.html"
+		"default_title": "__MSG_extButtonTitle__"
 	},
-	"default_locale": "en"
+	"default_locale": "en",
+	"options_ui": {
+		"browser_style": true,
+		"page": "manage.html",
+		"open_in_tab": true
+	}
 }

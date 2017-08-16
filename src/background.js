@@ -127,3 +127,7 @@ browser.webRequest.onHeadersReceived.addListener(function(e) {
 	  });
 	});
 }, {urls: ["<all_urls>"]}, ['blocking', 'responseHeaders']);
+
+browser.browserAction.onClicked.addListener(function () {
+	browser.runtime.openOptionsPage()
+});
