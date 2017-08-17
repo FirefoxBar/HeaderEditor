@@ -82,6 +82,10 @@ function filterRules(rules, options) {
 				return url.indexOf(rule.pattern) === 0;
 			} else if (rule.type === 'domain') {
 				return getDomain(url) === rule.pattern;
+			} else if (rule.type === 'url') {
+				return url === rule.pattern;
+			} else {
+				return false;
 			}
 		});
 	}

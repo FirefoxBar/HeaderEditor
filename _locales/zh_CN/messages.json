@@ -49,6 +49,9 @@
 	"match_regexp": {
 		"message": "正则表达式"
 	},
+	"match_domain": {
+		"message": "域名"
+	},
 	"match_url": {
 		"message": "网址"
 	},
