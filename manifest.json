@@ -8,7 +8,7 @@
 	},
 	"name": "__MSG_extName__",
 	"short_name": "__MSG_extName__",
-	"version": "1.0.4",
+	"version": "1.0.5",
 	"description": "__MSG_description__",
 	"homepage_url": "http://team.firefoxcn.net",
 	"manifest_version": 2,
