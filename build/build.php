@@ -10,7 +10,7 @@ $manifest = json_decode(file_get_contents(EXTENSION_DIR . '/manifest.json'), 1);
 $gecko_id = $manifest['applications']['gecko']['id'];
 $exclude = ['.git', '.vscode', 'build', '.gitignore', 'README.md'];
 $xpi = new XpiBuild([
-	'name' => 'xstyle',
+	'name' => 'HeaderEditor',
 	'output_dir' => __DIR__ . '/output/firefox'
 ]);
 $dh = opendir(EXTENSION_DIR);
