@@ -74,6 +74,7 @@ $('#ruleSave').bind('click', function() {
 	var headerName = $('#headerName').val().trim();
 	var headerValue = $('#headerValue').val().trim();
 	var ruleId = $('#ruleId').val();
+	var exclude = $('#excludeRule').val();
 	if (name === '') {
 		alert(t('name_empty'));
 		return;
@@ -95,7 +96,8 @@ $('#ruleSave').bind('click', function() {
 		"name": name,
 		"ruleType": ruleType,
 		"type": matchType,
-		"pattern": matchRule
+		"pattern": matchRule,
+		"exclude": exclude
 	};
 	var SaveTable = ruleType2tableName(ruleType);
 	if (ruleType === 'cancel') {
@@ -134,6 +136,7 @@ $('#rulesList').on('click', '.j_edit', function() {
 		$('#ruleId').val(id);
 		$('#name').val(rule.name);
 		$('#matchRule').val(rule.pattern);
+		$('#excludeRule').val(rule.exclude ? rule.exclude : '');
 		$('#ruleType').find('option[value="' + rule.ruleType + '"]').prop('selected', true);
 		$('#ruleType').attr('disabled', 'true');
 		$('#matchType').find('option[value="' + rule.type + '"]').prop('selected', true);

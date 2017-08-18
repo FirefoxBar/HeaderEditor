@@ -72,20 +72,30 @@ function filterRules(rules, options) {
 	}
 	if (url != null) {
 		rules = rules.filter(function(rule) {
+			var result = false;
 			if (rule.type === 'regexp') {
 				var r = runTryCatch(function() {
 					var reg = new RegExp(rule.pattern);
 					return reg.test(url);
 				});
-				return r === undefined ? false : r;
+				result =  (r === undefined ? false : r);
 			} else if (rule.type === 'prefix') {
-				return url.indexOf(rule.pattern) === 0;
+				result = url.indexOf(rule.pattern) === 0;
 			} else if (rule.type === 'domain') {
-				return getDomain(url) === rule.pattern;
+				result = getDomain(url) === rule.pattern;
 			} else if (rule.type === 'url') {
-				return url === rule.pattern;
+				result = url === rule.pattern;
 			} else {
-				return false;
+				result = false;
+			}
+			if (result && typeof(rule.exclude) === 'string' && rule.exclude.length > 0) {
+				var r = runTryCatch(function() {
+					var reg = new RegExp(rule.exclude);
+					return reg.test(url);
+				});
+				return (typeof(r) === 'undefined' || r) ? false : true;
+			} else {
+				return result;
 			}
 		});
 	}
