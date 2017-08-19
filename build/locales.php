@@ -28,6 +28,16 @@ foreach ($language_list as $v) {
 	} while (empty($language));
 	$content = json_decode($language['content'], 1);
 	ksort($content);
+	// remove description
+	if ($v !== 'en') {
+		foreach ($content as $kk => $vv) {
+			unset($content[$kk]['description']);
+		}
+	}
+	// put en to a special directory
+	if ($v === 'en') {
+		file_put_contents('./output/message.json', str_replace('    ', "\t", json_encode($content, JSON_UNESCAPED_UNICODE | JSON_PRETTY_PRINT)));
+	}
 	// Add placeholders
 	foreach ($placeholders as $kk => $vv) {
 		$content[$kk]['placeholders'] = $vv;
