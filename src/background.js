@@ -56,14 +56,14 @@ browser.webRequest.onBeforeRequest.addListener(function(e) {
   	return new Promise(function(resolve) {
 		getRules('request', {"url": e.url}, function(rules) {
 			var redirectTo = null;
-			for (var i in rules) {
-				if (rules[i].action === 'cancel') {
+			for (let item of rules) {
+				if (item.action === 'cancel') {
 					resolve({"cancel": true});
 				} else {
-					if (rules[i].type === 'regexp') {
-						redirectTo = e.url.replace(new RegExp(rules[i].pattern), rules[i].to);
+					if (item.type === 'regexp') {
+						redirectTo = e.url.replace(new RegExp(item.pattern), item.to);
 					} else {
-						redirectTo = rules[i].to;
+						redirectTo = item.to;
 					}
 				}
 			}
@@ -84,8 +84,8 @@ browser.webRequest.onBeforeSendHeaders.addListener(function(e) {
   	return new Promise(function(resolve) {
 		getRules('sendHeader', {"url": e.url}, function(rules) {
 			var headers = {};
-			for (var i = 0; i < rules.length; i++) {
-				headers[rules[i].action.name] = rules[i].action.value;
+			for (let item of rules) {
+				headers[item.action.name] = item.action.value;
 			}
 			for (var i = 0; i < e.requestHeaders.length; i++) {
 				if (typeof(headers[e.requestHeaders[i].name]) !== 'undefined') {
@@ -108,8 +108,8 @@ browser.webRequest.onHeadersReceived.addListener(function(e) {
 	return new Promise(function(resolve) {
 	  getRules('receiveHeader', {"url": e.url}, function(rules) {
 		  var headers = {};
-		  for (var i = 0; i < rules.length; i++) {
-			  headers[rules[i].action.name] = rules[i].action.value;
+		  for (let item of rules) {
+			  headers[item.action.name] = item.action.value;
 		  }
 		  for (var i = 0; i < e.responseHeaders.length; i++) {
 			  if (typeof(headers[e.responseHeaders[i].name]) !== 'undefined') {
