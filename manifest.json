@@ -24,7 +24,7 @@
 		"*://*/*"
 	],
 	"background": {
-		"scripts": ["src/storage.js", "src/background.js"]
+		"scripts": ["scripts/storage.js", "scripts/background.js"]
 	},
 	"browser_action": {
 		"default_icon": {

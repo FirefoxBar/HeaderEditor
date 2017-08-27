@@ -16,3 +16,10 @@ For more documentation, Please visit [wiki](https://github.com/FirefoxBar/Header
 You can contribute codes by [submit a pull request](https://github.com/FirefoxBar/HeaderEditor/compare).
 
 You can help us to translate this extension on [transifex](https://www.transifex.com/sytec/header-editor/).
+
+
+## Licenses
+
+In addition to the third-party directory, all files are GPLv2 license.
+
+Copyright © 2017 [FirefoxBar Team](http://team.firefoxcn.net)
