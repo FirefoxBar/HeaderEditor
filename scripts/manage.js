@@ -120,6 +120,13 @@ $('#ruleSave').bind('click', function() {
 	}
 	if (SaveData.isFunction) {
 		SaveData.code = code;
+		// test code
+		try {
+			new Function('val', code);
+		} catch (e) {
+			alert(e.message);
+			return;
+		}
 	} else {
 		if (ruleType === 'redirect') {
 			SaveData.action = 'redirect';

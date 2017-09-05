@@ -61,10 +61,12 @@ browser.webRequest.onBeforeRequest.addListener(function(e) {
 					resolve({"cancel": true});
 				} else {
 					if (item.isFunction) {
-						let r = item.func_body(redirectTo);
-						if (typeof(r) === 'string') {
-							redirectTo = r;
-						}
+						runTryCatch(() => {
+							let r = item.func_body(redirectTo);
+							if (typeof(r) === 'string') {
+								redirectTo = r;
+							}
+						});
 					} else {
 						if (item.matchType === 'regexp') {
 							redirectTo = redirectTo.replace(new RegExp(item.pattern), item.to);
@@ -108,7 +110,9 @@ function modifyHeaders(headers, rules) {
 	if (hasFunction) {
 		for (let item of rules) {
 			if (item.isFunction) {
-				item.func_body(headers);
+				runTryCatch(() => {
+					item.func_body(headers);
+				});
 			}
 		}
 	}
