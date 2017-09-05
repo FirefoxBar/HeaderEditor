@@ -25,7 +25,7 @@ while ($f = readdir($dh)) {
 // Build for firefox
 $xpi = new XpiBuild([
 	'name' => 'HeaderEditor',
-	'output_dir' => __DIR__ . '/output'
+	'output_dir' => __DIR__ . '/output/firefox'
 ]);
 foreach ($filelist['dir'] as $v) {
 	$xpi->addDir($v[0], $v[1]);
@@ -45,7 +45,7 @@ echo "Sign firefox extension finished\n";
 // Build AMO version
 $amo = new XpiBuild([
 	'name' => 'HeaderEditor-amo',
-	'output_dir' => __DIR__ . '/output'
+	'output_dir' => __DIR__ . '/output/firefox'
 ]);
 foreach ($filelist['dir'] as $v) {
 	$amo->addDir($v[0], $v[1]);
