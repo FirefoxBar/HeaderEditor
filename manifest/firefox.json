@@ -1,14 +1,14 @@
 {
 	"applications": {
 		"gecko": {
-			"id": "headereditor@addon.firefoxcn.net",
+			"id": "__appid__",
 			"update_url": "https://ext.firefoxcn.net/headereditor/install/update.json",
 			"strict_min_version": "52.0"
 		}
 	},
 	"name": "__MSG_extName__",
 	"short_name": "__MSG_extName__",
-	"version": "1.1.0",
+	"version": "__version__",
 	"description": "__MSG_description__",
 	"homepage_url": "http://team.firefoxcn.net",
 	"manifest_version": 2,
