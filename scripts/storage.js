@@ -202,6 +202,7 @@ function upgradeTo2() {
 					s.id = cursor.key;
 					s.matchType = s.type;
 					delete s.type;
+					s.isFunction = 0;
 					os.put(s);
 					cursor.continue();
 				}
