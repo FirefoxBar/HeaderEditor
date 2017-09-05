@@ -246,7 +246,10 @@ $('#import').bind('click', function() {
 					content[key][i].matchType = content[key][i].type;
 					content[key][i].isFunction = 0;
 					delete content[key][i].type;
-				} 
+				}
+				if (typeof(s.enable) === 'undefined') {
+					s.enable = 1;
+				}
 				total++;
 				browser.runtime.sendMessage({"method": "saveRule", "type": key, "content": content[key][i]}).then(function() {
 					var _t = setTimeout(function() {
