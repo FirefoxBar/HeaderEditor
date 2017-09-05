@@ -19,7 +19,7 @@ function loadRulesList() {
 		appendRule(response);
 	}
 	function requestRules(type) {
-		browser.runtime.sendMessage({"method": 'getRules', "type": type}).then(function(response){
+		getRules(type).then((response) => {
 			checkResult(type, response);
 		});
 	}
@@ -142,7 +142,7 @@ $('#ruleSave').bind('click', function() {
 	if (ruleId !== '') {
 		SaveData.id = ruleId;
 	}
-	browser.runtime.sendMessage({"method": "saveRule", "type": SaveTable, "content": SaveData}).then(function(response) {
+	saveRule(SaveTable, SaveData).then(function(response) {
 		$('#addDialog').modal('hide');
 		var _t = setTimeout(function() {
 			loadRulesList();
@@ -155,7 +155,7 @@ $('#ruleSave').bind('click', function() {
 $('#rulesList').on('click', '.j_edit', function() {
 	var id = $(this).parents('tr').attr('data-id');
 	var table = ruleType2tableName($(this).parents('tr').attr('data-type'));
-	browser.runtime.sendMessage({"method": "getRules", "options": {"id": id}, "type": table}).then(function(response) {
+	getRules(table, {"id": id}).then((response) => {
 		clearModal();
 		$('#addDialog').find('.modal-title').html(t('edit'));
 		var rule = response[0];
@@ -189,7 +189,7 @@ $('#rulesList').on('click', '.j_remove', function() {
 	var tr = $(this).parents('tr');
 	var id = tr.attr('data-id');
 	var table = ruleType2tableName(tr.attr('data-type'));
-	browser.runtime.sendMessage({"method": "deleteRule", "type": table, "id": id}).then(function(response) {
+	deleteRule(table, id).then((response) => {
 		tr.remove();
 	});
 });
@@ -199,7 +199,7 @@ $('#rulesList').on('change', 'input[type="checkbox"]', function() {
 	var id = tr.attr('data-id');
 	var table = ruleType2tableName(tr.attr('data-type'));
 	var enable = this.checked ? 1 : 0;
-	browser.runtime.sendMessage({"method": "saveRule", "type": table, "content": {"id": id, "enable": enable}}).then(() => {});
+	saveRule(table, {"id": id, "enable": enable}).then(() => {});
 });
 //export
 $('#export').bind('click', function() {
@@ -215,7 +215,7 @@ $('#export').bind('click', function() {
 		}
 	}
 	function requestRules(type) {
-		browser.runtime.sendMessage({"method": 'getRules', "type": type}).then(function(response){
+		getRules(type).then((response) => {
 			checkResult(type, response);
 		});
 	}
@@ -254,7 +254,7 @@ $('#import').bind('click', function() {
 				if (typeof(item.enable) === 'undefined') {
 					item.enable = 1;
 				}
-				browser.runtime.sendMessage({"method": "saveRule", "type": key, "content": item}).then(() => {
+				saveRule(key, item).then(() => {
 					finish++;
 					checkFinish();
 				});

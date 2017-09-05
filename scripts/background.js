@@ -13,19 +13,23 @@ function appId() {
 browser.runtime.onMessage.addListener(function(request, sender, sendResponse) {
 	switch (request.method) {
 		case "healthCheck":
-			getDatabase(function() { sendResponse(true); }, function() { sendResponse(false); });
+			getDatabase().then(() => {
+				sendResponse(true);
+			}).catch(() => {
+				sendResponse(false);
+			});
 			return true;
 		case "openURL":
 			openURL(request);
 			break;
 		case "getRules":
-			getRules(request.type, request.options, sendResponse);
+			getRules(request.type, request.options).then(sendResponse);
 			break;
 		case "saveRule":
-			saveRule(request.type, request.content, sendResponse);
+			saveRule(request.type, request.content).then(sendResponse);
 			break;
 		case "deleteRule":
-			deleteRule(request.type, request.id, sendResponse);
+			deleteRule(request.type, request.id).then(sendResponse);
 			break;
 	}
 });
@@ -54,7 +58,7 @@ function openURL(options) {
 browser.webRequest.onBeforeRequest.addListener(function(e) {
 	//可用：重定向，阻止加载
   	return new Promise(function(resolve) {
-		getRules('request', {"url": e.url, "enable": 1}, function(rules) {
+		getRules('request', {"url": e.url, "enable": 1}).then((rules) => {
 			var redirectTo = e.url;
 			for (let item of rules) {
 				if (item.action === 'cancel') {
@@ -124,7 +128,7 @@ browser.webRequest.onBeforeSendHeaders.addListener(function(e) {
 		return;
 	}
   	return new Promise(function(resolve) {
-		getRules('sendHeader', {"url": e.url, "enable": 1}, function(rules) {
+		getRules('sendHeader', {"url": e.url, "enable": 1}).then((rules) => {
 			modifyHeaders(e.requestHeaders, rules);
 			resolve(e);
 		});
@@ -136,7 +140,7 @@ browser.webRequest.onHeadersReceived.addListener(function(e) {
 		return;
 	}
 	return new Promise(function(resolve) {
-	  	getRules('receiveHeader', {"url": e.url, "enable": 1}, function(rules) {
+	  	getRules('receiveHeader', {"url": e.url, "enable": 1}).then((rules) => {
 			modifyHeaders(e.responseHeaders, rules);
 			resolve(e);
 	  	});
