@@ -222,6 +222,11 @@ $('#import').bind('click', function() {
 			key = types[k];
 			for (var i in content[key]) {
 				delete content[key][i].id;
+				if (typeof(content[key][i]).isFunction === 'undefined') {
+					content[key][i].matchType = content[key][i].type;
+					content[key][i].isFunction = 0;
+					delete content[key][i].type;
+				} 
 				total++;
 				browser.runtime.sendMessage({"method": "saveRule", "type": key, "content": content[key][i]}).then(function() {
 					var _t = setTimeout(function() {
