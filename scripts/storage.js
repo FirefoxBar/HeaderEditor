@@ -201,7 +201,7 @@ function getType(o) {
 function upgradeTo2() {
 	for (let k of ["request", "sendHeader", "receiveHeader"]) {
 		getDatabase().then((db) => {
-			let tx = db.transaction(["headereditor"], "readwrite");
+			let tx = db.transaction([k], "readwrite");
 			let os = tx.objectStore(k);
 			os.openCursor().onsuccess = function(e) {
 				let cursor = e.target.result;
