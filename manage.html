@@ -45,7 +45,12 @@
 <body>
 <div class="container">
 	<h1 i18n-text="manageTitle"></h1>
-	<p id="globalAction"><button class="btn btn-default" id="addRule" i18n-text="add"></button><button class="btn btn-default" id="export" i18n-text="export"></button><button class="btn btn-default" id="import" i18n-text="import"></button></p>
+	<p id="globalAction">
+		<button class="btn btn-default" id="addRule" i18n-text="add"></button>
+		<button class="btn btn-default" id="export" i18n-text="export"></button>
+		<button class="btn btn-default" id="import" i18n-text="import"></button>
+		<a class="btn btn-default" href="https://github.com/FirefoxBar/HeaderEditor/wiki" i18n-text="help"></a>
+	</p>
 	<table class="table table-hover">
 		<thead>
 			<tr>
@@ -145,7 +150,7 @@
 					</div>
 				</div>
 				<div class="custom-code default-hide">
-					<label for="custom-code">Code</label>
+					<label for="custom-code" i18n-text="code"></label>
 					<textarea id="custom-code" class="form-control" rows="10"></textarea>
 				</div>
 	  		</div>

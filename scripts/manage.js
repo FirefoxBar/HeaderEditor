@@ -87,7 +87,7 @@ $('#ruleSave').bind('click', function() {
 	}
 	if (isFunction) {
 		if (code === '') {
-			alert('Code can not be empty');
+			alert(t('code_empty'));
 			return;
 		}
 	} else {
