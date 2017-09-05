@@ -232,32 +232,31 @@ $('#import').bind('click', function() {
 	var finish = 0;
 	function checkFinish() {
 		if (total === finish) {
-			window.location.reload();
+			setTimeout(() => {
+				window.location.reload();
+			}, 500);
 		}
 	}
 	loadFromFile('.json').then(function(content) {
 		content = JSON.parse(content);
-		var types = ['request', 'sendHeader', 'receiveHeader'];
-		for (var k in types) {
-			key = types[k];
-			for (var i in content[key]) {
-				delete content[key][i].id;
-				if (typeof(content[key][i]).isFunction === 'undefined') {
-					content[key][i].matchType = content[key][i].type;
-					content[key][i].isFunction = 0;
-					delete content[key][i].type;
+		const types = ['request', 'sendHeader', 'receiveHeader'];
+		for (let key of types) {
+			total += content[key].length;
+		}
+		for (let key of types) {
+			for (let item of content[key]) {
+				delete item.id;
+				if (typeof(item.isFunction) === 'undefined') {
+					item.matchType = item.type;
+					item.isFunction = 0;
+					delete item.type;
 				}
-				if (typeof(s.enable) === 'undefined') {
-					s.enable = 1;
+				if (typeof(item.enable) === 'undefined') {
+					item.enable = 1;
 				}
-				total++;
-				browser.runtime.sendMessage({"method": "saveRule", "type": key, "content": content[key][i]}).then(function() {
-					var _t = setTimeout(function() {
-						clearTimeout(_t);
-						_t = null;
-						finish++;
-						checkFinish();
-					}, 300);
+				browser.runtime.sendMessage({"method": "saveRule", "type": key, "content": item}).then(() => {
+					finish++;
+					checkFinish();
 				});
 			}
 		}
