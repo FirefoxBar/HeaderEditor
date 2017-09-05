@@ -1,5 +1,5 @@
 function getDatabase(ready, error) {
-	var dbOpenRequest = window.indexedDB.open("headereditor", 1);
+	var dbOpenRequest = window.indexedDB.open("headereditor", 2);
 	dbOpenRequest.onsuccess = function(e) {
 		ready(e.target.result);
 	};
@@ -15,6 +15,10 @@ function getDatabase(ready, error) {
 			event.target.result.createObjectStore("request", {keyPath: 'id', autoIncrement: true});
 			event.target.result.createObjectStore("sendHeader", {keyPath: 'id', autoIncrement: true});
 			event.target.result.createObjectStore("receiveHeader", {keyPath: 'id', autoIncrement: true});
+		} else {
+			if (event.oldVersion < 2) {
+				upgradeTo2();
+			}
 		}
 	}
 };
@@ -43,7 +47,11 @@ function getRules(type, options, callback) {
 			if (cursor) {
 				var s = cursor.value;
 				s.id = cursor.key;
-				all.push(cursor.value);
+				// Init function here
+				if (s.isFunction) {
+					s.func_body = new Function('val', s.code);
+				}
+				all.push(s);
 				cursor.continue();
 			} else {
 				cachedRules[type] = all;
@@ -66,24 +74,33 @@ function filterRules(rules, options) {
 	var id = typeof(options.id) !== 'undefined' ? Number(options.id) : null;
 
 	if (id != null) {
-		rules = rules.filter(function(rule) {
+		rules = rules.filter((rule) => {
 			return rule.id == id;
 		});
 	}
+
+	if (options.name) {
+		rules = rules.filter((rule) => {
+			rule.name === options.name;
+		});
+	}
+
 	if (url != null) {
-		rules = rules.filter(function(rule) {
+		rules = rules.filter((rule) => {
 			var result = false;
-			if (rule.type === 'regexp') {
+			if (rule.matchType === 'all') {
+				result = true;
+			} else if (rule.matchType === 'regexp') {
 				var r = runTryCatch(function() {
 					var reg = new RegExp(rule.pattern);
 					return reg.test(url);
 				});
 				result =  (r === undefined ? false : r);
-			} else if (rule.type === 'prefix') {
+			} else if (rule.matchType === 'prefix') {
 				result = url.indexOf(rule.pattern) === 0;
-			} else if (rule.type === 'domain') {
+			} else if (rule.matchType === 'domain') {
 				result = getDomain(url) === rule.pattern;
-			} else if (rule.type === 'url') {
+			} else if (rule.matchType === 'url') {
 				result = url === rule.pattern;
 			} else {
 				result = false;
@@ -156,7 +173,7 @@ function deleteRule(tableName, id, callback) {
 
 function getDomain(url) {
 	if (url.indexOf("file:") == 0) {
-		return [];
+		return '';
 	}
 	var d = /.*?:\/*([^\/:]+)/.exec(url)[1];
 	return d;
@@ -170,4 +187,25 @@ function getType(o) {
 		return "array";
 	}
 	throw "Not supported - " + o;
+}
+
+
+function upgradeTo2() {
+	for (let k of ["request", "sendHeader", "receiveHeader"]) {
+		getDatabase((db) => {
+			let tx = db.transaction(["headereditor"], "readwrite");
+			let os = tx.objectStore(k);
+			os.openCursor().onsuccess = function(e) {
+				let cursor = e.target.result;
+				if (cursor) {
+					let s = cursor.value;
+					s.id = cursor.key;
+					s.matchType = s.type;
+					delete s.type;
+					os.put(s);
+					cursor.continue();
+				}
+			};
+		});
+	}
 }

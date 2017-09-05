@@ -3,7 +3,7 @@ function loadRulesList() {
 	$('#rulesList').html('');
 	function appendRule(response) {
 		for (var i = 0; i < response.length; i++) {
-			var text = '<tr data-id="' + response[i].id + '" data-type="' + response[i].ruleType + '"><td>' + response[i].name + '</td><td>' + t('rule_' + response[i].ruleType) + '</td><td>' + response[i].pattern + '</td><td>' + t('match_' + response[i].type) + '</td><td><button class="j_edit btn btn-default"><i class="glyphicon glyphicon-pencil"></i></button><button class="j_remove btn btn-default"><i class="glyphicon glyphicon-remove"></i></button></td></tr>';
+			var text = '<tr data-id="' + response[i].id + '" data-type="' + response[i].ruleType + '"><td>' + response[i].name + '</td><td>' + t('rule_' + response[i].ruleType) + '</td><td>' + response[i].pattern + '</td><td>' + t('match_' + response[i].matchType) + '</td><td><button class="j_edit btn btn-default"><i class="glyphicon glyphicon-pencil"></i></button><button class="j_remove btn btn-default"><i class="glyphicon glyphicon-remove"></i></button></td></tr>';
 			$('#rulesList').append(text);
 		}
 	}
@@ -39,8 +39,10 @@ function ruleType2tableName(ruleType) {
 function clearModal() {
 	$('#ruleId').val('');
 	$('#addDialog').find('input[type="text"]').val('');
+	$('#addDialog').find('textarea').val('');
 	$('#ruleType').find('option').removeAttr('selected');
 	$('#matchType').find('option').removeAttr('selected');
+	$('#isFunction').find('option').removeAttr('selected');
 	$('#ruleType').removeAttr('disabled');
 }
 
@@ -49,19 +51,17 @@ $('#addRule').bind('click', function() {
 	$('#addDialog').find('.modal-title').html(t('add'));
 	$('#addDialog').modal('show');
 	$('#ruleType').trigger('change');
+	$('#isFunction').trigger('change');
+	$('#matchType').trigger('change');
 });
 $('#ruleType').bind('change', function() {
-	var selectedVal = $(this).find('option:selected').val();
-	if (selectedVal !== 'redirect') {
-		$('#addDialog').find('.redirect_to').hide();
-	} else {
-		$('#addDialog').find('.redirect_to').show();
-	}
-	if (selectedVal !== 'modifySendHeader' && selectedVal !== 'modifyReceiveHeader') {
-		$('#addDialog').find('.header_mondify').hide();
-	} else {
-		$('#addDialog').find('.header_mondify').show();
-	}
+	$('#addDialog').attr('data-type', $(this).find('option:selected').val());
+});
+$('#isFunction').bind('change', function() {
+	$('#addDialog').attr('data-isfunction', $(this).find('option:selected').val());
+});
+$('#matchType').bind('change', function() {
+	$('#addDialog').attr('data-match', $(this).find('option:selected').val());
 });
 //save rule
 $('#ruleSave').bind('click', function() {
@@ -75,6 +75,8 @@ $('#ruleSave').bind('click', function() {
 	var headerValue = $('#headerValue').val().trim();
 	var ruleId = $('#ruleId').val();
 	var exclude = $('#excludeRule').val();
+	var isFunction = parseInt($('#isFunction').find('option:selected').val());
+	var code = $('#custom-code').val();
 	if (name === '') {
 		alert(t('name_empty'));
 		return;
@@ -83,35 +85,47 @@ $('#ruleSave').bind('click', function() {
 		alert(t('match_rule_empty'));
 		return;
 	}
-	if (ruleType === 'redirect' && redirectTo === '') {
-		alert(t('redirect_empty'));
-		return;
-	}
-	if ((ruleType === 'modifySendHeader' || ruleType === 'modifyReceiveHeader') && headerName === '') {
-		alert(t('header_empty'));
-		return;
+	if (isFunction) {
+		if (code === '') {
+			alert('Code can not be empty');
+			return;
+		}
+	} else {
+		if (ruleType === 'redirect' && redirectTo === '') {
+			alert(t('redirect_empty'));
+			return;
+		}
+		if ((ruleType === 'modifySendHeader' || ruleType === 'modifyReceiveHeader') && headerName === '') {
+			alert(t('header_empty'));
+			return;
+		}
 	}
 	//make save data
 	var SaveData = {
 		"name": name,
 		"ruleType": ruleType,
-		"type": matchType,
+		"matchType": matchType,
 		"pattern": matchRule,
-		"exclude": exclude
+		"exclude": exclude,
+		"isFunction": isFunction
 	};
 	var SaveTable = ruleType2tableName(ruleType);
 	if (ruleType === 'cancel') {
 		SaveData.action = 'cancel';
 	}
-	if (ruleType === 'redirect') {
-		SaveData.action = 'redirect';
-		SaveData.to = redirectTo;
-	}
-	if (ruleType === 'modifySendHeader' || ruleType === 'modifyReceiveHeader') {
-		SaveData.action = {
-			"name": headerName,
-			"value": headerValue
-		};
+	if (SaveData.isFunction) {
+		SaveData.code = code;
+	} else {
+		if (ruleType === 'redirect') {
+			SaveData.action = 'redirect';
+			SaveData.to = redirectTo;
+		}
+		if (ruleType === 'modifySendHeader' || ruleType === 'modifyReceiveHeader') {
+			SaveData.action = {
+				"name": headerName,
+				"value": headerValue
+			};
+		}
 	}
 	if (ruleId !== '') {
 		SaveData.id = ruleId;
@@ -139,28 +153,32 @@ $('#rulesList').on('click', '.j_edit', function() {
 		$('#excludeRule').val(rule.exclude ? rule.exclude : '');
 		$('#ruleType').find('option[value="' + rule.ruleType + '"]').prop('selected', true);
 		$('#ruleType').attr('disabled', 'true');
-		$('#matchType').find('option[value="' + rule.type + '"]').prop('selected', true);
-		if (rule.ruleType === 'redirect') {
-			$('#redirectTo').val(rule.to);
-		}
-		if (rule.ruleType === 'modifySendHeader' || rule.ruleType === 'modifyReceiveHeader') {
-			$('#headerName').val(rule.action.name);
-			$('#headerValue').val(rule.action.value);
+		$('#matchType').find('option[value="' + rule.matchType + '"]').prop('selected', true);
+		$('#isFunction').find('option[value="' + rule.isFunction + '"]').prop('selected', true);
+		if (isFunction) {
+			$('#custom-code').val(rule.code);
+		} else {
+			if (rule.ruleType === 'redirect') {
+				$('#redirectTo').val(rule.to);
+			}
+			if (rule.ruleType === 'modifySendHeader' || rule.ruleType === 'modifyReceiveHeader') {
+				$('#headerName').val(rule.action.name);
+				$('#headerValue').val(rule.action.value);
+			}
 		}
 		$('#ruleType').trigger('change');
+		$('#isFunction').trigger('change');
+		$('#matchType').trigger('change');
 		$('#addDialog').modal('show');
 	});
 });
 //remove
 $('#rulesList').on('click', '.j_remove', function() {
-	var id = $(this).parents('tr').attr('data-id');
-	var table = ruleType2tableName($(this).parents('tr').attr('data-type'));
+	var tr = $(this).parents('tr');
+	var id = tr.attr('data-id');
+	var table = ruleType2tableName(tr.attr('data-type'));
 	browser.runtime.sendMessage({"method": "deleteRule", "type": table, "id": id}).then(function(response) {
-		var _t = setTimeout(function() {
-			loadRulesList();
-			clearTimeout(_t);
-			_t = null;
-		}, 300);
+		tr.remove();
 	});
 });
 //export

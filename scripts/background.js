@@ -55,19 +55,26 @@ browser.webRequest.onBeforeRequest.addListener(function(e) {
 	//可用：重定向，阻止加载
   	return new Promise(function(resolve) {
 		getRules('request', {"url": e.url}, function(rules) {
-			var redirectTo = null;
+			var redirectTo = e.url;
 			for (let item of rules) {
 				if (item.action === 'cancel') {
 					resolve({"cancel": true});
 				} else {
-					if (item.type === 'regexp') {
-						redirectTo = e.url.replace(new RegExp(item.pattern), item.to);
+					if (item.isFunction) {
+						let r = item.func_body(redirectTo);
+						if (typeof(r) === 'string') {
+							redirectTo = r;
+						}
 					} else {
-						redirectTo = item.to;
+						if (item.matchType === 'regexp') {
+							redirectTo = redirectTo.replace(new RegExp(item.pattern), item.to);
+						} else {
+							redirectTo = item.to;
+						}
 					}
 				}
 			}
-			if (redirectTo != null) {
+			if (redirectTo !== e.url) {
 				resolve({"redirectUrl": redirectTo});
 			} else {
 				resolve();
@@ -76,6 +83,37 @@ browser.webRequest.onBeforeRequest.addListener(function(e) {
   	});
 }, {urls: ["<all_urls>"]}, ['blocking']);
 
+function modifyHeaders(headers, rules) {
+	let newHeaders = {};
+	let hasFunction = false;
+	for (let item of rules) {
+		if (!item.isFunction) {
+			newHeaders[item.action.name] = item.action.value;
+		} else {
+			hasFunction = 1;
+		}
+	}
+	for (var i = 0; i < headers.length; i++) {
+		if (typeof(newHeaders[headers[i].name]) !== 'undefined') {
+			headers[i].value = newHeaders[headers[i].name];
+			delete newHeaders[headers[i].name];
+		}
+	}
+	for (var k in newHeaders) {
+		headers.push({
+			"name": k,
+			"value": headers[k]
+		});
+	}
+	if (hasFunction) {
+		for (let item of rules) {
+			if (item.isFunction) {
+				item.func_body(headers);
+			}
+		}
+	}
+}
+
 browser.webRequest.onBeforeSendHeaders.addListener(function(e) {
 	//可用：修改请求头
 	if (!e.requestHeaders) {
@@ -83,48 +121,21 @@ browser.webRequest.onBeforeSendHeaders.addListener(function(e) {
 	}
   	return new Promise(function(resolve) {
 		getRules('sendHeader', {"url": e.url}, function(rules) {
-			var headers = {};
-			for (let item of rules) {
-				headers[item.action.name] = item.action.value;
-			}
-			for (var i = 0; i < e.requestHeaders.length; i++) {
-				if (typeof(headers[e.requestHeaders[i].name]) !== 'undefined') {
-					e.requestHeaders[i].value = headers[e.requestHeaders[i].name];
-					delete headers[e.requestHeaders[i].name];
-				}
-			}
-			for (var k in headers) {
-				e.requestHeaders.push({
-					"name": k,
-					"value": headers[k]
-				});
-			}
-			resolve({"requestHeaders": e.requestHeaders});
+			modifyHeaders(e.requestHeaders, rules);
+			resolve(e);
 		});
   	});
 }, {urls: ["<all_urls>"]}, ['blocking', 'requestHeaders']);
 
 browser.webRequest.onHeadersReceived.addListener(function(e) {
+	if (!e.responseHeaders) {
+		return;
+	}
 	return new Promise(function(resolve) {
-	  getRules('receiveHeader', {"url": e.url}, function(rules) {
-		  var headers = {};
-		  for (let item of rules) {
-			  headers[item.action.name] = item.action.value;
-		  }
-		  for (var i = 0; i < e.responseHeaders.length; i++) {
-			  if (typeof(headers[e.responseHeaders[i].name]) !== 'undefined') {
-				  e.responseHeaders[i].value = headers[e.responseHeaders[i].name];
-				  delete headers[e.responseHeaders[i].name];
-			  }
-		  }
-		  for (var k in headers) {
-			  e.responseHeaders.push({
-				  "name": k,
-				  "value": headers[k]
-			  });
-		  }
-		  resolve({"responseHeaders": e.responseHeaders});
-	  });
+	  	getRules('receiveHeader', {"url": e.url}, function(rules) {
+			modifyHeaders(e.responseHeaders, rules);
+			resolve(e);
+	  	});
 	});
 }, {urls: ["<all_urls>"]}, ['blocking', 'responseHeaders']);
 

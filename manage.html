@@ -13,6 +13,33 @@
 		padding: 6px;
 		margin-right: 6px;
 	}
+	#addDialog .default-hide {
+		display: none;
+	}
+	#addDialog .custom-code {
+		padding-left: 16px;
+		padding-right: 16px;
+	}
+	#addDialog[data-match="all"] .match_rule {
+		display: none;
+	}
+	#addDialog[data-type="cancel"] #isFunctionBox {
+		display: none;
+	}
+	#addDialog[data-type="redirect"] .redirect_to {
+		display: block;
+	}
+	#addDialog[data-type="modifySendHeader"] .header_mondify,
+	#addDialog[data-type="modifyReceiveHeader"] .header_mondify {
+		display: block;
+	}
+	#addDialog[data-isfunction="1"] .redirect_to,
+	#addDialog[data-isfunction="1"] .header_mondify{
+		display: none;
+	}
+	#addDialog[data-isfunction="1"] .custom-code {
+		display: block;
+	}
 	</style>
 </head>
 <body>
@@ -65,6 +92,7 @@
 					<label for="matchType" class="col-sm-2 control-label" i18n-text="matchType"></label>
 					<div class="col-sm-10">
 						<select class="form-control" id="matchType" autocomplete="off">
+							<option value="all" i18n-text="match_all"></option>
 							<option value="regexp" i18n-text="match_regexp"></option>
 							<option value="prefix" i18n-text="match_prefix"></option>
 							<option value="domain" i18n-text="match_domain"></option>
@@ -73,7 +101,7 @@
 					</div>
 				</div>
 				<!-- Rule match rule -->
-				<div class="form-group">
+				<div class="form-group match_rule">
 					<label for="matchRule" class="col-sm-2 control-label" i18n-text="matchRule"></label>
 					<div class="col-sm-10">
 						<input type="text" class="form-control" id="matchRule">
@@ -86,25 +114,39 @@
 						<input type="text" class="form-control" id="excludeRule">
 					</div>
 				</div>
+				<!-- isFunction or not -->
+				<div id="isFunctionBox" class="form-group">
+					<label for="isFunction" class="col-sm-2 control-label" i18n-text="exec_type"></label>
+					<div class="col-sm-10">
+						<select class="form-control" id="isFunction" autocomplete="off">
+							<option value="0" i18n-text="exec_normal"></option>
+							<option value="1" i18n-text="exec_function"></option>
+						</select>
+					</div>
+				</div>
 				<!-- redirect to -->
-				<div class="form-group redirect_to">
+				<div class="form-group redirect_to default-hide">
 					<label for="redirectTo" class="col-sm-2 control-label" i18n-text="redirectTo"></label>
 					<div class="col-sm-10">
 						<input type="text" class="form-control" id="redirectTo">
 					</div>
 				</div>
 				<!-- header mondify -->
-				<div class="form-group header_mondify">
+				<div class="form-group header_mondify default-hide">
 					<label for="headerName" class="col-sm-2 control-label" i18n-text="headerName"></label>
 					<div class="col-sm-10">
 						<input type="text" class="form-control" id="headerName">
 					</div>
 				</div>
-				<div class="form-group header_mondify">
+				<div class="form-group header_mondify default-hide">
 					<label for="headerValue" class="col-sm-2 control-label" i18n-text="headerValue"></label>
 					<div class="col-sm-10">
 						<input type="text" class="form-control" id="headerValue">
 					</div>
+				</div>
+				<div class="custom-code default-hide">
+					<label for="custom-code">Code</label>
+					<textarea id="custom-code" class="form-control" rows="10"></textarea>
 				</div>
 	  		</div>
 	  		<div class="modal-footer">
