@@ -81,7 +81,13 @@ function filterRules(rules, options) {
 
 	if (options.name) {
 		rules = rules.filter((rule) => {
-			rule.name === options.name;
+			return rule.name === options.name;
+		});
+	}
+
+	if (typeof(options.enable) !== 'undefined') {
+		rules = rules.filter((rule) => {
+			return rule.enable == options.enable;
 		});
 	}
 
@@ -203,6 +209,7 @@ function upgradeTo2() {
 					s.matchType = s.type;
 					delete s.type;
 					s.isFunction = 0;
+					s.enable = 1;
 					os.put(s);
 					cursor.continue();
 				}

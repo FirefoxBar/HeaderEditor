@@ -3,7 +3,11 @@ function loadRulesList() {
 	$('#rulesList').html('');
 	function appendRule(response) {
 		for (var i = 0; i < response.length; i++) {
-			var text = '<tr data-id="' + response[i].id + '" data-type="' + response[i].ruleType + '"><td>' + response[i].name + '</td><td>' + t('rule_' + response[i].ruleType) + '</td><td>' + response[i].pattern + '</td><td>' + t('match_' + response[i].matchType) + '</td><td><button class="j_edit btn btn-default"><i class="glyphicon glyphicon-pencil"></i></button><button class="j_remove btn btn-default"><i class="glyphicon glyphicon-remove"></i></button></td></tr>';
+			var text = '<tr data-id="' + response[i].id + '" data-type="' + response[i].ruleType + '"><td><input type="checkbox"';
+			if (response[i].enable) {
+				text += ' checked';
+			}
+			text += '></td><td>' + response[i].name + '</td><td>' + t('rule_' + response[i].ruleType) + '</td><td>' + response[i].pattern + '</td><td>' + t('match_' + response[i].matchType) + '</td><td><button class="j_edit btn btn-default"><i class="glyphicon glyphicon-pencil"></i></button><button class="j_remove btn btn-default"><i class="glyphicon glyphicon-remove"></i></button></td></tr>';
 			$('#rulesList').append(text);
 		}
 	}
@@ -102,6 +106,7 @@ $('#ruleSave').bind('click', function() {
 	}
 	//make save data
 	var SaveData = {
+		"enable": 1,
 		"name": name,
 		"ruleType": ruleType,
 		"matchType": matchType,
@@ -180,6 +185,14 @@ $('#rulesList').on('click', '.j_remove', function() {
 	browser.runtime.sendMessage({"method": "deleteRule", "type": table, "id": id}).then(function(response) {
 		tr.remove();
 	});
+});
+//enable or disable
+$('#rulesList').on('change', 'input[type="checkbox"]', function() {
+	var tr = $(this).parents('tr');
+	var id = tr.attr('data-id');
+	var table = ruleType2tableName(tr.attr('data-type'));
+	var enable = this.checked ? 1 : 0;
+	browser.runtime.sendMessage({"method": "saveRule", "type": table, "content": {"id": id, "enable": enable}}).then(() => {});
 });
 //export
 $('#export').bind('click', function() {

@@ -54,7 +54,7 @@ function openURL(options) {
 browser.webRequest.onBeforeRequest.addListener(function(e) {
 	//可用：重定向，阻止加载
   	return new Promise(function(resolve) {
-		getRules('request', {"url": e.url}, function(rules) {
+		getRules('request', {"url": e.url, "enable": 1}, function(rules) {
 			var redirectTo = e.url;
 			for (let item of rules) {
 				if (item.action === 'cancel') {
@@ -120,7 +120,7 @@ browser.webRequest.onBeforeSendHeaders.addListener(function(e) {
 		return;
 	}
   	return new Promise(function(resolve) {
-		getRules('sendHeader', {"url": e.url}, function(rules) {
+		getRules('sendHeader', {"url": e.url, "enable": 1}, function(rules) {
 			modifyHeaders(e.requestHeaders, rules);
 			resolve(e);
 		});
@@ -132,7 +132,7 @@ browser.webRequest.onHeadersReceived.addListener(function(e) {
 		return;
 	}
 	return new Promise(function(resolve) {
-	  	getRules('receiveHeader', {"url": e.url}, function(rules) {
+	  	getRules('receiveHeader', {"url": e.url, "enable": 1}, function(rules) {
 			modifyHeaders(e.responseHeaders, rules);
 			resolve(e);
 	  	});
