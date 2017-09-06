@@ -214,6 +214,8 @@ function upgradeTo2() {
 					s.enable = 1;
 					os.put(s);
 					cursor.continue();
+				} else {
+					invalidateCache(k);
 				}
 			};
 		});
