@@ -1,0 +1,35 @@
+{
+	"name": "__MSG_extName__",
+	"short_name": "__MSG_extName__",
+	"version": "__version__",
+	"description": "__MSG_description__",
+	"homepage_url": "http://team.firefoxcn.net",
+	"manifest_version": 2,
+	"icons": {
+		"128": "images/128.png"
+	},
+	"permissions": [
+		"tabs",
+		"webRequest",
+		"webRequestBlocking",
+		"storage",
+		"downloads",
+		"*://*/*",
+		"unlimitedStorage"
+	],
+	"content_security_policy": "script-src 'self' 'unsafe-eval'; object-src 'self';",
+	"background": {
+		"scripts": ["scripts/browser-polyfill.js", "scripts/storage.js", "scripts/background.js"]
+	},
+	"browser_action": {
+		"default_icon": {
+			"128": "images/128.png"
+		},
+		"default_title": "__MSG_extButtonTitle__"
+	},
+	"default_locale": "en",
+	"options_ui": {
+		"page": "manage.html",
+		"open_in_tab": true
+	}
+}

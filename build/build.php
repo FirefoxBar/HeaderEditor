@@ -2,6 +2,7 @@
 define('EXTENSION_DIR', realpath(__DIR__ . '/..'));
 require('config.php');
 require('XpiBuild.php');
+require('CrxBuild.php');
 $exclude = ['.git', '.vscode', 'build', 'manifest', '.gitignore', 'README.md', 'manifest.json'];
 
 // init file list
@@ -65,6 +66,23 @@ echo "Build amo extension finished\n";
 $amo->setApi(AMO_USER, AMO_SECRET);
 $finish = $amo->sign();
 echo "Uploaded AMO version\n";
+
+// Build crx
+$crx = new CrxBuild([
+	'name' => 'HeaderEditor',
+	'output_dir' => __DIR__ . '/output/chrome',
+	'only_zip' => TRUE
+]);
+foreach ($filelist['dir'] as $v) {
+	$crx->addDir($v[0], $v[1]);
+}
+foreach ($filelist['file'] as $v) {
+	$crx->addFile($v[0], $v[1]);
+}
+$manifest = str_replace('__version__', EXT_VERSION, file_get_contents(EXTENSION_DIR . '/manifest/chrome.json'));
+$crx->addString('manifest.json', $manifest);
+$crx->build();
+echo "Build chrome extension finished\n";
 
 //Add update files
 $fx_update = json_decode(file_get_contents('output/update.json'), 1);

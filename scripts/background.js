@@ -23,13 +23,23 @@ browser.runtime.onMessage.addListener(function(request, sender, sendResponse) {
 			openURL(request);
 			break;
 		case "getRules":
-			getRules(request.type, request.options).then(sendResponse);
+			sendResponse(getRules(request.type, request.options));
 			break;
 		case "saveRule":
 			saveRule(request.type, request.content).then(sendResponse);
 			break;
 		case "deleteRule":
 			deleteRule(request.type, request.id).then(sendResponse);
+			break;
+		case 'updateCache':
+			if (request.type === 'all') {
+				updateCache('request');
+				updateCache('sendHeader');
+				updateCache('receiveHeader');
+			} else {
+				updateCache(request.type);
+			}
+			sendResponse();
 			break;
 	}
 });
@@ -57,36 +67,31 @@ function openURL(options) {
 
 browser.webRequest.onBeforeRequest.addListener(function(e) {
 	//可用：重定向，阻止加载
-  	return new Promise(function(resolve) {
-		getRules('request', {"url": e.url, "enable": 1}).then((rules) => {
-			var redirectTo = e.url;
-			for (let item of rules) {
-				if (item.action === 'cancel') {
-					resolve({"cancel": true});
-				} else {
-					if (item.isFunction) {
-						runTryCatch(() => {
-							let r = item.func_body(redirectTo);
-							if (typeof(r) === 'string') {
-								redirectTo = r;
-							}
-						});
-					} else {
-						if (item.matchType === 'regexp') {
-							redirectTo = redirectTo.replace(new RegExp(item.pattern), item.to);
-						} else {
-							redirectTo = item.to;
-						}
+	let rules = getRules('request', {"url": e.url, "enable": 1});
+	let redirectTo = e.url;
+	for (let item of rules) {
+		if (item.action === 'cancel') {
+			return {"cancel": true};
+		} else {
+			if (item.isFunction) {
+				runTryCatch(() => {
+					let r = item.func_body(redirectTo);
+					if (typeof(r) === 'string') {
+						redirectTo = r;
 					}
+				});
+			} else {
+				if (item.matchType === 'regexp') {
+					redirectTo = redirectTo.replace(new RegExp(item.pattern), item.to);
+				} else {
+					redirectTo = item.to;
 				}
 			}
-			if (redirectTo !== e.url) {
-				resolve({"redirectUrl": redirectTo});
-			} else {
-				resolve();
-			}
-		});
-  	});
+		}
+	}
+	if (redirectTo !== e.url) {
+		return {"redirectUrl": redirectTo};
+	}
 }, {urls: ["<all_urls>"]}, ['blocking']);
 
 function modifyHeaders(headers, rules) {
@@ -127,24 +132,18 @@ browser.webRequest.onBeforeSendHeaders.addListener(function(e) {
 	if (!e.requestHeaders) {
 		return;
 	}
-  	return new Promise(function(resolve) {
-		getRules('sendHeader', {"url": e.url, "enable": 1}).then((rules) => {
-			modifyHeaders(e.requestHeaders, rules);
-			resolve(e);
-		});
-  	});
+	let rules = getRules('sendHeader', {"url": e.url, "enable": 1});
+	modifyHeaders(e.requestHeaders, rules);
+	return {"requestHeaders": e.requestHeaders};
 }, {urls: ["<all_urls>"]}, ['blocking', 'requestHeaders']);
 
 browser.webRequest.onHeadersReceived.addListener(function(e) {
 	if (!e.responseHeaders) {
 		return;
 	}
-	return new Promise(function(resolve) {
-	  	getRules('receiveHeader', {"url": e.url, "enable": 1}).then((rules) => {
-			modifyHeaders(e.responseHeaders, rules);
-			resolve(e);
-	  	});
-	});
+	let rules = getRules('receiveHeader', {"url": e.url, "enable": 1});
+	modifyHeaders(e.responseHeaders, rules);
+	return {"responseHeaders": e.responseHeaders};
 }, {urls: ["<all_urls>"]}, ['blocking', 'responseHeaders']);
 
 browser.browserAction.onClicked.addListener(function () {

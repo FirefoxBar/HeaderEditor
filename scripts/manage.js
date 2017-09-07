@@ -19,9 +19,9 @@ function loadRulesList() {
 		appendRule(response);
 	}
 	function requestRules(type) {
-		getRules(type).then((response) => {
-			checkResult(type, response);
-		});
+		setTimeout(() => {
+			checkResult(type, getRules(type));
+		}, 20);
 	}
 	requestRules('request');
 	requestRules('sendHeader');
@@ -85,7 +85,7 @@ $('#ruleSave').bind('click', function() {
 		alert(t('name_empty'));
 		return;
 	}
-	if (matchRule === '') {
+	if (matchType !== 'all' && matchRule === '') {
 		alert(t('match_rule_empty'));
 		return;
 	}
@@ -144,6 +144,7 @@ $('#ruleSave').bind('click', function() {
 	}
 	saveRule(SaveTable, SaveData).then(function(response) {
 		$('#addDialog').modal('hide');
+		browser.runtime.sendMessage({"method": "updateCache", "type": SaveTable});
 		var _t = setTimeout(function() {
 			loadRulesList();
 			clearTimeout(_t);
@@ -155,34 +156,32 @@ $('#ruleSave').bind('click', function() {
 $('#rulesList').on('click', '.j_edit', function() {
 	var id = $(this).parents('tr').attr('data-id');
 	var table = ruleType2tableName($(this).parents('tr').attr('data-type'));
-	getRules(table, {"id": id}).then((response) => {
-		clearModal();
-		$('#addDialog').find('.modal-title').html(t('edit'));
-		var rule = response[0];
-		$('#ruleId').val(id);
-		$('#name').val(rule.name);
-		$('#matchRule').val(rule.pattern);
-		$('#excludeRule').val(rule.exclude ? rule.exclude : '');
-		$('#ruleType').find('option[value="' + rule.ruleType + '"]').prop('selected', true);
-		$('#ruleType').attr('disabled', 'true');
-		$('#matchType').find('option[value="' + rule.matchType + '"]').prop('selected', true);
-		$('#isFunction').find('option[value="' + rule.isFunction + '"]').prop('selected', true);
-		if (isFunction) {
-			$('#custom-code').val(rule.code);
-		} else {
-			if (rule.ruleType === 'redirect') {
-				$('#redirectTo').val(rule.to);
-			}
-			if (rule.ruleType === 'modifySendHeader' || rule.ruleType === 'modifyReceiveHeader') {
-				$('#headerName').val(rule.action.name);
-				$('#headerValue').val(rule.action.value);
-			}
+	clearModal();
+	$('#addDialog').find('.modal-title').html(t('edit'));
+	var rule = getRules(table, {"id": id})[0];
+	$('#ruleId').val(id);
+	$('#name').val(rule.name);
+	$('#matchRule').val(rule.pattern);
+	$('#excludeRule').val(rule.exclude ? rule.exclude : '');
+	$('#ruleType').find('option[value="' + rule.ruleType + '"]').prop('selected', true);
+	$('#ruleType').attr('disabled', 'true');
+	$('#matchType').find('option[value="' + rule.matchType + '"]').prop('selected', true);
+	$('#isFunction').find('option[value="' + rule.isFunction + '"]').prop('selected', true);
+	if (isFunction) {
+		$('#custom-code').val(rule.code);
+	} else {
+		if (rule.ruleType === 'redirect') {
+			$('#redirectTo').val(rule.to);
 		}
-		$('#ruleType').trigger('change');
-		$('#isFunction').trigger('change');
-		$('#matchType').trigger('change');
-		$('#addDialog').modal('show');
-	});
+		if (rule.ruleType === 'modifySendHeader' || rule.ruleType === 'modifyReceiveHeader') {
+			$('#headerName').val(rule.action.name);
+			$('#headerValue').val(rule.action.value);
+		}
+	}
+	$('#ruleType').trigger('change');
+	$('#isFunction').trigger('change');
+	$('#matchType').trigger('change');
+	$('#addDialog').modal('show');
 });
 //remove
 $('#rulesList').on('click', '.j_remove', function() {
@@ -190,6 +189,7 @@ $('#rulesList').on('click', '.j_remove', function() {
 	var id = tr.attr('data-id');
 	var table = ruleType2tableName(tr.attr('data-type'));
 	deleteRule(table, id).then((response) => {
+		browser.runtime.sendMessage({"method": "updateCache", "type": table});
 		tr.remove();
 	});
 });
@@ -199,32 +199,16 @@ $('#rulesList').on('change', 'input[type="checkbox"]', function() {
 	var id = tr.attr('data-id');
 	var table = ruleType2tableName(tr.attr('data-type'));
 	var enable = this.checked ? 1 : 0;
-	saveRule(table, {"id": id, "enable": enable}).then(() => {});
+	saveRule(table, {"id": id, "enable": enable}).then(() => {
+		browser.runtime.sendMessage({"method": "updateCache", "type": table});
+	});
 });
 //export
 $('#export').bind('click', function() {
 	var allResult = {};
-	function checkResult(type, response) {
-		if (!response) { // Firefox is starting up
-			requestRules(type);
-			return;
-		}
-		allResult[type] = response;
-		if (allResult.request && allResult.sendHeader && allResult.receiveHeader) {
-			saveResult(allResult);
-		}
-	}
-	function requestRules(type) {
-		getRules(type).then((response) => {
-			checkResult(type, response);
-		});
-	}
-	function saveResult(result) {
-		saveAsFile(JSON.stringify(result), 'headereditor-' + new Date().getTime().toString() + '.json');
-	}
-	requestRules('request');
-	requestRules('sendHeader');
-	requestRules('receiveHeader');
+	browser.runtime.getBackgroundPage().then((page) => {
+		saveAsFile(JSON.stringify(page.cachedRules), 'headereditor-' + new Date().getTime().toString() + '.json');
+	});
 });
 //import
 $('#import').bind('click', function() {
@@ -232,6 +216,7 @@ $('#import').bind('click', function() {
 	var finish = 0;
 	function checkFinish() {
 		if (total === finish) {
+			browser.runtime.sendMessage({"method": "updateCache", "type": "all"});
 			setTimeout(() => {
 				window.location.reload();
 			}, 500);

@@ -34,38 +34,30 @@ var cachedRules = {
 	"receiveHeader": null
 };
 function getRules(type, options) {
-	return new Promise((resolve) => {
-		if (cachedRules[type] != null) {
-			resolve(filterRules(cachedRules[type], options));
-			return;
-		}
-		getDatabase().then((db) => {
-			var tx = db.transaction([type], "readonly");
-			var os = tx.objectStore(type);
-			var all = [];
-			os.openCursor().onsuccess = function(event) {
-				var cursor = event.target.result;
-				if (cursor) {
-					var s = cursor.value;
-					s.id = cursor.key;
-					// Init function here
-					if (s.isFunction) {
-						s.func_body = new Function('val', s.code);
-					}
-					all.push(s);
-					cursor.continue();
-				} else {
-					cachedRules[type] = all;
-					resolve(filterRules(all, options));
-				}
-			};
-		});
-	});
+	return options ? filterRules(cachedRules[type], options) : cachedRules[type];
 }
 
-
-function invalidateCache(type) {
-	cachedRules[type] = null;
+function updateCache(type) {
+	getDatabase().then((db) => {
+		var tx = db.transaction([type], "readonly");
+		var os = tx.objectStore(type);
+		var all = [];
+		os.openCursor().onsuccess = function(event) {
+			var cursor = event.target.result;
+			if (cursor) {
+				var s = cursor.value;
+				s.id = cursor.key;
+				// Init function here
+				if (s.isFunction) {
+					s.func_body = new Function('val', s.code);
+				}
+				all.push(s);
+				cursor.continue();
+			} else {
+				cachedRules[type] = all;
+			}
+		};
+	});
 }
 
 function filterRules(rules, options) {
@@ -145,7 +137,7 @@ function saveRule(tableName, o) {
 					}
 					request = os.put(rule);
 					request.onsuccess = function(event) {
-						invalidateCache(tableName);
+						updateCache(tableName);
 						resolve(rule);
 					};
 				};
@@ -156,7 +148,7 @@ function saveRule(tableName, o) {
 			delete o["id"];
 			var request = os.add(o);
 			request.onsuccess = function(event) {
-				invalidateCache(tableName);
+				updateCache(tableName);
 				// Give it the ID that was generated
 				o.id = event.target.result;
 				resolve(o);
@@ -172,7 +164,7 @@ function deleteRule(tableName, id) {
 			var os = tx.objectStore(tableName);
 			var request = os.delete(Number(id));
 			request.onsuccess = function(event) {
-				invalidateCache(tableName);
+				updateCache(tableName);
 				resolve();
 			};
 		});
@@ -215,9 +207,21 @@ function upgradeTo2() {
 					os.put(s);
 					cursor.continue();
 				} else {
-					invalidateCache(k);
+					updateCache(k);
 				}
 			};
 		});
 	}
 }
+
+function initStroage() {
+	setTimeout(() => {
+		updateCache('request');
+		updateCache('sendHeader');
+		updateCache('receiveHeader');
+		if (cachedRules.request === null || cachedRules.sendHeader === null || cachedRules.receiveHeader === null) {
+			initStroage();
+		}
+	}, 20);
+}
+initStroage();
