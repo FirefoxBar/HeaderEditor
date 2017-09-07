@@ -167,7 +167,7 @@ $('#rulesList').on('click', '.j_edit', function() {
 	$('#ruleType').attr('disabled', 'true');
 	$('#matchType').find('option[value="' + rule.matchType + '"]').prop('selected', true);
 	$('#isFunction').find('option[value="' + rule.isFunction + '"]').prop('selected', true);
-	if (isFunction) {
+	if (rule.isFunction) {
 		$('#custom-code').val(rule.code);
 	} else {
 		if (rule.ruleType === 'redirect') {
