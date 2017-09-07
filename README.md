@@ -5,7 +5,7 @@
 
 An extension which can modify the request, include request headers, response headers, redirect requests, and cancel requests.
 
-You can install from [Mozilla Add-ons](https://addons.mozilla.org/en-US/firefox/addon/header-editor/) or install [our self-distribution version](https://github.com/FirefoxBar/HeaderEditor/releases).
+You can install from [Mozilla Add-ons](https://addons.mozilla.org/en-US/firefox/addon/header-editor/) and [Chrome WebStore](https://chrome.google.com/webstore/detail/header-editor/eningockdidmgiojffjmkdblpjocbhgh) or install [our self-distribution version](https://github.com/FirefoxBar/HeaderEditor/releases).
 
 This is a WebExtension. Require Firefox 52 or later.
 
