@@ -110,10 +110,10 @@ function modifyHeaders(headers, rules) {
 			delete newHeaders[headers[i].name];
 		}
 	}
-	for (var k in newHeaders) {
+	for (let k in newHeaders) {
 		headers.push({
 			"name": k,
-			"value": headers[k]
+			"value": newHeaders[k]
 		});
 	}
 	if (hasFunction) {
