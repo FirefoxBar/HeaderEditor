@@ -7,8 +7,20 @@
 	<script src="scripts/localization.js"></script>
 	<script src="scripts/storage.js"></script>
 	<style>
+	.main {
+		padding: 20px 30px;
+	}
+	.main h1 {
+		margin-top: 0;
+	}
 	#globalAction .btn {
 		margin-right: 6px;
+	}
+	.table-header .enable {
+		width: 80px;
+	}
+	.table-header .action {
+		width: 100px;
 	}
 	#rulesList .btn {
 		padding: 6px;
@@ -44,7 +56,7 @@
 	</style>
 </head>
 <body>
-<div class="container">
+<div class="main">
 	<h1 i18n-text="manageTitle"></h1>
 	<p id="globalAction">
 		<button class="btn btn-default" id="addRule" i18n-text="add"></button>
@@ -54,13 +66,13 @@
 	</p>
 	<table class="table table-hover">
 		<thead>
-			<tr>
-				<th i18n-text="enable"></th>
+			<tr class="table-header">
+				<th i18n-text="enable" class="enable"></th>
 				<th i18n-text="name"></th>
 				<th i18n-text="ruleType"></th>
 				<th i18n-text="matchRule"></th>
 				<th i18n-text="matchType"></th>
-				<th i18n-text="action"></th>
+				<th i18n-text="action" class="action"></th>
 			</tr>
 		</thead>
 		<tbody id="rulesList"></tbody>
