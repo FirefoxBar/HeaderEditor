@@ -1,14 +1,25 @@
-loadRulesList();
+["forEach", "some", "indexOf", "map"].forEach((method) => {
+	if (typeof(NodeList.prototype[method]) === 'undefined') {
+		NodeList.prototype[method]= Array.prototype[method];
+	}
+});
+
 function loadRulesList() {
-	$('#rulesList').html('');
+	let ruleList = document.getElementById('rulesList');
+	ruleList.innerHTML = '';
 	function appendRule(response) {
 		for (var i = 0; i < response.length; i++) {
-			var text = '<tr data-id="' + response[i].id + '" data-type="' + response[i].ruleType + '"><td><input type="checkbox"';
+			let newNode = template.rule.cloneNode(true);
+			newNode.setAttribute('data-id', response[i].id);
+			newNode.setAttribute('data-type', response[i].ruleType);
+			newNode.querySelector('.name').appendChild(document.createTextNode(response[i].name));
+			newNode.querySelector('.rule-type').appendChild(document.createTextNode(t('rule_' + response[i].ruleType)));
+			newNode.querySelector('.pattern').appendChild(document.createTextNode(response[i].pattern));
+			newNode.querySelector('.match-type').appendChild(document.createTextNode(t('match_' + response[i].matchType)));
 			if (response[i].enable) {
-				text += ' checked';
+				newNode.querySelector('.enable input[type="checkbox"]').checked = true;
 			}
-			text += '></td><td>' + response[i].name + '</td><td>' + t('rule_' + response[i].ruleType) + '</td><td>' + response[i].pattern + '</td><td>' + t('match_' + response[i].matchType) + '</td><td><button class="j_edit btn btn-default"><i class="glyphicon glyphicon-pencil"></i></button><button class="j_remove btn btn-default"><i class="glyphicon glyphicon-remove"></i></button></td></tr>';
-			$('#rulesList').append(text);
+			ruleList.appendChild(newNode);
 		}
 	}
 	function checkResult(type, response) {
@@ -67,8 +78,59 @@ $('#isFunction').bind('change', function() {
 $('#matchType').bind('change', function() {
 	$('#addDialog').attr('data-match', $(this).find('option:selected').val());
 });
+//edit
+$('#rulesList').on('click', '.j_edit', function() {
+	var id = $(this).parents('tr').attr('data-id');
+	var table = ruleType2tableName($(this).parents('tr').attr('data-type'));
+	clearModal();
+	$('#addDialog').find('.modal-title').html(t('edit'));
+	var rule = getRules(table, {"id": id})[0];
+	$('#ruleId').val(id);
+	$('#name').val(rule.name);
+	$('#matchRule').val(rule.pattern);
+	$('#excludeRule').val(rule.exclude ? rule.exclude : '');
+	$('#ruleType').find('option[value="' + rule.ruleType + '"]').prop('selected', true);
+	$('#ruleType').attr('disabled', 'true');
+	$('#matchType').find('option[value="' + rule.matchType + '"]').prop('selected', true);
+	$('#isFunction').find('option[value="' + rule.isFunction + '"]').prop('selected', true);
+	if (rule.isFunction) {
+		$('#custom-code').val(rule.code);
+	} else {
+		if (rule.ruleType === 'redirect') {
+			$('#redirectTo').val(rule.to);
+		}
+		if (rule.ruleType === 'modifySendHeader' || rule.ruleType === 'modifyReceiveHeader') {
+			$('#headerName').val(rule.action.name);
+			$('#headerValue').val(rule.action.value);
+		}
+	}
+	$('#ruleType').trigger('change');
+	$('#isFunction').trigger('change');
+	$('#matchType').trigger('change');
+	$('#addDialog').modal('show');
+});
+//remove
+$('#rulesList').on('click', '.j_remove', function() {
+	var tr = $(this).parents('tr');
+	var id = tr.attr('data-id');
+	var table = ruleType2tableName(tr.attr('data-type'));
+	deleteRule(table, id).then((response) => {
+		browser.runtime.sendMessage({"method": "updateCache", "type": table});
+		tr.remove();
+	});
+});
+//enable or disable
+$('#rulesList').on('change', 'input[name="enable"]', function() {
+	var tr = $(this).parents('tr');
+	var id = tr.attr('data-id');
+	var table = ruleType2tableName(tr.attr('data-type'));
+	var enable = this.checked ? 1 : 0;
+	saveRule(table, {"id": id, "enable": enable}).then(() => {
+		browser.runtime.sendMessage({"method": "updateCache", "type": table});
+	});
+});
 //save rule
-$('#ruleSave').bind('click', function() {
+function onSaveClick() {
 	//check
 	var name = $('#name').val().trim();
 	var ruleType = $('#ruleType').find('option:selected').val();
@@ -151,67 +213,16 @@ $('#ruleSave').bind('click', function() {
 			_t = null;
 		}, 300);
 	});
-});
-//edit
-$('#rulesList').on('click', '.j_edit', function() {
-	var id = $(this).parents('tr').attr('data-id');
-	var table = ruleType2tableName($(this).parents('tr').attr('data-type'));
-	clearModal();
-	$('#addDialog').find('.modal-title').html(t('edit'));
-	var rule = getRules(table, {"id": id})[0];
-	$('#ruleId').val(id);
-	$('#name').val(rule.name);
-	$('#matchRule').val(rule.pattern);
-	$('#excludeRule').val(rule.exclude ? rule.exclude : '');
-	$('#ruleType').find('option[value="' + rule.ruleType + '"]').prop('selected', true);
-	$('#ruleType').attr('disabled', 'true');
-	$('#matchType').find('option[value="' + rule.matchType + '"]').prop('selected', true);
-	$('#isFunction').find('option[value="' + rule.isFunction + '"]').prop('selected', true);
-	if (rule.isFunction) {
-		$('#custom-code').val(rule.code);
-	} else {
-		if (rule.ruleType === 'redirect') {
-			$('#redirectTo').val(rule.to);
-		}
-		if (rule.ruleType === 'modifySendHeader' || rule.ruleType === 'modifyReceiveHeader') {
-			$('#headerName').val(rule.action.name);
-			$('#headerValue').val(rule.action.value);
-		}
-	}
-	$('#ruleType').trigger('change');
-	$('#isFunction').trigger('change');
-	$('#matchType').trigger('change');
-	$('#addDialog').modal('show');
-});
-//remove
-$('#rulesList').on('click', '.j_remove', function() {
-	var tr = $(this).parents('tr');
-	var id = tr.attr('data-id');
-	var table = ruleType2tableName(tr.attr('data-type'));
-	deleteRule(table, id).then((response) => {
-		browser.runtime.sendMessage({"method": "updateCache", "type": table});
-		tr.remove();
-	});
-});
-//enable or disable
-$('#rulesList').on('change', 'input[type="checkbox"]', function() {
-	var tr = $(this).parents('tr');
-	var id = tr.attr('data-id');
-	var table = ruleType2tableName(tr.attr('data-type'));
-	var enable = this.checked ? 1 : 0;
-	saveRule(table, {"id": id, "enable": enable}).then(() => {
-		browser.runtime.sendMessage({"method": "updateCache", "type": table});
-	});
-});
+}
 //export
-$('#export').bind('click', function() {
+function onExportClick() {
 	var allResult = {};
 	browser.runtime.getBackgroundPage().then((page) => {
 		saveAsFile(JSON.stringify(page.cachedRules), 'headereditor-' + new Date().getTime().toString() + '.json');
 	});
-});
+}
 //import
-$('#import').bind('click', function() {
+function onImportClick() {
 	var total = 0;
 	var finish = 0;
 	function checkFinish() {
@@ -246,4 +257,49 @@ $('#import').bind('click', function() {
 			}
 		}
 	});
+}
+
+function onBatchDeleteClick() {
+	document.querySelector('.rule-list').classList.toggle('batch-del-mode');
+	document.querySelector('.batch-delete-btns').classList.toggle('show');
+}
+function onBatchDeleteSelectAll() {
+	if (!document.querySelector('input[name="delete"]')) {
+		return;
+	}
+	let setTo = document.querySelector('input[name="delete"]').checked ? false : true;
+	document.querySelectorAll('input[name="delete"]').forEach((e) => {
+		e.checked = setTo;
+	});
+}
+function onBatchDeleteSubmit() {
+	let all = document.querySelectorAll('input[name="delete"]:checked');
+	let total = all.length;
+	let ok = 0;
+	all.forEach((e) => {
+		let tr = $(e).parents('tr');
+		let id = tr.attr('data-id');
+		let table = ruleType2tableName(tr.attr('data-type'));
+		deleteRule(table, id).then((response) => {
+			browser.runtime.sendMessage({"method": "updateCache", "type": table});
+			tr.remove();
+			ok++;
+			if (ok === total) {
+				onBatchDeleteClick();
+			}
+		});
+	});
+}
+
+document.addEventListener('DOMContentLoaded', () => {
+	document.getElementById('import').addEventListener('click', onImportClick);
+	document.getElementById('export').addEventListener('click', onExportClick);
+	document.getElementById('ruleSave').addEventListener('click', onSaveClick);
+
+	// Batch delete
+	document.getElementById('batch-delete').addEventListener('click', onBatchDeleteClick);
+	document.getElementById('batch-delete-all').addEventListener('click', onBatchDeleteSelectAll);
+	document.getElementById('batch-delete-submit').addEventListener('click', onBatchDeleteSubmit);
+
+	loadRulesList();
 });
