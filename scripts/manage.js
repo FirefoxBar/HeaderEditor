@@ -309,7 +309,6 @@ function onImportSubmit() {
 			toSave[key].push(item);
 		}
 	};
-	console.log(toSave);
 	for (let key of tables) {
 		for (const item of toSave[key]) {
 			saveRule(key, item).then(() => {
