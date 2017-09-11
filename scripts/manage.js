@@ -259,8 +259,6 @@ function showImportModal() {
 			const elementId = key + '-' + id;
 			let n = template.importRule.cloneNode(true);
 			n.setAttribute('id', elementId);
-			n.setAttribute('data-id', id);
-			n.setAttribute('data-type', key);
 			n.querySelector('.name').appendChild(document.createTextNode(item.name));
 			n.querySelector('.rule-type').appendChild(document.createTextNode(t('rule_' + item.ruleType)));
 			n.querySelectorAll('input[type="radio"]').forEach((e) => {
