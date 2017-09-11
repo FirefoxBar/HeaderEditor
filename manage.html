@@ -46,6 +46,12 @@
 		padding: 6px;
 		margin-right: 6px;
 	}
+	#importRulesList tr.keep .show-new {
+		display: none;
+	}
+	#importRulesList tr.new .show-keep {
+		display: none;
+	}
 	#addDialog .default-hide {
 		display: none;
 	}
@@ -85,6 +91,20 @@
 			<td class="batch-delete"><input type="checkbox" name="delete"></td>
 		</tr>
 	</template>
+	<template data-id="importRule">
+		<tr data-id="" data-oldid="" data-type="">
+			<td class="name"></td>
+			<td class="rule-type"></td>
+			<td class="show-keep row">
+				<div class="radio col-md-6"><label><input type="radio" value="old">保留已有</label></div>
+				<div class="radio col-md-6"><label><input type="radio" value="new">覆盖已有</label></div>
+			</td>
+			<td class="show-new row">
+				<div class="radio col-md-6"><label><input type="radio" value="no">不导入</label></div>
+				<div class="radio col-md-6"><label><input type="radio" value="yes">新增</label></div>
+			</td>
+		</tr>
+	</template>
 </head>
 <body>
 <div class="main">
@@ -116,8 +136,34 @@
 		<button id="batch-delete-submit" type="button" class="btn btn-primary">确认删除</button>
 		<button id="batch-delete-all" type="button" class="btn btn-primary">全选/全不选</button>
 </div>
+<div id="importDialog" class="modal fade" tabindex="-1" role="dialog">
+  	<div class="modal-dialog modal-lg" role="document">
+		<div class="modal-content">
+	  		<div class="modal-header">
+				<button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+				<h4 class="modal-title">导入</h4>
+	 		</div>
+			<div class="modal-body form-horizontal">
+				<table class="table table-hover rule-list">
+					<thead>
+						<tr>
+							<th i18n-text="name"></th>
+							<th i18n-text="ruleType"></th>
+							<th i18n-text="action"></th>
+						</tr>
+					</thead>
+					<tbody id="importRulesList"></tbody>
+				</table>
+			</div>
+	  		<div class="modal-footer">
+				<button type="button" class="btn btn-default" data-dismiss="modal" i18n-text="cancel"></button>
+				<button id="importSave" type="button" class="btn btn-primary" i18n-text="save"></button>
+	  		</div>
+		</div>
+	</div>
+</div>
 <div id="addDialog" class="modal fade" tabindex="-1" role="dialog">
-  	<div class="modal-dialog" role="document">
+  	<div class="modal-dialog modal-lg" role="document">
 		<div class="modal-content">
 	  		<div class="modal-header">
 				<button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>

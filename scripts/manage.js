@@ -1,3 +1,7 @@
+const tables = ['request', 'sendHeader', 'receiveHeader'];
+let waitToImport = null;
+
+
 ["forEach", "some", "indexOf", "map"].forEach((method) => {
 	if (typeof(NodeList.prototype[method]) === 'undefined') {
 		NodeList.prototype[method]= Array.prototype[method];
@@ -223,23 +227,13 @@ function onExportClick() {
 }
 //import
 function onImportClick() {
-	var total = 0;
-	var finish = 0;
-	function checkFinish() {
-		if (total === finish) {
-			browser.runtime.sendMessage({"method": "updateCache", "type": "all"});
-			setTimeout(() => {
-				window.location.reload();
-			}, 500);
-		}
-	}
+	waitToImport = {};
 	loadFromFile('.json').then(function(content) {
 		content = JSON.parse(content);
-		const types = ['request', 'sendHeader', 'receiveHeader'];
-		for (let key of types) {
-			total += content[key].length;
+		for (let key of tables) {
+			waitToImport[key] = [];
 		}
-		for (let key of types) {
+		for (let key of tables) {
 			for (let item of content[key]) {
 				delete item.id;
 				if (typeof(item.isFunction) === 'undefined') {
@@ -250,13 +244,80 @@ function onImportClick() {
 				if (typeof(item.enable) === 'undefined') {
 					item.enable = 1;
 				}
-				saveRule(key, item).then(() => {
-					finish++;
-					checkFinish();
-				});
+				waitToImport[key].push(item);
 			}
 		}
+		showImportModal();
 	});
+}
+function showImportModal() {
+	const tbody = document.getElementById('importRulesList');
+	tbody.innerHTML = '';
+	for (let key of tables) {
+		for (const id in waitToImport[key]) {
+			const item = waitToImport[key][id];
+			const elementId = key + '-' + id;
+			let n = template.importRule.cloneNode(true);
+			n.setAttribute('id', elementId);
+			n.setAttribute('data-id', id);
+			n.setAttribute('data-type', key);
+			n.querySelector('.name').appendChild(document.createTextNode(item.name));
+			n.querySelector('.rule-type').appendChild(document.createTextNode(t('rule_' + item.ruleType)));
+			n.querySelectorAll('input[type="radio"]').forEach((e) => {
+				e.setAttribute('name', elementId);
+			});
+			let rules = getRules(key, {"name": item.name});
+			if (rules.length) {
+				n.setAttribute('data-oldid', rules[0].id);
+				n.classList.add('keep');
+				n.querySelector('input[value="new"]').checked = true;
+			} else {
+				n.classList.add('new');
+				n.querySelector('input[value="yes"]').checked = true;
+			}
+			tbody.appendChild(n);
+		}
+	}
+	$('#importDialog').modal('show');
+}
+function onImportSubmit() {
+	let total = 0;
+	let finish = 0;
+	let toSave = {};
+	function checkFinish() {
+		if (total === finish) {
+			$('#importDialog').modal('hide');
+			browser.runtime.sendMessage({"method": "updateCache", "type": "all"});
+			setTimeout(() => {
+				window.location.reload();
+			}, 500);
+		}
+	}
+	for (let key of tables) {
+		toSave[key] = [];
+		for (const id in waitToImport[key]) {
+			const elementId = key + '-' + id;
+			let c = document.querySelector('input[name="' + elementId + '"]:checked');
+			let item = waitToImport[key][id];
+			if (c.value === 'old' || c.value === 'no') {
+				continue;
+			}
+			total++;
+			if (c.value === 'new') {
+				item.id = document.getElementById(elementId).getAttribute('data-oldid');
+			}
+			toSave[key].push(item);
+		}
+	};
+	console.log(toSave);
+	for (let key of tables) {
+		for (const item of toSave[key]) {
+			saveRule(key, item).then(() => {
+				finish++;
+				checkFinish();
+			});
+		}
+	}
 }
 
 function onBatchDeleteClick() {
@@ -292,7 +353,6 @@ function onBatchDeleteSubmit() {
 }
 
 document.addEventListener('DOMContentLoaded', () => {
-	document.getElementById('import').addEventListener('click', onImportClick);
 	document.getElementById('export').addEventListener('click', onExportClick);
 	document.getElementById('ruleSave').addEventListener('click', onSaveClick);
 
@@ -300,6 +360,10 @@ document.addEventListener('DOMContentLoaded', () => {
 	document.getElementById('batch-delete').addEventListener('click', onBatchDeleteClick);
 	document.getElementById('batch-delete-all').addEventListener('click', onBatchDeleteSelectAll);
 	document.getElementById('batch-delete-submit').addEventListener('click', onBatchDeleteSubmit);
+
+	// Import rules
+	document.getElementById('import').addEventListener('click', onImportClick);
+	document.getElementById('importSave').addEventListener('click', onImportSubmit);
 
 	loadRulesList();
 });
