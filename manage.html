@@ -24,6 +24,9 @@
 	.float-btns.show {
 		display: block;
 	}
+	.panel-group {
+		margin-bottom: 15px;
+	}
 	#globalAction .btn {
 		margin-right: 6px;
 	}
@@ -126,27 +129,40 @@
 <body>
 <div class="main">
 	<h1 i18n-text="manageTitle"></h1>
-	<p id="globalAction">
-		<button class="btn btn-default" id="addRule" i18n-text="add"></button>
-		<button class="btn btn-default" id="batch-delete">批量删除</button>
-		<button class="btn btn-default" id="export" i18n-text="export"></button>
-		<button class="btn btn-default" id="import" i18n-text="import"></button>
-		<a class="btn btn-default" href="https://github.com/FirefoxBar/HeaderEditor/wiki" i18n-text="help"></a>
-	</p>
-	<table class="table table-hover rule-list">
-		<thead>
-			<tr>
-				<th i18n-text="enable" class="enable"></th>
-				<th i18n-text="name"></th>
-				<th i18n-text="ruleType"></th>
-				<th i18n-text="matchRule"></th>
-				<th i18n-text="matchType"></th>
-				<th i18n-text="action" class="action"></th>
-				<th class="batch-delete">批量删除</th>
-			</tr>
-		</thead>
-		<tbody id="rulesList"></tbody>
-	</table>
+	<div class="panel-group" id="rules" role="tablist" aria-multiselectable="true">
+		<div class="panel panel-default">
+			<div class="panel-heading" role="tab" id="rules-head">
+				<h4 class="panel-title">
+					<a role="button" data-toggle="collapse" data-parent="#rules" href="#rules-content" aria-expanded="true" aria-controls="rules-content"><span>规则列表</span></a>
+				</h4>
+			</div>
+			<div id="rules-content" class="panel-collapse collapse in" role="tabpanel" aria-labelledby="rules-head">
+				<div class="panel-body">
+					<p id="globalAction">
+						<button class="btn btn-default" id="addRule" i18n-text="add"></button>
+						<button class="btn btn-default" id="batch-delete">批量删除</button>
+						<button class="btn btn-default" id="export" i18n-text="export"></button>
+						<button class="btn btn-default" id="import" i18n-text="import"></button>
+						<a class="btn btn-default" href="https://github.com/FirefoxBar/HeaderEditor/wiki" i18n-text="help"></a>
+					</p>
+					<table class="table table-hover rule-list">
+						<thead>
+							<tr>
+								<th i18n-text="enable" class="enable"></th>
+								<th i18n-text="name"></th>
+								<th i18n-text="ruleType"></th>
+								<th i18n-text="matchRule"></th>
+								<th i18n-text="matchType"></th>
+								<th i18n-text="action" class="action"></th>
+								<th class="batch-delete">批量删除</th>
+							</tr>
+						</thead>
+						<tbody id="rulesList"></tbody>
+					</table>
+				</div>
+			</div>
+		</div>
+	</div>
 	<div class="panel-group" id="actions" role="tablist" aria-multiselectable="true">
 		<div class="panel panel-default">
 			<div class="panel-heading" role="tab" id="download-rules-head">
@@ -154,15 +170,16 @@
 					<a role="button" data-toggle="collapse" data-parent="#actions" href="#download-rules" aria-expanded="true" aria-controls="download-rules"><span>下载规则</span></a>
 				</h4>
 			</div>
-		<div id="download-rules" class="panel-collapse collapse in" role="tabpanel" aria-labelledby="download-rules-head">
-			<div class="panel-body">
-				<div class="input-group">
-					<input id="download-url" type="text" class="form-control" placeholder="URL" autocomplete="off">
-					<div class="input-group-btn">
-							<button id="download-submit" type="button" class="btn btn-default"><span class="glyphicon glyphicon-download-alt"></span></button>
+			<div id="download-rules" class="panel-collapse collapse in" role="tabpanel" aria-labelledby="download-rules-head">
+				<div class="panel-body">
+					<div class="input-group">
+						<input id="download-url" type="text" class="form-control" placeholder="URL" autocomplete="off">
+						<div class="input-group-btn">
+								<button id="download-submit" type="button" class="btn btn-default"><span class="glyphicon glyphicon-download-alt"></span></button>
+						</div>
 					</div>
+					<ul id="download-history" class="list-group"></ul>
 				</div>
-				<ul id="download-history" class="list-group"></ul>
 			</div>
 		</div>
 	</div>
