@@ -409,6 +409,7 @@ function onHistoryDownload() {
 function onHistoryEdit() {
 	const url = this.parentElement.parentElement.querySelector('.url').getAttribute('data-url');
 	document.getElementById('download-url').value = url;
+	document.getElementById('download-url').focus();
 }
 function onHistoryRemove() {
 	const url = this.parentElement.parentElement.querySelector('.url').getAttribute('data-url');
@@ -421,6 +422,14 @@ function onHistoryRemove() {
 	}
 	localStorage.setItem('dl_history', JSON.stringify(h));
 	loadDownloadHistory();
+}
+function addHistory(url) {
+	let h = JSON.parse(localStorage.getItem('dl_history'));
+	if (!h.includes(url)) {
+		h.push(document.getElementById('download-url').value);
+		localStorage.setItem('dl_history', JSON.stringify(h));
+		loadDownloadHistory();
+	}
 }
 
 document.addEventListener('DOMContentLoaded', () => {
@@ -439,10 +448,7 @@ document.addEventListener('DOMContentLoaded', () => {
 	// Download rules
 	document.getElementById('download-submit').addEventListener('click', () => {
 		downloadRule(document.getElementById('download-url').value);
-		let h = JSON.parse(localStorage.getItem('dl_history'));
-		h.push(document.getElementById('download-url').value);
-		localStorage.setItem('dl_history', JSON.stringify(h));
-		loadDownloadHistory();
+		addHistory(document.getElementById('download-url').value);
 	});
 	loadDownloadHistory();
 

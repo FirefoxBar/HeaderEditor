@@ -106,12 +106,12 @@
 			<td class="name"></td>
 			<td class="rule-type"></td>
 			<td class="show-keep row">
-				<div class="radio col-md-6"><label><input type="radio" value="old" i18n-text="import_not_override"></label></div>
-				<div class="radio col-md-6"><label><input type="radio" value="new" i18n-text="import_override"></label></div>
+				<div class="radio col-md-6"><label><input type="radio" value="old"><span i18n-text="import_not_override"></span></label></div>
+				<div class="radio col-md-6"><label><input type="radio" value="new"><span i18n-text="import_override"></span></label></div>
 			</td>
 			<td class="show-new row">
-				<div class="radio col-md-6"><label><input type="radio" value="no" i18n-text="import_drop"></label></div>
-				<div class="radio col-md-6"><label><input type="radio" value="yes" i18n-text="import_new"></label></div>
+				<div class="radio col-md-6"><label><input type="radio" value="no"><span i18n-text="import_drop"></span></label></div>
+				<div class="radio col-md-6"><label><input type="radio" value="yes"><span i18n-text="import_new"></span></label></div>
 			</td>
 		</tr>
 	</template>
@@ -140,7 +140,7 @@
 				<div class="panel-body">
 					<p id="globalAction">
 						<button class="btn btn-default" id="addRule" i18n-text="add"></button>
-						<button class="btn btn-default" id="batch-delete" i18n-text="batch-delete"></button>
+						<button class="btn btn-default" id="batch-delete" i18n-text="batch_delete"></button>
 						<button class="btn btn-default" id="export" i18n-text="export"></button>
 						<button class="btn btn-default" id="import" i18n-text="import"></button>
 						<a class="btn btn-default" href="https://github.com/FirefoxBar/HeaderEditor/wiki" i18n-text="help"></a>
@@ -154,7 +154,7 @@
 								<th i18n-text="matchRule"></th>
 								<th i18n-text="matchType"></th>
 								<th i18n-text="action" class="action"></th>
-								<th class="batch-delete" i18n-text="batch-delete"></th>
+								<th class="batch-delete" i18n-text="batch_delete"></th>
 							</tr>
 						</thead>
 						<tbody id="rulesList"></tbody>
