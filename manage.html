@@ -1,3 +1,4 @@
+<!DOCTYPE html>
 <html>
 <head>
 	<meta http-equiv="Content-Type" content="text/html;charset=UTF-8">
@@ -75,6 +76,16 @@
 	#addDialog[data-isfunction="1"] .custom-code {
 		display: block;
 	}
+	#download-rules .list-group {
+		margin-top: 20px;
+	}
+	#download-rules .list-group li {
+		min-height: 54px;
+		line-height: 34px;
+	}
+	#download-rules .btn-group {
+		float: right;
+	}
 	</style>
 	<template data-id="rule">
 		<tr data-id="" data-type="">
@@ -101,6 +112,16 @@
 			</td>
 		</tr>
 	</template>
+	<template data-id="dlHistory">
+		<li class="list-group-item">
+			<div class="btn-group" role="group">
+				<button type="button" class="btn btn-default download"><span class="glyphicon glyphicon-download-alt"></span></button>
+				<button type="button" class="btn btn-default edit"><span class="glyphicon glyphicon-pencil"></span></button>
+				<button type="button" class="btn btn-default remove"><span class="glyphicon glyphicon-remove"></span></button>
+			</div>
+			<span class="url"></span>
+		</li>
+	</template>
 </head>
 <body>
 <div class="main">
@@ -126,6 +147,25 @@
 		</thead>
 		<tbody id="rulesList"></tbody>
 	</table>
+	<div class="panel-group" id="actions" role="tablist" aria-multiselectable="true">
+		<div class="panel panel-default">
+			<div class="panel-heading" role="tab" id="download-rules-head">
+				<h4 class="panel-title">
+					<a role="button" data-toggle="collapse" data-parent="#actions" href="#download-rules" aria-expanded="true" aria-controls="download-rules"><span>下载规则</span></a>
+				</h4>
+			</div>
+		<div id="download-rules" class="panel-collapse collapse in" role="tabpanel" aria-labelledby="download-rules-head">
+			<div class="panel-body">
+				<div class="input-group">
+					<input id="download-url" type="text" class="form-control" placeholder="URL" autocomplete="off">
+					<div class="input-group-btn">
+							<button id="download-submit" type="button" class="btn btn-default"><span class="glyphicon glyphicon-download-alt"></span></button>
+					</div>
+				</div>
+				<ul id="download-history" class="list-group"></ul>
+			</div>
+		</div>
+	</div>
 </div>
 <!-- batch delete actions -->
 <div class="float-btns batch-delete-btns btn-group" role="group">

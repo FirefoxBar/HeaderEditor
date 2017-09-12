@@ -8,6 +8,32 @@ let waitToImport = null;
 	}
 });
 
+
+function getURL(url, isPost) {
+	return new Promise((resolve, fail) => {
+		var xhr = new XMLHttpRequest();
+		xhr.onreadystatechange = () => {
+			if (xhr.readyState == 4) {
+				if (xhr.status >= 400) {
+					fail();
+				} else {
+					resolve(xhr.responseText);
+				}
+			}
+		};
+		if (url.length > 2000 || isPost) {
+			var parts = url.split("?");
+			xhr.open("POST", parts[0], true);
+			xhr.setRequestHeader("Content-type","application/x-www-form-urlencoded");
+			xhr.send(parts[1]);
+		} else {
+			xhr.open("GET", url, true);
+			xhr.send();
+		}
+	});
+}
+
+
 function loadRulesList() {
 	let ruleList = document.getElementById('rulesList');
 	ruleList.innerHTML = '';
@@ -226,28 +252,31 @@ function onExportClick() {
 	});
 }
 //import
-function onImportClick() {
+function importFromString(str) {
 	waitToImport = {};
-	loadFromFile('.json').then(function(content) {
-		content = JSON.parse(content);
-		for (let key of tables) {
-			waitToImport[key] = [];
-		}
-		for (let key of tables) {
-			for (let item of content[key]) {
-				delete item.id;
-				if (typeof(item.isFunction) === 'undefined') {
-					item.matchType = item.type;
-					item.isFunction = 0;
-					delete item.type;
-				}
-				if (typeof(item.enable) === 'undefined') {
-					item.enable = 1;
-				}
-				waitToImport[key].push(item);
+	content = JSON.parse(str);
+	for (let key of tables) {
+		waitToImport[key] = [];
+	}
+	for (let key of tables) {
+		for (let item of content[key]) {
+			delete item.id;
+			if (typeof(item.isFunction) === 'undefined') {
+				item.matchType = item.type;
+				item.isFunction = 0;
+				delete item.type;
 			}
+			if (typeof(item.enable) === 'undefined') {
+				item.enable = 1;
+			}
+			waitToImport[key].push(item);
 		}
-		showImportModal();
+	}
+	showImportModal();
+}
+function onImportClick() {
+	loadFromFile('.json').then(function(content) {
+		importFromString(content);
 	});
 }
 function showImportModal() {
@@ -349,6 +378,51 @@ function onBatchDeleteSubmit() {
 	});
 }
 
+function downloadRule(url) {
+	getURL(url).then((str) => {
+		importFromString(str);
+	});
+}
+
+function loadDownloadHistory() {
+	if (!localStorage.getItem('dl_history')) {
+		localStorage.setItem('dl_history', '[]');
+		return;
+	}
+	let h = JSON.parse(localStorage.getItem('dl_history'));
+	const dl_history_box = document.getElementById('download-history');
+	dl_history_box.innerHTML = '';
+	for (const url of h) {
+		let n = template.dlHistory.cloneNode(true);
+		n.querySelector('.url').setAttribute('data-url', url);
+		n.querySelector('.url').appendChild(document.createTextNode(url));
+		n.querySelector('.download').addEventListener('click', onHistoryDownload);
+		n.querySelector('.edit').addEventListener('click', onHistoryEdit);
+		n.querySelector('.remove').addEventListener('click', onHistoryRemove);
+		dl_history_box.appendChild(n);
+	}
+}
+function onHistoryDownload() {
+	const url = this.parentElement.parentElement.querySelector('.url').getAttribute('data-url');
+	downloadRule(url);
+}
+function onHistoryEdit() {
+	const url = this.parentElement.parentElement.querySelector('.url').getAttribute('data-url');
+	document.getElementById('download-url').value = url;
+}
+function onHistoryRemove() {
+	const url = this.parentElement.parentElement.querySelector('.url').getAttribute('data-url');
+	let h = JSON.parse(localStorage.getItem('dl_history'));
+	for (const index in h) {
+		if (h[index] === url) {
+			h.splice(index, 1);
+			break;
+		}
+	}
+	localStorage.setItem('dl_history', JSON.stringify(h));
+	loadDownloadHistory();
+}
+
 document.addEventListener('DOMContentLoaded', () => {
 	document.getElementById('export').addEventListener('click', onExportClick);
 	document.getElementById('ruleSave').addEventListener('click', onSaveClick);
@@ -361,6 +435,16 @@ document.addEventListener('DOMContentLoaded', () => {
 	// Import rules
 	document.getElementById('import').addEventListener('click', onImportClick);
 	document.getElementById('importSave').addEventListener('click', onImportSubmit);
+
+	// Download rules
+	document.getElementById('download-submit').addEventListener('click', () => {
+		downloadRule(document.getElementById('download-url').value);
+		let h = JSON.parse(localStorage.getItem('dl_history'));
+		h.push(document.getElementById('download-url').value);
+		localStorage.setItem('dl_history', JSON.stringify(h));
+		loadDownloadHistory();
+	});
+	loadDownloadHistory();
 
 	loadRulesList();
 });

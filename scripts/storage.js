@@ -214,14 +214,14 @@ function upgradeTo2() {
 	}
 }
 
-function initStroage() {
+function initStorage() {
 	setTimeout(() => {
 		updateCache('request');
 		updateCache('sendHeader');
 		updateCache('receiveHeader');
 		if (cachedRules.request === null || cachedRules.sendHeader === null || cachedRules.receiveHeader === null) {
-			initStroage();
+			initStorage();
 		}
 	}, 20);
 }
-initStroage();
+initStorage();
