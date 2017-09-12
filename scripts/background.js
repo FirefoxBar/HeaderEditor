@@ -64,6 +64,23 @@ function openURL(options) {
 	});
 }
 
+//给图片右键菜单增加快速添加反防盗链的功能
+runTryCatch(() => {
+	browser.contextMenus.create({
+		id: "add-anti-theft-link",
+		type: "normal",
+		title: "添加反防盗链规则",
+		contexts: ["image"],
+		targetUrlPatterns: ["http://*/*", "https://*/*", "ftp://*/*"]
+	});
+});
+browser.contextMenus.onClicked.addListener((info, tab) => {
+	if (info.menuItemId === 'add-anti-theft-link') {
+		openURL({"url": browser.extension.getURL("anti-theft-link.html") + '?url=' + info.srcUrl});
+	}
+});
+
+
 
 browser.webRequest.onBeforeRequest.addListener(function(e) {
 	//可用：重定向，阻止加载

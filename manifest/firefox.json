@@ -19,6 +19,7 @@
 		"tabs",
 		"webRequest",
 		"webRequestBlocking",
+		"contextMenus",
 		"storage",
 		"downloads",
 		"*://*/*"
