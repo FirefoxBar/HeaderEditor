@@ -69,7 +69,7 @@ runTryCatch(() => {
 	browser.contextMenus.create({
 		id: "add-anti-theft-link",
 		type: "normal",
-		title: "添加反防盗链规则",
+		title: t('add_anti_theft_link'),
 		contexts: ["image"],
 		targetUrlPatterns: ["http://*/*", "https://*/*", "ftp://*/*"]
 	});
