@@ -1,16 +1,10 @@
-var FIREFOX_VERSION = 0;
-if (/Firefox\/(\d+)\.(\d+)/.test(navigator.userAgent)) {
-	FIREFOX_VERSION = navigator.userAgent.match(/Firefox\/(\d+)\.(\d+)/);
-	FIREFOX_VERSION = parseFloat(FIREFOX_VERSION[1] + '.' + FIREFOX_VERSION[2]);
-}
-
 function saveAsFile(text, fileName) {
 	return new Promise(function(resolve){
 		var blob = new Blob([text]);
 		var fileUrl = URL.createObjectURL(blob);
 		var option = {filename: fileName, url: fileUrl};
 		// Firefox supported saveAs since version 52
-		if (FIREFOX_VERSION >= 52) {
+		if (IS_CHROME || FIREFOX_VERSION >= 52) {
 			option.saveAs = true;
 		}
 		browser.downloads.download(option).then(resolve);

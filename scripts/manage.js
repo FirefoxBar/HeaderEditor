@@ -1,38 +1,4 @@
-const tables = ['request', 'sendHeader', 'receiveHeader'];
 let waitToImport = null;
-
-
-["forEach", "some", "indexOf", "map"].forEach((method) => {
-	if (typeof(NodeList.prototype[method]) === 'undefined') {
-		NodeList.prototype[method]= Array.prototype[method];
-	}
-});
-
-
-function getURL(url, isPost) {
-	return new Promise((resolve, fail) => {
-		var xhr = new XMLHttpRequest();
-		xhr.onreadystatechange = () => {
-			if (xhr.readyState == 4) {
-				if (xhr.status >= 400) {
-					fail();
-				} else {
-					resolve(xhr.responseText);
-				}
-			}
-		};
-		if (url.length > 2000 || isPost) {
-			var parts = url.split("?");
-			xhr.open("POST", parts[0], true);
-			xhr.setRequestHeader("Content-type","application/x-www-form-urlencoded");
-			xhr.send(parts[1]);
-		} else {
-			xhr.open("GET", url, true);
-			xhr.send();
-		}
-	});
-}
-
 
 function loadRulesList() {
 	let ruleList = document.getElementById('rulesList');
@@ -64,9 +30,9 @@ function loadRulesList() {
 			checkResult(type, getRules(type));
 		}, 20);
 	}
-	requestRules('request');
-	requestRules('sendHeader');
-	requestRules('receiveHeader');
+	for (let t of tableNames) {
+		requestRules(t);
+	}
 }
 
 function ruleType2tableName(ruleType) {
@@ -247,18 +213,16 @@ function onSaveClick() {
 //export
 function onExportClick() {
 	var allResult = {};
-	browser.runtime.getBackgroundPage().then((page) => {
-		saveAsFile(JSON.stringify(page.cachedRules), 'headereditor-' + new Date().getTime().toString() + '.json');
-	});
+	saveAsFile(JSON.stringify(browser.extension.getBackgroundPage().cachedRules), 'headereditor-' + new Date().getTime().toString() + '.json');
 }
 //import
 function importFromString(str) {
 	waitToImport = {};
 	content = JSON.parse(str);
-	for (let key of tables) {
+	for (let key of tableNames) {
 		waitToImport[key] = [];
 	}
-	for (let key of tables) {
+	for (let key of tableNames) {
 		for (let item of content[key]) {
 			delete item.id;
 			if (typeof(item.isFunction) === 'undefined') {
@@ -282,7 +246,7 @@ function onImportClick() {
 function showImportModal() {
 	const tbody = document.getElementById('importRulesList');
 	tbody.innerHTML = '';
-	for (let key of tables) {
+	for (let key of tableNames) {
 		for (const id in waitToImport[key]) {
 			const item = waitToImport[key][id];
 			const elementId = key + '-' + id;
@@ -320,7 +284,7 @@ function onImportSubmit() {
 			}, 500);
 		}
 	}
-	for (let key of tables) {
+	for (let key of tableNames) {
 		toSave[key] = [];
 		for (const id in waitToImport[key]) {
 			const elementId = key + '-' + id;
@@ -336,7 +300,7 @@ function onImportSubmit() {
 			toSave[key].push(item);
 		}
 	};
-	for (let key of tables) {
+	for (let key of tableNames) {
 		for (const item of toSave[key]) {
 			saveRule(key, item).then(() => {
 				finish++;

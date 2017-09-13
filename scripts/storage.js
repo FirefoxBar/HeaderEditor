@@ -11,9 +11,9 @@ function getDatabase() {
 		dbOpenRequest.onupgradeneeded = function(event) {
 			if (event.oldVersion == 0) {
 				// Installed
-				event.target.result.createObjectStore("request", {keyPath: 'id', autoIncrement: true});
-				event.target.result.createObjectStore("sendHeader", {keyPath: 'id', autoIncrement: true});
-				event.target.result.createObjectStore("receiveHeader", {keyPath: 'id', autoIncrement: true});
+				for (let t of tableNames) {
+					event.target.result.createObjectStore(t, {keyPath: 'id', autoIncrement: true});
+				}
 			} else {
 				if (event.oldVersion < 2) {
 					upgradeTo2();
@@ -28,11 +28,10 @@ function runTryCatch(func) {
 	catch(e) {}
 }
 
-var cachedRules = {
-	"request": null,
-	"sendHeader": null,
-	"receiveHeader": null
-};
+var cachedRules = {};
+for (let t of tableNames) {
+	cachedRules[t] = null;
+}
 function getRules(type, options) {
 	return options ? filterRules(cachedRules[type], options) : cachedRules[type];
 }
@@ -191,7 +190,7 @@ function getType(o) {
 
 
 function upgradeTo2() {
-	for (let k of ["request", "sendHeader", "receiveHeader"]) {
+	for (let k of tableNames) {
 		getDatabase().then((db) => {
 			let tx = db.transaction([k], "readwrite");
 			let os = tx.objectStore(k);
