@@ -180,7 +180,7 @@ function onSaveClick() {
 		SaveData.code = code;
 		// test code
 		try {
-			new Function('val', code);
+			new Function('val', 'detail', code);
 		} catch (e) {
 			alert(e.message);
 			return;

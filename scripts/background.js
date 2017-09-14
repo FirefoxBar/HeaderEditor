@@ -86,13 +86,21 @@ browser.webRequest.onBeforeRequest.addListener(function(e) {
 	//可用：重定向，阻止加载
 	let rules = getRules('request', {"url": e.url, "enable": 1});
 	let redirectTo = e.url;
+	const detail = {
+		"url": e.url,
+		"method": e.method,
+		"isFrame": e.frameId === 0,
+		"type": e.type,
+		"time": e.timeStamp,
+		"originUrl": e.originUrl || ''
+	};
 	for (let item of rules) {
 		if (item.action === 'cancel') {
 			return {"cancel": true};
 		} else {
 			if (item.isFunction) {
 				runTryCatch(() => {
-					let r = item.func_body(redirectTo);
+					let r = item.func_body(redirectTo, detail);
 					if (typeof(r) === 'string') {
 						redirectTo = r;
 					}
@@ -111,7 +119,7 @@ browser.webRequest.onBeforeRequest.addListener(function(e) {
 	}
 }, {urls: ["<all_urls>"]}, ['blocking']);
 
-function modifyHeaders(headers, rules) {
+function modifyHeaders(headers, rules, details) {
 	let newHeaders = {};
 	let hasFunction = false;
 	for (let item of rules) {
@@ -134,10 +142,18 @@ function modifyHeaders(headers, rules) {
 		});
 	}
 	if (hasFunction) {
+		const detail = {
+			"url": details.url,
+			"method": details.method,
+			"isFrame": details.frameId === 0,
+			"type": details.type,
+			"time": details.timeStamp,
+			"originUrl": details.originUrl || ''
+		};
 		for (let item of rules) {
 			if (item.isFunction) {
 				runTryCatch(() => {
-					item.func_body(headers);
+					item.func_body(headers, detail);
 				});
 			}
 		}
@@ -150,7 +166,7 @@ browser.webRequest.onBeforeSendHeaders.addListener(function(e) {
 		return;
 	}
 	let rules = getRules('sendHeader', {"url": e.url, "enable": 1});
-	modifyHeaders(e.requestHeaders, rules);
+	modifyHeaders(e.requestHeaders, rules, e);
 	return {"requestHeaders": e.requestHeaders};
 }, {urls: ["<all_urls>"]}, ['blocking', 'requestHeaders']);
 
@@ -159,7 +175,7 @@ browser.webRequest.onHeadersReceived.addListener(function(e) {
 		return;
 	}
 	let rules = getRules('receiveHeader', {"url": e.url, "enable": 1});
-	modifyHeaders(e.responseHeaders, rules);
+	modifyHeaders(e.responseHeaders, rules, e);
 	return {"responseHeaders": e.responseHeaders};
 }, {urls: ["<all_urls>"]}, ['blocking', 'responseHeaders']);
 

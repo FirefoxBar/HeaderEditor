@@ -48,7 +48,7 @@ function updateCache(type) {
 				s.id = cursor.key;
 				// Init function here
 				if (s.isFunction) {
-					s.func_body = new Function('val', s.code);
+					s.func_body = new Function('val', 'detail', s.code);
 				}
 				all.push(s);
 				cursor.continue();

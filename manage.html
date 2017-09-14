@@ -36,7 +36,7 @@
 		width: 80px;
 	}
 	.rule-list .action {
-		width: 100px;
+		width: 200px;
 	}
 	.rule-list .batch-delete {
 		width: 100px;
@@ -47,10 +47,6 @@
 	}
 	.rule-list.batch-del-mode .batch-delete {
 		display: table-cell;
-	}
-	#rulesList .btn {
-		padding: 6px;
-		margin-right: 6px;
 	}
 	#importRulesList tr.keep .show-new {
 		display: none;
@@ -99,7 +95,14 @@
 			<td class="rule-type"></td>
 			<td class="pattern"></td>
 			<td class="match-type"></td>
-			<td class="action"><button class="j_edit btn btn-default"><i class="glyphicon glyphicon-pencil"></i></button><button class="j_remove btn btn-default"><i class="glyphicon glyphicon-remove"></i></button></td>
+			<td class="action">
+				<div class="btn-group" role="group">
+					<button type="button" class="btn btn-default dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">Action <span class="caret"></span></button>
+					<ul class="dropdown-menu"></ul>
+					<button class="j_edit btn btn-default"><i class="glyphicon glyphicon-pencil"></i></button>
+					<button class="j_remove btn btn-default"><i class="glyphicon glyphicon-remove"></i></button>
+				</div>
+			</td>
 			<td class="batch-delete"><input type="checkbox" name="delete"></td>
 		</tr>
 	</template>
@@ -131,6 +134,13 @@
 <body>
 <div class="main">
 	<h1 i18n-text="manageTitle"></h1>
+	<ul class="dropdown-menu" aria-labelledby="dLabel">
+		<li><a href="#">Action</a></li>
+		<li><a href="#">Another action</a></li>
+		<li><a href="#">Something else here</a></li>
+		<li role="separator" class="divider"></li>
+		<li><a href="#">Separated link</a></li>
+	</ul>
 	<div class="panel-group" id="rules" role="tablist" aria-multiselectable="true">
 		<div class="panel panel-default">
 			<div class="panel-heading" role="tab" id="rules-head">
