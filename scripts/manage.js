@@ -3,10 +3,11 @@ let cachedGroupList = {};
 let templateId = 1; // used by template
 
 function loadRulesList() {
-	function appendRule(response) {
+	function appendRule(type, response) {
 		for (var i = 0; i < response.length; i++) {
 			let newNode = template.rule.cloneNode(true);
 			newNode.setAttribute('data-id', response[i].id);
+			newNode.setAttribute('data-table', type);
 			newNode.setAttribute('data-type', response[i].ruleType);
 			newNode.querySelector('.name').appendChild(document.createTextNode(response[i].name));
 			newNode.querySelector('.rule-type').appendChild(document.createTextNode(t('rule_' + response[i].ruleType)));
@@ -19,7 +20,7 @@ function loadRulesList() {
 			if (response[i].enable) {
 				newNode.querySelector('.enable input[type="checkbox"]').checked = true;
 			}
-			moveItemToGroup(newNode, response[i].id, findItemInGroup(response[i].id));
+			moveItemToGroup(newNode, response[i].id, findItemInGroup(response[i].id, type), type);
 		}
 	}
 	function checkResult(type, response) {
@@ -27,7 +28,7 @@ function loadRulesList() {
 			requestRules(type);
 			return;
 		}
-		appendRule(response);
+		appendRule(type, response);
 	}
 	function requestRules(type) {
 		setTimeout(() => {
@@ -427,47 +428,47 @@ function onGroupMenuClick() {
 			groupMenu.insertBefore(n, groupMenu.childNodes[groupMenu.childNodes.length - 1]);
 			let n_group = template.groupItem.cloneNode(true);
 			n_group.setAttribute('data-name', name);
-			n_group.querySelector('.title').appendChild(document.createTextNode(name));
 			n_group.innerHTML = n_group.innerHTML.replace(/\{id\}/g, templateId++);
+			n_group.querySelector('.title').appendChild(document.createTextNode(name));
+			n_group.querySelector('.share').addEventListener('click', onGroupShareClick);
 			group.appendChild(n_group);
 			// move to
-			moveItemToGroup(el, el.getAttribute('data-id'), name);
+			moveItemToGroup(el, el.getAttribute('data-id'), name, el.getAttribute('data-table'));
 		}
 	} else {
 		name = this.getAttribute('data-name');
 		// move to
-		moveItemToGroup(el, el.getAttribute('data-id'), name);
+		moveItemToGroup(el, el.getAttribute('data-id'), name, el.getAttribute('data-table'));
 	}
 }
-function moveItemToGroup(from, id, groupName) {
+function moveItemToGroup(from, id, groupName, type) {
 	if (typeof(id) !== 'number') {
 		id = parseInt(id);
 	}
 	const g = document.querySelector('#groups .group-item[data-name="' + groupName + '"] .rules-list');
 	// move cachedGroupList
-	const oldGroup = findItemInGroup(id);
+	const oldGroup = findItemInGroup(id, type);
 	if (oldGroup !== groupName) {
 		if (oldGroup !== '未分组') {
-			cachedGroupList[oldGroup].splice(cachedGroupList[oldGroup].indexOf(id), 1);
+			cachedGroupList[oldGroup].splice(cachedGroupList[oldGroup].indexOf(type + '-' + id), 1);
 			saveGroups();
 		}
 		if (groupName !== '未分组') {
-			cachedGroupList[groupName].push(id);
+			cachedGroupList[groupName].push(type + '-' + id);
 			saveGroups();
 		}
 	}
 	// move element
 	g.appendChild(from);
 }
-function findItemInGroup(id) {
+function findItemInGroup(id, type) {
 	for (let i in cachedGroupList) {
-		if (cachedGroupList[i].includes(id)) {
+		if (cachedGroupList[i].includes(type + '-' + id)) {
 			return i;
 		}
 	}
 	return Object.keys(cachedGroupList)[0];
 }
-// function 
 function initGroup() {
 	const group = document.getElementById('groups');
 	const groupMenu = document.getElementById('move_to_group');
@@ -483,8 +484,9 @@ function initGroup() {
 		groupMenu.appendChild(n);
 		let n_group = template.groupItem.cloneNode(true);
 		n_group.setAttribute('data-name', e);
-		n_group.querySelector('.title').appendChild(document.createTextNode(e));
 		n_group.innerHTML = n_group.innerHTML.replace(/\{id\}/g, templateId++);
+		n_group.querySelector('.title').appendChild(document.createTextNode(e));
+		n_group.querySelector('.share').addEventListener('click', onGroupShareClick);
 		group.appendChild(n_group);
 	});
 	let n = template.groupMenuList.cloneNode(true);
@@ -494,6 +496,27 @@ function initGroup() {
 }
 function saveGroups() {
 	localStorage.setItem('groups', JSON.stringify(cachedGroupList));
+}
+function onGroupShareClick() {
+	const el = ((e) => {
+		while (!e.classList.contains('group-item')) {
+			e = e.parentElement;
+		}
+		return e;
+	})(this);
+	let result = {};
+	for (const t of tableNames) {
+		result[t] = [];
+	}
+	el.querySelectorAll('.rules-list tr').forEach((e) => {
+		const table = e.getAttribute('data-table');
+		const id = e.getAttribute('data-id');
+		let n =getRules(table, {"id": id})[0];
+		delete n["id"];
+		result[table].push(n);
+	});
+	console.log(JSON.stringify(result, null, "\t"));
+	saveAsFile(JSON.stringify(result, null, "\t"), 'headereditor-' + new Date().getTime().toString() + '.json');
 }
 
 document.addEventListener('DOMContentLoaded', () => {
