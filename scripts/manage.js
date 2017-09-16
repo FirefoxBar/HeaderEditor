@@ -458,9 +458,9 @@ function moveItemToGroup(from, id, groupName, type) {
 			cachedGroupList[groupName].push(type + '-' + id);
 			saveGroups();
 		}
-		// move element
-		g.appendChild(from);
 	}
+	// move element
+	g.appendChild(from);
 }
 function findItemInGroup(id, type) {
 	for (let i in cachedGroupList) {
@@ -513,9 +513,7 @@ function onGroupShareClick() {
 	el.querySelectorAll('.rules-list tr').forEach((e) => {
 		const table = e.getAttribute('data-table');
 		const id = e.getAttribute('data-id');
-		let n =getRules(table, {"id": id})[0];
-		delete n["id"];
-		result[table].push(n);
+		result[table].push(getRules(table, {"id": id})[0]);
 	});
 	saveAsFile(JSON.stringify(result, null, "\t"), 'headereditor-' + new Date().getTime().toString() + '.json');
 }
