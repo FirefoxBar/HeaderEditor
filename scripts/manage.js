@@ -431,6 +431,7 @@ function onGroupMenuClick() {
 			n_group.innerHTML = n_group.innerHTML.replace(/\{id\}/g, templateId++);
 			n_group.querySelector('.title').appendChild(document.createTextNode(name));
 			n_group.querySelector('.share').addEventListener('click', onGroupShareClick);
+			n_group.querySelector('.remove').addEventListener('click', onGroupRemoveClick);
 			group.appendChild(n_group);
 			// move to
 			moveItemToGroup(el, el.getAttribute('data-id'), name, el.getAttribute('data-table'));
@@ -446,9 +447,9 @@ function moveItemToGroup(from, id, groupName, type) {
 		id = parseInt(id);
 	}
 	const g = document.querySelector('#groups .group-item[data-name="' + groupName + '"] .rules-list');
-	// move cachedGroupList
 	const oldGroup = findItemInGroup(id, type);
 	if (oldGroup !== groupName) {
+		// move cachedGroupList
 		if (oldGroup !== '未分组') {
 			cachedGroupList[oldGroup].splice(cachedGroupList[oldGroup].indexOf(type + '-' + id), 1);
 			saveGroups();
@@ -457,9 +458,9 @@ function moveItemToGroup(from, id, groupName, type) {
 			cachedGroupList[groupName].push(type + '-' + id);
 			saveGroups();
 		}
+		// move element
+		g.appendChild(from);
 	}
-	// move element
-	g.appendChild(from);
 }
 function findItemInGroup(id, type) {
 	for (let i in cachedGroupList) {
@@ -487,6 +488,7 @@ function initGroup() {
 		n_group.innerHTML = n_group.innerHTML.replace(/\{id\}/g, templateId++);
 		n_group.querySelector('.title').appendChild(document.createTextNode(e));
 		n_group.querySelector('.share').addEventListener('click', onGroupShareClick);
+		n_group.querySelector('.remove').addEventListener('click', onGroupRemoveClick);
 		group.appendChild(n_group);
 	});
 	let n = template.groupMenuList.cloneNode(true);
@@ -515,8 +517,23 @@ function onGroupShareClick() {
 		delete n["id"];
 		result[table].push(n);
 	});
-	console.log(JSON.stringify(result, null, "\t"));
 	saveAsFile(JSON.stringify(result, null, "\t"), 'headereditor-' + new Date().getTime().toString() + '.json');
+}
+function onGroupRemoveClick() {
+	const el = ((e) => {
+		while (!e.classList.contains('group-item')) {
+			e = e.parentElement;
+		}
+		return e;
+	})(this);
+	const name = el.getAttribute('data-name');
+	if (name === '未分组') {
+		// can not delete default group
+		return;
+	}
+	delete cachedGroupList[name];
+	saveGroups();
+	window.location.reload();
 }
 
 document.addEventListener('DOMContentLoaded', () => {
