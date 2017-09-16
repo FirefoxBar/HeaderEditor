@@ -115,7 +115,7 @@ browser.webRequest.onBeforeRequest.addListener(function(e) {
 		}
 	}
 	if (redirectTo !== e.url) {
-		if (/^(http|https|ftp|file)%3A%2F%2F/.test(redirectTo)) {
+		if (/^(http|https|ftp|file)%3A/.test(redirectTo)) {
 			redirectTo = decodeURIComponent(redirectTo);
 		}
 		return {"redirectUrl": redirectTo};
