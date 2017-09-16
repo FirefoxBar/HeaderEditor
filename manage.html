@@ -42,9 +42,6 @@
 		width: 100px;
 		display: none;
 	}
-	.rule-list #batch-delete-all {
-		cursor: pointer;
-	}
 	.rule-list.batch-del-mode .batch-delete {
 		display: table-cell;
 	}
@@ -87,6 +84,13 @@
 	#download-rules .btn-group {
 		float: right;
 	}
+	.btn-group > .btn:first-child:not(:last-child) {
+		border-top-right-radius: 0;
+		border-bottom-right-radius: 0;
+	}
+	.btn-group a {
+		cursor: pointer;
+	}
 	</style>
 	<template data-id="rule">
 		<tr data-id="" data-type="">
@@ -97,10 +101,10 @@
 			<td class="match-type"></td>
 			<td class="action">
 				<div class="btn-group" role="group">
-					<button type="button" class="btn btn-default dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">Action <span class="caret"></span></button>
+					<button type="button" class="btn btn-default dropdown-toggle move-group" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">分组 <span class="caret"></span></button>
 					<ul class="dropdown-menu"></ul>
-					<button class="j_edit btn btn-default"><i class="glyphicon glyphicon-pencil"></i></button>
-					<button class="j_remove btn btn-default"><i class="glyphicon glyphicon-remove"></i></button>
+					<button class="edit btn btn-default"><i class="glyphicon glyphicon-pencil"></i></button>
+					<button class="remove btn btn-default"><i class="glyphicon glyphicon-remove"></i></button>
 				</div>
 			</td>
 			<td class="batch-delete"><input type="checkbox" name="delete"></td>
@@ -130,17 +134,45 @@
 			<span class="url"></span>
 		</li>
 	</template>
+	<template data-id="groupMenuList">
+		<li><a class="name"></a></li>
+	</template>
+	<template data-id="groupItem">
+		<div class="group-item">
+			<div class="panel-group" id="groups-{id}" role="tablist" aria-multiselectable="true">
+				<div class="panel panel-default">
+					<div class="panel-heading" role="tab" id="groups-head-{id}">
+						<h4 class="panel-title">
+							<a role="button" data-toggle="collapse" data-parent="#groups-{id}" href="#groups-content-{id}" aria-expanded="true" aria-controls="groups-content-{id}"><span class="title"></span></a>
+						</h4>
+					</div>
+					<div id="groups-content-{id}" class="panel-collapse collapse in" role="tabpanel" aria-labelledby="groups-head-{id}">
+						<div class="panel-body">
+							<table class="table table-hover rule-list">
+								<thead>
+									<tr>
+										<th i18n-text="enable" class="enable"></th>
+										<th i18n-text="name"></th>
+										<th i18n-text="ruleType"></th>
+										<th i18n-text="matchRule"></th>
+										<th i18n-text="matchType"></th>
+										<th i18n-text="action" class="action"></th>
+										<th class="batch-delete" i18n-text="batch_delete"></th>
+									</tr>
+								</thead>
+								<tbody class="rules-list"></tbody>
+							</table>
+						</div>
+					</div>
+				</div>
+			</div>
+		</div>
+	</template>
 </head>
 <body>
+<ul id="move_to_group" class="dropdown-menu"></ul>
 <div class="main">
 	<h1 i18n-text="manageTitle"></h1>
-	<ul class="dropdown-menu" aria-labelledby="dLabel">
-		<li><a href="#">Action</a></li>
-		<li><a href="#">Another action</a></li>
-		<li><a href="#">Something else here</a></li>
-		<li role="separator" class="divider"></li>
-		<li><a href="#">Separated link</a></li>
-	</ul>
 	<div class="panel-group" id="rules" role="tablist" aria-multiselectable="true">
 		<div class="panel panel-default">
 			<div class="panel-heading" role="tab" id="rules-head">
@@ -157,20 +189,7 @@
 						<button class="btn btn-default" id="import" i18n-text="import"></button>
 						<a class="btn btn-default" href="https://github.com/FirefoxBar/HeaderEditor/wiki" i18n-text="help"></a>
 					</p>
-					<table class="table table-hover rule-list">
-						<thead>
-							<tr>
-								<th i18n-text="enable" class="enable"></th>
-								<th i18n-text="name"></th>
-								<th i18n-text="ruleType"></th>
-								<th i18n-text="matchRule"></th>
-								<th i18n-text="matchType"></th>
-								<th i18n-text="action" class="action"></th>
-								<th class="batch-delete" i18n-text="batch_delete"></th>
-							</tr>
-						</thead>
-						<tbody id="rulesList"></tbody>
-					</table>
+					<div id="groups"></div>
 				</div>
 			</div>
 		</div>

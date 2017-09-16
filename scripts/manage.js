@@ -1,8 +1,8 @@
 let waitToImport = null;
+let cachedGroupList = {};
+let templateId = 1; // used by template
 
 function loadRulesList() {
-	let ruleList = document.getElementById('rulesList');
-	ruleList.innerHTML = '';
 	function appendRule(response) {
 		for (var i = 0; i < response.length; i++) {
 			let newNode = template.rule.cloneNode(true);
@@ -12,10 +12,14 @@ function loadRulesList() {
 			newNode.querySelector('.rule-type').appendChild(document.createTextNode(t('rule_' + response[i].ruleType)));
 			newNode.querySelector('.pattern').appendChild(document.createTextNode(response[i].pattern));
 			newNode.querySelector('.match-type').appendChild(document.createTextNode(t('match_' + response[i].matchType)));
+			newNode.querySelector('.move-group').addEventListener('click', onMoveGroupClick);
+			newNode.querySelector('.edit').addEventListener('click', onEditRuleClick);
+			newNode.querySelector('.remove').addEventListener('click', onRemoveRuleClick);
+			newNode.querySelector('input[name="enable"]').addEventListener('change', onEnableRuleChange);
 			if (response[i].enable) {
 				newNode.querySelector('.enable input[type="checkbox"]').checked = true;
 			}
-			ruleList.appendChild(newNode);
+			moveItemToGroup(newNode, response[i].id, findItemInGroup(response[i].id));
 		}
 	}
 	function checkResult(type, response) {
@@ -75,7 +79,7 @@ $('#matchType').bind('change', function() {
 	$('#addDialog').attr('data-match', $(this).find('option:selected').val());
 });
 //edit
-$('#rulesList').on('click', '.j_edit', function() {
+function onEditRuleClick() {
 	var id = $(this).parents('tr').attr('data-id');
 	var table = ruleType2tableName($(this).parents('tr').attr('data-type'));
 	clearModal();
@@ -104,9 +108,9 @@ $('#rulesList').on('click', '.j_edit', function() {
 	$('#isFunction').trigger('change');
 	$('#matchType').trigger('change');
 	$('#addDialog').modal('show');
-});
+}
 //remove
-$('#rulesList').on('click', '.j_remove', function() {
+function onRemoveRuleClick() {
 	var tr = $(this).parents('tr');
 	var id = tr.attr('data-id');
 	var table = ruleType2tableName(tr.attr('data-type'));
@@ -114,9 +118,9 @@ $('#rulesList').on('click', '.j_remove', function() {
 		browser.runtime.sendMessage({"method": "updateCache", "type": table});
 		tr.remove();
 	});
-});
+}
 //enable or disable
-$('#rulesList').on('change', 'input[name="enable"]', function() {
+function onEnableRuleChange () {
 	var tr = $(this).parents('tr');
 	var id = tr.attr('data-id');
 	var table = ruleType2tableName(tr.attr('data-type'));
@@ -124,7 +128,7 @@ $('#rulesList').on('change', 'input[name="enable"]', function() {
 	saveRule(table, {"id": id, "enable": enable}).then(() => {
 		browser.runtime.sendMessage({"method": "updateCache", "type": table});
 	});
-});
+}
 //save rule
 function onSaveClick() {
 	//check
@@ -203,10 +207,8 @@ function onSaveClick() {
 	saveRule(SaveTable, SaveData).then(function(response) {
 		$('#addDialog').modal('hide');
 		browser.runtime.sendMessage({"method": "updateCache", "type": SaveTable});
-		var _t = setTimeout(function() {
-			loadRulesList();
-			clearTimeout(_t);
-			_t = null;
+		setTimeout(() => {
+			window.location.reload();
 		}, 300);
 	});
 }
@@ -311,7 +313,9 @@ function onImportSubmit() {
 }
 
 function onBatchDeleteClick() {
-	document.querySelector('.rule-list').classList.toggle('batch-del-mode');
+	document.querySelectorAll('.rule-list').forEach((e) => {
+		e.classList.toggle('batch-del-mode');
+	});
 	document.querySelector('.batch-delete-btns').classList.toggle('show');
 }
 function onBatchDeleteSelectAll() {
@@ -396,9 +400,108 @@ function addHistory(url) {
 	}
 }
 
+function onMoveGroupClick() {
+	this.nextElementSibling.innerHTML = document.getElementById('move_to_group').innerHTML;
+	this.nextElementSibling.querySelectorAll('li').forEach((e) => {
+		e.addEventListener('click', onGroupMenuClick);
+	})
+}
+function onGroupMenuClick() {
+	let name = '';
+	let el = ((e) => {
+		while (e.nodeName.toLowerCase() !== 'tr') {
+			e = e.parentElement;
+		}
+		return e;
+	})(this);
+	if (this.getAttribute('data-name') === '_new') {
+		let name = window.prompt('请输入组名称');
+		if (name) {
+			const group = document.getElementById('groups');
+			const groupMenu = document.getElementById('move_to_group');
+			cachedGroupList[name] = [];
+			saveGroups();
+			let n = template.groupMenuList.cloneNode(true);
+			n.setAttribute('data-name', name);
+			n.querySelector('.name').appendChild(document.createTextNode(name));
+			groupMenu.insertBefore(n, groupMenu.childNodes[groupMenu.childNodes.length - 1]);
+			let n_group = template.groupItem.cloneNode(true);
+			n_group.setAttribute('data-name', name);
+			n_group.querySelector('.title').appendChild(document.createTextNode(name));
+			n_group.innerHTML = n_group.innerHTML.replace(/\{id\}/g, templateId++);
+			group.appendChild(n_group);
+			// move to
+			moveItemToGroup(el, el.getAttribute('data-id'), name);
+		}
+	} else {
+		name = this.getAttribute('data-name');
+		// move to
+		moveItemToGroup(el, el.getAttribute('data-id'), name);
+	}
+}
+function moveItemToGroup(from, id, groupName) {
+	if (typeof(id) !== 'number') {
+		id = parseInt(id);
+	}
+	const g = document.querySelector('#groups .group-item[data-name="' + groupName + '"] .rules-list');
+	// move cachedGroupList
+	const oldGroup = findItemInGroup(id);
+	if (oldGroup !== groupName) {
+		if (oldGroup !== '未分组') {
+			cachedGroupList[oldGroup].splice(cachedGroupList[oldGroup].indexOf(id), 1);
+			saveGroups();
+		}
+		if (groupName !== '未分组') {
+			cachedGroupList[groupName].push(id);
+			saveGroups();
+		}
+	}
+	// move element
+	g.appendChild(from);
+}
+function findItemInGroup(id) {
+	for (let i in cachedGroupList) {
+		if (cachedGroupList[i].includes(id)) {
+			return i;
+		}
+	}
+	return Object.keys(cachedGroupList)[0];
+}
+// function 
+function initGroup() {
+	const group = document.getElementById('groups');
+	const groupMenu = document.getElementById('move_to_group');
+	if (!localStorage.getItem('groups')) {
+		cachedGroupList['未分组'] = [];
+		saveGroups();
+	}
+	cachedGroupList = JSON.parse(localStorage.getItem('groups'));
+	Object.keys(cachedGroupList).forEach((e) => {
+		let n = template.groupMenuList.cloneNode(true);
+		n.setAttribute('data-name', e);
+		n.querySelector('.name').appendChild(document.createTextNode(e));
+		groupMenu.appendChild(n);
+		let n_group = template.groupItem.cloneNode(true);
+		n_group.setAttribute('data-name', e);
+		n_group.querySelector('.title').appendChild(document.createTextNode(e));
+		n_group.innerHTML = n_group.innerHTML.replace(/\{id\}/g, templateId++);
+		group.appendChild(n_group);
+	});
+	let n = template.groupMenuList.cloneNode(true);
+	n.setAttribute('data-name', '_new');
+	n.querySelector('.name').appendChild(document.createTextNode('新增'));
+	groupMenu.appendChild(n);
+}
+function saveGroups() {
+	localStorage.setItem('groups', JSON.stringify(cachedGroupList));
+}
+
 document.addEventListener('DOMContentLoaded', () => {
 	document.getElementById('export').addEventListener('click', onExportClick);
 	document.getElementById('ruleSave').addEventListener('click', onSaveClick);
+
+	// group
+	initGroup();
 
 	// Batch delete
 	document.getElementById('batch-delete').addEventListener('click', onBatchDeleteClick);
