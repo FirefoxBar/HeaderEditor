@@ -416,7 +416,7 @@ function onGroupMenuClick() {
 		return e;
 	})(this);
 	if (this.getAttribute('data-name') === '_new') {
-		let name = window.prompt('请输入组名称');
+		let name = window.prompt(t('enter_group_name'));
 		if (name) {
 			const group = document.getElementById('groups');
 			const groupMenu = document.getElementById('move_to_group');
@@ -450,11 +450,11 @@ function moveItemToGroup(from, id, groupName, type) {
 	const oldGroup = findItemInGroup(id, type);
 	if (oldGroup !== groupName) {
 		// move cachedGroupList
-		if (oldGroup !== '未分组') {
+		if (oldGroup !== t('ungrouped')) {
 			cachedGroupList[oldGroup].splice(cachedGroupList[oldGroup].indexOf(type + '-' + id), 1);
 			saveGroups();
 		}
-		if (groupName !== '未分组') {
+		if (groupName !== t('ungrouped')) {
 			cachedGroupList[groupName].push(type + '-' + id);
 			saveGroups();
 		}
@@ -474,7 +474,7 @@ function initGroup() {
 	const group = document.getElementById('groups');
 	const groupMenu = document.getElementById('move_to_group');
 	if (!localStorage.getItem('groups')) {
-		cachedGroupList['未分组'] = [];
+		cachedGroupList[t('ungrouped')] = [];
 		saveGroups();
 	}
 	cachedGroupList = JSON.parse(localStorage.getItem('groups'));
@@ -493,7 +493,7 @@ function initGroup() {
 	});
 	let n = template.groupMenuList.cloneNode(true);
 	n.setAttribute('data-name', '_new');
-	n.querySelector('.name').appendChild(document.createTextNode('新增'));
+	n.querySelector('.name').appendChild(document.createTextNode(t('add')));
 	groupMenu.appendChild(n);
 }
 function saveGroups() {
@@ -525,7 +525,7 @@ function onGroupRemoveClick() {
 		return e;
 	})(this);
 	const name = el.getAttribute('data-name');
-	if (name === '未分组') {
+	if (name === t('ungrouped')) {
 		// can not delete default group
 		return;
 	}
