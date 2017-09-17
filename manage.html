@@ -29,8 +29,13 @@
 	.panel-group {
 		margin-bottom: 15px;
 	}
-	.panel-title .btn-group {
-		margin-left: 20px;
+	.panel-title .buttons {
+		float: right;
+		display: inline-block;
+	}
+	.panel-title .buttons span {
+		cursor: pointer;
+		margin-left: 5px;
 	}
 	#globalAction .btn {
 		margin-right: 6px;
@@ -147,9 +152,9 @@
 					<div class="panel-heading" role="tab" id="groups-head-{id}">
 						<h4 class="panel-title">
 							<a role="button" data-toggle="collapse" data-parent="#groups-{id}" href="#groups-content-{id}" aria-expanded="true" aria-controls="groups-content-{id}"><span class="title"></span></a>
-							<div class="btn-group" role="group">
-								<button type="button" class="btn btn-default share"><span class="glyphicon glyphicon-share"></span></button>
-								<button type="button" class="btn btn-default remove"><span class="glyphicon glyphicon-remove"></span></button>
+							<div class="buttons">
+								<span class="glyphicon glyphicon-share share"></span>
+								<span class="glyphicon glyphicon-remove remove"></span>
 							</div>
 						</h4>
 					</div>
