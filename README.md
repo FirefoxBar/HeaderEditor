@@ -5,7 +5,9 @@
 
 An extension which can modify the request, include request headers, response headers, redirect requests, and cancel requests.
 
-You can install from [Mozilla Add-ons](https://addons.mozilla.org/en-US/firefox/addon/header-editor/) and [Chrome WebStore](https://chrome.google.com/webstore/detail/header-editor/eningockdidmgiojffjmkdblpjocbhgh) or install [our self-distribution version](https://github.com/FirefoxBar/HeaderEditor/releases).
+You can get this extension from [Mozilla Add-ons](https://addons.mozilla.org/en-US/firefox/addon/header-editor/) and [Chrome WebStore](https://chrome.google.com/webstore/detail/header-editor/eningockdidmgiojffjmkdblpjocbhgh)。
+
+But if you want to stay up-to-date with the latest developments, you should [install our self-distributed version](https://github.com/FirefoxBar/HeaderEditor/releases).
 
 This is a WebExtension. Require Firefox 52 or later.
 
@@ -13,9 +15,9 @@ For more documentation, Please visit [wiki](https://github.com/FirefoxBar/Header
 
 ## For contributors
 
-You can contribute codes by [submit a pull request](https://github.com/FirefoxBar/HeaderEditor/compare).
+You can contribute codes by [submiting a pull request](https://github.com/FirefoxBar/HeaderEditor/compare).
 
-You can help us to translate this extension on [transifex](https://www.transifex.com/sytec/header-editor/).
+You can also help us to translate this extension on [transifex](https://www.transifex.com/sytec/header-editor/).
 
 ## Licenses
 
