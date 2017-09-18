@@ -313,29 +313,29 @@ function onImportSubmit() {
 	}
 }
 
-function onBatchDeleteClick() {
+function onBatchModeClick() {
 	document.querySelectorAll('.rule-list').forEach((e) => {
-		e.classList.toggle('batch-del-mode');
+		e.classList.toggle('batch-mode');
 	});
-	document.querySelector('.batch-delete-btns').classList.toggle('show');
+	document.querySelector('.batch-mode-btns').classList.toggle('show');
 }
-function onBatchDeleteSelectAll() {
-	if (!document.querySelector('input[name="delete"]')) {
+function onBatchSelectAll() {
+	if (!document.querySelector('input[name="batch"]')) {
 		return;
 	}
-	let setTo = document.querySelector('input[name="delete"]').checked ? false : true;
-	document.querySelectorAll('input[name="delete"]').forEach((e) => {
+	let setTo = document.querySelector('input[name="batch"]').checked ? false : true;
+	document.querySelectorAll('input[name="batch"]').forEach((e) => {
 		e.checked = setTo;
 	});
 }
-function onBatchDeleteSubmit() {
-	let all = document.querySelectorAll('input[name="delete"]:checked');
+function onBatchDeleteClick() {
+	let all = document.querySelectorAll('input[name="batch"]:checked');
 	let total = all.length;
 	let ok = 0;
 	all.forEach((e) => {
-		let tr = $(e).parents('tr');
-		let id = tr.attr('data-id');
-		let table = ruleType2tableName(tr.attr('data-type'));
+		let tr = findParent(e, (c) => { return c.nodeName.toLowerCase() === 'tr'; });
+		let id = tr.getAttribute('data-id');
+		let table = tr.getAttribute('data-table');
 		deleteRule(table, id).then((response) => {
 			browser.runtime.sendMessage({"method": "updateCache", "type": table});
 			tr.remove();
@@ -344,6 +344,43 @@ function onBatchDeleteSubmit() {
 				onBatchDeleteClick();
 			}
 		});
+	});
+}
+function onBatchGroupClick() {
+	this.nextElementSibling.innerHTML = document.getElementById('move_to_group').innerHTML;
+	this.nextElementSibling.querySelectorAll('li').forEach((e) => {
+		e.addEventListener('click', onBatchGroupMenuClick);
+	});
+}
+function onBatchGroupMenuClick() {
+	let name = '';
+	if (this.getAttribute('data-name') === '_new') {
+		name = window.prompt(t('enter_group_name'));
+		if (name) {
+			const group = document.getElementById('groups');
+			const groupMenu = document.getElementById('move_to_group');
+			cachedGroupList[name] = [];
+			saveGroups();
+			let n = template.groupMenuList.cloneNode(true);
+			n.setAttribute('data-name', name);
+			n.querySelector('.name').appendChild(document.createTextNode(name));
+			groupMenu.insertBefore(n, groupMenu.childNodes[groupMenu.childNodes.length - 1]);
+			let n_group = template.groupItem.cloneNode(true);
+			n_group.setAttribute('data-name', name);
+			n_group.innerHTML = n_group.innerHTML.replace(/\{id\}/g, templateId++);
+			n_group.querySelector('.title').appendChild(document.createTextNode(name));
+			n_group.querySelector('.share').addEventListener('click', onGroupShareClick);
+			n_group.querySelector('.remove').addEventListener('click', onGroupRemoveClick);
+			group.appendChild(n_group);
+		} else {
+			return;
+		}
+	} else {
+		name = this.getAttribute('data-name');
+	}
+	document.querySelectorAll('input[name="batch"]:checked').forEach((e) => {
+		let el = findParent(e, (c) => { return c.nodeName.toLowerCase() === 'tr'; });
+		moveItemToGroup(el, el.getAttribute('data-id'), name, el.getAttribute('data-table'));
 	});
 }
 
@@ -405,18 +442,13 @@ function onMoveGroupClick() {
 	this.nextElementSibling.innerHTML = document.getElementById('move_to_group').innerHTML;
 	this.nextElementSibling.querySelectorAll('li').forEach((e) => {
 		e.addEventListener('click', onGroupMenuClick);
-	})
+	});
 }
 function onGroupMenuClick() {
 	let name = '';
-	let el = ((e) => {
-		while (e.nodeName.toLowerCase() !== 'tr') {
-			e = e.parentElement;
-		}
-		return e;
-	})(this);
+	let el = findParent(this, (e) => { return e.nodeName.toLowerCase() === 'tr'; });
 	if (this.getAttribute('data-name') === '_new') {
-		let name = window.prompt(t('enter_group_name'));
+		name = window.prompt(t('enter_group_name'));
 		if (name) {
 			const group = document.getElementById('groups');
 			const groupMenu = document.getElementById('move_to_group');
@@ -433,14 +465,14 @@ function onGroupMenuClick() {
 			n_group.querySelector('.share').addEventListener('click', onGroupShareClick);
 			n_group.querySelector('.remove').addEventListener('click', onGroupRemoveClick);
 			group.appendChild(n_group);
-			// move to
-			moveItemToGroup(el, el.getAttribute('data-id'), name, el.getAttribute('data-table'));
+		} else {
+			return;
 		}
 	} else {
 		name = this.getAttribute('data-name');
-		// move to
-		moveItemToGroup(el, el.getAttribute('data-id'), name, el.getAttribute('data-table'));
 	}
+	// move to
+	moveItemToGroup(el, el.getAttribute('data-id'), name, el.getAttribute('data-table'));
 }
 function moveItemToGroup(from, id, groupName, type) {
 	if (typeof(id) !== 'number') {
@@ -500,12 +532,7 @@ function saveGroups() {
 	localStorage.setItem('groups', JSON.stringify(cachedGroupList));
 }
 function onGroupShareClick() {
-	const el = ((e) => {
-		while (!e.classList.contains('group-item')) {
-			e = e.parentElement;
-		}
-		return e;
-	})(this);
+	const el = findParent(this, (e) => { return e.classList.contains('group-item'); });
 	let result = {};
 	for (const t of tableNames) {
 		result[t] = [];
@@ -518,12 +545,7 @@ function onGroupShareClick() {
 	saveAsFile(JSON.stringify(result, null, "\t"), 'headereditor-' + new Date().getTime().toString() + '.json');
 }
 function onGroupRemoveClick() {
-	const el = ((e) => {
-		while (!e.classList.contains('group-item')) {
-			e = e.parentElement;
-		}
-		return e;
-	})(this);
+	const el = findParent(this, (e) => { return e.classList.contains('group-item'); });
 	const name = el.getAttribute('data-name');
 	if (name === t('ungrouped')) {
 		// can not delete default group
@@ -542,9 +564,10 @@ document.addEventListener('DOMContentLoaded', () => {
 	initGroup();
 
 	// Batch delete
+	document.getElementById('batch-mode').addEventListener('click', onBatchModeClick);
+	document.getElementById('batch-select-all').addEventListener('click', onBatchSelectAll);
 	document.getElementById('batch-delete').addEventListener('click', onBatchDeleteClick);
-	document.getElementById('batch-delete-all').addEventListener('click', onBatchDeleteSelectAll);
-	document.getElementById('batch-delete-submit').addEventListener('click', onBatchDeleteSubmit);
+	document.getElementById('batch-group').addEventListener('click', onBatchGroupClick);
 
 	// Import rules
 	document.getElementById('import').addEventListener('click', onImportClick);

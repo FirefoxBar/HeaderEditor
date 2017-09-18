@@ -46,11 +46,11 @@
 	.rule-list .action {
 		width: 200px;
 	}
-	.rule-list .batch-delete {
+	.rule-list .batch {
 		width: 100px;
 		display: none;
 	}
-	.rule-list.batch-del-mode .batch-delete {
+	.rule-list.batch-mode .batch {
 		display: table-cell;
 	}
 	#importRulesList tr.keep .show-new {
@@ -92,7 +92,7 @@
 	#download-rules .btn-group {
 		float: right;
 	}
-	.btn-group > .btn:first-child:not(:last-child) {
+	.btn-group > .btn:not(:last-child) {
 		border-top-right-radius: 0;
 		border-bottom-right-radius: 0;
 		border-right-style: none;
@@ -116,7 +116,7 @@
 					<button class="remove btn btn-default"><i class="glyphicon glyphicon-remove"></i></button>
 				</div>
 			</td>
-			<td class="batch-delete"><input type="checkbox" name="delete"></td>
+			<td class="batch"><input type="checkbox" name="batch"></td>
 		</tr>
 	</template>
 	<template data-id="importRule">
@@ -170,7 +170,7 @@
 										<th i18n-text="matchRule"></th>
 										<th i18n-text="matchType"></th>
 										<th i18n-text="action" class="action"></th>
-										<th class="batch-delete" i18n-text="batch_delete"></th>
+										<th class="batch">批量操作</th>
 									</tr>
 								</thead>
 								<tbody class="rules-list"></tbody>
@@ -197,7 +197,8 @@
 				<div class="panel-body">
 					<p id="globalAction">
 						<button class="btn btn-default" id="addRule" i18n-text="add"></button>
-						<button class="btn btn-default" id="batch-delete" i18n-text="batch_delete"></button>
+						<!-- <button class="btn btn-default" id="batch-delete" i18n-text="batch_delete"></button> -->
+						<button class="btn btn-default" id="batch-mode">批量操作</button>
 						<button class="btn btn-default" id="export" i18n-text="export"></button>
 						<button class="btn btn-default" id="import" i18n-text="import"></button>
 						<a class="btn btn-default" href="https://github.com/FirefoxBar/HeaderEditor/wiki" i18n-text="help"></a>
@@ -229,9 +230,11 @@
 	</div>
 </div>
 <!-- batch delete actions -->
-<div class="float-btns batch-delete-btns btn-group" role="group">
-		<button id="batch-delete-submit" type="button" class="btn btn-primary" i18n-text="delete_confirm"></button>
-		<button id="batch-delete-all" type="button" class="btn btn-primary" i18n-text="select_all"></button>
+<div class="float-btns batch-mode-btns btn-group" role="group">
+		<button id="batch-delete" type="button" class="btn btn-primary" i18n-text="batch_delete"></button>
+		<button id="batch-group" type="button" class="btn btn-primary dropdown-toggle move-group" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false"><span i18n-text="group"></span> <span class="caret"></span></button>
+		<ul class="dropdown-menu"></ul>
+		<button id="batch-select-all" type="button" class="btn btn-primary" i18n-text="select_all"></button>
 </div>
 <div id="importDialog" class="modal fade" tabindex="-1" role="dialog">
   	<div class="modal-dialog modal-lg" role="document">

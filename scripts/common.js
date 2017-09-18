@@ -79,3 +79,14 @@ function getURL(url, isPost) {
 		}
 	});
 }
+
+function findParent(el, check) {
+	while (el.parentElement) {
+		if (check(el.parentElement)) {
+			return el.parentElement;
+		} else {
+			el = el.parentElement
+		}
+	}
+	return null;
+}
