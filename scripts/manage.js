@@ -346,6 +346,19 @@ function onBatchDeleteClick() {
 		});
 	});
 }
+function onBatchShareClick() {
+	let result = {};
+	for (const t of tableNames) {
+		result[t] = [];
+	}
+	document.querySelectorAll('input[name="batch"]:checked').forEach((e) => {
+		const el = findParent(e, (c) => { return c.nodeName.toLowerCase() === 'tr'; });
+		const table = el.getAttribute('data-table');
+		const id = el.getAttribute('data-id');
+		result[table].push(getRules(table, {"id": id})[0]);
+	});
+	saveAsFile(JSON.stringify(result, null, "\t"), 'headereditor-' + new Date().getTime().toString() + '.json');
+}
 function onBatchGroupClick() {
 	this.nextElementSibling.innerHTML = document.getElementById('move_to_group').innerHTML;
 	this.nextElementSibling.querySelectorAll('li').forEach((e) => {
@@ -435,6 +448,7 @@ function addHistory(url) {
 		loadDownloadHistory();
 	}
 }
+
 
 function onMoveGroupClick() {
 	this.nextElementSibling.innerHTML = document.getElementById('move_to_group').innerHTML;
@@ -564,6 +578,7 @@ document.addEventListener('DOMContentLoaded', () => {
 	document.getElementById('batch-select-all').addEventListener('click', onBatchSelectAll);
 	document.getElementById('batch-delete').addEventListener('click', onBatchDeleteClick);
 	document.getElementById('batch-group').addEventListener('click', onBatchGroupClick);
+	document.getElementById('batch-share').addEventListener('click', onBatchShareClick);
 
 	// Import rules
 	document.getElementById('import').addEventListener('click', onImportClick);
