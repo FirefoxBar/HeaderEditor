@@ -2,7 +2,7 @@
 <html>
 <head>
 	<meta http-equiv="Content-Type" content="text/html;charset=UTF-8">
-	<title i18n-text="manageTitle"></title>
+	<title>Header Editor</title>
 	<link rel="icon" type="image/png" href="images/128.png">
 	<link rel="stylesheet" href="third-party/bootstrap/css/bootstrap.min.css">
 	<script src="scripts/browser-polyfill.js"></script>
@@ -173,7 +173,7 @@
 										<th i18n-text="matchRule"></th>
 										<th i18n-text="matchType"></th>
 										<th i18n-text="action" class="action"></th>
-										<th class="batch">批量操作</th>
+										<th i18n-text="batch_mode" class="batch"></th>
 									</tr>
 								</thead>
 								<tbody class="rules-list"></tbody>
@@ -188,7 +188,7 @@
 <body>
 <ul id="move_to_group" class="dropdown-menu"></ul>
 <div class="main">
-	<h1 i18n-text="manageTitle"></h1>
+	<h1>Header Editor</h1>
 	<div class="panel-group" id="rules" role="tablist" aria-multiselectable="true">
 		<div class="panel panel-default">
 			<div class="panel-heading" role="tab" id="rules-head">
@@ -200,7 +200,7 @@
 				<div class="panel-body">
 					<p id="globalAction">
 						<button class="btn btn-default" id="addRule" i18n-text="add"></button>
-						<button class="btn btn-default" id="batch-mode">批量操作</button>
+						<button class="btn btn-default" id="batch-mode" i18n-text="batch_mode"></button>
 						<button class="btn btn-default" id="export" i18n-text="export"></button>
 						<button class="btn btn-default" id="import" i18n-text="import"></button>
 						<a class="btn btn-default" href="https://github.com/FirefoxBar/HeaderEditor/wiki" i18n-text="help"></a>
@@ -215,6 +215,9 @@
 			<div class="panel-heading" role="tab" id="download-rules-head">
 				<h4 class="panel-title">
 					<a role="button" data-toggle="collapse" data-parent="#actions" href="#download-rules" aria-expanded="true" aria-controls="download-rules"><span i18n-text="download_rule"></span></a>
+					<div class="buttons">
+						<a href="https://github.com/FirefoxBar/HeaderEditor/wiki/Third-party-rules"><span  class="glyphicon glyphicon-search"></span> <span i18n-text="third_party_rules"></span></a>
+					</div>
 				</h4>
 			</div>
 			<div id="download-rules" class="panel-collapse collapse in" role="tabpanel" aria-labelledby="download-rules-head">
