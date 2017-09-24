@@ -329,19 +329,27 @@ function onBatchSelectAll() {
 	});
 }
 function onBatchDeleteClick() {
+	if (!confirm(t('delete_confirm'))) {
+		return;
+	}
 	let all = document.querySelectorAll('input[name="batch"]:checked');
 	let total = all.length;
 	let ok = 0;
+	let tables = [];
 	all.forEach((e) => {
 		let tr = findParent(e, (c) => { return c.nodeName.toLowerCase() === 'tr'; });
 		let id = tr.getAttribute('data-id');
 		let table = tr.getAttribute('data-table');
 		deleteRule(table, id).then((response) => {
-			browser.runtime.sendMessage({"method": "updateCache", "type": table});
+			if (!tables.includes(table)) {
+				tables.push(table);
+			}
 			tr.remove();
 			ok++;
 			if (ok === total) {
-				onBatchDeleteClick();
+				for (const t of tables) {
+					browser.runtime.sendMessage({"method": "updateCache", "type": t});
+				}
 			}
 		});
 	});
