@@ -60,6 +60,7 @@ function clearModal() {
 	$('#matchType').find('option').removeAttr('selected');
 	$('#isFunction').find('option').removeAttr('selected');
 	$('#ruleType').removeAttr('disabled');
+	$('#test-url').trigger('keyup');
 }
 
 $('#addRule').bind('click', function() {
@@ -613,17 +614,17 @@ function onRealtimeTest() {
 		isMatch = (typeof(r) === 'undefined' || r) ? 1 : (r ? 2 : 1);
 	}
 	if (isMatch === -1) {
-		resultArea.innerHTML = '正则表达式无效';
+		resultArea.innerHTML = t('test_invalid_regexp');
 		return;
 	} else if (isMatch === 0) {
-		resultArea.innerHTML = '不匹配';
+		resultArea.innerHTML = t('test_mismatch');
 		return;
 	} else if (isMatch === 2) {
-		resultArea.innerHTML = '匹配但被排除';
+		resultArea.innerHTML = t('test_exclude');
 		return;
 	}
 	if (isFunction) {
-		resultArea.innerHTML = '暂不支持预览自定义函数';
+		resultArea.innerHTML = t('test_custom_code');
 		return;
 	} else {
 		let redirect = '';
@@ -631,6 +632,9 @@ function onRealtimeTest() {
 			redirect = url.replace(new RegExp(matchRule), redirectTo);
 		} else {
 			redirect = redirectTo;
+		}
+		if (/^(http|https|ftp|file)%3A/.test(redirect)) {
+			redirect = decodeURIComponent(redirect);
 		}
 		resultArea.innerHTML = '';
 		resultArea.appendChild(document.createTextNode(redirect));
