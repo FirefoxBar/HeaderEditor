@@ -573,6 +573,70 @@ function onGroupRemoveClick() {
 	window.location.reload();
 }
 
+function onRealtimeTest() {
+	const url = document.getElementById('test-url').value;
+	const redirectTo = document.getElementById('redirectTo').value;
+	const matchRule = document.getElementById('matchRule').value;
+	const excludeRule = document.getElementById('excludeRule').value;
+	const matchType = document.querySelector('#matchType option:checked').value;
+	const resultArea = document.getElementById('test-url-result');
+	const isFunction = parseInt(document.querySelector('#isFunction option:checked').value);
+	let isMatch = 0;
+	switch (matchType) {
+		case 'all':
+			isMatch = 1;
+			break;
+		case 'regexp':
+			var r = runTryCatch(function() {
+				var reg = new RegExp(matchRule);
+				return reg.test(url);
+			});
+			isMatch =  (r === undefined ? -1 : (r ? 1 : 0));
+			break;
+		case 'prefix':
+			isMatch = url.indexOf(matchRule) === 0 ? 1 : 0;
+			break;
+		case 'domain':
+			isMatch = getDomain(url) === matchRule ? 1 : 0;
+			break;
+		case 'url':
+			isMatch = url === matchRule ? 1 : 0;
+			break;
+		default:
+			break;
+	}
+	if (isMatch === 1 && typeof(excludeRule) === 'string' && excludeRule.length > 0) {
+		var r = runTryCatch(function() {
+			var reg = new RegExp(excludeRule);
+			return reg.test(url);
+		});
+		isMatch = (typeof(r) === 'undefined' || r) ? 1 : (r ? 2 : 1);
+	}
+	if (isMatch === -1) {
+		resultArea.innerHTML = '正则表达式无效';
+		return;
+	} else if (isMatch === 0) {
+		resultArea.innerHTML = '不匹配';
+		return;
+	} else if (isMatch === 2) {
+		resultArea.innerHTML = '匹配但被排除';
+		return;
+	}
+	if (isFunction) {
+		resultArea.innerHTML = '暂不支持预览自定义函数';
+		return;
+	} else {
+		let redirect = '';
+		if (matchType === 'regexp') {
+			redirect = url.replace(new RegExp(matchRule), redirectTo);
+		} else {
+			redirect = redirectTo;
+		}
+		resultArea.innerHTML = '';
+		resultArea.appendChild(document.createTextNode(redirect));
+		return;
+	}
+}
 
 document.addEventListener('DOMContentLoaded', () => {
 	document.getElementById('export').addEventListener('click', onExportClick);
@@ -598,6 +662,13 @@ document.addEventListener('DOMContentLoaded', () => {
 		addHistory(document.getElementById('download-url').value);
 	});
 	loadDownloadHistory();
+
+	//Realtime test
+	document.getElementById('test-url').addEventListener('keyup', onRealtimeTest);
+	document.getElementById('redirectTo').addEventListener('keyup', onRealtimeTest);
+	document.getElementById('excludeRule').addEventListener('keyup', onRealtimeTest);
+	document.getElementById('matchRule').addEventListener('keyup', onRealtimeTest);
+	document.getElementById('matchType').addEventListener('change', onRealtimeTest);
 
 	loadRulesList();
 });

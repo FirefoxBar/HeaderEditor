@@ -86,23 +86,29 @@ function filterRules(rules, options) {
 
 	if (url != null) {
 		rules = rules.filter((rule) => {
-			var result = false;
-			if (rule.matchType === 'all') {
-				result = true;
-			} else if (rule.matchType === 'regexp') {
-				var r = runTryCatch(function() {
-					var reg = new RegExp(rule.pattern);
-					return reg.test(url);
-				});
-				result =  (r === undefined ? false : r);
-			} else if (rule.matchType === 'prefix') {
-				result = url.indexOf(rule.pattern) === 0;
-			} else if (rule.matchType === 'domain') {
-				result = getDomain(url) === rule.pattern;
-			} else if (rule.matchType === 'url') {
-				result = url === rule.pattern;
-			} else {
-				result = false;
+			let result = false;
+			switch (rule.matchType) {
+				case 'all':
+					result = true;
+					break;
+				case 'regexp':
+					var r = runTryCatch(function() {
+						var reg = new RegExp(rule.pattern);
+						return reg.test(url);
+					});
+					result =  (r === undefined ? false : r);
+					break;
+				case 'prefix':
+					result = url.indexOf(rule.pattern) === 0;
+					break;
+				case 'domain':
+					result = getDomain(url) === rule.pattern;
+					break;
+				case 'url':
+					result = url === rule.pattern;
+					break;
+				default:
+					break;
 			}
 			if (result && typeof(rule.exclude) === 'string' && rule.exclude.length > 0) {
 				var r = runTryCatch(function() {
