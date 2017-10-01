@@ -1,5 +1,4 @@
 const tables = ['request', 'sendHeader', 'receiveHeader'];
-let waitToImport = null;
 
 ["forEach", "some", "indexOf", "map"].forEach((method) => {
 	if (typeof(NodeList.prototype[method]) === 'undefined') {

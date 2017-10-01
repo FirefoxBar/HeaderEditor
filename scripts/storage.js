@@ -24,8 +24,9 @@ function getDatabase() {
 };
 
 function runTryCatch(func) {
-	try { return func() }
-	catch(e) {}
+	try {
+		return func();
+	} catch(e) {}
 }
 
 var cachedRules = {};
@@ -92,11 +93,11 @@ function filterRules(rules, options) {
 					result = true;
 					break;
 				case 'regexp':
-					var r = runTryCatch(function() {
+					var r = runTryCatch(() => {
 						var reg = new RegExp(rule.pattern);
 						return reg.test(url);
 					});
-					result =  (r === undefined ? false : r);
+					result = (r === undefined ? false : r);
 					break;
 				case 'prefix':
 					result = url.indexOf(rule.pattern) === 0;
@@ -227,6 +228,6 @@ function initStorage() {
 		if (cachedRules.request === null || cachedRules.sendHeader === null || cachedRules.receiveHeader === null) {
 			initStorage();
 		}
-	}, 20);
+	}, 50);
 }
 initStorage();
