@@ -45,13 +45,35 @@ function updateCache(type) {
 		os.openCursor().onsuccess = function(event) {
 			var cursor = event.target.result;
 			if (cursor) {
-				var s = cursor.value;
+				let s = cursor.value;
+				let isValidRule = true;
 				s.id = cursor.key;
 				// Init function here
 				if (s.isFunction) {
-					s.func_body = new Function('val', 'detail', s.code);
+					try {
+						s._func = new Function('val', 'detail', s.code);
+					} catch (e) {
+						isValidRule = false;
+					}
 				}
-				all.push(s);
+				// Init regexp
+				if (s.matchType === 'regexp') {
+					try {
+						s._reg = new RegExp(s.pattern);
+					} catch (e) {
+						isValidRule = false;
+					}
+				}
+				if (typeof(s.exclude) === 'string' && s.exclude.length > 0) {
+					try {
+						s._exclude = new RegExp(s.exclude);
+					} catch (e) {
+						isValidRule = false;
+					}
+				}
+				if (isValidRule) {
+					all.push(s);
+				}
 				cursor.continue();
 			} else {
 				cachedRules[type] = all;
@@ -93,11 +115,7 @@ function filterRules(rules, options) {
 					result = true;
 					break;
 				case 'regexp':
-					var r = runTryCatch(() => {
-						var reg = new RegExp(rule.pattern);
-						return reg.test(url);
-					});
-					result = (r === undefined ? false : r);
+					result = rule._reg.test(url);
 					break;
 				case 'prefix':
 					result = url.indexOf(rule.pattern) === 0;
@@ -111,12 +129,8 @@ function filterRules(rules, options) {
 				default:
 					break;
 			}
-			if (result && typeof(rule.exclude) === 'string' && rule.exclude.length > 0) {
-				var r = runTryCatch(function() {
-					var reg = new RegExp(rule.exclude);
-					return reg.test(url);
-				});
-				return (typeof(r) === 'undefined' || r) ? false : true;
+			if (result && rule._exclude) {
+				return !(rule._exclude.test(url));
 			} else {
 				return result;
 			}

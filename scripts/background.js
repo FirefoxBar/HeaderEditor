@@ -100,14 +100,14 @@ browser.webRequest.onBeforeRequest.addListener(function(e) {
 		} else {
 			if (item.isFunction) {
 				runTryCatch(() => {
-					let r = item.func_body(redirectTo, detail);
+					let r = item._func(redirectTo, detail);
 					if (typeof(r) === 'string') {
 						redirectTo = r;
 					}
 				});
 			} else {
 				if (item.matchType === 'regexp') {
-					redirectTo = redirectTo.replace(new RegExp(item.pattern), item.to);
+					redirectTo = redirectTo.replace(item._reg, item.to);
 				} else {
 					redirectTo = item.to;
 				}
@@ -156,7 +156,7 @@ function modifyHeaders(headers, rules, details) {
 		for (let item of rules) {
 			if (item.isFunction) {
 				runTryCatch(() => {
-					item.func_body(headers, detail);
+					item._func(headers, detail);
 				});
 			}
 		}

@@ -588,11 +588,12 @@ function onRealtimeTest() {
 			isMatch = 1;
 			break;
 		case 'regexp':
-			var r = runTryCatch(function() {
-				var reg = new RegExp(matchRule);
-				return reg.test(url);
-			});
-			isMatch =  (r === undefined ? -1 : (r ? 1 : 0));
+			try {
+				let reg = new RegExp(matchRule);
+				isMatch = reg.test(url) ? 1 : 0;
+			} catch (e) {
+				isMatch = -1;
+			}
 			break;
 		case 'prefix':
 			isMatch = url.indexOf(matchRule) === 0 ? 1 : 0;
@@ -607,11 +608,12 @@ function onRealtimeTest() {
 			break;
 	}
 	if (isMatch === 1 && typeof(excludeRule) === 'string' && excludeRule.length > 0) {
-		var r = runTryCatch(function() {
-			var reg = new RegExp(excludeRule);
-			return reg.test(url);
-		});
-		isMatch = (typeof(r) === 'undefined' || r) ? 1 : (r ? 2 : 1);
+		try {
+			let reg = new RegExp(matchRule);
+			isMatch = reg.test(url) ? 2 : 1;
+		} catch (e) {
+			isMatch = 1;
+		}
 	}
 	if (isMatch === -1) {
 		resultArea.innerHTML = t('test_invalid_regexp');
