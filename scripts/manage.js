@@ -609,7 +609,7 @@ function onRealtimeTest() {
 	}
 	if (isMatch === 1 && typeof(excludeRule) === 'string' && excludeRule.length > 0) {
 		try {
-			let reg = new RegExp(matchRule);
+			let reg = new RegExp(excludeRule);
 			isMatch = reg.test(url) ? 2 : 1;
 		} catch (e) {
 			isMatch = 1;
