@@ -589,7 +589,7 @@ function onRealtimeTest() {
 			break;
 		case 'regexp':
 			try {
-				let reg = new RegExp(matchRule);
+				let reg = new RegExp(matchRule, 'g');
 				isMatch = reg.test(url) ? 1 : 0;
 			} catch (e) {
 				isMatch = -1;
@@ -631,7 +631,7 @@ function onRealtimeTest() {
 	} else {
 		let redirect = '';
 		if (matchType === 'regexp') {
-			redirect = url.replace(new RegExp(matchRule), redirectTo);
+			redirect = url.replace(new RegExp(matchRule, 'g'), redirectTo);
 		} else {
 			redirect = redirectTo;
 		}
