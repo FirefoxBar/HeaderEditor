@@ -59,7 +59,7 @@ function updateCache(type) {
 				// Init regexp
 				if (s.matchType === 'regexp') {
 					try {
-						s._reg = new RegExp(s.pattern);
+						s._reg = new RegExp(s.pattern, 'g');
 					} catch (e) {
 						isValidRule = false;
 					}
