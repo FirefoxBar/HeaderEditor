@@ -66,17 +66,19 @@ function openURL(options) {
 
 //给图片右键菜单增加快速添加反防盗链的功能
 runTryCatch(() => {
-	browser.contextMenus.create({
-		id: "add-anti-theft-link",
-		type: "normal",
-		title: t('add_anti_theft_link'),
-		contexts: ["image"],
-		targetUrlPatterns: ["http://*/*", "https://*/*", "ftp://*/*"]
-	});
-});
-browser.contextMenus.onClicked.addListener((info, tab) => {
-	if (info.menuItemId === 'add-anti-theft-link') {
-		openURL({"url": browser.extension.getURL("anti-theft-link.html") + '?url=' + info.srcUrl});
+	if (typeof(browser.contextMenus) !== 'undefined') {
+		browser.contextMenus.create({
+			id: "add-anti-theft-link",
+			type: "normal",
+			title: t('add_anti_theft_link'),
+			contexts: ["image"],
+			targetUrlPatterns: ["http://*/*", "https://*/*", "ftp://*/*"]
+		});
+		browser.contextMenus.onClicked.addListener((info, tab) => {
+			if (info.menuItemId === 'add-anti-theft-link') {
+				openURL({"url": browser.extension.getURL("anti-theft-link.html") + '?url=' + info.srcUrl});
+			}
+		});
 	}
 });
 
@@ -183,5 +185,5 @@ browser.webRequest.onHeadersReceived.addListener(function(e) {
 }, {urls: ["<all_urls>"]}, ['blocking', 'responseHeaders']);
 
 browser.browserAction.onClicked.addListener(function () {
-	browser.runtime.openOptionsPage()
+	openURL({"url": browser.extension.getURL('manage.html')});
 });
