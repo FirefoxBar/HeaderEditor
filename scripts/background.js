@@ -70,9 +70,8 @@ runTryCatch(() => {
 		browser.contextMenus.create({
 			id: "add-anti-theft-link",
 			type: "normal",
-			title: t('add_anti_theft_link'),
-			contexts: ["image"],
-			targetUrlPatterns: ["http://*/*", "https://*/*", "ftp://*/*"]
+			title: browser.i18n.getMessage('add_anti_theft_link'),
+			contexts: ["image"]
 		});
 		browser.contextMenus.onClicked.addListener((info, tab) => {
 			if (info.menuItemId === 'add-anti-theft-link') {
