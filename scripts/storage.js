@@ -236,12 +236,18 @@ function upgradeTo2() {
 
 function initStorage() {
 	setTimeout(() => {
-		updateCache('request');
-		updateCache('sendHeader');
-		updateCache('receiveHeader');
+		if (cachedRules.request === null) {
+			updateCache('request');
+		}
+		if (cachedRules.sendHeader === null) {
+			updateCache('sendHeader');
+		}
+		if (cachedRules.receiveHeader === null) {
+			updateCache('receiveHeader');
+		}
 		if (cachedRules.request === null || cachedRules.sendHeader === null || cachedRules.receiveHeader === null) {
 			initStorage();
 		}
-	}, 50);
+	}, 100);
 }
 initStorage();
