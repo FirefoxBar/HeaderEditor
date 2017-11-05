@@ -4,6 +4,8 @@ const IS_ANDROID = navigator.userAgent.includes('Android');
 //const IS_MOBILE = (IS_ANDROID || IS_IOS);
 const IS_MOBILE = IS_ANDROID;
 
+const HE_DUMP_FILE_NAME = "HE-{Y}-{m}-{d}_{H}.{i}.{s}.json";
+
 const tableNames = ['request', 'sendHeader', 'receiveHeader'];
 
 let IS_FIREFOX = false;
@@ -30,6 +32,20 @@ if (/Firefox\/(\d+)\.(\d+)/.test(navigator.userAgent)) {
 		NodeList.prototype[method]= Array.prototype[method];
 	}
 });
+
+//date format
+function DateFormat(f, d) {
+	if (typeof(d) === 'undefined') {
+		d = new Date();
+	}
+	f = f.replace(/\{Y\}/g, d.getFullYear());
+	f = f.replace(/\{m\}/g, d.getMonth() + 1);
+	f = f.replace(/\{d\}/g, d.getDate());
+	f = f.replace(/\{H\}/g, d.getHours());
+	f = f.replace(/\{i\}/g, d.getMinutes());
+	f = f.replace(/\{s\}/g, d.getSeconds());
+	return f;
+}
 
 //get url params
 function getParams() {

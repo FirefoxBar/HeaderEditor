@@ -218,7 +218,7 @@ function onSaveClick() {
 //export
 function onExportClick() {
 	var allResult = {};
-	saveAsFile(JSON.stringify(browser.extension.getBackgroundPage().cachedRules), 'headereditor-' + new Date().getTime().toString() + '.json');
+	saveAsFile(JSON.stringify(browser.extension.getBackgroundPage().cachedRules), DateFormat(HE_DUMP_FILE_NAME));
 }
 
 //import
