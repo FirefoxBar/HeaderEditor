@@ -238,11 +238,11 @@
 </div>
 <!-- batch delete actions -->
 <div class="float-btns batch-mode-btns btn-group dropup" role="group">
-		<button id="batch-delete" type="button" class="btn btn-primary" i18n-text="batch_delete"></button>
-		<button id="batch-share" class="btn btn-primary" i18n-text="export"></button>
-		<button id="batch-group" type="button" class="btn btn-primary dropdown-toggle move-group" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false"><span i18n-text="group"></span> <span class="caret"></span></button>
-		<ul class="dropdown-menu"></ul>
-		<button id="batch-select-all" type="button" class="btn btn-primary" i18n-text="select_all"></button>
+	<button id="batch-delete" type="button" class="btn btn-primary" i18n-text="batch_delete"></button>
+	<button id="batch-share" class="btn btn-primary" i18n-text="export"></button>
+	<button id="batch-group" type="button" class="btn btn-primary dropdown-toggle move-group" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false"><span i18n-text="group"></span> <span class="caret"></span></button>
+	<ul class="dropdown-menu"></ul>
+	<button id="batch-select-all" type="button" class="btn btn-primary" i18n-text="select_all"></button>
 </div>
 <div id="importDialog" class="modal fade" tabindex="-1" role="dialog">
   	<div class="modal-dialog modal-lg" role="document">
@@ -252,6 +252,10 @@
 				<h4 class="modal-title" i18n-text="import"></h4>
 	 		</div>
 			<div class="modal-body form-horizontal">
+				<div class="btn-group" role="group">
+					<button type="button" class="btn btn-default dropdown-toggle move-group" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false" style="border-right-style:solid;border-top-right-radius:4px"><span class="group_name" i18n-text="ungrouped"></span> <span class="caret"></span></button>
+					<ul id="importRulesGroup" class="dropdown-menu"></ul>
+				</div>
 				<table class="table table-hover rule-list">
 					<thead>
 						<tr>

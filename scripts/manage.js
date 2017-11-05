@@ -214,11 +214,13 @@ function onSaveClick() {
 		}, 300);
 	});
 }
+
 //export
 function onExportClick() {
 	var allResult = {};
 	saveAsFile(JSON.stringify(browser.extension.getBackgroundPage().cachedRules), 'headereditor-' + new Date().getTime().toString() + '.json');
 }
+
 //import
 function importFromString(str) {
 	waitToImport = {};
@@ -248,6 +250,14 @@ function onImportClick() {
 	});
 }
 function showImportModal() {
+	// Move group selection
+	const groups = document.getElementById('importRulesGroup');
+	groups.innerHTML = document.getElementById('move_to_group').innerHTML;
+	groups.setAttribute('data-name', t('ungrouped'));
+	groups.querySelectorAll('li').forEach((e) => {
+		e.addEventListener('click', onImportGroupClick);
+	});
+	// Contents
 	const tbody = document.getElementById('importRulesList');
 	tbody.innerHTML = '';
 	for (let key of tableNames) {
@@ -275,13 +285,33 @@ function showImportModal() {
 	}
 	$('#importDialog').modal('show');
 }
+function onImportGroupClick() {
+	let name = null;
+	if (this.getAttribute('data-name') === '_new') {
+		name = window.prompt(t('enter_group_name'));
+		if (name) {
+			addGroupEl(name);
+			cachedGroupList[name] = [];
+			saveGroups();
+		} else {
+			return;
+		}
+	} else {
+		name = this.getAttribute('data-name');
+	}
+	this.parentElement.setAttribute('data-name', name);
+	this.parentElement.previousElementSibling.querySelector('.group_name').innerHTML = '';
+	this.parentElement.previousElementSibling.querySelector('.group_name').appendChild(document.createTextNode(name));
+}
 function onImportSubmit() {
 	let total = 0;
 	let finish = 0;
 	let toSave = {};
+	let groupName = document.getElementById('importRulesGroup').getAttribute('data-name');
 	function checkFinish() {
 		if (total === finish) {
 			$('#importDialog').modal('hide');
+			saveGroups();
 			browser.runtime.sendMessage({"method": "updateCache", "type": "all"});
 			setTimeout(() => {
 				window.location.reload();
@@ -303,10 +333,13 @@ function onImportSubmit() {
 			}
 			toSave[key].push(item);
 		}
-	};
+	}
 	for (let key of tableNames) {
 		for (const item of toSave[key]) {
-			saveRule(key, item).then(() => {
+			saveRule(key, item).then((r) => {
+				if (groupName !== t('ungrouped')) {
+					cachedGroupList[groupName].push(key + '-' + r.id);
+				}
 				finish++;
 				checkFinish();
 			});
@@ -314,6 +347,7 @@ function onImportSubmit() {
 	}
 }
 
+// Batch mode
 function onBatchModeClick() {
 	//unselect all
 	document.querySelectorAll('input[name="batch"]:checked').forEach((e) => {
@@ -408,12 +442,12 @@ function onBatchGroupSelect() {
 	});
 }
 
+// Download rules
 function downloadRule(url) {
 	getURL(url).then((str) => {
 		importFromString(str);
 	});
 }
-
 function loadDownloadHistory() {
 	if (!localStorage.getItem('dl_history')) {
 		localStorage.setItem('dl_history', '[]');
