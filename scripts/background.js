@@ -33,13 +33,10 @@ browser.runtime.onMessage.addListener(function(request, sender, sendResponse) {
 			break;
 		case 'updateCache':
 			if (request.type === 'all') {
-				updateCache('request');
-				updateCache('sendHeader');
-				updateCache('receiveHeader');
+				Promise.all([updateCache('request'), updateCache('sendHeader'), updateCache('receiveHeader')]).then(sendResponse);
 			} else {
-				updateCache(request.type);
+				updateCache(request.type).then(sendResponse);
 			}
-			sendResponse();
 			break;
 	}
 });

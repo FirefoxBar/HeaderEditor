@@ -38,47 +38,50 @@ function getRules(type, options) {
 }
 
 function updateCache(type) {
-	getDatabase().then((db) => {
-		var tx = db.transaction([type], "readonly");
-		var os = tx.objectStore(type);
-		var all = [];
-		os.openCursor().onsuccess = function(event) {
-			var cursor = event.target.result;
-			if (cursor) {
-				let s = cursor.value;
-				let isValidRule = true;
-				s.id = cursor.key;
-				// Init function here
-				if (s.isFunction) {
-					try {
-						s._func = new Function('val', 'detail', s.code);
-					} catch (e) {
-						isValidRule = false;
+	return new Promise((resolve, reject) => {
+		getDatabase().then((db) => {
+			var tx = db.transaction([type], "readonly");
+			var os = tx.objectStore(type);
+			var all = [];
+			os.openCursor().onsuccess = function(event) {
+				var cursor = event.target.result;
+				if (cursor) {
+					let s = cursor.value;
+					let isValidRule = true;
+					s.id = cursor.key;
+					// Init function here
+					if (s.isFunction) {
+						try {
+							s._func = new Function('val', 'detail', s.code);
+						} catch (e) {
+							isValidRule = false;
+						}
 					}
-				}
-				// Init regexp
-				if (s.matchType === 'regexp') {
-					try {
-						s._reg = new RegExp(s.pattern, 'g');
-					} catch (e) {
-						isValidRule = false;
+					// Init regexp
+					if (s.matchType === 'regexp') {
+						try {
+							s._reg = new RegExp(s.pattern, 'g');
+						} catch (e) {
+							isValidRule = false;
+						}
 					}
-				}
-				if (typeof(s.exclude) === 'string' && s.exclude.length > 0) {
-					try {
-						s._exclude = new RegExp(s.exclude);
-					} catch (e) {
-						isValidRule = false;
+					if (typeof(s.exclude) === 'string' && s.exclude.length > 0) {
+						try {
+							s._exclude = new RegExp(s.exclude);
+						} catch (e) {
+							isValidRule = false;
+						}
 					}
+					if (isValidRule) {
+						all.push(s);
+					}
+					cursor.continue();
+				} else {
+					cachedRules[type] = all;
+					resolve();
 				}
-				if (isValidRule) {
-					all.push(s);
-				}
-				cursor.continue();
-			} else {
-				cachedRules[type] = all;
-			}
-		};
+			};
+		}).catch(reject);
 	});
 }
 
@@ -236,18 +239,21 @@ function upgradeTo2() {
 
 function initStorage() {
 	setTimeout(() => {
+		let queue = [];
 		if (cachedRules.request === null) {
-			updateCache('request');
+			queue.push(updateCache('request'));
 		}
 		if (cachedRules.sendHeader === null) {
-			updateCache('sendHeader');
+			queue.push(updateCache('sendHeader'));
 		}
 		if (cachedRules.receiveHeader === null) {
-			updateCache('receiveHeader');
+			queue.push(updateCache('receiveHeader'));
 		}
-		if (cachedRules.request === null || cachedRules.sendHeader === null || cachedRules.receiveHeader === null) {
-			initStorage();
-		}
+		Promise.all(queue).then(() => {
+			if (cachedRules.request === null || cachedRules.sendHeader === null || cachedRules.receiveHeader === null) {
+				initStorage();
+			}
+		});
 	}, 100);
 }
 initStorage();
