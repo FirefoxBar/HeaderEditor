@@ -315,6 +315,10 @@ function onImportSubmit() {
 }
 
 function onBatchModeClick() {
+	//unselect all
+	document.querySelectorAll('input[name="batch"]:checked').forEach((e) => {
+		e.checked = false;
+	});
 	document.querySelectorAll('.rule-list').forEach((e) => {
 		e.classList.toggle('batch-mode');
 	});
