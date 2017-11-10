@@ -5,7 +5,9 @@
 	<meta name="viewport" content="width=device-width, initial-scale=1">
 	<title>Header Editor</title>
 	<link rel="icon" type="image/png" href="images/128.png">
-	<link rel="stylesheet" href="third-party/bootstrap/css/bootstrap.min.css">
+	<link rel="stylesheet" href="third-party/material-design-icons/material-icons.min.css"/>
+	<link rel="stylesheet" href="third-party/dialog-polyfill/dialog-polyfill.min.css"/>
+	<link rel="stylesheet" href="third-party/mdl/material.min.css"/>
 	<script src="scripts/browser-polyfill.js"></script>
 	<script src="scripts/common.js"></script>
 	<script src="scripts/localization.js"></script>
@@ -108,12 +110,13 @@
 	</style>
 	<template data-id="rule">
 		<tr data-id="" data-type="">
-			<td class="enable"><input type="checkbox" name="enable"></td>
-			<td class="name"></td>
-			<td class="rule-type"></td>
-			<td class="pattern"></td>
-			<td class="match-type"></td>
-			<td class="action">
+			<td class="batch mdl-data-table__cell--non-numeric"><input type="checkbox" name="batch"></td>
+			<td class="enable mdl-data-table__cell--non-numeric"><input type="checkbox" name="enable"></td>
+			<td class="name mdl-data-table__cell--non-numeric"></td>
+			<td class="rule-type mdl-data-table__cell--non-numeric"></td>
+			<td class="pattern mdl-data-table__cell--non-numeric"></td>
+			<td class="match-type mdl-data-table__cell--non-numeric"></td>
+			<td class="action mdl-data-table__cell--non-numeric">
 				<div class="btn-group" role="group">
 					<button type="button" class="btn btn-default dropdown-toggle move-group" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false"><span i18n-text="group"></span> <span class="caret"></span></button>
 					<ul class="dropdown-menu"></ul>
@@ -121,7 +124,6 @@
 					<button class="remove btn btn-default"><i class="glyphicon glyphicon-remove"></i></button>
 				</div>
 			</td>
-			<td class="batch"><input type="checkbox" name="batch"></td>
 		</tr>
 	</template>
 	<template data-id="importRule">
@@ -153,35 +155,31 @@
 	</template>
 	<template data-id="groupItem">
 		<div class="group-item">
-			<div class="panel-group" id="groups-{id}" role="tablist" aria-multiselectable="true">
-				<div class="panel panel-default">
-					<div class="panel-heading" role="tab" id="groups-head-{id}">
-						<h4 class="panel-title">
-							<a role="button" data-toggle="collapse" data-parent="#groups-{id}" href="#groups-content-{id}" aria-expanded="true" aria-controls="groups-content-{id}"><span class="title"></span></a>
-							<div class="buttons">
-								<span class="glyphicon glyphicon-share share"></span>
-								<span class="glyphicon glyphicon-remove remove"></span>
-							</div>
-						</h4>
-					</div>
-					<div id="groups-content-{id}" class="panel-collapse collapse in" role="tabpanel" aria-labelledby="groups-head-{id}">
-						<div class="panel-body">
-							<table class="table table-hover rule-list">
-								<thead>
-									<tr>
-										<th i18n-text="enable" class="enable"></th>
-										<th i18n-text="name"></th>
-										<th i18n-text="ruleType"></th>
-										<th i18n-text="matchRule"></th>
-										<th i18n-text="matchType"></th>
-										<th i18n-text="action" class="action"></th>
-										<th i18n-text="batch_mode" class="batch"></th>
-									</tr>
-								</thead>
-								<tbody class="rules-list"></tbody>
-							</table>
+			<div class="mdl-card mdl-shadow--2dp option">
+				<div class="mdl-card__title mdl-card--expand">
+					<h2 class="mdl-card__title-text">
+						<span class="title"></span>
+						<div class="buttons">
+							<span class="glyphicon glyphicon-share share"></span>
+							<span class="glyphicon glyphicon-remove remove"></span>
 						</div>
-					</div>
+					</h2>
+				</div>
+				<div class="mdl-card__supporting-text mdl-grid">
+					<table class="mdl-data-table mdl-js-data-table rule-list" style="border:0">
+						<thead>
+							<tr>
+								<th i18n-text="batch_mode" class="batch mdl-data-table__cell--non-numeric"></th>
+								<th i18n-text="enable" class="enable mdl-data-table__cell--non-numeric"></th>
+								<th i18n-text="name mdl-data-table__cell--non-numeric"></th>
+								<th i18n-text="ruleType mdl-data-table__cell--non-numeric"></th>
+								<th i18n-text="matchRule mdl-data-table__cell--non-numeric"></th>
+								<th i18n-text="matchType mdl-data-table__cell--non-numeric"></th>
+								<th i18n-text="action" class="action mdl-data-table__cell--non-numeric"></th>
+							</tr>
+						</thead>
+						<tbody class="rules-list"></tbody>
+					</table>
 				</div>
 			</div>
 		</div>
@@ -189,6 +187,37 @@
 </head>
 <body>
 <ul id="move_to_group" class="dropdown-menu"></ul>
+id="demo-menu-lower-left"
+<ul class="mdl-menu mdl-menu--bottom-left mdl-js-menu mdl-js-ripple-effect" for="demo-menu-lower-left">
+	<li class="mdl-menu__item">Some Action</li>
+	<li class="mdl-menu__item mdl-menu__item--full-bleed-divider">Another Action</li>
+	<li disabled class="mdl-menu__item">Disabled Action</li>
+	<li class="mdl-menu__item">Yet Another Action</li>
+</ul>
+<div class="mdl-layout mdl-js-layout mdl-layout--fixed-header">
+	<header class="mdl-layout__header">
+		<div class="mdl-layout__tab-bar mdl-js-ripple-effect">
+			<a href="#rule-panel" class="mdl-layout__tab is-active"><i class="material-icons">list</i><span i18n-text="rule_list"></span></a>
+			<a href="#download-panel" class="mdl-layout__tab"><i class="material-icons">cloud_download</i><span i18n-text="download_rule"></span></a>
+			<a id="export" class="mdl-layout__tab"><i class="material-icons">settings_backup_restore</i><span i18n-text="export"></span></a>
+			<a id="import" class="mdl-layout__tab"><i class="material-icons">settings_backup_restore</i><span i18n-text="import"></span></a>
+			<div class="mdl-layout-spacer"></div>
+			<a href="https://github.com/FirefoxBar/HeaderEditor/wiki" class="mdl-layout__tab"><i class="material-icons">help</i><span i18n-text="help"></span></a>
+		</div>
+	</header>
+	<main class="mdl-layout__content">
+		<section class="mdl-layout__tab-panel is-active" id="rule-panel">
+			<div class="page-content">
+				<div id="groups"></div>
+			</div>
+		</section>
+		<section class="mdl-layout__tab-panel" id="download-panel">
+			<div class="page-content">
+			</div>
+		</section>
+	</main>
+</div>
+<!--
 <div class="main">
 	<h1>Header Editor</h1>
 	<div class="panel-group" id="rules" role="tablist" aria-multiselectable="true">
@@ -203,11 +232,9 @@
 					<p id="globalAction">
 						<button class="btn btn-default" id="addRule" i18n-text="add"></button>
 						<button class="btn btn-default" id="batch-mode" i18n-text="batch_mode"></button>
-						<button class="btn btn-default" id="export" i18n-text="export"></button>
-						<button class="btn btn-default" id="import" i18n-text="import"></button>
-						<a class="btn btn-default" href="https://github.com/FirefoxBar/HeaderEditor/wiki" i18n-text="help"></a>
+						<a class="btn btn-default" href="" i18n-text="help"></a>
 					</p>
-					<div id="groups"></div>
+					
 				</div>
 			</div>
 		</div>
@@ -236,7 +263,9 @@
 		</div>
 	</div>
 </div>
+-->
 <!-- batch delete actions -->
+<!--
 <div class="float-btns batch-mode-btns btn-group dropup" role="group">
 	<button id="batch-delete" type="button" class="btn btn-primary" i18n-text="batch_delete"></button>
 	<button id="batch-share" class="btn btn-primary" i18n-text="export"></button>
@@ -274,6 +303,7 @@
 		</div>
 	</div>
 </div>
+-->
 <div id="addDialog" class="modal fade" tabindex="-1" role="dialog">
   	<div class="modal-dialog modal-lg" role="document">
 		<div class="modal-content">
@@ -378,8 +408,8 @@
 		</div><!-- /.modal-content -->
   	</div><!-- /.modal-dialog -->
 </div><!-- /.modal -->
-<script src="third-party/jquery.min.js"></script>
-<script src="third-party/bootstrap/js/bootstrap.min.js"></script>
+<script src="third-party/dialog-polyfill/dialog-polyfill.min.js"></script>
+<script src="third-party/mdl/material.min.js"></script>
 <script src="scripts/fileSaveLoad.js"></script>
 <script src="scripts/manage.js"></script>
 </body>
