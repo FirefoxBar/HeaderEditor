@@ -162,7 +162,7 @@ function modifyHeaders(headers, rules, details) {
 }
 
 browser.webRequest.onBeforeSendHeaders.addListener(function(e) {
-	//可用：修改请求头
+	//修改请求头
 	if (!e.requestHeaders) {
 		return;
 	}
@@ -172,6 +172,7 @@ browser.webRequest.onBeforeSendHeaders.addListener(function(e) {
 }, {urls: ["<all_urls>"]}, ['blocking', 'requestHeaders']);
 
 browser.webRequest.onHeadersReceived.addListener(function(e) {
+	//修改请求头
 	if (!e.responseHeaders) {
 		return;
 	}
