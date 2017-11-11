@@ -2,6 +2,9 @@ function saveAsFile(text, fileName) {
 	return new Promise(function(resolve){
 		var blob = new Blob([text]);
 		var fileUrl = URL.createObjectURL(blob);
+		if (fileName.include('{ADDITIONAL}')) {
+			fileName = fileName.replace('{ADDITIONAL}', '');
+		}
 		var option = {filename: fileName, url: fileUrl};
 		// Firefox supported saveAs since version 52
 		if (IS_CHROME || FIREFOX_VERSION >= 52) {

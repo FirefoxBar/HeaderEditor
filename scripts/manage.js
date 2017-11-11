@@ -218,7 +218,7 @@ function onSaveClick() {
 //export
 function onExportClick() {
 	var allResult = {};
-	saveAsFile(JSON.stringify(browser.extension.getBackgroundPage().cachedRules), DateFormat(HE_DUMP_FILE_NAME));
+	saveAsFile(JSON.stringify(browser.extension.getBackgroundPage().cachedRules), DateFormat(HE_DUMP_FILE_NAME).replace('{ADDITIONAL}', '-All'));
 }
 
 //import
@@ -598,7 +598,7 @@ function onGroupShareClick() {
 		const id = e.getAttribute('data-id');
 		result[table].push(getRules(table, {"id": id})[0]);
 	});
-	saveAsFile(JSON.stringify(result, null, "\t"), DateFormat(HE_DUMP_FILE_NAME));
+	saveAsFile(JSON.stringify(result, null, "\t"), DateFormat(HE_DUMP_FILE_NAME).replace('{ADDITIONAL}', '-' + el.querySelector('.title').innerHTML));
 }
 function onGroupRemoveClick() {
 	const el = findParent(this, (e) => { return e.classList.contains('group-item'); });
