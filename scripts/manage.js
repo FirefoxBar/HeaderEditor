@@ -404,7 +404,7 @@ function onBatchShareClick() {
 		const id = el.getAttribute('data-id');
 		result[table].push(getRules(table, {"id": id})[0]);
 	});
-	saveAsFile(JSON.stringify(result, null, "\t"), 'headereditor-' + new Date().getTime().toString() + '.json');
+	saveAsFile(JSON.stringify(result, null, "\t"), DateFormat(HE_DUMP_FILE_NAME));
 }
 function onBatchGroupClick() {
 	this.nextElementSibling.innerHTML = document.getElementById('move_to_group').innerHTML;
@@ -598,7 +598,7 @@ function onGroupShareClick() {
 		const id = e.getAttribute('data-id');
 		result[table].push(getRules(table, {"id": id})[0]);
 	});
-	saveAsFile(JSON.stringify(result, null, "\t"), 'headereditor-' + new Date().getTime().toString() + '.json');
+	saveAsFile(JSON.stringify(result, null, "\t"), DateFormat(HE_DUMP_FILE_NAME));
 }
 function onGroupRemoveClick() {
 	const el = findParent(this, (e) => { return e.classList.contains('group-item'); });
