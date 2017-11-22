@@ -4,7 +4,7 @@ const IS_ANDROID = navigator.userAgent.includes('Android');
 //const IS_MOBILE = (IS_ANDROID || IS_IOS);
 const IS_MOBILE = IS_ANDROID;
 
-const HE_DUMP_FILE_NAME = "HE-{Y}-{m}-{d}_{H}.{i}.{s}.json";
+const HE_DUMP_FILE_NAME = "HE-{Y}-{m}-{d}_{H}.{i}.{s}{ADDITIONAL}.json";
 
 const tableNames = ['request', 'sendHeader', 'receiveHeader'];
 

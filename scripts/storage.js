@@ -118,6 +118,7 @@ function filterRules(rules, options) {
 					result = true;
 					break;
 				case 'regexp':
+					rule._reg.lastIndex = 0;
 					result = rule._reg.test(url);
 					break;
 				case 'prefix':
