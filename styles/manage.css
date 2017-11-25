@@ -1,0 +1,121 @@
+.mdl-layout__tab-bar-left-button,
+.mdl-layout__tab-bar-right-button {
+	display: none;
+}
+.mdl-layout__tab-bar-container {
+	height: 64px;
+}
+.mdl-layout__tab {
+	height: 64px;
+	line-height: 64px;
+}
+.mdl-layout__tab-bar {
+	padding-left: 0;
+	padding-right: 0;
+	width: 100%;
+	height: 64px;
+	overflow: hidden;
+}
+.mdl-tabs__panel > .mdl-card {
+	margin-bottom: 10px;
+}
+.mdl-layout__tab .material-icons {
+	vertical-align: middle;
+	margin-right: 12px;
+}
+.rule-list {
+	width: 100%;
+}
+.rule-list .enable {
+	width: 80px;
+}
+.rule-list .action {
+	width: 400px;
+}
+.rule-list .batch {
+	width: 100px;
+	display: none;
+}
+.rule-list th.batch {
+	cursor: pointer;
+}
+.rule-list.batch-mode .batch {
+	display: table-cell;
+}
+.float-button {
+	position: fixed;
+	right: 20px;
+	bottom: 20px;
+	width: 56px;
+}
+.float-button .mdl-button {
+	margin-top: 15px;
+}
+.form-group > * {
+	padding-top: 10px;
+	padding-bottom: 10px;
+	font-size: 16px;
+	display: inline-block;
+}
+.form-group .left {
+	width: 10%;
+	min-width: 160px;
+}
+.form-group .right {
+	width: 89%;
+	max-width: calc(100% - 190px);
+}
+.form-group .right .mdl-radio {
+	margin-right: 10px;
+}
+#edit-body .mdl-card__supporting-text > * {
+	width: 100%;
+}
+#importRulesList tr.keep .show-new {
+	display: none;
+}
+#importRulesList tr.new .show-keep {
+	display: none;
+}
+#edit-body .default-hide {
+	display: none;
+}
+#edit-body[data-match="all"] .match_rule {
+	display: none;
+}
+#edit-body[data-type="cancel"] #isFunctionBox {
+	display: none;
+}
+#edit-body[data-type="redirect"] .redirect_to,
+#edit-body[data-type="redirect"] .realtime-test {
+	display: block;
+}
+#edit-body[data-type="modifySendHeader"] .header_mondify,
+#edit-body[data-type="modifyReceiveHeader"] .header_mondify {
+	display: block;
+}
+#edit-body[data-isfunction="1"] .redirect_to,
+#edit-body[data-isfunction="1"] .header_mondify{
+	display: none;
+}
+#edit-body[data-isfunction="1"] .custom-code {
+	display: block;
+}
+#download-rules .list-group {
+	margin-top: 20px;
+}
+#download-rules .list-group li {
+	min-height: 54px;
+	line-height: 34px;
+}
+#download-rules .btn-group {
+	float: right;
+}
+.btn-group > .btn:not(:last-child) {
+	border-top-right-radius: 0;
+	border-bottom-right-radius: 0;
+	border-right-style: none;
+}
+.btn-group a {
+	cursor: pointer;
+}

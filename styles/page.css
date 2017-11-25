@@ -1,0 +1,85 @@
+body {
+	background-color: #EEE;
+}
+.mdl-button:not(.mdl-button--icon):not(.mdl-button--fab) .material-icons {
+	margin-right: 5px;
+}
+.mdl-card {
+	min-height: 0;
+	width: 100%;
+}
+.mdl-card__supporting-text {
+	width: 100%;
+	box-sizing: border-box;
+}
+.mdl-layout__content {
+	background-color: #EEE;
+}
+.section-spacer {
+	-webkit-flex-grow: 1;
+	-ms-flex-positive: 1;
+	flex-grow: 1;
+}
+.mdl-button .mdl-spinner {
+	display: none;
+	vertical-align: middle;
+	width: 25px;
+	height: 25px;
+	margin-left: 5px;
+}
+.mdl-menu .mdl-menu__item.active {
+	color: rgb(255, 64, 129);
+	font-weight: bold;
+}
+.mdl-layout__drawer-button .material-icons {
+	max-width: 24px;
+}
+.page-content {
+	padding: 10px;
+}
+.page-content > .mdl-card {
+	margin-bottom: 10px;
+}
+.page-content .mdl-card .mdl-card--expand {
+	flex-grow: 0;
+	-webkit-flex-grow: 0;
+	-ms-flex-positive: 0;
+}
+.page-content .mdl-card .mdl-card__supporting-text {
+	flex-grow: 1;
+	-webkit-flex-grow: 1;
+	-ms-flex-positive: 1;
+}
+.mdl-tabs__tab .material-icons {
+	vertical-align: middle;
+}
+.closeable-box.close .mdl-card__supporting-text,
+.closeable-box.close .mdl-card__actions {
+	display: none;
+}
+.closeable-box .toggle-box {
+	transition: .2s;
+}
+.closeable-box.close .toggle-box {
+	transform: rotate(180deg);
+}
+#editRuleDialog {
+	width: 800px;
+	max-width: 90%;
+}
+#editRuleDialog .mdl-grid {
+	padding: 0;
+}
+#editRuleDialog .mdl-grid .mdl-textfield {
+	width: 100%;
+}
+@media screen and (max-width: 1024px) {
+	.hide-on-mobile {
+		display: none !important;
+	}
+}
+@media screen and (min-width: 1025px) {
+	.hide-on-desktop {
+		display: none !important;
+	}
+}

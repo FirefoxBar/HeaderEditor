@@ -5,22 +5,27 @@ let templateId = 1; // used by template
 function loadRulesList() {
 	function appendRule(type, response) {
 		for (var i = 0; i < response.length; i++) {
-			let newNode = template.rule.cloneNode(true);
-			newNode.setAttribute('data-id', response[i].id);
-			newNode.setAttribute('data-table', type);
-			newNode.setAttribute('data-type', response[i].ruleType);
-			newNode.querySelector('.name').appendChild(document.createTextNode(response[i].name));
-			newNode.querySelector('.rule-type').appendChild(document.createTextNode(t('rule_' + response[i].ruleType)));
-			newNode.querySelector('.pattern').appendChild(document.createTextNode(response[i].pattern));
-			newNode.querySelector('.match-type').appendChild(document.createTextNode(t('match_' + response[i].matchType)));
-			newNode.querySelector('.move-group').addEventListener('click', onMoveGroupClick);
-			newNode.querySelector('.edit').addEventListener('click', onEditRuleClick);
-			newNode.querySelector('.remove').addEventListener('click', onRemoveRuleClick);
-			newNode.querySelector('input[name="enable"]').addEventListener('change', onEnableRuleChange);
-			if (response[i].enable) {
-				newNode.querySelector('.enable input[type="checkbox"]').checked = true;
+			let e = template.rule.cloneNode(true);
+			e.setAttribute('data-id', response[i].id);
+			e.setAttribute('data-table', type);
+			e.setAttribute('data-type', response[i].ruleType);
+			e.querySelector('.name').appendChild(document.createTextNode(response[i].name));
+			e.querySelector('.rule-type').appendChild(document.createTextNode(t('rule_' + response[i].ruleType)));
+			e.querySelector('.pattern').appendChild(document.createTextNode(response[i].pattern));
+			e.querySelector('.match-type').appendChild(document.createTextNode(t('match_' + response[i].matchType)));
+			e.querySelector('.move-group').addEventListener('click', onMoveGroupClick);
+			e.querySelector('.edit').addEventListener('click', onEditRuleClick);
+			e.querySelector('.remove').addEventListener('click', onRemoveRuleClick);
+			e.querySelector('input[name="enable"]').addEventListener('change', onEnableRuleChange);
+			const enableSwitcher = e.querySelector('.enable-switcher');
+			const enableCheckbox = enableSwitcher.querySelector('input');
+			enableSwitcher.setAttribute('for', 'switcher-' + response[i].id);
+			enableCheckbox.setAttribute('id', 'switcher-' + response[i].id);
+			enableCheckbox.checked = response[i].enable;
+			if (typeof(componentHandler) !== 'undefined') {
+				componentHandler.upgradeElement(enableSwitcher, 'MaterialSwitch');
 			}
-			moveItemToGroup(newNode, response[i].id, findItemInGroup(response[i].id, type), type);
+			moveItemToGroup(e, response[i].id, findItemInGroup(response[i].id, type), type);
 		}
 	}
 	function checkResult(type, response) {
@@ -52,34 +57,67 @@ function ruleType2tableName(ruleType) {
 	}
 }
 
-function clearModal() {
-	$('#ruleId').val('');
-	$('#addDialog').find('input[type="text"]').val('');
-	$('#addDialog').find('textarea').val('');
-	$('#ruleType').find('option').removeAttr('selected');
-	$('#matchType').find('option').removeAttr('selected');
-	$('#isFunction').find('option').removeAttr('selected');
-	$('#ruleType').removeAttr('disabled');
-	$('#test-url').trigger('keyup');
+function initEditChange() {
+	const body = document.getElementById('edit-body');
+	body.querySelectorAll('input[name="ruleType"]').forEach(e => {
+		e.addEventListener('change', function() {
+			body.setAttribute('data-type', this.value);
+		});
+	});
+	body.querySelectorAll('input[name="execType"]').forEach(e => {
+		e.addEventListener('change', function() {
+			body.setAttribute('data-isfunction', this.value);
+		});
+	});
+	body.querySelectorAll('input[name="matchType"]').forEach(e => {
+		e.addEventListener('change', function() {
+			body.setAttribute('data-match', this.value);
+		});
+	});
+}
+function clearEditPage() {
+	const body = document.getElementById('edit-body');
+	body.querySelector('#ruleId').value = '';
+	body.querySelectorAll('input[type="text"]').forEach((e) => {
+		e.value = '';
+	});
+	body.querySelectorAll('textarea').forEach((e) => {
+		e.value = '';
+	});
+	body.querySelectorAll('input[type="radio"]:checked').forEach((e) => {
+		e.checked = false;
+	});
+	body.querySelector('input[name="ruleType"]').checked = true;
+	body.querySelector('input[name="execType"]').checked = true;
+	body.querySelector('input[name="matchType"]').checked = true;
+	body.setAttribute('data-type', body.querySelector('input[name="ruleType"]').value);
+	body.setAttribute('data-isfunction', body.querySelector('input[name="execType"]').value);
+	body.setAttribute('data-match', body.querySelector('input[name="matchType"]').value);
+	// $('#ruleType').removeAttr('disabled');
+	// $('#test-url').trigger('keyup');
+}
+function showEditPage() {
+	document.getElementById('main-head').parentElement.style.display = 'none';
+	document.getElementById('main-body').style.display = 'none';
+	document.getElementById('edit-head').style.display = 'flex';
+	document.getElementById('edit-body').style.display = 'block';
+}
+function hideEditPage() {
+	document.getElementById('edit-head').style.display = 'none';
+	document.getElementById('edit-body').style.display = 'none';
+	document.getElementById('main-head').parentElement.style.display = 'flex';
+	document.getElementById('main-body').style.display = 'block';
+}
+function onEditCancelClick() {
+	hideEditPage();
+}
+function onAddRuleClick() {
+	clearEditPage();
+	document.querySelector('#edit-head .mdl-layout-title').innerHTML = t('add');
+	document.querySelector('#edit-body .title').innerHTML = t('add');
+	showEditPage();
 }
 
-$('#addRule').bind('click', function() {
-	clearModal();
-	$('#addDialog').find('.modal-title').html(t('add'));
-	$('#addDialog').modal('show');
-	$('#ruleType').trigger('change');
-	$('#isFunction').trigger('change');
-	$('#matchType').trigger('change');
-});
-$('#ruleType').bind('change', function() {
-	$('#addDialog').attr('data-type', $(this).find('option:selected').val());
-});
-$('#isFunction').bind('change', function() {
-	$('#addDialog').attr('data-isfunction', $(this).find('option:selected').val());
-});
-$('#matchType').bind('change', function() {
-	$('#addDialog').attr('data-match', $(this).find('option:selected').val());
-});
 //edit
 function onEditRuleClick() {
 	var id = $(this).parents('tr').attr('data-id');
@@ -113,9 +151,15 @@ function onEditRuleClick() {
 }
 //remove
 function onRemoveRuleClick() {
-	var tr = $(this).parents('tr');
-	var id = tr.attr('data-id');
-	var table = ruleType2tableName(tr.attr('data-type'));
+	const tr = ((e) => {
+		let p = e;
+		while (p.tagName !== 'TR' && p.parentElement) {
+			p = p.parentElement;
+		}
+		return p;
+	})(this);
+	const id = tr.getAttribute('data-id');
+	const table = ruleType2tableName(tr.getAttribute('data-type'));
 	deleteRule(table, id).then((response) => {
 		browser.runtime.sendMessage({"method": "updateCache", "type": table});
 		tr.remove();
@@ -123,10 +167,16 @@ function onRemoveRuleClick() {
 }
 //enable or disable
 function onEnableRuleChange () {
-	var tr = $(this).parents('tr');
-	var id = tr.attr('data-id');
-	var table = ruleType2tableName(tr.attr('data-type'));
-	var enable = this.checked ? 1 : 0;
+	const tr = ((e) => {
+		let p = e;
+		while (p.tagName !== 'TR' && p.parentElement) {
+			p = p.parentElement;
+		}
+		return p;
+	})(this);
+	const id = tr.getAttribute('data-id');
+	const table = ruleType2tableName(tr.getAttribute('data-type'));
+	const enable = this.checked ? 1 : 0;
 	saveRule(table, {"id": id, "enable": enable}).then(() => {
 		browser.runtime.sendMessage({"method": "updateCache", "type": table});
 	});
@@ -498,10 +548,10 @@ function addHistory(url) {
 
 
 function onMoveGroupClick() {
-	this.nextElementSibling.innerHTML = document.getElementById('move_to_group').innerHTML;
-	this.nextElementSibling.querySelectorAll('li').forEach((e) => {
-		e.addEventListener('click', onGroupMenuClick);
-	});
+	// this.nextElementSibling.innerHTML = document.getElementById('move_to_group').innerHTML;
+	// this.nextElementSibling.querySelectorAll('li').forEach((e) => {
+		// e.addEventListener('click', onGroupMenuClick);
+	// });
 }
 function onGroupMenuClick() {
 	let name = '';
@@ -550,7 +600,7 @@ function findItemInGroup(id, type) {
 	return Object.keys(cachedGroupList)[0];
 }
 function initGroup() {
-	const groupMenu = document.getElementById('move_to_group');
+	// const groupMenu = document.getElementById('move_to_group');
 	if (!localStorage.getItem('groups')) {
 		cachedGroupList[t('ungrouped')] = [];
 		saveGroups();
@@ -562,18 +612,18 @@ function initGroup() {
 	let n = template.groupMenuList.cloneNode(true);
 	n.setAttribute('data-name', '_new');
 	n.querySelector('.name').appendChild(document.createTextNode(t('add')));
-	groupMenu.appendChild(n);
+	// groupMenu.appendChild(n);
 }
 function addGroupEl(name) {
 	if (document.querySelector('#groups .group-item[data-name="' + name + '"]') !== null) {
 		return;
 	}
 	const group = document.getElementById('groups');
-	const groupMenu = document.getElementById('move_to_group');
+	// const groupMenu = document.getElementById('move_to_group');
 	let n = template.groupMenuList.cloneNode(true);
 	n.setAttribute('data-name', name);
 	n.querySelector('.name').appendChild(document.createTextNode(name));
-	groupMenu.insertBefore(n, groupMenu.childNodes[groupMenu.childNodes.length - 1]);
+	// groupMenu.insertBefore(n, groupMenu.childNodes[groupMenu.childNodes.length - 1]);
 	let n_group = template.groupItem.cloneNode(true);
 	n_group.setAttribute('data-name', name);
 	n_group.innerHTML = n_group.innerHTML.replace(/\{id\}/g, templateId++);
@@ -683,36 +733,39 @@ function onRealtimeTest() {
 }
 
 document.addEventListener('DOMContentLoaded', () => {
-	document.getElementById('export').addEventListener('click', onExportClick);
-	document.getElementById('ruleSave').addEventListener('click', onSaveClick);
+	// document.getElementById('export').addEventListener('click', onExportClick);
+	// document.getElementById('ruleSave').addEventListener('click', onSaveClick);
 
+	document.getElementById('add-rule').addEventListener('click', onAddRuleClick);
+	document.getElementById('edit-back').addEventListener('click', onEditCancelClick);
+	initEditChange();
 	// group
 	initGroup();
 
 	// Batch delete
-	document.getElementById('batch-mode').addEventListener('click', onBatchModeClick);
-	document.getElementById('batch-select-all').addEventListener('click', onBatchSelectAll);
-	document.getElementById('batch-delete').addEventListener('click', onBatchDeleteClick);
-	document.getElementById('batch-group').addEventListener('click', onBatchGroupClick);
-	document.getElementById('batch-share').addEventListener('click', onBatchShareClick);
+	// document.getElementById('batch-mode').addEventListener('click', onBatchModeClick);
+	// document.getElementById('batch-select-all').addEventListener('click', onBatchSelectAll);
+	// document.getElementById('batch-delete').addEventListener('click', onBatchDeleteClick);
+	// document.getElementById('batch-group').addEventListener('click', onBatchGroupClick);
+	// document.getElementById('batch-share').addEventListener('click', onBatchShareClick);
 
 	// Import rules
-	document.getElementById('import').addEventListener('click', onImportClick);
-	document.getElementById('importSave').addEventListener('click', onImportSubmit);
+	// document.getElementById('import').addEventListener('click', onImportClick);
+	// document.getElementById('importSave').addEventListener('click', onImportSubmit);
 
 	// Download rules
-	document.getElementById('download-submit').addEventListener('click', () => {
-		downloadRule(document.getElementById('download-url').value);
-		addHistory(document.getElementById('download-url').value);
-	});
-	loadDownloadHistory();
+	// document.getElementById('download-submit').addEventListener('click', () => {
+		// downloadRule(document.getElementById('download-url').value);
+		// addHistory(document.getElementById('download-url').value);
+	// });
+	// loadDownloadHistory();
 
 	//Realtime test
-	document.getElementById('test-url').addEventListener('keyup', onRealtimeTest);
-	document.getElementById('redirectTo').addEventListener('keyup', onRealtimeTest);
-	document.getElementById('excludeRule').addEventListener('keyup', onRealtimeTest);
-	document.getElementById('matchRule').addEventListener('keyup', onRealtimeTest);
-	document.getElementById('matchType').addEventListener('change', onRealtimeTest);
+	// document.getElementById('test-url').addEventListener('keyup', onRealtimeTest);
+	// document.getElementById('redirectTo').addEventListener('keyup', onRealtimeTest);
+	// document.getElementById('excludeRule').addEventListener('keyup', onRealtimeTest);
+	// document.getElementById('matchRule').addEventListener('keyup', onRealtimeTest);
+	// document.getElementById('matchType').addEventListener('change', onRealtimeTest);
 
 	loadRulesList();
 });

@@ -8,121 +8,28 @@
 	<link rel="stylesheet" href="third-party/material-design-icons/material-icons.min.css"/>
 	<link rel="stylesheet" href="third-party/dialog-polyfill/dialog-polyfill.min.css"/>
 	<link rel="stylesheet" href="third-party/mdl/material.min.css"/>
+	<link rel="stylesheet" href="styles/page.css"/>
+	<link rel="stylesheet" href="styles/manage.css"/>
 	<script src="scripts/browser-polyfill.js"></script>
 	<script src="scripts/common.js"></script>
 	<script src="scripts/localization.js"></script>
 	<script src="scripts/storage.js"></script>
 	<style>
-	.main {
-		padding: 20px 30px;
-	}
-	.main h1 {
-		margin-top: 0;
-	}
-	.float-btns {
-		display: none;
-		position: fixed;
-		z-index: 5;
-		bottom: 15px;
-		right: 15px;
-	}
-	.float-btns.show {
-		display: block;
-	}
-	.panel-group {
-		margin-bottom: 15px;
-	}
-	.panel-title .buttons {
-		float: right;
-		display: inline-block;
-	}
-	.panel-title .buttons span {
-		cursor: pointer;
-		margin-left: 5px;
-	}
-	#globalAction .btn {
-		margin-right: 6px;
-	}
-	.rule-list .enable {
-		width: 80px;
-	}
-	.rule-list .action {
-		width: 200px;
-	}
-	.rule-list .batch {
-		width: 100px;
-		display: none;
-	}
-	.rule-list th.batch {
-		cursor: pointer;
-	}
-	.rule-list.batch-mode .batch {
-		display: table-cell;
-	}
-	#importRulesList tr.keep .show-new {
-		display: none;
-	}
-	#importRulesList tr.new .show-keep {
-		display: none;
-	}
-	#addDialog .default-hide {
-		display: none;
-	}
-	#addDialog[data-match="all"] .match_rule {
-		display: none;
-	}
-	#addDialog[data-type="cancel"] #isFunctionBox {
-		display: none;
-	}
-	#addDialog[data-type="redirect"] .redirect_to,
-	#addDialog[data-type="redirect"] .realtime-test {
-		display: block;
-	}
-	#addDialog[data-type="modifySendHeader"] .header_mondify,
-	#addDialog[data-type="modifyReceiveHeader"] .header_mondify {
-		display: block;
-	}
-	#addDialog[data-isfunction="1"] .redirect_to,
-	#addDialog[data-isfunction="1"] .header_mondify{
-		display: none;
-	}
-	#addDialog[data-isfunction="1"] .custom-code {
-		display: block;
-	}
-	#download-rules .list-group {
-		margin-top: 20px;
-	}
-	#download-rules .list-group li {
-		min-height: 54px;
-		line-height: 34px;
-	}
-	#download-rules .btn-group {
-		float: right;
-	}
-	.btn-group > .btn:not(:last-child) {
-		border-top-right-radius: 0;
-		border-bottom-right-radius: 0;
-		border-right-style: none;
-	}
-	.btn-group a {
-		cursor: pointer;
-	}
 	</style>
 	<template data-id="rule">
 		<tr data-id="" data-type="">
 			<td class="batch mdl-data-table__cell--non-numeric"><input type="checkbox" name="batch"></td>
-			<td class="enable mdl-data-table__cell--non-numeric"><input type="checkbox" name="enable"></td>
+			<td class="enable mdl-data-table__cell--non-numeric">
+				<label class="mdl-switch enable-switcher"><input type="checkbox" class="mdl-switch__input activate" name="enable"/></label>
+			</td>
 			<td class="name mdl-data-table__cell--non-numeric"></td>
 			<td class="rule-type mdl-data-table__cell--non-numeric"></td>
 			<td class="pattern mdl-data-table__cell--non-numeric"></td>
 			<td class="match-type mdl-data-table__cell--non-numeric"></td>
 			<td class="action mdl-data-table__cell--non-numeric">
-				<div class="btn-group" role="group">
-					<button type="button" class="btn btn-default dropdown-toggle move-group" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false"><span i18n-text="group"></span> <span class="caret"></span></button>
-					<ul class="dropdown-menu"></ul>
-					<button class="edit btn btn-default"><i class="glyphicon glyphicon-pencil"></i></button>
-					<button class="remove btn btn-default"><i class="glyphicon glyphicon-remove"></i></button>
-				</div>
+				<button class="move-group mdl-button mdl-js-button mdl-js-ripple-effect"><i class="material-icons">playlist_add</i><span>Group</span></button>
+				<button class=" edit mdl-button mdl-js-button mdl-js-ripple-effect"><i class="material-icons">mode_edit</i><span>Edit</span></button>
+				<button class="remove mdl-button mdl-js-button mdl-js-ripple-effect"><i class="material-icons">delete</i><span>Remove</span></button>
 			</td>
 		</tr>
 	</template>
@@ -155,7 +62,7 @@
 	</template>
 	<template data-id="groupItem">
 		<div class="group-item">
-			<div class="mdl-card mdl-shadow--2dp option">
+			<div class="mdl-card mdl-shadow--2dp closeable-box">
 				<div class="mdl-card__title mdl-card--expand">
 					<h2 class="mdl-card__title-text">
 						<span class="title"></span>
@@ -171,23 +78,25 @@
 							<tr>
 								<th i18n-text="batch_mode" class="batch mdl-data-table__cell--non-numeric"></th>
 								<th i18n-text="enable" class="enable mdl-data-table__cell--non-numeric"></th>
-								<th i18n-text="name mdl-data-table__cell--non-numeric"></th>
-								<th i18n-text="ruleType mdl-data-table__cell--non-numeric"></th>
-								<th i18n-text="matchRule mdl-data-table__cell--non-numeric"></th>
-								<th i18n-text="matchType mdl-data-table__cell--non-numeric"></th>
+								<th i18n-text="name" class="name mdl-data-table__cell--non-numeric"></th>
+								<th i18n-text="ruleType" class="ruleType mdl-data-table__cell--non-numeric"></th>
+								<th i18n-text="matchRule" class="matchRule mdl-data-table__cell--non-numeric"></th>
+								<th i18n-text="matchType" class="matchType mdl-data-table__cell--non-numeric"></th>
 								<th i18n-text="action" class="action mdl-data-table__cell--non-numeric"></th>
 							</tr>
 						</thead>
 						<tbody class="rules-list"></tbody>
 					</table>
 				</div>
+				<div class="mdl-card__menu">
+					<button class="toggle-box mdl-button mdl-js-button mdl-button--icon"><i class="material-icons">keyboard_arrow_up</i></button>
+				</div>
 			</div>
 		</div>
 	</template>
 </head>
 <body>
-<ul id="move_to_group" class="dropdown-menu"></ul>
-id="demo-menu-lower-left"
+<!-- <ul id="move_to_group" class="dropdown-menu"></ul> -->
 <ul class="mdl-menu mdl-menu--bottom-left mdl-js-menu mdl-js-ripple-effect" for="demo-menu-lower-left">
 	<li class="mdl-menu__item">Some Action</li>
 	<li class="mdl-menu__item mdl-menu__item--full-bleed-divider">Another Action</li>
@@ -196,7 +105,15 @@ id="demo-menu-lower-left"
 </ul>
 <div class="mdl-layout mdl-js-layout mdl-layout--fixed-header">
 	<header class="mdl-layout__header">
-		<div class="mdl-layout__tab-bar mdl-js-ripple-effect">
+		<div id="edit-head" class="mdl-layout__header-row" style="display:none">
+			<button id="edit-back" role="button" tabindex="0" class="mdl-layout__drawer-button"><i class="material-icons">arrow_back</i></button>
+			<span class="mdl-layout-title"></span>
+			<div class="mdl-layout-spacer"></div>
+			<nav class="mdl-navigation wrapper">
+				<button id="save-rule" class="mdl-button mdl-js-button mdl-button--icon"><i class="material-icons">save</i></button>
+			</nav>
+		</div>
+		<div id="main-head" class="mdl-layout__tab-bar mdl-js-ripple-effect">
 			<a href="#rule-panel" class="mdl-layout__tab is-active"><i class="material-icons">list</i><span i18n-text="rule_list"></span></a>
 			<a href="#download-panel" class="mdl-layout__tab"><i class="material-icons">cloud_download</i><span i18n-text="download_rule"></span></a>
 			<a id="export" class="mdl-layout__tab"><i class="material-icons">settings_backup_restore</i><span i18n-text="export"></span></a>
@@ -205,10 +122,147 @@ id="demo-menu-lower-left"
 			<a href="https://github.com/FirefoxBar/HeaderEditor/wiki" class="mdl-layout__tab"><i class="material-icons">help</i><span i18n-text="help"></span></a>
 		</div>
 	</header>
-	<main class="mdl-layout__content">
+	<main id="edit-body" class="mdl-layout__content" style="display:none">
+		<div class="page-content mdl-grid">
+			<div class="mdl-cell mdl-cell--8-col">
+				<div class="mdl-card mdl-shadow--2dp">
+					<div class="mdl-card__title mdl-card--expand">
+						<h2 class="mdl-card__title-text">
+							<span class="title"></span>
+						</h2>
+					</div>
+					<div class="mdl-card__supporting-text">
+						<input id="ruleId" type="hidden">
+						<div class="mdl-textfield mdl-js-textfield mdl-textfield--floating-label">
+							<input class="mdl-textfield__input" type="text" id="name">
+							<label class="mdl-textfield__label" for="name" i18n-text="name"></label>
+						</div>
+						<div class="form-group">
+							<div class="left">
+								<span i18n-text="ruleType"></span>
+							</div>
+							<div class="right">
+								<label class="mdl-radio mdl-js-radio mdl-js-ripple-effect" for="rule-type-cancel">
+									<input type="radio" id="rule-type-cancel" class="mdl-radio__button" name="ruleType" value="cancel">
+									<span class="mdl-radio__label" i18n-text="rule_cancel"></span>
+								</label>
+								<label class="mdl-radio mdl-js-radio mdl-js-ripple-effect" for="rule-type-redirect">
+									<input type="radio" id="rule-type-redirect" class="mdl-radio__button" name="ruleType" value="redirect">
+									<span class="mdl-radio__label" i18n-text="rule_redirect"></span>
+								</label>
+								<label class="mdl-radio mdl-js-radio mdl-js-ripple-effect" for="rule-type-modifySendHeader">
+									<input type="radio" id="rule-type-modifySendHeader" class="mdl-radio__button" name="ruleType" value="modifySendHeader">
+									<span class="mdl-radio__label" i18n-text="rule_modifySendHeader"></span>
+								</label>
+								<label class="mdl-radio mdl-js-radio mdl-js-ripple-effect" for="rule-type-modifyReceiveHeader">
+									<input type="radio" id="rule-type-modifyReceiveHeader" class="mdl-radio__button" name="ruleType" value="modifyReceiveHeader">
+									<span class="mdl-radio__label" i18n-text="rule_modifyReceiveHeader"></span>
+								</label>
+							</div>
+						</div>
+						<!-- Match type -->
+						<div class="form-group">
+							<div class="left">
+								<span i18n-text="matchType"></span>
+							</div>
+							<div class="right">
+								<label class="mdl-radio mdl-js-radio mdl-js-ripple-effect" for="match-type-all">
+									<input type="radio" id="match-type-all" class="mdl-radio__button" name="matchType" value="all">
+									<span class="mdl-radio__label" i18n-text="match_all"></span>
+								</label>
+								<label class="mdl-radio mdl-js-radio mdl-js-ripple-effect" for="match-type-regexp">
+									<input type="radio" id="match-type-regexp" class="mdl-radio__button" name="matchType" value="regexp">
+									<span class="mdl-radio__label" i18n-text="match_regexp"></span>
+								</label>
+								<label class="mdl-radio mdl-js-radio mdl-js-ripple-effect" for="match-type-prefix">
+									<input type="radio" id="match-type-prefix" class="mdl-radio__button" name="matchType" value="prefix">
+									<span class="mdl-radio__label" i18n-text="match_prefix"></span>
+								</label>
+								<label class="mdl-radio mdl-js-radio mdl-js-ripple-effect" for="match-type-domain">
+									<input type="radio" id="match-type-domain" class="mdl-radio__button" name="matchType" value="domain">
+									<span class="mdl-radio__label" i18n-text="match_domain"></span>
+								</label>
+								<label class="mdl-radio mdl-js-radio mdl-js-ripple-effect" for="match-type-url">
+									<input type="radio" id="match-type-url" class="mdl-radio__button" name="matchType" value="url">
+									<span class="mdl-radio__label" i18n-text="match_url"></span>
+								</label>
+							</div>
+						</div>
+						<!-- Rule match rule -->
+						<div class="mdl-textfield mdl-js-textfield mdl-textfield--floating-label match_rule">
+							<input class="mdl-textfield__input" type="text" id="matchRule">
+							<label class="mdl-textfield__label" for="matchRule" i18n-text="matchRule"></label>
+						</div>
+						<!-- Rule exclude rule -->
+						<div class="mdl-textfield mdl-js-textfield mdl-textfield--floating-label match_rule">
+							<input class="mdl-textfield__input" type="text" id="excludeRule">
+							<label class="mdl-textfield__label" for="excludeRule" i18n-text="excludeRule"></label>
+						</div>
+						<!-- isFunction or not -->
+						<div id="isFunctionBox" class="form-group">
+							<div class="left">
+								<span i18n-text="exec_type"></span>
+							</div>
+							<div class="right">
+								<label class="mdl-radio mdl-js-radio mdl-js-ripple-effect" for="exec-normal">
+									<input type="radio" id="exec-normal" class="mdl-radio__button" name="execType" value="0">
+									<span class="mdl-radio__label" i18n-text="exec_normal"></span>
+								</label>
+								<label class="mdl-radio mdl-js-radio mdl-js-ripple-effect" for="exec-function">
+									<input type="radio" id="exec-function" class="mdl-radio__button" name="execType" value="1">
+									<span class="mdl-radio__label" i18n-text="exec_function"></span>
+								</label>
+							</div>
+						</div>
+						<!-- redirect to -->
+						<div class="match_rule mdl-textfield mdl-js-textfield mdl-textfield--floating-label redirect_to default-hide">
+							<input class="mdl-textfield__input" type="text" id="redirectTo">
+							<label class="mdl-textfield__label" for="redirectTo" i18n-text="redirectTo"></label>
+						</div>
+						<!-- header mondify -->
+						<div class="mdl-textfield mdl-js-textfield mdl-textfield--floating-label header_mondify default-hide">
+							<input class="mdl-textfield__input" type="text" id="headerName">
+							<label class="mdl-textfield__label" for="headerName" i18n-text="headerName"></label>
+						</div>
+						<div class="mdl-textfield mdl-js-textfield mdl-textfield--floating-label header_mondify default-hide">
+							<input class="mdl-textfield__input" type="text" id="headerValue">
+							<label class="mdl-textfield__label" for="headerValue" i18n-text="headerValue"></label>
+						</div>
+						<div class="mdl-textfield mdl-js-textfield mdl-textfield--floating-label custom-code default-hide">
+							<textarea class="mdl-textfield__input" type="text" id="custom-code"></textarea>
+							<label class="mdl-textfield__label" for="custom-code" rows="10" i18n-text="code"></label>
+						</div>
+					</div>
+				</div>
+			</div>
+			<div class="mdl-cell mdl-cell--4-col">
+				<div class="mdl-card mdl-shadow--2dp">
+					<div class="mdl-card__title mdl-card--expand">
+						<h2 class="mdl-card__title-text">
+							<span class="title"></span>
+						</h2>
+					</div>
+					<div class="mdl-card__supporting-text">
+						<div class="mdl-textfield mdl-js-textfield mdl-textfield--floating-label realtime-test">
+							<input class="mdl-textfield__input" type="text" id="test-url">
+							<label class="mdl-textfield__label" for="test-url" i18n-text="test_url"></label>
+						</div>
+						<pre id="test-url-result" style="margin-top: 10px"></pre>
+						<button class="mdl-button mdl-js-button mdl-button--raised mdl-js-ripple-effect" id="rule-save" i18n-text="save"></button>
+					</div>
+				</div>
+			</div>
+		</div>
+	</main>
+	<main id="main-body" class="mdl-layout__content">
 		<section class="mdl-layout__tab-panel is-active" id="rule-panel">
 			<div class="page-content">
 				<div id="groups"></div>
+			</div>
+			<div id="default-button" class="float-button">
+				<button id="add-rule" class="mdl-button mdl-js-button mdl-button--fab mdl-js-ripple-effect mdl-button--colored">
+					<i class="material-icons">add</i>
+				</button>
 			</div>
 		</section>
 		<section class="mdl-layout__tab-panel" id="download-panel">
@@ -304,110 +358,6 @@ id="demo-menu-lower-left"
 	</div>
 </div>
 -->
-<div id="addDialog" class="modal fade" tabindex="-1" role="dialog">
-  	<div class="modal-dialog modal-lg" role="document">
-		<div class="modal-content">
-	  		<div class="modal-header">
-				<button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
-				<h4 class="modal-title"></h4>
-	 		</div>
-			<div class="modal-body form-horizontal">
-				<input id="ruleId" type="hidden">
-				<!-- Rule name -->
-				<div class="form-group">
-					<label for="name" class="col-sm-2 control-label" i18n-text="name"></label>
-					<div class="col-sm-10">
-						<input type="text" class="form-control" id="name">
-					</div>
-				</div>
-				<!-- Rule type -->
-				<div class="form-group">
-					<label for="ruleType" class="col-sm-2 control-label" i18n-text="ruleType"></label>
-					<div class="col-sm-10">
-						<select class="form-control" id="ruleType" autocomplete="off">
-							<option value="cancel" i18n-text="rule_cancel"></option>
-							<option value="redirect" i18n-text="rule_redirect"></option>
-							<option value="modifySendHeader" i18n-text="rule_modifySendHeader"></option>
-							<option value="modifyReceiveHeader" i18n-text="rule_modifyReceiveHeader"></option>
-						</select>
-					</div>
-				</div>
-				<!-- Rule match type -->
-				<div class="form-group">
-					<label for="matchType" class="col-sm-2 control-label" i18n-text="matchType"></label>
-					<div class="col-sm-10">
-						<select class="form-control" id="matchType" autocomplete="off">
-							<option value="all" i18n-text="match_all"></option>
-							<option value="regexp" i18n-text="match_regexp"></option>
-							<option value="prefix" i18n-text="match_prefix"></option>
-							<option value="domain" i18n-text="match_domain"></option>
-							<option value="url" i18n-text="match_url"></option>
-						</select>
-					</div>
-				</div>
-				<!-- Rule match rule -->
-				<div class="form-group match_rule">
-					<label for="matchRule" class="col-sm-2 control-label" i18n-text="matchRule"></label>
-					<div class="col-sm-10">
-						<input type="text" class="form-control" id="matchRule">
-					</div>
-				</div>
-				<!-- Rule exclude rule -->
-				<div class="form-group">
-					<label for="excludeRule" class="col-sm-2 control-label" i18n-text="excludeRule"></label>
-					<div class="col-sm-10">
-						<input type="text" class="form-control" id="excludeRule">
-					</div>
-				</div>
-				<!-- isFunction or not -->
-				<div id="isFunctionBox" class="form-group">
-					<label for="isFunction" class="col-sm-2 control-label" i18n-text="exec_type"></label>
-					<div class="col-sm-10">
-						<select class="form-control" id="isFunction" autocomplete="off">
-							<option value="0" i18n-text="exec_normal"></option>
-							<option value="1" i18n-text="exec_function"></option>
-						</select>
-					</div>
-				</div>
-				<!-- redirect to -->
-				<div class="form-group redirect_to default-hide">
-					<label for="redirectTo" class="col-sm-2 control-label" i18n-text="redirectTo"></label>
-					<div class="col-sm-10">
-						<input type="text" class="form-control" id="redirectTo">
-					</div>
-				</div>
-				<!-- header mondify -->
-				<div class="form-group header_mondify default-hide">
-					<label for="headerName" class="col-sm-2 control-label" i18n-text="headerName"></label>
-					<div class="col-sm-10">
-						<input type="text" class="form-control" id="headerName">
-					</div>
-				</div>
-				<div class="form-group header_mondify default-hide">
-					<label for="headerValue" class="col-sm-2 control-label" i18n-text="headerValue"></label>
-					<div class="col-sm-10">
-						<input type="text" class="form-control" id="headerValue">
-					</div>
-				</div>
-				<div class="form-group custom-code default-hide">
-					<label for="custom-code" class="col-sm-2 control-label" i18n-text="code"></label>
-					<div class="col-sm-10"><textarea id="custom-code" class="form-control" rows="10"></textarea></div>
-				</div>
-				<div class="form-group realtime-test default-hide">
-					<label for="test-url" class="col-sm-2 control-label" i18n-text="test_url"></label>
-					<div class="col-sm-10">
-						<input type="text" class="form-control" id="test-url">
-						<pre id="test-url-result" style="margin-top: 10px"></pre>
-					</div>
-				</div>
-	  		</div>
-	  		<div class="modal-footer">
-				<button type="button" class="btn btn-default" data-dismiss="modal" i18n-text="cancel"></button>
-				<button id="ruleSave" type="button" class="btn btn-primary" i18n-text="save"></button>
-	  		</div>
-		</div><!-- /.modal-content -->
-  	</div><!-- /.modal-dialog -->
-</div><!-- /.modal -->
 <script src="third-party/dialog-polyfill/dialog-polyfill.min.js"></script>
 <script src="third-party/mdl/material.min.js"></script>
 <script src="scripts/fileSaveLoad.js"></script>
