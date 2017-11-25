@@ -84,12 +84,15 @@ function clearEditPage() {
 	body.querySelectorAll('textarea').forEach((e) => {
 		e.value = '';
 	});
-	body.querySelectorAll('input[type="radio"]:checked').forEach((e) => {
-		e.checked = false;
+	body.querySelectorAll('.mdl-radio.is-checked').forEach((e) => {
+		e.querySelector('input[type="radio"]').checked = false;
+		e.classList.remove('is-checked');
 	});
-	body.querySelector('input[name="ruleType"]').checked = true;
-	body.querySelector('input[name="execType"]').checked = true;
-	body.querySelector('input[name="matchType"]').checked = true;
+	['ruleType', 'execType', 'matchType'].forEach((e) => {
+		const el = body.querySelector('input[name="' + e + '"]');
+		el.checked = true;
+		el.parentElement.classList.add('is-checked');
+	});
 	body.setAttribute('data-type', body.querySelector('input[name="ruleType"]').value);
 	body.setAttribute('data-isfunction', body.querySelector('input[name="execType"]').value);
 	body.setAttribute('data-match', body.querySelector('input[name="matchType"]').value);
