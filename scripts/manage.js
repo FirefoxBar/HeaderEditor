@@ -746,7 +746,7 @@ function onRealtimeTest() {
 		"matchType": body.querySelector('input[name="matchType"]:checked').value,
 		"pattern": document.getElementById('matchRule').value,
 		"exclude": document.getElementById('excludeRule').value,
-		"isFunction": body.querySelectorAll('input[name="execType"]').value == 1
+		"isFunction": body.querySelector('input[name="execType"]:checked').value == 1
 	};
 	const redirectTo = document.getElementById('redirectTo').value;
 	const url = document.getElementById('test-url').value;
