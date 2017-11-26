@@ -194,58 +194,53 @@ function onEnableRuleChange () {
 	});
 }
 //save rule
-function onSaveClick() {
+function onRuleSaveClick() {
+	const body = document.getElementById('edit-body');
 	//check
-	var name = $('#name').val().trim();
-	var ruleType = $('#ruleType').find('option:selected').val();
-	var matchType = $('#matchType').find('option:selected').val();
-	var matchRule = $('#matchRule').val().trim();
-	var redirectTo = $('#redirectTo').val().trim();
-	var headerName = $('#headerName').val().trim();
-	var headerValue = $('#headerValue').val().trim();
-	var ruleId = $('#ruleId').val();
-	var exclude = $('#excludeRule').val();
-	var isFunction = parseInt($('#isFunction').find('option:selected').val());
-	var code = $('#custom-code').val();
-	if (name === '') {
+	let data = {
+		"enable": 1,
+		"name": document.getElementById('name').value,
+		"ruleType": body.querySelector('input[name="ruleType"]:checked').value,
+		"matchType": body.querySelector('input[name="matchType"]:checked').value,
+		"pattern": document.getElementById('matchRule').value,
+		"exclude": document.getElementById('excludeRule').value,
+		"isFunction": body.querySelector('input[name="execType"]:checked').value == 1
+	};
+	const redirectTo = document.getElementById('redirectTo').value;
+	const headerName = document.getElementById('headerName').value;
+	const headerValue = document.getElementById('headerValue').value;
+	const ruleId = document.getElementById('ruleId').value;
+	const code = document.getElementById('custom-code').value;
+	const table = ruleType2tableName(data.ruleType);
+	if (data.name === '') {
 		alert(t('name_empty'));
 		return;
 	}
-	if (matchType !== 'all' && matchRule === '') {
+	if (data.matchType !== 'all' && data.matchRule === '') {
 		alert(t('match_rule_empty'));
 		return;
 	}
-	if (isFunction) {
+	if (data.isFunction) {
 		if (code === '') {
 			alert(t('code_empty'));
 			return;
 		}
 	} else {
-		if (ruleType === 'redirect' && redirectTo === '') {
+		if (data.ruleType === 'redirect' && redirectTo === '') {
 			alert(t('redirect_empty'));
 			return;
 		}
-		if ((ruleType === 'modifySendHeader' || ruleType === 'modifyReceiveHeader') && headerName === '') {
+		if ((data.ruleType === 'modifySendHeader' || data.ruleType === 'modifyReceiveHeader') && headerName === '') {
 			alert(t('header_empty'));
 			return;
 		}
 	}
 	//make save data
-	var SaveData = {
-		"enable": 1,
-		"name": name,
-		"ruleType": ruleType,
-		"matchType": matchType,
-		"pattern": matchRule,
-		"exclude": exclude,
-		"isFunction": isFunction
-	};
-	var SaveTable = ruleType2tableName(ruleType);
-	if (ruleType === 'cancel') {
-		SaveData.action = 'cancel';
+	if (data.ruleType === 'cancel') {
+		data.action = 'cancel';
 	}
-	if (SaveData.isFunction) {
-		SaveData.code = code;
+	if (data.isFunction) {
+		data.code = code;
 		// test code
 		try {
 			new Function('val', 'detail', code);
@@ -254,23 +249,22 @@ function onSaveClick() {
 			return;
 		}
 	} else {
-		if (ruleType === 'redirect') {
-			SaveData.action = 'redirect';
-			SaveData.to = redirectTo;
+		if (data.ruleType === 'redirect') {
+			data.action = 'redirect';
+			data.to = redirectTo;
 		}
-		if (ruleType === 'modifySendHeader' || ruleType === 'modifyReceiveHeader') {
-			SaveData.action = {
+		if (data.ruleType === 'modifySendHeader' || data.ruleType === 'modifyReceiveHeader') {
+			data.action = {
 				"name": headerName,
 				"value": headerValue
 			};
 		}
 	}
 	if (ruleId !== '') {
-		SaveData.id = ruleId;
+		data.id = ruleId;
 	}
-	saveRule(SaveTable, SaveData).then(function(response) {
-		$('#addDialog').modal('hide');
-		browser.runtime.sendMessage({"method": "updateCache", "type": SaveTable});
+	saveRule(table, data).then(function(response) {
+		browser.runtime.sendMessage({"method": "updateCache", "type": table});
 		setTimeout(() => {
 			window.location.reload();
 		}, 300);
@@ -560,28 +554,10 @@ function addHistory(url) {
 
 
 function onMoveGroupClick() {
-	// this.nextElementSibling.innerHTML = document.getElementById('move_to_group').innerHTML;
-	// this.nextElementSibling.querySelectorAll('li').forEach((e) => {
-		// e.addEventListener('click', onGroupMenuClick);
-	// });
-}
-function onGroupMenuClick() {
-	let name = '';
-	let el = findParent(this, (e) => { return e.nodeName.toLowerCase() === 'tr'; });
-	if (this.getAttribute('data-name') === '_new') {
-		name = window.prompt(t('enter_group_name'));
-		if (name) {
-			addGroupEl(name);
-			cachedGroupList[name] = [];
-			saveGroups();
-		} else {
-			return;
-		}
-	} else {
-		name = this.getAttribute('data-name');
-	}
-	// move to
-	moveItemToGroup(el, el.getAttribute('data-id'), name, el.getAttribute('data-table'));
+	const e = this.parentElement.parentElement;
+	chooseGroup().then(name => {
+		moveItemToGroup(e, e.getAttribute('data-id'), name, e.getAttribute('data-table'));
+	});
 }
 function moveItemToGroup(from, id, groupName, type) {
 	if (typeof(id) !== 'number') {
@@ -815,7 +791,7 @@ function onRealtimeTest() {
 
 document.addEventListener('DOMContentLoaded', () => {
 	// document.getElementById('export').addEventListener('click', onExportClick);
-	// document.getElementById('ruleSave').addEventListener('click', onSaveClick);
+	document.getElementById('rule-save').addEventListener('click', onRuleSaveClick);
 
 	document.getElementById('add-rule').addEventListener('click', onAddRuleClick);
 	document.getElementById('edit-back').addEventListener('click', onEditCancelClick);
