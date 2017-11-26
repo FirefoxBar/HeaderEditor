@@ -729,42 +729,56 @@ function chooseGroup() {
 	});
 }
 
+function initRealtimeTest() {
+	const body = document.getElementById('edit-body');
+	document.getElementById('test-url').addEventListener('keyup', onRealtimeTest);
+	document.getElementById('redirectTo').addEventListener('keyup', onRealtimeTest);
+	document.getElementById('excludeRule').addEventListener('keyup', onRealtimeTest);
+	document.getElementById('matchRule').addEventListener('keyup', onRealtimeTest);
+	body.querySelectorAll('input[name="matchType"]').forEach(e => {
+		e.addEventListener('change', onRealtimeTest);
+	});
+}
 function onRealtimeTest() {
-	const url = document.getElementById('test-url').value;
+	const body = document.getElementById('edit-body');
+	const data = {
+		"ruleType": body.querySelector('input[name="ruleType"]:checked').value,
+		"matchType": body.querySelector('input[name="matchType"]:checked').value,
+		"pattern": document.getElementById('matchRule').value,
+		"exclude": document.getElementById('excludeRule').value,
+		"isFunction": body.querySelectorAll('input[name="execType"]').value == 1
+	};
 	const redirectTo = document.getElementById('redirectTo').value;
-	const matchRule = document.getElementById('matchRule').value;
-	const excludeRule = document.getElementById('excludeRule').value;
-	const matchType = document.querySelector('#matchType option:checked').value;
+	const url = document.getElementById('test-url').value;
 	const resultArea = document.getElementById('test-url-result');
-	const isFunction = parseInt(document.querySelector('#isFunction option:checked').value);
 	let isMatch = 0;
-	switch (matchType) {
+	switch (data.matchType) {
 		case 'all':
 			isMatch = 1;
 			break;
 		case 'regexp':
 			try {
-				let reg = new RegExp(matchRule, 'g');
+				let reg = new RegExp(data.pattern, 'g');
 				isMatch = reg.test(url) ? 1 : 0;
 			} catch (e) {
 				isMatch = -1;
 			}
 			break;
 		case 'prefix':
-			isMatch = url.indexOf(matchRule) === 0 ? 1 : 0;
+			isMatch = url.indexOf(data.pattern) === 0 ? 1 : 0;
 			break;
 		case 'domain':
-			isMatch = getDomain(url) === matchRule ? 1 : 0;
+			isMatch = getDomain(url) === data.pattern ? 1 : 0;
 			break;
 		case 'url':
-			isMatch = url === matchRule ? 1 : 0;
+			isMatch = url === data.pattern ? 1 : 0;
 			break;
 		default:
 			break;
 	}
-	if (isMatch === 1 && typeof(excludeRule) === 'string' && excludeRule.length > 0) {
+	if (isMatch === 1 && typeof(data.exclude) === 'string' && data.exclude.length > 0) {
 		try {
-			let reg = new RegExp(excludeRule);
+			let reg = new RegExp(data.exclude);
 			isMatch = reg.test(url) ? 2 : 1;
 		} catch (e) {
 			isMatch = 1;
@@ -780,13 +794,13 @@ function onRealtimeTest() {
 		resultArea.innerHTML = t('test_exclude');
 		return;
 	}
-	if (isFunction) {
+	if (data.isFunction) {
 		resultArea.innerHTML = t('test_custom_code');
 		return;
 	} else {
 		let redirect = '';
-		if (matchType === 'regexp') {
-			redirect = url.replace(new RegExp(matchRule, 'g'), redirectTo);
+		if (data.matchType === 'regexp') {
+			redirect = url.replace(new RegExp(data.pattern, 'g'), redirectTo);
 		} else {
 			redirect = redirectTo;
 		}
@@ -828,11 +842,7 @@ document.addEventListener('DOMContentLoaded', () => {
 	// loadDownloadHistory();
 
 	//Realtime test
-	// document.getElementById('test-url').addEventListener('keyup', onRealtimeTest);
-	// document.getElementById('redirectTo').addEventListener('keyup', onRealtimeTest);
-	// document.getElementById('excludeRule').addEventListener('keyup', onRealtimeTest);
-	// document.getElementById('matchRule').addEventListener('keyup', onRealtimeTest);
-	// document.getElementById('matchType').addEventListener('change', onRealtimeTest);
+	initRealtimeTest();
 
 	loadRulesList();
 });
