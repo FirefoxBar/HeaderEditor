@@ -74,6 +74,12 @@ function initEditChange() {
 			body.setAttribute('data-match', this.value);
 		});
 	});
+	body.querySelector('.group-choose').addEventListener('click', () => {
+		chooseGroup().then(r => {
+			body.querySelector('.group-name').innerHTML = r;
+			body.querySelector('.group-name').setAttribute('data-name', r);
+		});
+	});
 }
 function clearEditPage() {
 	const body = document.getElementById('edit-body');
@@ -96,6 +102,9 @@ function clearEditPage() {
 	body.setAttribute('data-type', body.querySelector('input[name="ruleType"]').value);
 	body.setAttribute('data-isfunction', body.querySelector('input[name="execType"]').value);
 	body.setAttribute('data-match', body.querySelector('input[name="matchType"]').value);
+	// Group
+	body.querySelector('.group-name').innerHTML = t('ungrouped');
+	body.querySelector('.group-name').setAttribute('data-name', t('ungrouped'));
 	// $('#ruleType').removeAttr('disabled');
 	// $('#test-url').trigger('keyup');
 }
@@ -603,7 +612,7 @@ function findItemInGroup(id, type) {
 	return Object.keys(cachedGroupList)[0];
 }
 function initGroup() {
-	// const groupMenu = document.getElementById('move_to_group');
+	const groupMenu = document.querySelector('#group-dialog .mdl-dialog__content');
 	if (!localStorage.getItem('groups')) {
 		cachedGroupList[t('ungrouped')] = [];
 		saveGroups();
@@ -612,21 +621,42 @@ function initGroup() {
 	Object.keys(cachedGroupList).forEach((e) => {
 		addGroupEl(e);
 	});
-	let n = template.groupMenuList.cloneNode(true);
-	n.setAttribute('data-name', '_new');
-	n.querySelector('.name').appendChild(document.createTextNode(t('add')));
-	// groupMenu.appendChild(n);
+	// new
+	let n = template.groupMenuListNew.cloneNode(true);
+	let new_id = n.querySelector('.mdl-radio').getAttribute('for') + (templateId++);
+	n.querySelector('.mdl-radio').setAttribute('for', new_id);
+	n.querySelector('input[type="radio"]').setAttribute('id', new_id);
+	n.querySelector('input[type="radio"]').value = '_new';
+	// event
+	n.querySelector('#group-add').addEventListener('focus', () => {
+		if (groupMenu.querySelector('.is-checked').getAttribute('data-isnew') != 1) {
+			groupMenu.querySelector('.is-checked input[type="radio"]').checked = false;
+			groupMenu.querySelector('.is-checked').classList.remove('is-checked');
+			n.querySelector('.mdl-radio').classList.add('is-checked');
+			n.querySelector('input[type="radio"]').checked = true;
+		}
+	});
+	groupMenu.appendChild(n);
 }
 function addGroupEl(name) {
 	if (document.querySelector('#groups .group-item[data-name="' + name + '"]') !== null) {
 		return;
 	}
 	const group = document.getElementById('groups');
-	// const groupMenu = document.getElementById('move_to_group');
+	const groupMenu = document.querySelector('#group-dialog .mdl-dialog__content');
 	let n = template.groupMenuList.cloneNode(true);
-	n.setAttribute('data-name', name);
-	n.querySelector('.name').appendChild(document.createTextNode(name));
-	// groupMenu.insertBefore(n, groupMenu.childNodes[groupMenu.childNodes.length - 1]);
+	let n_label = n.querySelector('.mdl-radio');
+	let new_id = n_label.getAttribute('for') + (templateId++);
+	n_label.setAttribute('for', new_id);
+	n.querySelector('input[type="radio"]').setAttribute('id', new_id);
+	n.querySelector('input[type="radio"]').value = name;
+	n.querySelector('.mdl-radio__label').appendChild(document.createTextNode(name));
+	// material design
+	if (typeof(componentHandler) !== 'undefined' && !n_label.classList.contains('is-upgraded')) {
+		componentHandler.upgradeElement(n_label, 'MaterialRadio');
+		componentHandler.upgradeElement(n_label.querySelector('.mdl-js-ripple-effect'), 'MaterialRipple');
+	}
+	groupMenu.appendChild(n);
 	let n_group = template.groupItem.cloneNode(true);
 	n_group.setAttribute('data-name', name);
 	n_group.innerHTML = n_group.innerHTML.replace(/\{id\}/g, templateId++);
@@ -663,6 +693,36 @@ function onGroupRemoveClick() {
 	delete cachedGroupList[name];
 	saveGroups();
 	window.location.reload();
+}
+function chooseGroup() {
+	return new Promise((resolve, reject) => {
+		const dialog = document.getElementById('group-dialog');
+		if (dialog.querySelector('.is-checked')) {
+			dialog.querySelector('.is-checked input[type="radio"]').checked = false;
+			dialog.querySelector('.is-checked').classList.remove('is-checked');
+		}
+		dialog.querySelector('#group-add').value = '';
+		dialog.querySelector('.mdl-radio').classList.add('is-checked');
+		dialog.querySelector('.mdl-radio input[type="radio"]').checked = true;
+		dialog.querySelector('.ok').addEventListener('click', function _ok() {
+			let r = dialog.querySelector('input[type="radio"]:checked').value;
+			if (r === '_new') {
+				r = dialog.querySelector('#group-add').value;
+				cachedGroupList[r] = [];
+				saveGroups();
+				addGroupEl(r);
+			}
+			this.removeEventListener('click', _ok);
+			dialog.close();
+			resolve(r);
+		});
+		dialog.querySelector('.close').addEventListener('click', function _close() {
+			this.removeEventListener('click', _close);
+			dialog.close();
+			reject();
+		});
+		dialog.showModal();
+	});
 }
 
 function onRealtimeTest() {

@@ -63,15 +63,19 @@ body {
 .closeable-box.close .toggle-box {
 	transform: rotate(180deg);
 }
-#editRuleDialog {
+#group-dialog {
 	width: 800px;
 	max-width: 90%;
 }
-#editRuleDialog .mdl-grid {
+#group-dialog .mdl-grid {
 	padding: 0;
 }
-#editRuleDialog .mdl-grid .mdl-textfield {
-	width: 100%;
+#group-dialog .mdl-grid .mdl-textfield {
+	padding-top: 0;
+	padding-bottom: 0;
+}
+#group-dialog .mdl-grid .mdl-textfield__label:after {
+	bottom: 0;
 }
 @media screen and (max-width: 1024px) {
 	.hide-on-mobile {

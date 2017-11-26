@@ -58,7 +58,26 @@
 		</li>
 	</template>
 	<template data-id="groupMenuList">
-		<li><a class="name"></a></li>
+		<div class="mdl-cell mdl-cell--6-col">
+			<label class="mdl-radio mdl-js-radio mdl-js-ripple-effect" for="group-menu-">
+				<input type="radio" id="group-menu-" class="mdl-radio__button" name="group-choose" value="">
+				<span class="mdl-radio__label"></span>
+			</label>
+		</div>
+	</template>
+	<template data-id="groupMenuListNew">
+		<div class="mdl-cell mdl-cell--12-col">
+			<label class="mdl-radio mdl-js-radio mdl-js-ripple-effect" for="group-menu-" data-isnew="1">
+				<input type="radio" id="group-menu-" class="mdl-radio__button" name="group-choose" value="">
+				<span class="mdl-radio__label">
+					<span i18n-text="add"></span>
+					<div class="mdl-textfield mdl-js-textfield">
+						<input class="mdl-textfield__input" type="text" id="group-add">
+						<label class="mdl-textfield__label" for="group-add"></label>
+					</div>
+				</span>
+			</label>
+		</div>
 	</template>
 	<template data-id="groupItem">
 		<div class="group-item">
@@ -96,13 +115,6 @@
 	</template>
 </head>
 <body>
-<!-- <ul id="move_to_group" class="dropdown-menu"></ul> -->
-<ul class="mdl-menu mdl-menu--bottom-left mdl-js-menu mdl-js-ripple-effect" for="demo-menu-lower-left">
-	<li class="mdl-menu__item">Some Action</li>
-	<li class="mdl-menu__item mdl-menu__item--full-bleed-divider">Another Action</li>
-	<li disabled class="mdl-menu__item">Disabled Action</li>
-	<li class="mdl-menu__item">Yet Another Action</li>
-</ul>
 <div class="mdl-layout mdl-js-layout mdl-layout--fixed-header">
 	<header class="mdl-layout__header">
 		<div id="edit-head" class="mdl-layout__header-row" style="display:none">
@@ -248,6 +260,15 @@
 							<label class="mdl-textfield__label" for="test-url" i18n-text="test_url"></label>
 						</div>
 						<pre id="test-url-result" style="margin-top: 10px"></pre>
+						<div class="form-group">
+							<div class="left">
+								<span>GROUP</span>
+							</div>
+							<div class="right">
+								<span class="group-name"></span>
+								<button class="mdl-button mdl-js-button mdl-button--icon group-choose"><i class="material-icons">more_vert</i></button>
+							</div>
+						</div>
 						<button class="mdl-button mdl-js-button mdl-button--raised mdl-js-ripple-effect" id="rule-save" i18n-text="save"></button>
 					</div>
 				</div>
@@ -271,6 +292,14 @@
 		</section>
 	</main>
 </div>
+<!-- Choose group dialog -->
+<dialog id="group-dialog" class="mdl-dialog">
+	<div class="mdl-dialog__content mdl-grid"></div>
+	<div class="mdl-dialog__actions">
+		<button type="button" class="mdl-button ok">OK</button>
+		<button type="button" class="mdl-button close">Close</button>
+	</div>
+</dialog>
 <!--
 <div class="main">
 	<h1>Header Editor</h1>
