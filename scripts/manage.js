@@ -663,6 +663,10 @@ function addGroupEl(name) {
 	n_group.querySelector('.title').appendChild(document.createTextNode(name));
 	n_group.querySelector('.share').addEventListener('click', onGroupShareClick);
 	n_group.querySelector('.remove').addEventListener('click', onGroupRemoveClick);
+	// toggle box
+	n_group.querySelector('.toggle-box').addEventListener('click', function() {
+		this.parentElement.parentElement.classList.toggle('close');
+	});
 	group.appendChild(n_group);
 	// select and unselect all
 	n_group.querySelector('th.batch').addEventListener('click', onBatchGroupSelect);

@@ -23,6 +23,9 @@
 	vertical-align: middle;
 	margin-right: 12px;
 }
+.group-item {
+	margin-bottom: 10px;
+}
 .rule-list {
 	width: 100%;
 }
