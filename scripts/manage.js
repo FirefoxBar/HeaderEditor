@@ -132,15 +132,31 @@ function onAddRuleClick() {
 
 //edit
 function onEditRuleClick() {
-	var id = $(this).parents('tr').attr('data-id');
-	var table = ruleType2tableName($(this).parents('tr').attr('data-type'));
-	clearModal();
-	$('#addDialog').find('.modal-title').html(t('edit'));
-	var rule = getRules(table, {"id": id})[0];
-	$('#ruleId').val(id);
-	$('#name').val(rule.name);
-	$('#matchRule').val(rule.pattern);
-	$('#excludeRule').val(rule.exclude ? rule.exclude : '');
+	const tr = this.parentElement.parentElement;
+	const id = tr.getAttribute('data-id');
+	const table = ruleType2tableName(tr.getAttribute('data-type'));
+	clearEditPage();
+	document.querySelector('#edit-head .mdl-layout-title').innerHTML = t('edit');
+	document.querySelector('#edit-body .title').innerHTML = t('edit');
+	const rule = getRules(table, {"id": id})[0];
+	document.getElementById('ruleId').value = id;
+	document.getElementById('name').value = name;
+	document.getElementById('matchRule').value = rule.pattern;
+	document.getElementById('excludeRule').value = rule.exclude ? rule.exclude : '';
+	//
+	body.querySelectorAll('.mdl-radio.is-checked').forEach((e) => {
+		e.querySelector('input[type="radio"]').checked = false;
+		e.classList.remove('is-checked');
+	});
+	['ruleType', 'execType', 'matchType'].forEach((e) => {
+		const el = body.querySelector('input[name="' + e + '"]');
+		el.checked = true;
+		el.parentElement.classList.add('is-checked');
+	});
+	body.setAttribute('data-type', body.querySelector('input[name="ruleType"]').value);
+	body.setAttribute('data-isfunction', body.querySelector('input[name="execType"]').value);
+	body.setAttribute('data-match', body.querySelector('input[name="matchType"]').value);
+	
 	$('#ruleType').find('option[value="' + rule.ruleType + '"]').prop('selected', true);
 	$('#ruleType').attr('disabled', 'true');
 	$('#matchType').find('option[value="' + rule.matchType + '"]').prop('selected', true);
@@ -156,20 +172,11 @@ function onEditRuleClick() {
 			$('#headerValue').val(rule.action.value);
 		}
 	}
-	$('#ruleType').trigger('change');
-	$('#isFunction').trigger('change');
-	$('#matchType').trigger('change');
-	$('#addDialog').modal('show');
+	showEditPage();
 }
 //remove
 function onRemoveRuleClick() {
-	const tr = ((e) => {
-		let p = e;
-		while (p.tagName !== 'TR' && p.parentElement) {
-			p = p.parentElement;
-		}
-		return p;
-	})(this);
+	const tr = this.parentElement.parentElement;
 	const id = tr.getAttribute('data-id');
 	const table = ruleType2tableName(tr.getAttribute('data-type'));
 	deleteRule(table, id).then((response) => {
@@ -179,13 +186,7 @@ function onRemoveRuleClick() {
 }
 //enable or disable
 function onEnableRuleChange () {
-	const tr = ((e) => {
-		let p = e;
-		while (p.tagName !== 'TR' && p.parentElement) {
-			p = p.parentElement;
-		}
-		return p;
-	})(this);
+	const tr = this.parentElement.parentElement;
 	const id = tr.getAttribute('data-id');
 	const table = ruleType2tableName(tr.getAttribute('data-type'));
 	const enable = this.checked ? 1 : 0;
