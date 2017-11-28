@@ -35,26 +35,41 @@
 	</template>
 	<template data-id="importRule">
 		<tr data-oldid="">
-			<td class="name"></td>
-			<td class="rule-type"></td>
-			<td class="show-keep row">
-				<div class="radio col-md-6"><label><input type="radio" value="old"><span i18n-text="import_not_override"></span></label></div>
-				<div class="radio col-md-6"><label><input type="radio" value="new"><span i18n-text="import_override"></span></label></div>
+			<td class="name mdl-data-table__cell--non-numeric"></td>
+			<td class="rule-type mdl-data-table__cell--non-numeric"></td>
+			<td class="show-keep mdl-data-table__cell--non-numeric">
+				<label class="mdl-radio mdl-js-radio mdl-js-ripple-effect" for="import-">
+					<input type="radio" id="import-" class="mdl-radio__button" value="old">
+					<span class="mdl-radio__label" i18n-text="import_not_override"></span>
+				</label>
+				<label class="mdl-radio mdl-js-radio mdl-js-ripple-effect" for="import-">
+					<input type="radio" id="import-" class="mdl-radio__button" value="new">
+					<span class="mdl-radio__label" i18n-text="import_override"></span>
+				</label>
 			</td>
-			<td class="show-new row">
-				<div class="radio col-md-6"><label><input type="radio" value="no"><span i18n-text="import_drop"></span></label></div>
-				<div class="radio col-md-6"><label><input type="radio" value="yes"><span i18n-text="import_new"></span></label></div>
+			<td class="show-new mdl-data-table__cell--non-numeric">
+				<label class="mdl-radio mdl-js-radio mdl-js-ripple-effect" for="import-">
+					<input type="radio" id="import-" class="mdl-radio__button" value="no">
+					<span class="mdl-radio__label" i18n-text="import_drop"></span>
+				</label>
+				<label class="mdl-radio mdl-js-radio mdl-js-ripple-effect" for="import-">
+					<input type="radio" id="import-" class="mdl-radio__button" value="yes">
+					<span class="mdl-radio__label" i18n-text="import_new"></span>
+				</label>
 			</td>
 		</tr>
 	</template>
 	<template data-id="dlHistory">
-		<li class="list-group-item">
-			<div class="btn-group" role="group">
-				<button type="button" class="btn btn-default download"><span class="glyphicon glyphicon-download-alt"></span></button>
-				<button type="button" class="btn btn-default edit"><span class="glyphicon glyphicon-pencil"></span></button>
-				<button type="button" class="btn btn-default remove"><span class="glyphicon glyphicon-remove"></span></button>
-			</div>
-			<span class="url"></span>
+		<li class="mdl-list__item">
+			<span class="mdl-list__item-primary-content">
+				<i class="material-icons mdl-list__item-icon">link</i>
+				<span class="url"></span>
+			</span>
+			<span class="mdl-list__item-secondary-action">
+				<button type="button" class="mdl-button mdl-js-button mdl-button--icon download"><i class="material-icons">file_download</i></button>
+				<button type="button" class="mdl-button mdl-js-button mdl-button--icon edit"><i class="material-icons">mode_edit</i></button>
+				<button type="button" class="mdl-button mdl-js-button mdl-button--icon remove"><i class="material-icons">delete</i></button>
+			</span>
 		</li>
 	</template>
 	<template data-id="groupMenuList">
@@ -127,9 +142,7 @@
 		</div>
 		<div id="main-head" class="mdl-layout__tab-bar mdl-js-ripple-effect">
 			<a href="#rule-panel" class="mdl-layout__tab is-active"><i class="material-icons">list</i><span i18n-text="rule_list"></span></a>
-			<a href="#download-panel" class="mdl-layout__tab"><i class="material-icons">cloud_download</i><span i18n-text="download_rule"></span></a>
-			<a id="export" class="mdl-layout__tab"><i class="material-icons">settings_backup_restore</i><span i18n-text="export"></span></a>
-			<a id="import" class="mdl-layout__tab"><i class="material-icons">settings_backup_restore</i><span i18n-text="import"></span></a>
+			<a href="#import-panel" class="mdl-layout__tab"><i class="material-icons">settings_backup_restore</i><span i18n-text="export"></span><span i18n-text="import"></span></a>
 			<div class="mdl-layout-spacer"></div>
 			<a href="https://github.com/FirefoxBar/HeaderEditor/wiki" class="mdl-layout__tab"><i class="material-icons">help</i><span i18n-text="help"></span></a>
 		</div>
@@ -286,8 +299,52 @@
 				</button>
 			</div>
 		</section>
-		<section class="mdl-layout__tab-panel" id="download-panel">
+		<section class="mdl-layout__tab-panel" id="import-panel">
 			<div class="page-content">
+				<div class="mdl-card mdl-shadow--2dp">
+					<div class="mdl-card__title mdl-card--expand">
+						<h2 class="mdl-card__title-text">
+							<span class="title" i18n-text="download_rule"></span>
+						</h2>
+					</div>
+					<div class="mdl-card__supporting-text">
+						<div class="download-input">
+							<div class="mdl-textfield mdl-js-textfield">
+								<input class="mdl-textfield__input" type="text" id="download-url">
+								<label class="mdl-textfield__label" for="download-url">URL</label>
+							</div>
+							<div class="buttons">
+								<button id="download-submit" type="button" class="mdl-button mdl-js-button mdl-button--icon"><i class="material-icons">file_download</i></button>
+								<a href="https://github.com/FirefoxBar/HeaderEditor/wiki/Third-party-rules" class="mdl-button mdl-js-button mdl-js-ripple-effect" target="_blank"><i class="material-icons">search</i> <span i18n-text="third_party_rules"></span></a>
+							</div>
+						</div>
+						<ul id="download-history" class="mdl-list"></ul>
+					</div>
+				</div>
+				<div id="import-confirm" class="mdl-card mdl-shadow--2dp">
+					<div class="mdl-card__title mdl-card--expand">
+						<h2 class="mdl-card__title-text">
+							<span class="title" i18n-text="import"></span>
+						</h2>
+					</div>
+					<div class="mdl-card__supporting-text">
+						<table class="mdl-data-table mdl-js-data-table rule-list" style="border:0">
+							<thead>
+								<tr>
+									<th class="mdl-data-table__cell--non-numeric" i18n-text="name"></th>
+									<th class="mdl-data-table__cell--non-numeric" i18n-text="ruleType"></th>
+									<th class="mdl-data-table__cell--non-numeric" i18n-text="action"></th>
+								</tr>
+							</thead>
+							<tbody id="import-list"></tbody>
+						</table>
+					</div>
+					<div class="mdl-card__actions mdl-card--border">
+						<button id="import-group" class="mdl-button mdl-button--colored mdl-js-button mdl-js-ripple-effect"><span>GROUP</span>&nbsp;<span class="group-name"></span></button>
+						<button class="mdl-button mdl-button--colored mdl-js-button mdl-js-ripple-effect">Save</button>
+						<button class="mdl-button mdl-button--colored mdl-js-button mdl-js-ripple-effect">Cancel</button>
+					</div>
+				</div>
 			</div>
 		</section>
 	</main>
@@ -324,25 +381,6 @@
 	</div>
 	<div class="panel-group" id="actions" role="tablist" aria-multiselectable="true">
 		<div class="panel panel-default">
-			<div class="panel-heading" role="tab" id="download-rules-head">
-				<h4 class="panel-title">
-					<a role="button" data-toggle="collapse" data-parent="#actions" href="#download-rules" aria-expanded="true" aria-controls="download-rules"><span i18n-text="download_rule"></span></a>
-					<div class="buttons">
-						<a href="https://github.com/FirefoxBar/HeaderEditor/wiki/Third-party-rules"><span  class="glyphicon glyphicon-search"></span> <span i18n-text="third_party_rules"></span></a>
-					</div>
-				</h4>
-			</div>
-			<div id="download-rules" class="panel-collapse collapse in" role="tabpanel" aria-labelledby="download-rules-head">
-				<div class="panel-body">
-					<div class="input-group">
-						<input id="download-url" type="text" class="form-control" placeholder="URL" autocomplete="off">
-						<div class="input-group-btn">
-								<button id="download-submit" type="button" class="btn btn-default"><span class="glyphicon glyphicon-download-alt"></span></button>
-						</div>
-					</div>
-					<ul id="download-history" class="list-group"></ul>
-				</div>
-			</div>
 		</div>
 	</div>
 </div>

@@ -307,15 +307,8 @@ function onImportClick() {
 	});
 }
 function showImportModal() {
-	// Move group selection
-	const groups = document.getElementById('importRulesGroup');
-	groups.innerHTML = document.getElementById('move_to_group').innerHTML;
-	groups.setAttribute('data-name', t('ungrouped'));
-	groups.querySelectorAll('li').forEach((e) => {
-		e.addEventListener('click', onImportGroupClick);
-	});
 	// Contents
-	const tbody = document.getElementById('importRulesList');
+	const tbody = document.getElementById('import-list');
 	tbody.innerHTML = '';
 	for (let key of tableNames) {
 		for (const id in waitToImport[key]) {
@@ -325,9 +318,6 @@ function showImportModal() {
 			n.setAttribute('id', elementId);
 			n.querySelector('.name').appendChild(document.createTextNode(item.name));
 			n.querySelector('.rule-type').appendChild(document.createTextNode(t('rule_' + item.ruleType)));
-			n.querySelectorAll('input[type="radio"]').forEach((e) => {
-				e.setAttribute('name', elementId);
-			});
 			let rules = getRules(key, {"name": item.name});
 			if (rules.length) {
 				n.setAttribute('data-oldid', rules[0].id);
@@ -337,10 +327,20 @@ function showImportModal() {
 				n.classList.add('new');
 				n.querySelector('input[value="yes"]').checked = true;
 			}
+			n.querySelectorAll('.mdl-radio').forEach((e) => {
+				const id = 'import-' + elementId + '-' + (templateId++);
+				e.setAttribute('for', id);
+				e.querySelector('input[type="radio"]').setAttribute('id', id);
+				e.querySelector('input[type="radio"]').setAttribute('name', elementId);
+				if (typeof(componentHandler) !== 'undefined' && !e.classList.contains('is-upgraded')) {
+					componentHandler.upgradeElement(e, 'MaterialRadio');
+					componentHandler.upgradeElement(e.querySelector('.mdl-js-ripple-effect'), 'MaterialRipple');
+				}
+			});
 			tbody.appendChild(n);
 		}
 	}
-	$('#importDialog').modal('show');
+	document.getElementById('main-body').scrollTo(0, document.getElementById('import-confirm').offsetTop);
 }
 function onImportGroupClick() {
 	let name = null;
@@ -810,13 +810,22 @@ document.addEventListener('DOMContentLoaded', () => {
 	// Import rules
 	// document.getElementById('import').addEventListener('click', onImportClick);
 	// document.getElementById('importSave').addEventListener('click', onImportSubmit);
+	const importGroups = document.getElementById('import-group');
+	importGroups.setAttribute('data-name', t('ungrouped'));
+	importGroups.querySelector('.group-name').innerHTML = t('ungrouped');
+	importGroups.addEventListener('click', function() {
+		chooseGroup().then(r => {
+			this.setAttribute('data-name', r);
+			this.querySelector('.group-name').innerHTML = r;
+		})
+	});
 
 	// Download rules
-	// document.getElementById('download-submit').addEventListener('click', () => {
-		// downloadRule(document.getElementById('download-url').value);
-		// addHistory(document.getElementById('download-url').value);
-	// });
-	// loadDownloadHistory();
+	document.getElementById('download-submit').addEventListener('click', () => {
+		downloadRule(document.getElementById('download-url').value);
+		addHistory(document.getElementById('download-url').value);
+	});
+	loadDownloadHistory();
 
 	//Realtime test
 	initRealtimeTest();

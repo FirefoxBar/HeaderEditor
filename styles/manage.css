@@ -75,12 +75,6 @@
 #edit-body .mdl-card__supporting-text > * {
 	width: 100%;
 }
-#importRulesList tr.keep .show-new {
-	display: none;
-}
-#importRulesList tr.new .show-keep {
-	display: none;
-}
 #edit-body .default-hide {
 	display: none;
 }
@@ -105,21 +99,30 @@
 #edit-body[data-isfunction="1"] .custom-code {
 	display: block;
 }
-#download-rules .list-group {
-	margin-top: 20px;
+.download-input .mdl-textfield {
+	margin-top: 5px;
+	margin-right: 10px;
+	padding-top: 0;
+	padding-bottom: 0;
+	width: calc(100% - 190px);
 }
-#download-rules .list-group li {
-	min-height: 54px;
-	line-height: 34px;
+.download-input .mdl-textfield__label {
+	top: 4px;
+	bottom: auto;
+	overflow: visible;
 }
-#download-rules .btn-group {
-	float: right;
+.download-input .mdl-textfield__label:after {
+	bottom: -4px;
 }
-.btn-group > .btn:not(:last-child) {
-	border-top-right-radius: 0;
-	border-bottom-right-radius: 0;
-	border-right-style: none;
+.download-input .buttons {
+	display: inline-block;
 }
-.btn-group a {
-	cursor: pointer;
+#import-list .mdl-radio {
+	margin-right: 10px;
+}
+#import-list tr.keep .show-new {
+	display: none;
+}
+#import-list tr.new .show-keep {
+	display: none;
 }
