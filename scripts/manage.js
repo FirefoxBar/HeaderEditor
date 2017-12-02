@@ -83,21 +83,18 @@ function initEditChange() {
 }
 function clearEditPage() {
 	const body = document.getElementById('edit-body');
-	body.querySelector('#ruleId').value = '';
+	mdlSetValue(body.querySelector('#ruleId'), '');
 	body.querySelectorAll('input[type="text"]').forEach((e) => {
-		e.value = '';
+		mdlSetValue(e, '');
 	});
 	body.querySelectorAll('textarea').forEach((e) => {
 		e.value = '';
 	});
-	body.querySelectorAll('.mdl-radio.is-checked').forEach((e) => {
-		e.querySelector('input[type="radio"]').checked = false;
-		e.classList.remove('is-checked');
-	});
+	// remove disabled
+	mdlRadioDisable("ruleType", false, body);
+	mdlRadioDisable("matchType", false, body);
 	['ruleType', 'execType', 'matchType'].forEach((e) => {
-		const el = body.querySelector('input[name="' + e + '"]');
-		el.checked = true;
-		el.parentElement.classList.add('is-checked');
+		mdlRadioSet(e, body.querySelector('input[name="' + e + '"]').value, body);
 	});
 	body.setAttribute('data-type', body.querySelector('input[name="ruleType"]').value);
 	body.setAttribute('data-isfunction', body.querySelector('input[name="execType"]').value);
@@ -133,6 +130,7 @@ function onAddRuleClick() {
 //edit
 function onEditRuleClick() {
 	const tr = this.parentElement.parentElement;
+	const body = document.getElementById('edit-body');
 	const id = tr.getAttribute('data-id');
 	const table = ruleType2tableName(tr.getAttribute('data-type'));
 	clearEditPage();
@@ -140,36 +138,26 @@ function onEditRuleClick() {
 	document.querySelector('#edit-body .title').innerHTML = t('edit');
 	const rule = getRules(table, {"id": id})[0];
 	document.getElementById('ruleId').value = id;
-	document.getElementById('name').value = name;
-	document.getElementById('matchRule').value = rule.pattern;
-	document.getElementById('excludeRule').value = rule.exclude ? rule.exclude : '';
-	//
-	body.querySelectorAll('.mdl-radio.is-checked').forEach((e) => {
-		e.querySelector('input[type="radio"]').checked = false;
-		e.classList.remove('is-checked');
-	});
-	['ruleType', 'execType', 'matchType'].forEach((e) => {
-		const el = body.querySelector('input[name="' + e + '"]');
-		el.checked = true;
-		el.parentElement.classList.add('is-checked');
-	});
-	body.setAttribute('data-type', body.querySelector('input[name="ruleType"]').value);
-	body.setAttribute('data-isfunction', body.querySelector('input[name="execType"]').value);
-	body.setAttribute('data-match', body.querySelector('input[name="matchType"]').value);
-	
-	$('#ruleType').find('option[value="' + rule.ruleType + '"]').prop('selected', true);
-	$('#ruleType').attr('disabled', 'true');
-	$('#matchType').find('option[value="' + rule.matchType + '"]').prop('selected', true);
-	$('#isFunction').find('option[value="' + rule.isFunction + '"]').prop('selected', true);
+	mdlSetValue(document.getElementById('rule-name'), rule.name);
+	mdlSetValue(document.getElementById('matchRule'), rule.pattern);
+	mdlSetValue(document.getElementById('excludeRule'), rule.exclude ? rule.exclude : '');
+	mdlRadioSet("ruleType", rule.ruleType, body);
+	mdlRadioDisable("ruleType", true, body);
+	mdlRadioSet("matchType", rule.matchType, body);
+	mdlRadioDisable("matchType", true, body);
+	mdlRadioSet("execType", rule.isFunction ? 1 : 0, body);
+	body.setAttribute('data-type', rule.ruleType);
+	body.setAttribute('data-isfunction', rule.isFunction ? 1 : 0);
+	body.setAttribute('data-match', rule.matchType);
 	if (rule.isFunction) {
-		$('#custom-code').val(rule.code);
+		document.getElementById('custom-code').value = rule.code;
 	} else {
 		if (rule.ruleType === 'redirect') {
-			$('#redirectTo').val(rule.to);
+			mdlSetValue(document.getElementById('redirectTo'), rule.to);
 		}
 		if (rule.ruleType === 'modifySendHeader' || rule.ruleType === 'modifyReceiveHeader') {
-			$('#headerName').val(rule.action.name);
-			$('#headerValue').val(rule.action.value);
+			mdlSetValue(document.getElementById('headerName'), rule.action.name);
+			mdlSetValue(document.getElementById('headerValue'), rule.action.value);
 		}
 	}
 	showEditPage();
@@ -200,7 +188,7 @@ function onRuleSaveClick() {
 	//check
 	let data = {
 		"enable": 1,
-		"name": document.getElementById('name').value,
+		"name": document.getElementById('rule-name').value,
 		"ruleType": body.querySelector('input[name="ruleType"]:checked').value,
 		"matchType": body.querySelector('input[name="matchType"]:checked').value,
 		"pattern": document.getElementById('matchRule').value,
