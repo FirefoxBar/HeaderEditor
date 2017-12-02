@@ -779,7 +779,6 @@ function onRealtimeTest() {
 }
 
 document.addEventListener('DOMContentLoaded', () => {
-	// document.getElementById('export').addEventListener('click', onExportClick);
 	document.getElementById('rule-save').addEventListener('click', onRuleSaveClick);
 
 	document.getElementById('add-rule').addEventListener('click', onAddRuleClick);
@@ -795,8 +794,9 @@ document.addEventListener('DOMContentLoaded', () => {
 	// document.getElementById('batch-group').addEventListener('click', onBatchGroupClick);
 	// document.getElementById('batch-share').addEventListener('click', onBatchShareClick);
 
-	// Import rules
-	// document.getElementById('import').addEventListener('click', onImportClick);
+	// Import and Export rules
+	document.getElementById('export').addEventListener('click', onExportClick);
+	document.getElementById('import').addEventListener('click', onImportClick);
 	// document.getElementById('importSave').addEventListener('click', onImportSubmit);
 	const importGroups = document.getElementById('import-group');
 	importGroups.setAttribute('data-name', t('ungrouped'));
