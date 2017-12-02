@@ -102,8 +102,6 @@ function clearEditPage() {
 	// Group
 	body.querySelector('.group-name').innerHTML = t('ungrouped');
 	body.querySelector('.group-name').setAttribute('data-name', t('ungrouped'));
-	// $('#ruleType').removeAttr('disabled');
-	// $('#test-url').trigger('keyup');
 }
 function showEditPage() {
 	document.getElementById('main-head').parentElement.style.display = 'none';
@@ -267,6 +265,15 @@ function onExportClick() {
 }
 
 //import
+function setImportStatus(s) {
+	const box = document.getElementById('import-confirm');
+	box.classList.add(s);
+	['waiting-select', 'loading', 'waiting-confirm'].forEach(t => {
+		if (s !== t) {
+			box.classList.remove(t);
+		}
+	});
+}
 function importFromString(str) {
 	waitToImport = {};
 	content = JSON.parse(str);
@@ -291,10 +298,12 @@ function importFromString(str) {
 }
 function onImportClick() {
 	loadFromFile('.json').then(function(content) {
+		setImportStatus('loading');
 		importFromString(content);
 	});
 }
 function showImportModal() {
+	const box = document.getElementById('import-confirm');
 	// Contents
 	const tbody = document.getElementById('import-list');
 	tbody.innerHTML = '';
@@ -328,34 +337,16 @@ function showImportModal() {
 			tbody.appendChild(n);
 		}
 	}
-	document.getElementById('main-body').scrollTo(0, document.getElementById('import-confirm').offsetTop);
-}
-function onImportGroupClick() {
-	let name = null;
-	if (this.getAttribute('data-name') === '_new') {
-		name = window.prompt(t('enter_group_name'));
-		if (name) {
-			addGroupEl(name);
-			cachedGroupList[name] = [];
-			saveGroups();
-		} else {
-			return;
-		}
-	} else {
-		name = this.getAttribute('data-name');
-	}
-	this.parentElement.setAttribute('data-name', name);
-	this.parentElement.previousElementSibling.querySelector('.group_name').innerHTML = '';
-	this.parentElement.previousElementSibling.querySelector('.group_name').appendChild(document.createTextNode(name));
+	setImportStatus('waiting-confirm');
+	document.getElementById('main-body').scrollTo(0, box.offsetTop);
 }
 function onImportSubmit() {
 	let total = 0;
 	let finish = 0;
 	let toSave = {};
-	let groupName = document.getElementById('importRulesGroup').getAttribute('data-name');
+	let groupName = document.getElementById('import-group').getAttribute('data-name');
 	function checkFinish() {
 		if (total === finish) {
-			$('#importDialog').modal('hide');
 			saveGroups();
 			browser.runtime.sendMessage({"method": "updateCache", "type": "all"});
 			setTimeout(() => {
@@ -489,6 +480,7 @@ function onBatchGroupSelect() {
 
 // Download rules
 function downloadRule(url) {
+	setImportStatus('loading');
 	getURL(url).then((str) => {
 		importFromString(str);
 	});
@@ -797,7 +789,10 @@ document.addEventListener('DOMContentLoaded', () => {
 	// Import and Export rules
 	document.getElementById('export').addEventListener('click', onExportClick);
 	document.getElementById('import').addEventListener('click', onImportClick);
-	// document.getElementById('importSave').addEventListener('click', onImportSubmit);
+	document.getElementById('import-save').addEventListener('click', onImportSubmit);
+	document.getElementById('import-cancel').addEventListener('click', () => {
+		setImportStatus('waiting-select');
+	});
 	const importGroups = document.getElementById('import-group');
 	importGroups.setAttribute('data-name', t('ungrouped'));
 	importGroups.querySelector('.group-name').innerHTML = t('ungrouped');

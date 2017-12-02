@@ -117,6 +117,29 @@
 .download-input .buttons {
 	display: inline-block;
 }
+#import-confirm .import-loading,
+#import-confirm .import-waiting-select {
+	text-align: center;
+	font-size: 16px;
+}
+#import-confirm .mdl-spinner {
+	width: 70px;
+	height: 70px;
+}
+#import-confirm .import-loading,
+#import-confirm .import-waiting-select,
+#import-confirm .import-table,
+#import-confirm .mdl-card__actions {
+	display: none;
+}
+#import-confirm.loading .import-loading,
+#import-confirm.waiting-select .import-waiting-select,
+#import-confirm.waiting-confirm .mdl-card__actions {
+	display: block;
+}
+#import-confirm.waiting-confirm .import-table {
+	display: table;
+}
 #import-list .mdl-radio {
 	margin-right: 10px;
 }
