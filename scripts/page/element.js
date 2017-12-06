@@ -29,7 +29,6 @@ function mdlRadioSet(name, val, p) {
 			break;
 		}
 	}
-	console.log(all);
 	if (e === null) {
 		e = all[0];
 	}

@@ -17,7 +17,7 @@
 	<style>
 	</style>
 	<template data-id="rule">
-		<tr data-id="" data-type="">
+		<tr class="rule-item" data-id="" data-type="">
 			<td class="batch mdl-data-table__cell--non-numeric"><input type="checkbox" name="batch"></td>
 			<td class="enable mdl-data-table__cell--non-numeric">
 				<label class="mdl-switch enable-switcher"><input type="checkbox" class="mdl-switch__input activate" name="enable"/></label>
@@ -100,14 +100,10 @@
 				<div class="mdl-card__title mdl-card--expand">
 					<h2 class="mdl-card__title-text">
 						<span class="title"></span>
-						<div class="buttons">
-							<span class="glyphicon glyphicon-share share"></span>
-							<span class="glyphicon glyphicon-remove remove"></span>
-						</div>
 					</h2>
 				</div>
 				<div class="mdl-card__supporting-text mdl-grid">
-					<table class="mdl-data-table mdl-js-data-table rule-list" style="border:0">
+					<table class="mdl-data-table mdl-js-data-table rule-list">
 						<thead>
 							<tr>
 								<th i18n-text="batch_mode" class="batch mdl-data-table__cell--non-numeric"></th>
@@ -123,6 +119,8 @@
 					</table>
 				</div>
 				<div class="mdl-card__menu">
+					<button class="remove mdl-button mdl-js-button mdl-button--icon"><i class="material-icons">delete</i></button>
+					<button class="share mdl-button mdl-js-button mdl-button--icon"><i class="material-icons">share</i></button>
 					<button class="toggle-box mdl-button mdl-js-button mdl-button--icon"><i class="material-icons">keyboard_arrow_up</i></button>
 				</div>
 			</div>
@@ -441,7 +439,7 @@
 <script src="third-party/dialog-polyfill/dialog-polyfill.min.js"></script>
 <script src="third-party/mdl/material.min.js"></script>
 <script src="scripts/fileSaveLoad.js"></script>
-<script src="scripts/element.js"></script>
-<script src="scripts/manage.js"></script>
+<script src="scripts/page/element.js"></script>
+<script src="scripts/page/manage.js"></script>
 </body>
 </html>

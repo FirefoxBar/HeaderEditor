@@ -5,27 +5,7 @@ let templateId = 1; // used by template
 function loadRulesList() {
 	function appendRule(type, response) {
 		for (var i = 0; i < response.length; i++) {
-			let e = template.rule.cloneNode(true);
-			e.setAttribute('data-id', response[i].id);
-			e.setAttribute('data-table', type);
-			e.setAttribute('data-type', response[i].ruleType);
-			e.querySelector('.name').appendChild(document.createTextNode(response[i].name));
-			e.querySelector('.rule-type').appendChild(document.createTextNode(t('rule_' + response[i].ruleType)));
-			e.querySelector('.pattern').appendChild(document.createTextNode(response[i].pattern));
-			e.querySelector('.match-type').appendChild(document.createTextNode(t('match_' + response[i].matchType)));
-			e.querySelector('.move-group').addEventListener('click', onMoveGroupClick);
-			e.querySelector('.edit').addEventListener('click', onEditRuleClick);
-			e.querySelector('.remove').addEventListener('click', onRemoveRuleClick);
-			e.querySelector('input[name="enable"]').addEventListener('change', onEnableRuleChange);
-			const enableSwitcher = e.querySelector('.enable-switcher');
-			const enableCheckbox = enableSwitcher.querySelector('input');
-			enableSwitcher.setAttribute('for', 'switcher-' + response[i].id);
-			enableCheckbox.setAttribute('id', 'switcher-' + response[i].id);
-			enableCheckbox.checked = response[i].enable;
-			if (typeof(componentHandler) !== 'undefined') {
-				componentHandler.upgradeElement(enableSwitcher, 'MaterialSwitch');
-			}
-			moveItemToGroup(e, response[i].id, findItemInGroup(response[i].id, type), type);
+			addRuleEl(response[i], type);
 		}
 	}
 	function checkResult(type, response) {
@@ -57,6 +37,33 @@ function ruleType2tableName(ruleType) {
 	}
 }
 
+function addRuleEl(rule, type, notAutoMove) {
+	let e = template.rule.cloneNode(true);
+	e.setAttribute('data-id', rule.id);
+	e.setAttribute('data-table', type);
+	e.setAttribute('data-type', rule.ruleType);
+	e.querySelector('.name').appendChild(document.createTextNode(rule.name));
+	e.querySelector('.rule-type').appendChild(document.createTextNode(t('rule_' + rule.ruleType)));
+	e.querySelector('.pattern').appendChild(document.createTextNode(rule.pattern));
+	e.querySelector('.match-type').appendChild(document.createTextNode(t('match_' + rule.matchType)));
+	e.querySelector('.move-group').addEventListener('click', onMoveGroupClick);
+	e.querySelector('.edit').addEventListener('click', onEditRuleClick);
+	e.querySelector('.remove').addEventListener('click', onRemoveRuleClick);
+	e.querySelector('input[name="enable"]').addEventListener('change', onEnableRuleChange);
+	const enableSwitcher = e.querySelector('.enable-switcher');
+	const enableCheckbox = enableSwitcher.querySelector('input');
+	enableSwitcher.setAttribute('for', 'switcher-' + rule.id);
+	enableCheckbox.setAttribute('id', 'switcher-' + rule.id);
+	enableCheckbox.checked = rule.enable;
+	if (typeof(componentHandler) !== 'undefined') {
+		componentHandler.upgradeElement(enableSwitcher, 'MaterialSwitch');
+	}
+	if (!notAutoMove) {
+		moveItemToGroup(e, rule.id, findItemInGroup(rule.id, type), type);
+	}
+	return e;
+}
+
 function initEditChange() {
 	const body = document.getElementById('edit-body');
 	body.querySelectorAll('input[name="ruleType"]').forEach(e => {
@@ -78,7 +85,7 @@ function initEditChange() {
 		chooseGroup().then(r => {
 			body.querySelector('.group-name').innerHTML = r;
 			body.querySelector('.group-name').setAttribute('data-name', r);
-		});
+		}).catch(() => {});
 	});
 }
 function clearEditPage() {
@@ -158,6 +165,10 @@ function onEditRuleClick() {
 			mdlSetValue(document.getElementById('headerValue'), rule.action.value);
 		}
 	}
+	// Group
+	const oldGroup = findItemInGroup(id, table);
+	body.querySelector('.group-name').innerHTML = oldGroup;
+	body.querySelector('.group-name').setAttribute('data-name', oldGroup);
 	showEditPage();
 }
 //remove
@@ -199,6 +210,7 @@ function onRuleSaveClick() {
 	const ruleId = document.getElementById('ruleId').value;
 	const code = document.getElementById('custom-code').value;
 	const table = ruleType2tableName(data.ruleType);
+	const newGroup = body.querySelector('.group-name').getAttribute('data-name');
 	if (data.name === '') {
 		alert(t('name_empty'));
 		return;
@@ -251,10 +263,16 @@ function onRuleSaveClick() {
 		data.id = ruleId;
 	}
 	saveRule(table, data).then(function(response) {
+		// move to group
+		let el = null;
+		if (ruleId !== '') {
+			el = document.querySelector('.rule-item[data-id="' + ruleId + '"]');
+		} else {
+			el = addRuleEl(response, table, true);
+		}
+		moveItemToGroup(el, response.id, newGroup, table);
 		browser.runtime.sendMessage({"method": "updateCache", "type": table});
-		setTimeout(() => {
-			window.location.reload();
-		}, 300);
+		hideEditPage();
 	});
 }
 
@@ -538,7 +556,7 @@ function onMoveGroupClick() {
 	const e = this.parentElement.parentElement;
 	chooseGroup().then(name => {
 		moveItemToGroup(e, e.getAttribute('data-id'), name, e.getAttribute('data-table'));
-	});
+	}).catch(() => {});
 }
 function moveItemToGroup(from, id, groupName, type) {
 	if (typeof(id) !== 'number') {
@@ -800,7 +818,7 @@ document.addEventListener('DOMContentLoaded', () => {
 		chooseGroup().then(r => {
 			this.setAttribute('data-name', r);
 			this.querySelector('.group-name').innerHTML = r;
-		})
+		}).catch(() => {});
 	});
 
 	// Download rules

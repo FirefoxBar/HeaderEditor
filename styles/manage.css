@@ -26,7 +26,14 @@
 .group-item {
 	margin-bottom: 10px;
 }
+.group-item .mdl-card__supporting-text {
+	padding-top: 0;
+	padding-bottom: 0;
+	padding-left: 0;
+	padding-right: 0;
+}
 .rule-list {
+	border: none;
 	width: 100%;
 }
 .rule-list .enable {
