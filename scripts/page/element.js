@@ -46,6 +46,15 @@ function mdlRadioDisable(name, disable, p) {
 	});
 }
 
+function mdlCheckboxSet(e, val) {
+	e.querySelector('input[type="checkbox"]').checked = val;
+	if (val) {
+		e.classList.add('is-checked');
+	} else {
+		e.classList.remove('is-checked');
+	}
+}
+
 function mdlSetValue(el, value) {
 	el.value = value;
 	if (value === '') {

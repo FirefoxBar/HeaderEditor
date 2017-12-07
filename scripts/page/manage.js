@@ -49,14 +49,21 @@ function addRuleEl(rule, type, notAutoMove) {
 	e.querySelector('.move-group').addEventListener('click', onMoveGroupClick);
 	e.querySelector('.edit').addEventListener('click', onEditRuleClick);
 	e.querySelector('.remove').addEventListener('click', onRemoveRuleClick);
-	e.querySelector('input[name="enable"]').addEventListener('change', onEnableRuleChange);
+	// enable switcher
 	const enableSwitcher = e.querySelector('.enable-switcher');
 	const enableCheckbox = enableSwitcher.querySelector('input');
-	enableSwitcher.setAttribute('for', 'switcher-' + rule.id);
-	enableCheckbox.setAttribute('id', 'switcher-' + rule.id);
+	enableSwitcher.setAttribute('for', 'switcher-' + type + '-' + rule.id);
+	enableCheckbox.setAttribute('id', 'switcher-' + type + '-' + rule.id);
 	enableCheckbox.checked = rule.enable;
+	enableCheckbox.addEventListener('change', onEnableRuleChange);
+	// Batch checkbox
+	const batchSwitcher = e.querySelector('.batch-checkbox');
+	const batchCheckbox = batchSwitcher.querySelector('input');
+	batchSwitcher.setAttribute('for', 'batch-' + type + '-' + rule.id);
+	batchCheckbox.setAttribute('id', 'batch-' + type + '-' + rule.id);
 	if (typeof(componentHandler) !== 'undefined') {
 		componentHandler.upgradeElement(enableSwitcher, 'MaterialSwitch');
+		componentHandler.upgradeElement(batchSwitcher, 'MaterialCheckbox');
 	}
 	if (!notAutoMove) {
 		moveItemToGroup(e, rule.id, findItemInGroup(rule.id, type), type);
@@ -403,22 +410,26 @@ function onImportSubmit() {
 
 // Batch mode
 function onBatchModeClick() {
+	if (document.querySelector('.rule-list').classList.contains('batch-mode')) {
+		setFloatButton('default-button');
+	} else {
+		setFloatButton('batch-button');
+	}
 	//unselect all
-	document.querySelectorAll('input[name="batch"]:checked').forEach((e) => {
-		e.checked = false;
+	document.querySelectorAll('.batch-checkbox').forEach((e) => {
+		mdlCheckboxSet(e, false);
 	});
 	document.querySelectorAll('.rule-list').forEach((e) => {
 		e.classList.toggle('batch-mode');
 	});
-	document.querySelector('.batch-mode-btns').classList.toggle('show');
 }
 function onBatchSelectAll() {
 	if (!document.querySelector('input[name="batch"]')) {
 		return;
 	}
-	let setTo = document.querySelector('input[name="batch"]').checked ? false : true;
-	document.querySelectorAll('input[name="batch"]').forEach((e) => {
-		e.checked = setTo;
+	const setTo = document.querySelector('input[name="batch"]').checked ? false : true;
+	document.querySelectorAll('.batch-checkbox').forEach((e) => {
+		mdlCheckboxSet(e, setTo);
 	});
 }
 function onBatchDeleteClick() {
@@ -461,38 +472,21 @@ function onBatchShareClick() {
 	saveAsFile(JSON.stringify(result, null, "\t"), DateFormat(HE_DUMP_FILE_NAME));
 }
 function onBatchGroupClick() {
-	this.nextElementSibling.innerHTML = document.getElementById('move_to_group').innerHTML;
-	this.nextElementSibling.querySelectorAll('li').forEach((e) => {
-		e.addEventListener('click', onBatchGroupMenuClick);
-	});
-}
-function onBatchGroupMenuClick() {
-	let name = '';
-	if (this.getAttribute('data-name') === '_new') {
-		name = window.prompt(t('enter_group_name'));
-		if (name) {
-			addGroupEl(name);
-			cachedGroupList[name] = [];
-			saveGroups();
-		} else {
-			return;
-		}
-	} else {
-		name = this.getAttribute('data-name');
-	}
-	document.querySelectorAll('input[name="batch"]:checked').forEach((e) => {
-		let el = findParent(e, (c) => { return c.nodeName.toLowerCase() === 'tr'; });
-		moveItemToGroup(el, el.getAttribute('data-id'), name, el.getAttribute('data-table'));
-	});
+	chooseGroup().then(name => {
+		document.querySelectorAll('input[name="batch"]:checked').forEach((e) => {
+			let el = findParent(e, (c) => { return c.nodeName.toLowerCase() === 'tr'; });
+			moveItemToGroup(el, el.getAttribute('data-id'), name, el.getAttribute('data-table'));
+		});
+	}).catch(() => {});
 }
 function onBatchGroupSelect() {
-	const p = findParent(this, (e) => { return e.classList.contains('group-item'); });
+	const p = findParent(this, (e) => { return e.classList.contains('rule-list'); });
 	if (!p.querySelector('input[name="batch"]')) {
 		return;
 	}
-	let setTo = p.querySelector('input[name="batch"]').checked ? false : true;
-	p.querySelectorAll('input[name="batch"]').forEach((e) => {
-		e.checked = setTo;
+	const setTo = p.querySelector('input[name="batch"]').checked ? false : true;
+	p.querySelectorAll('.batch-checkbox').forEach((e) => {
+		mdlCheckboxSet(e, setTo);
 	});
 }
 
@@ -788,7 +782,19 @@ function onRealtimeTest() {
 	}
 }
 
+
+function setFloatButton(id) {
+	document.querySelectorAll('.float-button').forEach(e => {
+		if (e.id === id) {
+			e.style.display = 'block';
+		} else {
+			e.style.display = 'none';
+		}
+	});
+}
+
 document.addEventListener('DOMContentLoaded', () => {
+	setFloatButton('default-button');
 	document.getElementById('rule-save').addEventListener('click', onRuleSaveClick);
 
 	document.getElementById('add-rule').addEventListener('click', onAddRuleClick);
@@ -798,11 +804,12 @@ document.addEventListener('DOMContentLoaded', () => {
 	initGroup();
 
 	// Batch delete
-	// document.getElementById('batch-mode').addEventListener('click', onBatchModeClick);
-	// document.getElementById('batch-select-all').addEventListener('click', onBatchSelectAll);
-	// document.getElementById('batch-delete').addEventListener('click', onBatchDeleteClick);
-	// document.getElementById('batch-group').addEventListener('click', onBatchGroupClick);
-	// document.getElementById('batch-share').addEventListener('click', onBatchShareClick);
+	document.getElementById('batch-mode').addEventListener('click', onBatchModeClick);
+	document.getElementById('batch-mode-exit').addEventListener('click', onBatchModeClick);
+	document.getElementById('batch-select-all').addEventListener('click', onBatchSelectAll);
+	document.getElementById('batch-delete').addEventListener('click', onBatchDeleteClick);
+	document.getElementById('batch-group').addEventListener('click', onBatchGroupClick);
+	document.getElementById('batch-share').addEventListener('click', onBatchShareClick);
 
 	// Import and Export rules
 	document.getElementById('export').addEventListener('click', onExportClick);

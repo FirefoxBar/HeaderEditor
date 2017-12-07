@@ -18,7 +18,11 @@
 	</style>
 	<template data-id="rule">
 		<tr class="rule-item" data-id="" data-type="">
-			<td class="batch mdl-data-table__cell--non-numeric"><input type="checkbox" name="batch"></td>
+			<td class="batch mdl-data-table__cell--non-numeric">
+				<label class="mdl-checkbox batch-checkbox" for="checkbox-1">
+					<input type="checkbox" id="checkbox-1" class="mdl-checkbox__input" name="batch">
+				</label>
+			</td>
 			<td class="enable mdl-data-table__cell--non-numeric">
 				<label class="mdl-switch enable-switcher"><input type="checkbox" class="mdl-switch__input activate" name="enable"/></label>
 			</td>
@@ -292,8 +296,28 @@
 				<div id="groups"></div>
 			</div>
 			<div id="default-button" class="float-button">
+				<button id="batch-mode" class="mdl-button mdl-js-button mdl-button--fab mdl-js-ripple-effect mdl-button--colored">
+					<i class="material-icons">playlist_add_check</i>
+				</button>
 				<button id="add-rule" class="mdl-button mdl-js-button mdl-button--fab mdl-js-ripple-effect mdl-button--colored">
 					<i class="material-icons">add</i>
+				</button>
+			</div>
+			<div id="batch-button" class="float-button">
+				<button id="batch-select-all" class="mdl-button mdl-js-button mdl-button--fab mdl-js-ripple-effect mdl-button--colored">
+					<i class="material-icons">done_all</i>
+				</button>
+				<button id="batch-group" class="mdl-button mdl-js-button mdl-button--fab mdl-js-ripple-effect mdl-button--colored">
+					<i class="material-icons">playlist_add</i>
+				</button>
+				<button id="batch-share" class="mdl-button mdl-js-button mdl-button--fab mdl-js-ripple-effect mdl-button--colored">
+					<i class="material-icons">share</i>
+				</button>
+				<button id="batch-delete" class="mdl-button mdl-js-button mdl-button--fab mdl-js-ripple-effect mdl-button--colored">
+					<i class="material-icons">delete</i>
+				</button>
+				<button id="batch-mode-exit" class="mdl-button mdl-js-button mdl-button--fab mdl-js-ripple-effect mdl-button--colored">
+					<i class="material-icons">cancel</i>
 				</button>
 			</div>
 		</section>

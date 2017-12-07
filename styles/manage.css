@@ -58,6 +58,7 @@
 	bottom: 20px;
 	width: 56px;
 	z-index: 99;
+	display: none;
 }
 .float-button .mdl-button {
 	margin-top: 15px;
