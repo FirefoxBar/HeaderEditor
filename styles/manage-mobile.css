@@ -1,0 +1,16 @@
+.rule-list .pattern,
+.rule-list .match-type,
+.rule-list .mdl-button span {
+	display: none;
+}
+.rule-list .mdl-button {
+	padding-left: 4px;
+	padding-right: 4px;
+	min-width: auto;
+}
+.rule-list .mdl-button:not(.mdl-button--icon):not(.mdl-button--fab) .material-icons {
+	margin-right: 0;
+}
+#download-history .mdl-list__item {
+	overflow: auto;
+}

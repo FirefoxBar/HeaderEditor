@@ -10,6 +10,7 @@
 	<link rel="stylesheet" href="third-party/mdl/material.min.css"/>
 	<link rel="stylesheet" href="styles/page.css"/>
 	<link rel="stylesheet" href="styles/manage.css"/>
+	<link rel="stylesheet" media="screen and (max-width: 640px)" href="styles/manage-mobile.css">
 	<script src="scripts/browser-polyfill.js"></script>
 	<script src="scripts/common.js"></script>
 	<script src="scripts/localization.js"></script>
@@ -36,6 +37,62 @@
 				<button class="remove mdl-button mdl-js-button mdl-js-ripple-effect"><i class="material-icons">delete</i><span>Remove</span></button>
 			</td>
 		</tr>
+	</template>
+	<template data-id="groupItem">
+		<div class="group-item">
+			<div class="mdl-card mdl-shadow--2dp closeable-box">
+				<div class="mdl-card__title mdl-card--expand">
+					<h2 class="mdl-card__title-text">
+						<span class="title"></span>
+					</h2>
+				</div>
+				<div class="mdl-card__supporting-text mdl-grid">
+					<div class="rule-list-box">
+						<table class="mdl-data-table mdl-js-data-table rule-list">
+							<thead>
+								<tr>
+									<th i18n-text="batch_mode" class="batch mdl-data-table__cell--non-numeric"></th>
+									<th i18n-text="enable" class="enable mdl-data-table__cell--non-numeric"></th>
+									<th i18n-text="name" class="name mdl-data-table__cell--non-numeric"></th>
+									<th i18n-text="ruleType" class="rule-type mdl-data-table__cell--non-numeric"></th>
+									<th i18n-text="matchRule" class="pattern mdl-data-table__cell--non-numeric"></th>
+									<th i18n-text="matchType" class="match-type mdl-data-table__cell--non-numeric"></th>
+									<th i18n-text="action" class="action mdl-data-table__cell--non-numeric"></th>
+								</tr>
+							</thead>
+							<tbody class="rules-list"></tbody>
+						</table>
+					</div>
+				</div>
+				<div class="mdl-card__menu">
+					<button class="remove mdl-button mdl-js-button mdl-button--icon"><i class="material-icons">delete</i></button>
+					<button class="share mdl-button mdl-js-button mdl-button--icon"><i class="material-icons">share</i></button>
+					<button class="toggle-box mdl-button mdl-js-button mdl-button--icon"><i class="material-icons">keyboard_arrow_up</i></button>
+				</div>
+			</div>
+		</div>
+	</template>
+	<template data-id="groupMenuList">
+		<div class="mdl-cell mdl-cell--6-col">
+			<label class="mdl-radio mdl-js-radio mdl-js-ripple-effect" for="group-menu-">
+				<input type="radio" id="group-menu-" class="mdl-radio__button" name="group-choose" value="">
+				<span class="mdl-radio__label"></span>
+			</label>
+		</div>
+	</template>
+	<template data-id="groupMenuListNew">
+		<div class="mdl-cell mdl-cell--12-col">
+			<label class="mdl-radio mdl-js-radio mdl-js-ripple-effect" for="group-menu-" data-isnew="1">
+				<input type="radio" id="group-menu-" class="mdl-radio__button" name="group-choose" value="">
+				<span class="mdl-radio__label">
+					<span i18n-text="add"></span>
+					<div class="mdl-textfield mdl-js-textfield">
+						<input class="mdl-textfield__input" type="text" id="group-add">
+						<label class="mdl-textfield__label" for="group-add"></label>
+					</div>
+				</span>
+			</label>
+		</div>
 	</template>
 	<template data-id="importRule">
 		<tr data-oldid="">
@@ -75,60 +132,6 @@
 				<button type="button" class="mdl-button mdl-js-button mdl-button--icon remove"><i class="material-icons">delete</i></button>
 			</span>
 		</li>
-	</template>
-	<template data-id="groupMenuList">
-		<div class="mdl-cell mdl-cell--6-col">
-			<label class="mdl-radio mdl-js-radio mdl-js-ripple-effect" for="group-menu-">
-				<input type="radio" id="group-menu-" class="mdl-radio__button" name="group-choose" value="">
-				<span class="mdl-radio__label"></span>
-			</label>
-		</div>
-	</template>
-	<template data-id="groupMenuListNew">
-		<div class="mdl-cell mdl-cell--12-col">
-			<label class="mdl-radio mdl-js-radio mdl-js-ripple-effect" for="group-menu-" data-isnew="1">
-				<input type="radio" id="group-menu-" class="mdl-radio__button" name="group-choose" value="">
-				<span class="mdl-radio__label">
-					<span i18n-text="add"></span>
-					<div class="mdl-textfield mdl-js-textfield">
-						<input class="mdl-textfield__input" type="text" id="group-add">
-						<label class="mdl-textfield__label" for="group-add"></label>
-					</div>
-				</span>
-			</label>
-		</div>
-	</template>
-	<template data-id="groupItem">
-		<div class="group-item">
-			<div class="mdl-card mdl-shadow--2dp closeable-box">
-				<div class="mdl-card__title mdl-card--expand">
-					<h2 class="mdl-card__title-text">
-						<span class="title"></span>
-					</h2>
-				</div>
-				<div class="mdl-card__supporting-text mdl-grid">
-					<table class="mdl-data-table mdl-js-data-table rule-list">
-						<thead>
-							<tr>
-								<th i18n-text="batch_mode" class="batch mdl-data-table__cell--non-numeric"></th>
-								<th i18n-text="enable" class="enable mdl-data-table__cell--non-numeric"></th>
-								<th i18n-text="name" class="name mdl-data-table__cell--non-numeric"></th>
-								<th i18n-text="ruleType" class="ruleType mdl-data-table__cell--non-numeric"></th>
-								<th i18n-text="matchRule" class="matchRule mdl-data-table__cell--non-numeric"></th>
-								<th i18n-text="matchType" class="matchType mdl-data-table__cell--non-numeric"></th>
-								<th i18n-text="action" class="action mdl-data-table__cell--non-numeric"></th>
-							</tr>
-						</thead>
-						<tbody class="rules-list"></tbody>
-					</table>
-				</div>
-				<div class="mdl-card__menu">
-					<button class="remove mdl-button mdl-js-button mdl-button--icon"><i class="material-icons">delete</i></button>
-					<button class="share mdl-button mdl-js-button mdl-button--icon"><i class="material-icons">share</i></button>
-					<button class="toggle-box mdl-button mdl-js-button mdl-button--icon"><i class="material-icons">keyboard_arrow_up</i></button>
-				</div>
-			</div>
-		</div>
 	</template>
 </head>
 <body>
@@ -392,74 +395,6 @@
 		<button type="button" class="mdl-button close">Close</button>
 	</div>
 </dialog>
-<!--
-<div class="main">
-	<h1>Header Editor</h1>
-	<div class="panel-group" id="rules" role="tablist" aria-multiselectable="true">
-		<div class="panel panel-default">
-			<div class="panel-heading" role="tab" id="rules-head">
-				<h4 class="panel-title">
-					<a role="button" data-toggle="collapse" data-parent="#rules" href="#rules-content" aria-expanded="true" aria-controls="rules-content"><span i18n-text="rule_list"></span></a>
-				</h4>
-			</div>
-			<div id="rules-content" class="panel-collapse collapse in" role="tabpanel" aria-labelledby="rules-head">
-				<div class="panel-body">
-					<p id="globalAction">
-						<button class="btn btn-default" id="addRule" i18n-text="add"></button>
-						<button class="btn btn-default" id="batch-mode" i18n-text="batch_mode"></button>
-						<a class="btn btn-default" href="" i18n-text="help"></a>
-					</p>
-					
-				</div>
-			</div>
-		</div>
-	</div>
-	<div class="panel-group" id="actions" role="tablist" aria-multiselectable="true">
-		<div class="panel panel-default">
-		</div>
-	</div>
-</div>
--->
-<!-- batch delete actions -->
-<!--
-<div class="float-btns batch-mode-btns btn-group dropup" role="group">
-	<button id="batch-delete" type="button" class="btn btn-primary" i18n-text="batch_delete"></button>
-	<button id="batch-share" class="btn btn-primary" i18n-text="export"></button>
-	<button id="batch-group" type="button" class="btn btn-primary dropdown-toggle move-group" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false"><span i18n-text="group"></span> <span class="caret"></span></button>
-	<ul class="dropdown-menu"></ul>
-	<button id="batch-select-all" type="button" class="btn btn-primary" i18n-text="select_all"></button>
-</div>
-<div id="importDialog" class="modal fade" tabindex="-1" role="dialog">
-  	<div class="modal-dialog modal-lg" role="document">
-		<div class="modal-content">
-	  		<div class="modal-header">
-				<button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
-				<h4 class="modal-title" i18n-text="import"></h4>
-	 		</div>
-			<div class="modal-body form-horizontal">
-				<div class="btn-group" role="group">
-					<button type="button" class="btn btn-default dropdown-toggle move-group" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false" style="border-right-style:solid;border-top-right-radius:4px"><span class="group_name" i18n-text="ungrouped"></span> <span class="caret"></span></button>
-					<ul id="importRulesGroup" class="dropdown-menu"></ul>
-				</div>
-				<table class="table table-hover rule-list">
-					<thead>
-						<tr>
-							<th i18n-text="name"></th>
-							<th i18n-text="ruleType"></th>
-							<th i18n-text="action"></th>
-						</tr>
-					</thead>
-					<tbody id="importRulesList"></tbody>
-				</table>
-			</div>
-	  		<div class="modal-footer">
-				<button type="button" class="btn btn-default" data-dismiss="modal" i18n-text="cancel"></button>
-				<button id="importSave" type="button" class="btn btn-primary" i18n-text="save"></button>
-	  		</div>
-		</div>
-	</div>
-</div>
--->
 <script src="third-party/dialog-polyfill/dialog-polyfill.min.js"></script>
 <script src="third-party/mdl/material.min.js"></script>
 <script src="scripts/fileSaveLoad.js"></script>
