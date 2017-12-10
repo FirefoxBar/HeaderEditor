@@ -32,9 +32,9 @@
 			<td class="pattern mdl-data-table__cell--non-numeric"></td>
 			<td class="match-type mdl-data-table__cell--non-numeric"></td>
 			<td class="action mdl-data-table__cell--non-numeric">
-				<button class="move-group mdl-button mdl-js-button mdl-js-ripple-effect"><i class="material-icons">playlist_add</i><span>Group</span></button>
-				<button class=" edit mdl-button mdl-js-button mdl-js-ripple-effect"><i class="material-icons">mode_edit</i><span>Edit</span></button>
-				<button class="remove mdl-button mdl-js-button mdl-js-ripple-effect"><i class="material-icons">delete</i><span>Remove</span></button>
+				<button class="move-group mdl-button mdl-js-button mdl-js-ripple-effect"><i class="material-icons">playlist_add</i><span i18n-text="group"></span></button>
+				<button class=" edit mdl-button mdl-js-button mdl-js-ripple-effect"><i class="material-icons">mode_edit</i><span i18n-text="edit"></span></button>
+				<button class="remove mdl-button mdl-js-button mdl-js-ripple-effect"><i class="material-icons">delete</i><span i18n-text="delete"></span></button>
 			</td>
 		</tr>
 	</template>
@@ -147,7 +147,7 @@
 		</div>
 		<div id="main-head" class="mdl-layout__tab-bar mdl-js-ripple-effect">
 			<a href="#rule-panel" class="mdl-layout__tab is-active"><i class="material-icons">list</i><span i18n-text="rule_list"></span></a>
-			<a href="#import-panel" class="mdl-layout__tab"><i class="material-icons">settings_backup_restore</i><span i18n-text="export"></span><span i18n-text="import"></span></a>
+			<a href="#import-panel" class="mdl-layout__tab"><i class="material-icons">settings_backup_restore</i><span i18n-text="export_and_import"></span></a>
 			<div class="mdl-layout-spacer"></div>
 			<a href="https://github.com/FirefoxBar/HeaderEditor/wiki" class="mdl-layout__tab"><i class="material-icons">help</i><span i18n-text="help"></span></a>
 		</div>
@@ -280,7 +280,7 @@
 						<pre id="test-url-result" style="border-radius:3px;background-color:#f7f7f7;padding:8px;font-size:13px"></pre>
 						<div class="form-group">
 							<div class="left">
-								<span>GROUP</span>
+								<span i18n-text="group"></span>
 							</div>
 							<div class="right">
 								<span class="group-name"></span>
@@ -365,7 +365,7 @@
 					</div>
 					<div class="mdl-card__supporting-text">
 						<div class="import-loading"><div class="mdl-spinner mdl-js-spinner is-active"></div></div>
-						<div class="import-waiting-select">请从文件导入或下载规则</div>
+						<div class="import-waiting-select" i18n-text="select_or_download"></div>
 						<table class="import-table mdl-data-table mdl-js-data-table rule-list" style="border:0">
 							<thead>
 								<tr>
@@ -378,9 +378,9 @@
 						</table>
 					</div>
 					<div class="mdl-card__actions mdl-card--border">
-						<button id="import-group" class="mdl-button mdl-button--colored mdl-js-button mdl-js-ripple-effect"><span>GROUP</span>&nbsp;<span class="group-name"></span></button>
-						<button id="import-save" class="mdl-button mdl-button--colored mdl-js-button mdl-js-ripple-effect">Save</button>
-						<button id="import-cancel" class="mdl-button mdl-button--colored mdl-js-button mdl-js-ripple-effect">Cancel</button>
+						<button id="import-group" class="mdl-button mdl-button--colored mdl-js-button mdl-js-ripple-effect"><span i18n-text="group"></span>&nbsp;<span class="group-name"></span></button>
+						<button id="import-save" class="mdl-button mdl-button--colored mdl-js-button mdl-js-ripple-effect" i18n-text="save"></button>
+						<button id="import-cancel" class="mdl-button mdl-button--colored mdl-js-button mdl-js-ripple-effect" i18n-text="cancel"></button>
 					</div>
 				</div>
 			</div>
