@@ -14,3 +14,19 @@
 #download-history .mdl-list__item {
 	overflow: auto;
 }
+.float-button {
+	width: 36px;
+}
+.float-button .mdl-button--fab {
+	height: 36px;
+	width: 36px;
+	min-width: 36px;
+	margin-top: 8px;
+}
+.float-button .mdl-button--fab .material-icons {
+	font-size: 20px;
+}
+.float-button .mdl-button--fab .mdl-button__ripple-container {
+	height: 36px;
+	width: 36px;
+}
