@@ -72,7 +72,7 @@ runTryCatch(() => {
 		});
 		browser.contextMenus.onClicked.addListener((info, tab) => {
 			if (info.menuItemId === 'add-anti-theft-link') {
-				openURL({"url": browser.extension.getURL("anti-theft-link.html") + '?url=' + info.srcUrl});
+				openURL({"url": browser.extension.getURL("manage.html") + '?action=add-anti-theft-link&url=' + info.srcUrl});
 			}
 		});
 	}

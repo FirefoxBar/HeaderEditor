@@ -195,13 +195,6 @@ function deleteRule(tableName, id) {
 	});
 }
 
-function getDomain(url) {
-	if (url.indexOf("file:") == 0) {
-		return '';
-	}
-	var d = /.*?:\/*([^\/:]+)/.exec(url)[1];
-	return d;
-}
 
 function getType(o) {
 	if (typeof o == "undefined" || typeof o == "string") {

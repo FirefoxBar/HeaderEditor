@@ -61,6 +61,15 @@ function getParams() {
 	return params;
 }
 
+function getDomain(url) {
+	if (url.indexOf("file:") == 0) {
+		return '';
+	}
+	var d = /.*?:\/*([^\/:]+)/.exec(url)[1];
+	return d;
+}
+
+
 // Get Active Tab
 function getActiveTab(callback) {
 	browser.tabs.query({currentWindow: true, active: true}).then((tabs) => {

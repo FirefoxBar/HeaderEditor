@@ -793,6 +793,24 @@ function setFloatButton(id) {
 	});
 }
 
+
+function initAddAntiTheftLink(url) {
+	const body = document.getElementById('edit-body');
+	clearEditPage();
+	document.querySelector('#edit-head .mdl-layout-title').innerHTML = t('add');
+	document.querySelector('#edit-body .title').innerHTML = t('add');
+	mdlSetValue(document.getElementById('matchRule'), getDomain(url));
+	mdlRadioSet("ruleType", 'modifySendHeader', body);
+	mdlRadioSet("matchType", 'domain', body);
+	mdlRadioSet("execType", 0, body);
+	body.setAttribute('data-type', 'modifySendHeader');
+	body.setAttribute('data-isfunction', 0);
+	body.setAttribute('data-match', 'domain');
+	mdlSetValue(document.getElementById('headerName'), 'Referer');
+	mdlSetValue(document.getElementById('headerValue'), getDomain(url));
+	showEditPage();
+}
+
 document.addEventListener('DOMContentLoaded', () => {
 	setFloatButton('default-button');
 	document.getElementById('rule-save').addEventListener('click', onRuleSaveClick);
@@ -839,4 +857,12 @@ document.addEventListener('DOMContentLoaded', () => {
 	initRealtimeTest();
 
 	loadRulesList();
+
+	// Special actions
+	let params = getParams();
+	if (params.action === 'add-anti-theft-link') {
+		setTimeout(() => {
+			initAddAntiTheftLink(params.url);
+		}, 300);
+	}
 });
