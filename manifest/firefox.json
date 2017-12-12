@@ -2,7 +2,6 @@
 	"applications": {
 		"gecko": {
 			"id": "__appid__",
-			"update_url": "https://ext.firefoxcn.net/headereditor/install/update.json",
 			"strict_min_version": "52.0"
 		}
 	},

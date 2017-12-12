@@ -670,6 +670,9 @@ function onGroupRemoveClick() {
 function chooseGroup() {
 	return new Promise((resolve, reject) => {
 		const dialog = document.getElementById('group-dialog');
+		if (!dialog.showModal) {
+			dialogPolyfill.registerDialog(dialog);
+		}
 		if (dialog.querySelector('.is-checked')) {
 			dialog.querySelector('.is-checked input[type="radio"]').checked = false;
 			dialog.querySelector('.is-checked').classList.remove('is-checked');
