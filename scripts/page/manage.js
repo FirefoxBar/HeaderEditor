@@ -162,7 +162,7 @@ function onEditRuleClick() {
 	body.setAttribute('data-isfunction', rule.isFunction ? 1 : 0);
 	body.setAttribute('data-match', rule.matchType);
 	if (rule.isFunction) {
-		document.getElementById('custom-code').value = rule.code;
+		mdlSetValue(document.getElementById('custom-code'), rule.code);
 	} else {
 		if (rule.ruleType === 'redirect') {
 			mdlSetValue(document.getElementById('redirectTo'), rule.to);
@@ -190,7 +190,7 @@ function onRemoveRuleClick() {
 }
 //enable or disable
 function onEnableRuleChange () {
-	const tr = this.parentElement.parentElement;
+	const tr = findParent(this, (e) => { return e.tagName.toLowerCase() === 'tr'});
 	const id = tr.getAttribute('data-id');
 	const table = ruleType2tableName(tr.getAttribute('data-type'));
 	const enable = this.checked ? 1 : 0;

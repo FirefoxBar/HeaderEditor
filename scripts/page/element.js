@@ -15,7 +15,7 @@ function mdlRadioSet(name, val, p) {
 	}
 	const o = p.querySelector('input[name="' + name + '"]:checked');
 	if (o !== null) {
-		if (o.value === val) {
+		if (o.value == val) {
 			return;
 		}
 		o.parentElement.classList.remove('is-checked');
@@ -24,7 +24,7 @@ function mdlRadioSet(name, val, p) {
 	let e = null;
 	const all = Array.prototype.slice.call(p.querySelectorAll('input[name="' + name + '"]'));
 	for (let x of all) {
-		if (x.value === val) {
+		if (x.value == val) {
 			e = x;
 			break;
 		}
