@@ -156,7 +156,6 @@ function onEditRuleClick() {
 	mdlRadioSet("ruleType", rule.ruleType, body);
 	mdlRadioDisable("ruleType", true, body);
 	mdlRadioSet("matchType", rule.matchType, body);
-	mdlRadioDisable("matchType", true, body);
 	mdlRadioSet("execType", rule.isFunction ? 1 : 0, body);
 	body.setAttribute('data-type', rule.ruleType);
 	body.setAttribute('data-isfunction', rule.isFunction ? 1 : 0);
@@ -270,14 +269,22 @@ function onRuleSaveClick() {
 		data.id = ruleId;
 	}
 	saveRule(table, data).then(function(response) {
-		// move to group
-		let el = null;
 		if (ruleId !== '') {
-			el = document.querySelector('.rule-item[data-id="' + ruleId + '"]');
+			let oldGroup = findItemInGroup(ruleId, table);
+			let el = document.querySelector('.rule-item[data-id="' + ruleId + '"]');
+			let newEl = addRuleEl(response, table, true);
+			if (oldGroup !== newGroup) {
+				//edit a rule and move to a new group
+				moveItemToGroup(newEl, response.id, newGroup, table);
+			} else {
+				//not move
+				el.parentElement.insertBefore(newEl, el);
+			}
+			el.remove();
 		} else {
-			el = addRuleEl(response, table, true);
+			let el = addRuleEl(response, table, true);
+			moveItemToGroup(el, response.id, newGroup, table);
 		}
-		moveItemToGroup(el, response.id, newGroup, table);
 		browser.runtime.sendMessage({"method": "updateCache", "type": table});
 		hideEditPage();
 	});
