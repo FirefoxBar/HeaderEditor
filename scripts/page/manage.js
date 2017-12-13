@@ -861,6 +861,7 @@ document.addEventListener('DOMContentLoaded', () => {
 		downloadRule(document.getElementById('download-url').value);
 		addHistory(document.getElementById('download-url').value);
 	});
+	document.querySelector('.download-input .mdl-textfield').style.width = 'calc(100% - ' + (document.querySelector('.download-input .buttons').offsetWidth + 15) + 'px)';
 	loadDownloadHistory();
 
 	//Realtime test
