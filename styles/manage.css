@@ -26,6 +26,9 @@
 .group-item {
 	margin-bottom: 10px;
 }
+.group-item .mdl-card__title-text {
+	cursor: pointer;
+}
 #import-confirm .mdl-card__supporting-text,
 .group-item .mdl-card__supporting-text {
 	padding-top: 0;

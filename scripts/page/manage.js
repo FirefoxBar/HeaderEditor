@@ -640,6 +640,9 @@ function addGroupEl(name) {
 	n_group.querySelector('.share').addEventListener('click', onGroupShareClick);
 	n_group.querySelector('.remove').addEventListener('click', onGroupRemoveClick);
 	// toggle box
+	n_group.querySelector('.mdl-card__title-text').addEventListener('click', function() {
+		this.parentElement.parentElement.classList.toggle('close');
+	});
 	n_group.querySelector('.toggle-box').addEventListener('click', function() {
 		this.parentElement.parentElement.classList.toggle('close');
 	});
