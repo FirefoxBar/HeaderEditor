@@ -528,7 +528,7 @@ function onHistoryDownload() {
 }
 function onHistoryEdit() {
 	const url = this.parentElement.parentElement.querySelector('.url').getAttribute('data-url');
-	document.getElementById('download-url').value = url;
+	mdlSetValue(document.getElementById('download-url'), url);
 	document.getElementById('download-url').focus();
 }
 function onHistoryRemove() {
