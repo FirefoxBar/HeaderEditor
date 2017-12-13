@@ -824,6 +824,7 @@ function initAddAntiTheftLink(url) {
 document.addEventListener('DOMContentLoaded', () => {
 	setFloatButton('default-button');
 	document.getElementById('rule-save').addEventListener('click', onRuleSaveClick);
+	document.getElementById('save-rule').addEventListener('click', onRuleSaveClick);
 
 	document.getElementById('add-rule').addEventListener('click', onAddRuleClick);
 	document.getElementById('edit-back').addEventListener('click', onEditCancelClick);
