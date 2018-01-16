@@ -13,14 +13,33 @@ This is a WebExtension. Require Firefox 52 or later.
 
 For more documentation, Please visit [wiki](https://github.com/FirefoxBar/HeaderEditor/wiki)
 
-## For contributors
+## Contribution
 
 You can contribute codes by [submiting a pull request](https://github.com/FirefoxBar/HeaderEditor/compare).
 
 You can also help us to translate this extension on [transifex](https://www.transifex.com/sytec/header-editor/).
 
+## Translators
+
+* en: [ShuangYa](https://github.com/sylingd)
+
+* zh-CN: [ShuangYa](https://github.com/sylingd)
+
+* zh-TW: [zhtw2013](https://github.com/zhtw2013)
+
+* pt-BR: [Kassio Cruz](https://www.transifex.com/user/profile/kassiocs/)
+
 ## Licenses
 
-In addition to the third-party directory, all files are GPLv2 license.
+| File/Directory | LICENSE | GitHub |
+| ----- | ----- | ----- |
+| scripts/browser-polyfill.js | [MPL 2.0](http://mozilla.org/MPL/2.0/) | [mozilla/webextension-polyfill](https://github.com/mozilla/webextension-polyfill) |
+| third-party/mdl | [Apache 2.0](https://github.com/google/material-design-lite/blob/mdl-1.x/LICENSE) | [google/material-design-lite](https://github.com/google/material-design-lite) |
+| third-party/material-design-icons | [Apache 2.0](https://github.com/google/material-design-icons/blob/master/LICENSE) | [google/material-design-icons](https://github.com/google/material-design-icons) |
+| third-party/dialog-polyfill | [BSD 3](https://github.com/GoogleChrome/dialog-polyfill/blob/master/LICENSE) | [GoogleChrome/dialog-polyfill](https://github.com/GoogleChrome/dialog-polyfill) |
 
-Copyright © 2017 [FirefoxBar Team](http://team.firefoxcn.net)
+**Everything else:**
+
+Copyright © 2017-2018 [FirefoxBar Team](http://team.firefoxcn.net)
+
+Open source licensed under [GPLv2](COPYING).
