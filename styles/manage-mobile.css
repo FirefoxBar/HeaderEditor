@@ -3,6 +3,9 @@
 .rule-list .mdl-button span {
 	display: none;
 }
+.rule-list .action {
+	width: 150px;
+}
 .rule-list .mdl-button {
 	padding-left: 4px;
 	padding-right: 4px;
@@ -15,18 +18,20 @@
 	overflow: auto;
 }
 .float-button {
-	width: 36px;
+	width: 42px;
+	right: 15px;
+	bottom: 15px;
 }
 .float-button .mdl-button--fab {
-	height: 36px;
-	width: 36px;
-	min-width: 36px;
-	margin-top: 8px;
+	height: 42px;
+	width: 42px;
+	min-width: 42px;
+	margin-top: 9px;
 }
 .float-button .mdl-button--fab .material-icons {
-	font-size: 20px;
+	font-size: 22px;
 }
 .float-button .mdl-button--fab .mdl-button__ripple-container {
-	height: 36px;
-	width: 36px;
+	height: 42px;
+	width: 42px;
 }
