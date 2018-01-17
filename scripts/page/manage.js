@@ -859,7 +859,8 @@ document.addEventListener('DOMContentLoaded', () => {
 	// options
 	document.getElementById('manage-hide-empty').addEventListener('change', onHideEmptyGroupChange);
 	setupLivePrefs([
-		"manage-hide-empty"
+		"manage-hide-empty",
+		"add-theif-link"
 	]);
 	// group
 	initGroup();

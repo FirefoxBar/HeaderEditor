@@ -248,7 +248,8 @@ var prefs = browser.extension.getBackgroundPage().prefs || new function Prefs() 
 	let boundMethods = {};
 
 	let defaults = {
-		"manage-hide-empty": false // Hide empty groups
+		"manage-hide-empty": false, // Hide empty groups
+		"add-theif-link": true
 	};
 	// when browser is strarting up, the setting is default
 	this.isDefault = true;

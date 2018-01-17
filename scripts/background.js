@@ -1,4 +1,4 @@
-var backStorage = localStorage;
+let theifLinkMenu = null;
 
 function appId() {
     function genRand() {
@@ -41,6 +41,11 @@ browser.runtime.onMessage.addListener(function(request, sender, sendResponse) {
 				updateCache(request.type).then(sendResponse);
 			}
 			break;
+		case 'prefChanged':
+			if (request.prefName === 'add-theif-link') {
+				toggleTheifLinkMenu(request.value);
+			}
+			break;
 	}
 });
 
@@ -64,15 +69,8 @@ function openURL(options) {
 	});
 }
 
-//给图片右键菜单增加快速添加反防盗链的功能
 runTryCatch(() => {
 	if (typeof(browser.contextMenus) !== 'undefined') {
-		browser.contextMenus.create({
-			id: "add-anti-theft-link",
-			type: "normal",
-			title: browser.i18n.getMessage('add_anti_theft_link'),
-			contexts: ["image"]
-		});
 		browser.contextMenus.onClicked.addListener((info, tab) => {
 			if (info.menuItemId === 'add-anti-theft-link') {
 				openURL({"url": browser.extension.getURL("manage.html") + '?action=add-anti-theft-link&url=' + info.srcUrl});
@@ -187,3 +185,32 @@ browser.webRequest.onHeadersReceived.addListener(function(e) {
 browser.browserAction.onClicked.addListener(function () {
 	openURL({"url": browser.extension.getURL('manage.html')});
 });
+
+function toggleTheifLinkMenu(has) {
+	if (IS_MOBILE) {
+		return;
+	}
+	if (has && theifLinkMenu === null) {
+		theifLinkMenu = browser.contextMenus.create({
+			id: "add-anti-theft-link",
+			type: "normal",
+			title: browser.i18n.getMessage('add_anti_theft_link'),
+			contexts: ["image"]
+		});
+	}
+	if (!has && theifLinkMenu !== null) {
+		browser.contextMenus.remove(theifLinkMenu);
+		theifLinkMenu = null;
+	}
+}
+function requestUserPrefs() {
+	let t = setTimeout(() => {
+		clearTimeout(t);
+		if (!prefs.isDefault) {
+			toggleTheifLinkMenu(prefs.get('add-theif-link'));
+		} else {
+			requestUserPrefs();
+		}
+	}, 10);
+}
+requestUserPrefs();
