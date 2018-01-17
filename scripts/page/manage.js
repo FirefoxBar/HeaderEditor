@@ -807,18 +807,22 @@ function onRealtimeTest() {
 		resultArea.innerHTML = t('test_custom_code');
 		return;
 	} else {
-		let redirect = '';
-		if (data.matchType === 'regexp') {
-			redirect = url.replace(new RegExp(data.pattern, 'g'), redirectTo);
+		// if this is a redirect rule, show the result
+		if (data.ruleType === 'redirect') {
+			let redirect = '';
+			if (data.matchType === 'regexp') {
+				redirect = url.replace(new RegExp(data.pattern, 'g'), redirectTo);
+			} else {
+				redirect = redirectTo;
+			}
+			if (/^(http|https|ftp|file)%3A/.test(redirect)) {
+				redirect = decodeURIComponent(redirect);
+			}
+			resultArea.innerHTML = '';
+			resultArea.appendChild(document.createTextNode(redirect));
 		} else {
-			redirect = redirectTo;
+			resultArea.innerHTML = '<i>Matched</i>';
 		}
-		if (/^(http|https|ftp|file)%3A/.test(redirect)) {
-			redirect = decodeURIComponent(redirect);
-		}
-		resultArea.innerHTML = '';
-		resultArea.appendChild(document.createTextNode(redirect));
-		return;
 	}
 }
 
