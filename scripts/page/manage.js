@@ -552,7 +552,16 @@ function addHistory(url) {
 	}
 }
 
-
+function onHideEmptyGroupChange() {
+	document.getElementById('hideEmptyGroupStyle').disabled = !this.checked;
+}
+function checkEmptyGroup(el) {
+	if (el.querySelector('.rule-item')) {
+		el.classList.remove('empty');
+	} else {
+		el.classList.add('empty');
+	}
+}
 function onMoveGroupClick() {
 	const e = this.parentElement.parentElement;
 	chooseGroup().then(name => {
@@ -578,6 +587,9 @@ function moveItemToGroup(from, id, groupName, type) {
 	}
 	// move element
 	g.appendChild(from);
+	// Check empty
+	checkEmptyGroup(document.querySelector('#groups .group-item[data-name="' + oldGroup + '"]'));
+	checkEmptyGroup(document.querySelector('#groups .group-item[data-name="' + groupName + '"]'));
 }
 function findItemInGroup(id, type) {
 	for (let i in cachedGroupList) {
@@ -832,6 +844,11 @@ document.addEventListener('DOMContentLoaded', () => {
 	document.getElementById('add-rule').addEventListener('click', onAddRuleClick);
 	document.getElementById('edit-back').addEventListener('click', onEditCancelClick);
 	initEditChange();
+	// options
+	document.getElementById('manage-hide-empty').addEventListener('change', onHideEmptyGroupChange);
+	setupLivePrefs([
+		"manage-hide-empty"
+	]);
 	// group
 	initGroup();
 

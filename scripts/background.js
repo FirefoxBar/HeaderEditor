@@ -11,6 +11,9 @@ function appId() {
 }
 
 browser.runtime.onMessage.addListener(function(request, sender, sendResponse) {
+	if (request.method === 'notifyBackground') {
+		request.method = request.reason;
+	}
 	switch (request.method) {
 		case "healthCheck":
 			getDatabase().then(() => {

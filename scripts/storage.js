@@ -207,6 +207,243 @@ function getType(o) {
 }
 
 
+// Accepts an array of pref names (values are fetched via prefs.get)
+// and establishes a two-way connection between the document elements and the actual prefs
+function notifyBackground(request) {
+	return new Promise((resolve) => {
+		browser.runtime.sendMessage(shallowMerge({}, request, {
+			method: "notifyBackground",
+			reason: request.method
+		})).then(resolve);
+	});
+}
+function isCheckbox(el) {
+	return el.nodeName.toLowerCase() == "input" && "checkbox" == el.type.toLowerCase();
+}
+function setupLivePrefs(IDs) {
+	var localIDs = {};
+	IDs.forEach(function(id) {
+		localIDs[id] = true;
+		updateElement(id).addEventListener("change", function() {
+			notifyBackground({"method": "prefChanged", "prefName": this.id, "value": isCheckbox(this) ? this.checked : this.value});
+			prefs.set(this.id, isCheckbox(this) ? this.checked : this.value);
+		});
+	});
+	browser.runtime.onMessage.addListener(function(request) {
+		if (request.prefName in localIDs) {
+			updateElement(request.prefName);
+		}
+	});
+	function updateElement(id) {
+		var el = document.getElementById(id);
+		el[isCheckbox(el) ? "checked" : "value"] = prefs.get(id);
+		el.dispatchEvent(new Event("change", {bubbles: true, cancelable: true}));
+		return el;
+	}
+}
+
+var prefs = browser.extension.getBackgroundPage().prefs || new function Prefs() {
+	const _this = this;
+	let boundWrappers = {};
+	let boundMethods = {};
+
+	let defaults = {
+		"manage-hide-empty": false // Hide empty groups
+	};
+	// when browser is strarting up, the setting is default
+	this.isDefault = true;
+
+	let values = deepCopy(defaults);
+	let syncTimeout; // see broadcast() function below
+
+	Object.defineProperty(this, "readOnlyValues", {value: {}});
+
+	Prefs.prototype.get = function(key, defaultValue) {
+		if (key in boundMethods) {
+			if (key in boundWrappers) {
+				return boundWrappers[key];
+			} else {
+				if (key in values) {
+					boundWrappers[key] = boundMethods[key](values[key]);
+					return boundWrappers[key];
+				}
+			}
+		}
+		if (key in values) {
+			return values[key];
+		}
+		if (defaultValue !== undefined) {
+			return defaultValue;
+		}
+		if (key in defaults) {
+			return defaults[key];
+		}
+		console.warn("No default preference for '%s'", key);
+	};
+
+	Prefs.prototype.getAll = function(key) {
+		return deepCopy(values);
+	};
+
+	Prefs.prototype.set = function(key, value, options) {
+		let oldValue = deepCopy(values[key]);
+		values[key] = value;
+		defineReadonlyProperty(this.readOnlyValues, key, value);
+		if ((!options || !options.noBroadcast) && !equal(value, oldValue)) {
+			_this.broadcast(key, value, options);
+		}
+	};
+
+	Prefs.prototype.bindAPI = function(apiName, apiMethod) {
+		boundMethods[apiName] = apiMethod;
+	};
+
+	Prefs.prototype.remove = function(key) {
+		_this.set(key, undefined)
+	};
+
+	Prefs.prototype.broadcast = function(key, value, options) {
+		if (!options || !options.noSync) {
+			clearTimeout(syncTimeout);
+			syncTimeout = setTimeout(function() {
+				getSync().set({"settings": values});
+			}, 0);
+		}
+	};
+
+	Object.keys(defaults).forEach(function(key) {
+		_this.set(key, defaults[key], {noBroadcast: true});
+	});
+
+	getSync().get("settings").then(function(result) {
+		_this.isDefault = false;
+		const synced = result.settings;
+		for (var key in defaults) {
+			if (synced && (key in synced)) {
+				_this.set(key, synced[key], {noSync: true});
+			} else {
+				var value = tryMigrating(key);
+				if (value !== undefined) {
+					_this.set(key, value);
+				}
+			}
+		}
+	});
+
+	browser.storage.onChanged.addListener(function(changes, area) {
+		if (area == "sync" && "settings" in changes) {
+			const synced = changes.settings.newValue;
+			if (synced) {
+				for (key in defaults) {
+					if (key in synced) {
+						_this.set(key, synced[key], {noSync: true});
+					}
+				}
+			} else {
+				// user manually deleted our settings, we'll recreate them
+				getSync().set({"settings": values});
+			}
+		}
+	});
+
+	function tryMigrating(key) {
+		if (!(key in localStorage)) {
+			return undefined;
+		}
+		var value = localStorage[key];
+		delete localStorage[key];
+		localStorage["DEPRECATED: " + key] = value;
+		switch (typeof defaults[key]) {
+			case "boolean":
+				return value.toLowerCase() === "true";
+			case "number":
+				return Number(value);
+			case "object":
+				try {
+					return JSON.parse(value);
+				} catch(e) {
+					console.log("Cannot migrate from localStorage %s = '%s': %o", key, value, e);
+					return undefined;
+				}
+		}
+		return value;
+	}
+};
+
+function deepCopy(obj) {
+	if (!obj || typeof obj != "object") {
+		return obj;
+	} else {
+		var emptyCopy = Object.create(Object.getPrototypeOf(obj));
+		return deepMerge(emptyCopy, obj);
+	}
+}
+
+function deepMerge(target, obj1 /* plus any number of object arguments */) {
+	for (var i = 1; i < arguments.length; i++) {
+		var obj = arguments[i];
+		for (var k in obj) {
+			// hasOwnProperty checking is not needed for our non-OOP stuff
+			var value = obj[k];
+			if (!value || typeof value != "object") {
+				target[k] = value;
+			} else if (k in target) {
+				deepMerge(target[k], value);
+			} else {
+				target[k] = deepCopy(value);
+			}
+		}
+	}
+	return target;
+}
+
+function shallowMerge(target, obj1 /* plus any number of object arguments */) {
+	for (var i = 1; i < arguments.length; i++) {
+		var obj = arguments[i];
+		for (var k in obj) {
+			target[k] = obj[k];
+			// hasOwnProperty checking is not needed for our non-OOP stuff
+		}
+	}
+	return target;
+}
+
+function equal(a, b) {
+	if (!a || !b || typeof a != "object" || typeof b != "object") {
+		return a === b;
+	}
+	if (Object.keys(a).length != Object.keys(b).length) {
+		return false;
+	}
+	for (var k in a) {
+		if (a[k] !== b[k]) {
+			return false;
+		}
+	}
+	return true;
+}
+
+function defineReadonlyProperty(obj, key, value) {
+	var copy = deepCopy(value);
+	// In ES6, freezing a literal is OK (it returns the same value), but in previous versions it's an exception.
+	if (typeof copy == "object") {
+		Object.freeze(copy);
+	}
+	Object.defineProperty(obj, key, {value: copy, configurable: true})
+}
+
+function getSync() {
+	if ("sync" in browser.storage) {
+		return browser.storage.sync;
+	}
+	// In old Firefox version, sync is not supported, use local to instead of it
+	if ("local" in browser.storage) {
+		return browser.storage.local;
+	}
+}
+
+
+
 function upgradeTo2() {
 	for (let k of tableNames) {
 		getDatabase().then((db) => {
