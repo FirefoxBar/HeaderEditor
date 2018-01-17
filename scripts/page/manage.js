@@ -673,6 +673,9 @@ function addGroupEl(name) {
 	n_group.querySelector('.toggle-box').addEventListener('click', function() {
 		this.parentElement.parentElement.classList.toggle('close');
 	});
+	if (prefs.get('manage-collapse-group')) {
+		n_group.querySelector('.closeable-box').classList.add('close');
+	}
 	group.appendChild(n_group);
 	// select and unselect all
 	n_group.querySelector('th.batch').addEventListener('click', onBatchGroupSelect);
@@ -867,6 +870,7 @@ document.addEventListener('DOMContentLoaded', () => {
 	document.getElementById('manage-hide-empty').addEventListener('change', onHideEmptyGroupChange);
 	setupLivePrefs([
 		"manage-hide-empty",
+		"manage-collapse-group",
 		"add-theif-link"
 	]);
 	// group
