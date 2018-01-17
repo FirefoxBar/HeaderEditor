@@ -439,6 +439,18 @@ function onBatchSelectAll() {
 		mdlCheckboxSet(e, setTo);
 	});
 }
+function onBatchEnable() {
+	document.querySelectorAll('input[name="batch"]:checked').forEach((e) => {
+		const tr = findParent(e, (el) => { return el.tagName.toLowerCase() === 'tr'});
+		const id = tr.getAttribute('data-id');
+		const table = ruleType2tableName(tr.getAttribute('data-type'));
+		const enable = tr.querySelector('.enable-switcher input[type="checkbox"]').checked ? 0 : 1;
+		mdlCheckboxSet(tr.querySelector('.enable-switcher'), enable);
+		saveRule(table, {"id": id, "enable": enable}).then(() => {
+			browser.runtime.sendMessage({"method": "updateCache", "type": table});
+		});
+	});
+}
 function onBatchDeleteClick() {
 	if (!confirm(t('delete_confirm'))) {
 		return;
@@ -856,6 +868,7 @@ document.addEventListener('DOMContentLoaded', () => {
 	document.getElementById('batch-mode').addEventListener('click', onBatchModeClick);
 	document.getElementById('batch-mode-exit').addEventListener('click', onBatchModeClick);
 	document.getElementById('batch-select-all').addEventListener('click', onBatchSelectAll);
+	document.getElementById('batch-enable').addEventListener('click', onBatchEnable);
 	document.getElementById('batch-delete').addEventListener('click', onBatchDeleteClick);
 	document.getElementById('batch-group').addEventListener('click', onBatchGroupClick);
 	document.getElementById('batch-share').addEventListener('click', onBatchShareClick);
