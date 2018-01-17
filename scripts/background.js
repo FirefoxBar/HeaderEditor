@@ -55,17 +55,21 @@ function getActiveTab(callback) {
 	});
 }
 
-function openURL(options) {
-	// Firefox do not support highlight a tab or switch to a tab
+function openURL(options, sendResponse) {
 	delete options.method;
-	getActiveTab(function(tab) {
-		// re-use an active new tab page
-		// Firefox may have more than 1 newtab url, so check all
-		var isNewTab = false;
-		if (tab.url.indexOf('about:newtab') === 0 || tab.url.indexOf('about:home') === 0) {
-			isNewTab = true;
+	browser.tabs.query({currentWindow: true, url: options.url}).then((tabs) => {
+		if (tabs.length) {
+			browser.tabs.update(tabs[0].id, {
+				"active": true
+			}).then(sendResponse);
+		} else {
+			getActiveTab((tab) => {
+				// re-use an active new tab page
+				// Firefox may have more than 1 newtab url, so check all
+				const isNewTab = tab.url.indexOf('about:newtab') === 0 || tab.url.indexOf('about:home') === 0 || tab.url.indexOf('chrome://newtab/') === 0;
+				browser.tabs[isNewTab ? "update" : "create"](options).then(sendResponse);
+			});
 		}
-		browser.tabs[isNewTab ? "update" : "create"](options);
 	});
 }
 
