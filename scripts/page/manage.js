@@ -600,8 +600,11 @@ function moveItemToGroup(from, id, groupName, type) {
 	// move element
 	g.appendChild(from);
 	// Check empty
-	checkEmptyGroup(document.querySelector('#groups .group-item[data-name="' + oldGroup + '"]'));
-	checkEmptyGroup(document.querySelector('#groups .group-item[data-name="' + groupName + '"]'));
+	let _t = setTimeout(() => {
+		checkEmptyGroup(document.querySelector('#groups .group-item[data-name="' + oldGroup + '"]'));
+		checkEmptyGroup(document.querySelector('#groups .group-item[data-name="' + groupName + '"]'));
+		clearTimeout(_t);
+	}, 100);
 }
 function findItemInGroup(id, type) {
 	for (let i in cachedGroupList) {
