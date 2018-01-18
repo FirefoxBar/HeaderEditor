@@ -42,4 +42,4 @@ You can also help us to translate this extension on [transifex](https://www.tran
 
 Copyright © 2017-2018 [FirefoxBar Team](http://team.firefoxcn.net)
 
-Open source licensed under [GPLv2](COPYING).
+Open source licensed under [GPLv2](LICENSE).
