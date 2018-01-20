@@ -1,4 +1,4 @@
-let thiefLinkMenu = null;
+let antiHotLinkMenu = null;
 
 function appId() {
     function genRand() {
@@ -42,8 +42,8 @@ browser.runtime.onMessage.addListener(function(request, sender, sendResponse) {
 			}
 			break;
 		case 'prefChanged':
-			if (request.prefName === 'add-thief-link') {
-				toggleThiefLinkMenu(request.value);
+			if (request.prefName === 'add-hot-link') {
+				toggleAntiHotLinkMenu(request.value);
 			}
 			break;
 	}
@@ -76,8 +76,8 @@ function openURL(options, sendResponse) {
 runTryCatch(() => {
 	if (typeof(browser.contextMenus) !== 'undefined') {
 		browser.contextMenus.onClicked.addListener((info, tab) => {
-			if (info.menuItemId === 'add-anti-theft-link') {
-				openURL({"url": browser.extension.getURL("manage.html") + '?action=add-anti-theft-link&url=' + info.srcUrl});
+			if (info.menuItemId === 'add-anti-hot-link') {
+				openURL({"url": browser.extension.getURL("manage.html") + '?action=add-anti-hot-link&url=' + info.srcUrl});
 			}
 		});
 	}
@@ -190,28 +190,28 @@ browser.browserAction.onClicked.addListener(function () {
 	openURL({"url": browser.extension.getURL('manage.html')});
 });
 
-function toggleThiefLinkMenu(has) {
+function toggleAntiHotLinkMenu(has) {
 	if (IS_MOBILE) {
 		return;
 	}
-	if (has && thiefLinkMenu === null) {
-		thiefLinkMenu = browser.contextMenus.create({
-			id: "add-anti-theft-link",
+	if (has && antiHotLinkMenu === null) {
+		antiHotLinkMenu = browser.contextMenus.create({
+			id: "add-anti-hot-link",
 			type: "normal",
-			title: browser.i18n.getMessage('add_anti_theft_link'),
+			title: browser.i18n.getMessage('add_anti_hot_link'),
 			contexts: ["image"]
 		});
 	}
-	if (!has && thiefLinkMenu !== null) {
-		browser.contextMenus.remove(thiefLinkMenu);
-		thiefLinkMenu = null;
+	if (!has && antiHotLinkMenu !== null) {
+		browser.contextMenus.remove(antiHotLinkMenu);
+		antiHotLinkMenu = null;
 	}
 }
 function requestUserPrefs() {
 	let t = setTimeout(() => {
 		clearTimeout(t);
 		if (!prefs.isDefault) {
-			toggleThiefLinkMenu(prefs.get('add-thief-link'));
+			toggleAntiHotLinkMenu(prefs.get('add-hot-link'));
 		} else {
 			requestUserPrefs();
 		}

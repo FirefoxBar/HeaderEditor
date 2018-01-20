@@ -866,7 +866,7 @@ function setFloatButton(id) {
 }
 
 
-function initAddAntiTheftLink(url) {
+function initAddAntiHotLink(url) {
 	const body = document.getElementById('edit-body');
 	clearEditPage();
 	document.querySelector('#edit-head .mdl-layout-title').innerHTML = t('add');
@@ -896,7 +896,7 @@ document.addEventListener('DOMContentLoaded', () => {
 	setupLivePrefs([
 		"manage-hide-empty",
 		"manage-collapse-group",
-		"add-thief-link"
+		"add-hot-link"
 	]);
 	// group
 	initGroup();
@@ -942,9 +942,9 @@ document.addEventListener('DOMContentLoaded', () => {
 
 	// Special actions
 	let params = getParams();
-	if (params.action === 'add-anti-theft-link') {
+	if (params.action === 'add-anti-hot-link') {
 		setTimeout(() => {
-			initAddAntiTheftLink(params.url);
+			initAddAntiHotLink(params.url);
 		}, 300);
 	}
 });
