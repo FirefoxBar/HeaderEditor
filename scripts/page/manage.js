@@ -39,31 +39,56 @@ function ruleType2tableName(ruleType) {
 
 function addRuleEl(rule, type, notAutoMove) {
 	let e = template.rule.cloneNode(true);
+	const uniqid = type + '-' + rule.id;
 	e.setAttribute('data-id', rule.id);
 	e.setAttribute('data-table', type);
 	e.setAttribute('data-type', rule.ruleType);
-	e.querySelector('.name').appendChild(document.createTextNode(rule.name));
+	const name = e.querySelector('.name-label');
+	const detail = name.nextElementSibling;
+	name.appendChild(document.createTextNode(rule.name));
+	name.setAttribute('id', 'detail-' + uniqid);
+	// detail
+	detail.classList.add('mdl-tooltip');
+	detail.setAttribute('for', 'detail-' + uniqid);
+	if (!IS_MOBILE) {
+		detail.querySelector('.pattern').appendChild(document.createTextNode(rule.pattern));
+		detail.querySelector('.match-type').appendChild(document.createTextNode(t('match_' + rule.matchType)));
+		detail.classList.add('exec-' + (rule.isFunction ? 'func' : 'normal'));
+		detail.querySelector('.exec_type').appendChild(document.createTextNode(t(rule.isFunction ? 'exec_normal' : 'exec_function')));
+		if (!rule.isFunction) {
+			if (rule.ruleType === 'modifySendHeader' || rule.ruleType === 'modifyReceiveHeader') {
+				detail.querySelector('.headerName').appendChild(document.createTextNode(rule.action.name));
+				detail.querySelector('.headerValue').appendChild(document.createTextNode(rule.action.value));
+			} else if (rule.ruleType === 'redirect') {
+				detail.querySelector('.redirectTo').appendChild(document.createTextNode(rule.to));
+			}
+		}
+	}
 	e.querySelector('.rule-type').appendChild(document.createTextNode(t('rule_' + rule.ruleType)));
-	e.querySelector('.pattern').appendChild(document.createTextNode(rule.pattern));
-	e.querySelector('.match-type').appendChild(document.createTextNode(t('match_' + rule.matchType)));
 	e.querySelector('.move-group').addEventListener('click', onMoveGroupClick);
 	e.querySelector('.edit').addEventListener('click', onEditRuleClick);
 	e.querySelector('.remove').addEventListener('click', onRemoveRuleClick);
 	// enable switcher
 	const enableSwitcher = e.querySelector('.enable-switcher');
 	const enableCheckbox = enableSwitcher.querySelector('input');
-	enableSwitcher.setAttribute('for', 'switcher-' + type + '-' + rule.id);
-	enableCheckbox.setAttribute('id', 'switcher-' + type + '-' + rule.id);
+	enableSwitcher.setAttribute('for', 'switcher-' + uniqid);
+	enableCheckbox.setAttribute('id', 'switcher-' + uniqid);
 	enableCheckbox.checked = rule.enable;
 	enableCheckbox.addEventListener('change', onEnableRuleChange);
 	// Batch checkbox
 	const batchSwitcher = e.querySelector('.batch-checkbox');
 	const batchCheckbox = batchSwitcher.querySelector('input');
-	batchSwitcher.setAttribute('for', 'batch-' + type + '-' + rule.id);
-	batchCheckbox.setAttribute('id', 'batch-' + type + '-' + rule.id);
+	batchSwitcher.setAttribute('for', 'batch-' + uniqid);
+	batchCheckbox.setAttribute('id', 'batch-' + uniqid);
 	if (typeof(componentHandler) !== 'undefined') {
 		componentHandler.upgradeElement(enableSwitcher, 'MaterialSwitch');
 		componentHandler.upgradeElement(batchSwitcher, 'MaterialCheckbox');
+		if (!IS_MOBILE) {
+			let _t = setTimeout(() => {
+				componentHandler.upgradeElement(detail, 'MaterialTooltip');
+				clearTimeout(_t);
+			}, 300);
+		}
 	}
 	if (!notAutoMove) {
 		moveItemToGroup(e, rule.id, findItemInGroup(rule.id, type), type);

@@ -30,10 +30,18 @@
 			<td class="enable mdl-data-table__cell--non-numeric">
 				<label class="mdl-switch enable-switcher"><input type="checkbox" class="mdl-switch__input activate" name="enable"/></label>
 			</td>
-			<td class="name mdl-data-table__cell--non-numeric"></td>
+			<td class="name mdl-data-table__cell--non-numeric">
+				<div class="name-label"></div>
+				<div class="detail">
+					<p><span i18n-text="matchType"></span>: <span class="match-type"></span></p>
+					<p><span i18n-text="matchRule"></span>: <span class="pattern"></span></p>
+					<p><span i18n-text="exec_type"></span>: <span class="exec_type"></span></p>
+					<p class="is_redirect"><span i18n-text="redirectTo"></span>: <span class="redirectTo"></span></p>
+					<p class="is_header"><span i18n-text="headerName"></span>: <span class="headerName"></span></p>
+					<p class="is_header"><span i18n-text="headerValue"></span>: <span class="headerValue"></span></p>
+				</div>
+			</td>
 			<td class="rule-type mdl-data-table__cell--non-numeric"></td>
-			<td class="pattern mdl-data-table__cell--non-numeric"></td>
-			<td class="match-type mdl-data-table__cell--non-numeric"></td>
 			<td class="action mdl-data-table__cell--non-numeric">
 				<button class="move-group mdl-button mdl-js-button mdl-js-ripple-effect" i18n-title="group"><i class="material-icons">playlist_add</i><span i18n-text="group"></span></button>
 				<button class=" edit mdl-button mdl-js-button mdl-js-ripple-effect" i18n-title="edit"><i class="material-icons">mode_edit</i><span i18n-text="edit"></span></button>
@@ -58,8 +66,6 @@
 									<th i18n-text="enable" class="enable mdl-data-table__cell--non-numeric"></th>
 									<th i18n-text="name" class="name mdl-data-table__cell--non-numeric"></th>
 									<th i18n-text="ruleType" class="rule-type mdl-data-table__cell--non-numeric"></th>
-									<th i18n-text="matchRule" class="pattern mdl-data-table__cell--non-numeric"></th>
-									<th i18n-text="matchType" class="match-type mdl-data-table__cell--non-numeric"></th>
 									<th i18n-text="action" class="action mdl-data-table__cell--non-numeric"></th>
 								</tr>
 							</thead>

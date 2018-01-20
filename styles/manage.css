@@ -47,6 +47,22 @@
 .rule-list .enable {
 	width: 80px;
 }
+.rule-list .detail {
+	max-width: 400px;
+}
+.rule-list .detail > p {
+	max-width: 400px;
+	margin-bottom: 0;
+}
+.rule-list .rule-item .detail.exec-func .is_redirect,
+.rule-list .rule-item .detail.exec-func .is_header,
+.rule-list .rule-item[data-type="modifySendHeader"] .detail .is_redirect,
+.rule-list .rule-item[data-type="modifyReceiveHeader"] .detail .is_redirect,
+.rule-list .rule-item[data-type="redirect"] .detail .is_header,
+.rule-list .rule-item[data-type="cancel"] .detail .is_redirect,
+.rule-list .rule-item[data-type="cancel"] .detail .is_header {
+	display: none;
+}
 .rule-list .action {
 	width: 400px;
 }

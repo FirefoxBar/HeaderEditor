@@ -132,16 +132,16 @@ function modifyHeaders(headers, rules, details) {
 		if (!item.isFunction) {
 			newHeaders[item.action.name] = item.action.value;
 		} else {
-			hasFunction = 1;
+			hasFunction = true;
 		}
 	}
-	for (var i = 0; i < headers.length; i++) {
-		if (typeof(newHeaders[headers[i].name]) !== 'undefined') {
+	for (let i = 0; i < headers.length; i++) {
+		if (newHeaders[headers[i].name]) {
 			headers[i].value = newHeaders[headers[i].name];
 			delete newHeaders[headers[i].name];
 		}
 	}
-	for (let k in newHeaders) {
+	for (const k in newHeaders) {
 		headers.push({
 			"name": k,
 			"value": newHeaders[k]
