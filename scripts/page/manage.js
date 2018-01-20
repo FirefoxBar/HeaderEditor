@@ -896,7 +896,7 @@ document.addEventListener('DOMContentLoaded', () => {
 	setupLivePrefs([
 		"manage-hide-empty",
 		"manage-collapse-group",
-		"add-theif-link"
+		"add-thief-link"
 	]);
 	// group
 	initGroup();

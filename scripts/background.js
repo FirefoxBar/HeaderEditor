@@ -1,4 +1,4 @@
-let theifLinkMenu = null;
+let thiefLinkMenu = null;
 
 function appId() {
     function genRand() {
@@ -42,8 +42,8 @@ browser.runtime.onMessage.addListener(function(request, sender, sendResponse) {
 			}
 			break;
 		case 'prefChanged':
-			if (request.prefName === 'add-theif-link') {
-				toggleTheifLinkMenu(request.value);
+			if (request.prefName === 'add-thief-link') {
+				toggleThiefLinkMenu(request.value);
 			}
 			break;
 	}
@@ -190,28 +190,28 @@ browser.browserAction.onClicked.addListener(function () {
 	openURL({"url": browser.extension.getURL('manage.html')});
 });
 
-function toggleTheifLinkMenu(has) {
+function toggleThiefLinkMenu(has) {
 	if (IS_MOBILE) {
 		return;
 	}
-	if (has && theifLinkMenu === null) {
-		theifLinkMenu = browser.contextMenus.create({
+	if (has && thiefLinkMenu === null) {
+		thiefLinkMenu = browser.contextMenus.create({
 			id: "add-anti-theft-link",
 			type: "normal",
 			title: browser.i18n.getMessage('add_anti_theft_link'),
 			contexts: ["image"]
 		});
 	}
-	if (!has && theifLinkMenu !== null) {
-		browser.contextMenus.remove(theifLinkMenu);
-		theifLinkMenu = null;
+	if (!has && thiefLinkMenu !== null) {
+		browser.contextMenus.remove(thiefLinkMenu);
+		thiefLinkMenu = null;
 	}
 }
 function requestUserPrefs() {
 	let t = setTimeout(() => {
 		clearTimeout(t);
 		if (!prefs.isDefault) {
-			toggleTheifLinkMenu(prefs.get('add-theif-link'));
+			toggleThiefLinkMenu(prefs.get('add-thief-link'));
 		} else {
 			requestUserPrefs();
 		}

@@ -250,7 +250,7 @@ var prefs = browser.extension.getBackgroundPage().prefs || new function Prefs() 
 	let defaults = {
 		"manage-hide-empty": false, // Hide empty groups
 		"manage-collapse-group": true, // Collapse groups
-		"add-theif-link": true
+		"add-thief-link": true
 	};
 	// when browser is strarting up, the setting is default
 	this.isDefault = true;
