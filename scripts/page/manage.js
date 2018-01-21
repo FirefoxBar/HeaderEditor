@@ -52,10 +52,14 @@ function addRuleEl(rule, type, notAutoMove) {
 	detail.classList.add('mdl-tooltip');
 	detail.setAttribute('for', 'detail-' + uniqid);
 	if (!IS_MOBILE) {
-		detail.querySelector('.pattern').appendChild(document.createTextNode(rule.pattern));
 		detail.querySelector('.match-type').appendChild(document.createTextNode(t('match_' + rule.matchType)));
+		if (rule.matchType === 'all') {
+			detail.querySelector('.pattern').parentElement.remove();
+		} else {
+			detail.querySelector('.pattern').appendChild(document.createTextNode(rule.pattern));
+		}
 		detail.classList.add('exec-' + (rule.isFunction ? 'func' : 'normal'));
-		detail.querySelector('.exec_type').appendChild(document.createTextNode(t(rule.isFunction ? 'exec_normal' : 'exec_function')));
+		detail.querySelector('.exec_type').appendChild(document.createTextNode(t(rule.isFunction ? 'exec_function' : 'exec_normal')));
 		if (!rule.isFunction) {
 			if (rule.ruleType === 'modifySendHeader' || rule.ruleType === 'modifyReceiveHeader') {
 				detail.querySelector('.headerName').appendChild(document.createTextNode(rule.action.name));
