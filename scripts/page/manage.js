@@ -89,7 +89,9 @@ function addRuleEl(rule, type, notAutoMove) {
 		componentHandler.upgradeElement(enableSwitcher, 'MaterialSwitch');
 		componentHandler.upgradeElement(batchSwitcher, 'MaterialCheckbox');
 		if (!IS_MOBILE) {
-			let _t = setTimeout(() => {
+			// To avoid uglifyes's error, the follow two lines can not be merged
+			let _t = null;
+			_t = setTimeout(() => {
 				componentHandler.upgradeElement(detail, 'MaterialTooltip');
 				clearTimeout(_t);
 			}, 300);
