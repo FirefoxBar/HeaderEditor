@@ -40,6 +40,7 @@ function ruleType2tableName(ruleType) {
 function addRuleEl(rule, type, notAutoMove) {
 	let e = template.rule.cloneNode(true);
 	const uniqid = type + '-' + rule.id;
+	e.setAttribute('id', 'rule-' + uniqid);
 	e.setAttribute('data-id', rule.id);
 	e.setAttribute('data-table', type);
 	e.setAttribute('data-type', rule.ruleType);
@@ -296,16 +297,17 @@ function onRuleSaveClick() {
 	saveRule(table, data).then(function(response) {
 		if (ruleId !== '') {
 			let oldGroup = findItemInGroup(ruleId, table);
-			let el = document.querySelector('.rule-item[data-id="' + ruleId + '"]');
+			let el = document.getElementById('rule-' + table + '-' + ruleId);
 			let newEl = addRuleEl(response, table, true);
 			if (oldGroup !== newGroup) {
+				el.remove();
 				//edit a rule and move to a new group
 				moveItemToGroup(newEl, response.id, newGroup, table);
 			} else {
 				//not move
 				el.parentElement.insertBefore(newEl, el);
+				el.remove();
 			}
-			el.remove();
 		} else {
 			let el = addRuleEl(response, table, true);
 			moveItemToGroup(el, response.id, newGroup, table);
