@@ -938,7 +938,9 @@ document.addEventListener('DOMContentLoaded', () => {
 		downloadRule(document.getElementById('download-url').value);
 		addHistory(document.getElementById('download-url').value);
 	});
-	document.querySelector('.download-input .mdl-textfield').style.width = 'calc(100% - ' + (document.querySelector('.download-input .buttons').offsetWidth + 25) + 'px)';
+	if (!IS_MOBILE) {
+		document.querySelector('.download-input .mdl-textfield').style.width = 'calc(100% - ' + (document.querySelector('.download-input .buttons').offsetWidth + 25) + 'px)';
+	}
 	loadDownloadHistory();
 
 	//Realtime test

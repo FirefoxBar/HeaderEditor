@@ -35,3 +35,6 @@
 	height: 42px;
 	width: 42px;
 }
+#download-history .mdl-list__item-icon {
+	display: none;
+}

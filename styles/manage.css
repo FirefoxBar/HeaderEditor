@@ -149,6 +149,15 @@
 .download-input .buttons {
 	display: inline-block;
 }
+#download-history .mdl-list__item-primary-content {
+	max-width: calc(100% - 108px);
+}
+#download-history .mdl-list__item-primary-content .url {
+	max-width: 100%;
+	overflow: hidden;
+	white-space: nowrap;
+	text-overflow: ellipsis;
+}
 #import-confirm .mdl-card__supporting-text {
 	padding-bottom: 10px;
 	overflow: auto;

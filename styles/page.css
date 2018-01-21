@@ -1,6 +1,9 @@
 body {
 	background-color: #EEE;
 }
+.mdl-checkbox {
+	height: auto;
+}
 .mdl-button:not(.mdl-button--icon):not(.mdl-button--fab) .material-icons {
 	margin-right: 5px;
 }
