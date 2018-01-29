@@ -136,10 +136,16 @@ function modifyHeaders(headers, rules, details) {
 		}
 	}
 	for (let i = 0; i < headers.length; i++) {
-		if (newHeaders[headers[i].name]) {
-			headers[i].value = newHeaders[headers[i].name];
-			delete newHeaders[headers[i].name];
+		if (newHeaders[headers[i].name] === undefined) {
+			continue;
 		}
+		if (newHeaders[headers[i].name] === '_header_editor_remove_') {
+			headers.splice(i, 1);
+			i--;
+		} else {
+			headers[i].value = newHeaders[headers[i].name];
+		}
+		delete newHeaders[headers[i].name];
 	}
 	for (const k in newHeaders) {
 		headers.push({
