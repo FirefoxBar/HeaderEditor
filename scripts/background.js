@@ -136,10 +136,10 @@ function modifyHeaders(headers, rules, details) {
 		}
 	}
 	for (let i = 0; i < headers.length; i++) {
-		if (newHeaders[headers[i].name] === undefined) {
+		const name = headers[i].name;
+		if (newHeaders[name] === undefined) {
 			continue;
 		}
-		const name = headers[i].name;
 		if (newHeaders[name] === '_header_editor_remove_') {
 			headers.splice(i, 1);
 			i--;
