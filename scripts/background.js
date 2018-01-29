@@ -139,13 +139,14 @@ function modifyHeaders(headers, rules, details) {
 		if (newHeaders[headers[i].name] === undefined) {
 			continue;
 		}
-		if (newHeaders[headers[i].name] === '_header_editor_remove_') {
+		const name = headers[i].name;
+		if (newHeaders[name] === '_header_editor_remove_') {
 			headers.splice(i, 1);
 			i--;
 		} else {
-			headers[i].value = newHeaders[headers[i].name];
+			headers[i].value = newHeaders[name];
 		}
-		delete newHeaders[headers[i].name];
+		delete newHeaders[name];
 	}
 	for (const k in newHeaders) {
 		headers.push({
