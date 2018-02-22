@@ -44,6 +44,9 @@
 	border: none;
 	width: 100%;
 }
+.rule-list .batch-checkbox {
+	vertical-align: top;
+}
 .rule-list .enable {
 	width: 80px;
 }
