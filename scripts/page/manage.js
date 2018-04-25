@@ -899,6 +899,14 @@ function initAddAntiHotLink(url) {
 }
 
 document.addEventListener('DOMContentLoaded', () => {
+	// Upgrade
+	if (localStorage.getItem('dl_history')) {
+		getLocalStorage().set({'dl_history': JSON.parse(localStorage.getItem('dl_history'))});
+	}
+	if (localStorage.getItem('groups')) {
+		getLocalStorage().set({'groups': JSON.parse(localStorage.getItem('groups'))});
+	}
+
 	setFloatButton('default-button');
 	document.getElementById('rule-save').addEventListener('click', onRuleSaveClick);
 	document.getElementById('save-rule').addEventListener('click', onRuleSaveClick);
