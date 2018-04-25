@@ -250,7 +250,8 @@ var prefs = browser.extension.getBackgroundPage().prefs || new function Prefs() 
 	let defaults = {
 		"manage-hide-empty": false, // Hide empty groups
 		"manage-collapse-group": true, // Collapse groups
-		"add-hot-link": true
+		"add-hot-link": true,
+		"exclude-he": true // rules take no effect on HE or not
 	};
 	// when browser is strarting up, the setting is default
 	this.isDefault = true;

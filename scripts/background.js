@@ -86,6 +86,10 @@ runTryCatch(() => {
 
 
 browser.webRequest.onBeforeRequest.addListener(function(e) {
+	//判断是否是HE自身
+	if (prefs.get('exclude-he') && e.url.indexOf(browser.extension.getURL('')) === 0) {
+		return;
+	}
 	//可用：重定向，阻止加载
 	let rules = getRules('request', {"url": e.url, "enable": 1});
 	let redirectTo = e.url;
@@ -174,6 +178,10 @@ function modifyHeaders(headers, rules, details) {
 }
 
 browser.webRequest.onBeforeSendHeaders.addListener(function(e) {
+	//判断是否是HE自身
+	if (prefs.get('exclude-he') && e.url.indexOf(browser.extension.getURL('')) === 0) {
+		return;
+	}
 	//修改请求头
 	if (!e.requestHeaders) {
 		return;
@@ -184,6 +192,10 @@ browser.webRequest.onBeforeSendHeaders.addListener(function(e) {
 }, {urls: ["<all_urls>"]}, ['blocking', 'requestHeaders']);
 
 browser.webRequest.onHeadersReceived.addListener(function(e) {
+	//判断是否是HE自身
+	if (prefs.get('exclude-he') && e.url.indexOf(browser.extension.getURL('')) === 0) {
+		return;
+	}
 	//修改请求头
 	if (!e.responseHeaders) {
 		return;
