@@ -443,6 +443,9 @@ function getSync() {
 		return browser.storage.local;
 	}
 }
+function getLocalStorage() {
+	return browser.storage.local;
+}
 
 
 

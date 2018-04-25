@@ -550,22 +550,22 @@ function downloadRule(url) {
 	});
 }
 function loadDownloadHistory() {
-	if (!localStorage.getItem('dl_history')) {
-		localStorage.setItem('dl_history', '[]');
-		return;
-	}
-	let h = JSON.parse(localStorage.getItem('dl_history'));
-	const dl_history_box = document.getElementById('download-history');
-	dl_history_box.innerHTML = '';
-	for (const url of h) {
-		let n = template.dlHistory.cloneNode(true);
-		n.querySelector('.url').setAttribute('data-url', url);
-		n.querySelector('.url').appendChild(document.createTextNode(url));
-		n.querySelector('.download').addEventListener('click', onHistoryDownload);
-		n.querySelector('.edit').addEventListener('click', onHistoryEdit);
-		n.querySelector('.remove').addEventListener('click', onHistoryRemove);
-		dl_history_box.appendChild(n);
-	}
+	getLocalStorage().get('dl_history').then(r => {
+		if (r.dl_history === undefined) {
+			return;
+		}
+		const dl_history_box = document.getElementById('download-history');
+		dl_history_box.innerHTML = '';
+		for (const url of r.dl_history) {
+			let n = template.dlHistory.cloneNode(true);
+			n.querySelector('.url').setAttribute('data-url', url);
+			n.querySelector('.url').appendChild(document.createTextNode(url));
+			n.querySelector('.download').addEventListener('click', onHistoryDownload);
+			n.querySelector('.edit').addEventListener('click', onHistoryEdit);
+			n.querySelector('.remove').addEventListener('click', onHistoryRemove);
+			dl_history_box.appendChild(n);
+		}
+	});
 }
 function onHistoryDownload() {
 	const url = this.parentElement.parentElement.querySelector('.url').getAttribute('data-url');
@@ -578,23 +578,27 @@ function onHistoryEdit() {
 }
 function onHistoryRemove() {
 	const url = this.parentElement.parentElement.querySelector('.url').getAttribute('data-url');
-	let h = JSON.parse(localStorage.getItem('dl_history'));
-	for (const index in h) {
-		if (h[index] === url) {
-			h.splice(index, 1);
-			break;
+	getLocalStorage().get('dl_history').then(r => {
+		if (r.dl_history === undefined) {
+			return;
 		}
-	}
-	localStorage.setItem('dl_history', JSON.stringify(h));
-	loadDownloadHistory();
+		for (const index in h) {
+			if (h[index] === url) {
+				h.splice(index, 1);
+				break;
+			}
+		}
+		getLocalStorage().set({'dl_history': h}).then(loadDownloadHistory);
+	});
 }
 function addHistory(url) {
-	let h = JSON.parse(localStorage.getItem('dl_history'));
-	if (!h.includes(url)) {
-		h.push(document.getElementById('download-url').value);
-		localStorage.setItem('dl_history', JSON.stringify(h));
-		loadDownloadHistory();
-	}
+	getLocalStorage().get('dl_history').then(r => {
+		let list = (r.dl_history === undefined) ? [] : r.dl_history;
+		if (!list.includes(url)) {
+			list.push(document.getElementById('download-url').value);
+			getLocalStorage().set({'dl_history': list}).then(loadDownloadHistory);
+		}
+	});
 }
 
 function onHideEmptyGroupChange() {
@@ -649,30 +653,33 @@ function findItemInGroup(id, type) {
 }
 function initGroup() {
 	const groupMenu = document.querySelector('#group-dialog .mdl-dialog__content');
-	if (!localStorage.getItem('groups')) {
-		cachedGroupList[t('ungrouped')] = [];
-		saveGroups();
-	}
-	cachedGroupList = JSON.parse(localStorage.getItem('groups'));
-	Object.keys(cachedGroupList).forEach((e) => {
-		addGroupEl(e);
-	});
-	// new
-	let n = template.groupMenuListNew.cloneNode(true);
-	let new_id = n.querySelector('.mdl-radio').getAttribute('for') + (templateId++);
-	n.querySelector('.mdl-radio').setAttribute('for', new_id);
-	n.querySelector('input[type="radio"]').setAttribute('id', new_id);
-	n.querySelector('input[type="radio"]').value = '_new';
-	// event
-	n.querySelector('#group-add').addEventListener('focus', () => {
-		if (groupMenu.querySelector('.is-checked').getAttribute('data-isnew') != 1) {
-			groupMenu.querySelector('.is-checked input[type="radio"]').checked = false;
-			groupMenu.querySelector('.is-checked').classList.remove('is-checked');
-			n.querySelector('.mdl-radio').classList.add('is-checked');
-			n.querySelector('input[type="radio"]').checked = true;
+	getLocalStorage().get('groups').then(r => {
+		if (r.groups === undefined) {
+			cachedGroupList[t('ungrouped')] = [];
+			saveGroups();
+		} else {
+			cachedGroupList = r.groups;
 		}
+		Object.keys(cachedGroupList).forEach((e) => {
+			addGroupEl(e);
+		});
+		// new
+		let n = template.groupMenuListNew.cloneNode(true);
+		let new_id = n.querySelector('.mdl-radio').getAttribute('for') + (templateId++);
+		n.querySelector('.mdl-radio').setAttribute('for', new_id);
+		n.querySelector('input[type="radio"]').setAttribute('id', new_id);
+		n.querySelector('input[type="radio"]').value = '_new';
+		// event
+		n.querySelector('#group-add').addEventListener('focus', () => {
+			if (groupMenu.querySelector('.is-checked').getAttribute('data-isnew') != 1) {
+				groupMenu.querySelector('.is-checked input[type="radio"]').checked = false;
+				groupMenu.querySelector('.is-checked').classList.remove('is-checked');
+				n.querySelector('.mdl-radio').classList.add('is-checked');
+				n.querySelector('input[type="radio"]').checked = true;
+			}
+		});
+		groupMenu.appendChild(n);
 	});
-	groupMenu.appendChild(n);
 }
 function addGroupEl(name) {
 	if (document.querySelector('#groups .group-item[data-name="' + name + '"]') !== null) {
@@ -714,7 +721,7 @@ function addGroupEl(name) {
 	n_group.querySelector('th.batch').addEventListener('click', onBatchGroupSelect);
 }
 function saveGroups() {
-	localStorage.setItem('groups', JSON.stringify(cachedGroupList));
+	getLocalStorage().set({'groups' : cachedGroupList});
 }
 function onGroupShareClick() {
 	const el = findParent(this, (e) => { return e.classList.contains('group-item'); });
