@@ -645,9 +645,7 @@ function moveItemToGroup(from, id, groupName, type) {
 	}, 100);
 }
 function findItemInGroup(id, type) {
-	console.log(cachedGroupList)
 	for (let i in cachedGroupList) {
-		console.log(cachedGroupList[i])
 		if (cachedGroupList[i].includes(type + '-' + id)) {
 			return i;
 		}
@@ -783,16 +781,18 @@ function chooseGroup() {
 		dialog.querySelector('.mdl-radio input[type="radio"]').checked = true;
 		dialog.querySelector('.ok').addEventListener('click', function _ok() {
 			let r = dialog.querySelector('input[type="radio"]:checked').value;
+			this.removeEventListener('click', _ok);
+			dialog.close();
 			if (r === '_new') {
 				r = dialog.querySelector('#group-add').value;
 				cachedGroupList[r] = [];
 				saveGroups().then(() => {
 					addGroupEl(r);
+					resolve(r);
 				});
+			} else {
+				resolve(r);
 			}
-			this.removeEventListener('click', _ok);
-			dialog.close();
-			resolve(r);
 		});
 		dialog.querySelector('.close').addEventListener('click', function _close() {
 			this.removeEventListener('click', _close);
