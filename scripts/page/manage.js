@@ -902,9 +902,11 @@ document.addEventListener('DOMContentLoaded', () => {
 	// Upgrade
 	if (localStorage.getItem('dl_history')) {
 		getLocalStorage().set({'dl_history': JSON.parse(localStorage.getItem('dl_history'))});
+		localStorage.removeItem('dl_history');
 	}
 	if (localStorage.getItem('groups')) {
 		getLocalStorage().set({'groups': JSON.parse(localStorage.getItem('groups'))});
+		localStorage.removeItem('groups');
 	}
 
 	setFloatButton('default-button');
