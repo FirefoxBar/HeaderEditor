@@ -32,6 +32,23 @@ if (/Firefox\/(\d+)\.(\d+)/.test(navigator.userAgent)) {
 		NodeList.prototype[method]= Array.prototype[method];
 	}
 });
+(function(constructor) {
+	if (constructor &&
+		constructor.prototype &&
+		constructor.prototype.firstElementChild == null) {
+		Object.defineProperty(constructor.prototype, 'firstElementChild', {
+			get: function() {
+				var node, nodes = this.childNodes, i = 0;
+				while (node = nodes[i++]) {
+					if (node.nodeType === 1) {
+						return node;
+					}
+				}
+				return null;
+			}
+		});
+	}
+})(window.Node || window.Element);
 
 //date format
 function DateFormat(f, d) {

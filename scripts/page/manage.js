@@ -412,11 +412,12 @@ function onImportSubmit() {
 	let groupName = document.getElementById('import-group').getAttribute('data-name');
 	function checkFinish() {
 		if (total === finish) {
-			saveGroups();
-			browser.runtime.sendMessage({"method": "updateCache", "type": "all"});
-			setTimeout(() => {
-				window.location.reload();
-			}, 500);
+			saveGroups().then(() => {
+				browser.runtime.sendMessage({"method": "updateCache", "type": "all"});
+				setTimeout(() => {
+					window.location.reload();
+				}, 500);
+			});
 		}
 	}
 	for (let key of tableNames) {
@@ -644,7 +645,9 @@ function moveItemToGroup(from, id, groupName, type) {
 	}, 100);
 }
 function findItemInGroup(id, type) {
+	console.log(cachedGroupList)
 	for (let i in cachedGroupList) {
+		console.log(cachedGroupList[i])
 		if (cachedGroupList[i].includes(type + '-' + id)) {
 			return i;
 		}
@@ -704,6 +707,7 @@ function addGroupEl(name) {
 	n_group.setAttribute('data-name', name);
 	n_group.innerHTML = n_group.innerHTML.replace(/\{id\}/g, templateId++);
 	n_group.querySelector('.title').appendChild(document.createTextNode(name));
+	n_group.querySelector('.rename').addEventListener('click', onGroupRenameClick);
 	n_group.querySelector('.share').addEventListener('click', onGroupShareClick);
 	n_group.querySelector('.remove').addEventListener('click', onGroupRemoveClick);
 	// toggle box
@@ -721,7 +725,7 @@ function addGroupEl(name) {
 	n_group.querySelector('th.batch').addEventListener('click', onBatchGroupSelect);
 }
 function saveGroups() {
-	getLocalStorage().set({'groups' : cachedGroupList});
+	return getLocalStorage().set({'groups' : cachedGroupList});
 }
 function onGroupShareClick() {
 	const el = findParent(this, (e) => { return e.classList.contains('group-item'); });
@@ -744,8 +748,25 @@ function onGroupRemoveClick() {
 		return;
 	}
 	delete cachedGroupList[name];
-	saveGroups();
-	window.location.reload();
+	saveGroups().then(() => {
+		window.location.reload();
+	});
+}
+function onGroupRenameClick() {
+	const el = findParent(this, (e) => { return e.classList.contains('group-item'); });
+	const name = el.getAttribute('data-name');
+	if (name === t('ungrouped')) {
+		// can not rename default group
+		return;
+	}
+	let new_name = window.prompt(t('enter_group_name'), name);
+	if (name) {
+		cachedGroupList[new_name] = deepCopy(cachedGroupList[name]);
+		delete cachedGroupList[name];
+	}
+	saveGroups().then(() => {
+		window.location.reload();
+	});
 }
 function chooseGroup() {
 	return new Promise((resolve, reject) => {
@@ -765,8 +786,9 @@ function chooseGroup() {
 			if (r === '_new') {
 				r = dialog.querySelector('#group-add').value;
 				cachedGroupList[r] = [];
-				saveGroups();
-				addGroupEl(r);
+				saveGroups().then(() => {
+					addGroupEl(r);
+				});
 			}
 			this.removeEventListener('click', _ok);
 			dialog.close();

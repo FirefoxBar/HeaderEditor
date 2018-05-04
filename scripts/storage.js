@@ -377,23 +377,41 @@ function deepCopy(obj) {
 	if (!obj || typeof obj != "object") {
 		return obj;
 	} else {
-		var emptyCopy = Object.create(Object.getPrototypeOf(obj));
-		return deepMerge(emptyCopy, obj);
+		if (obj instanceof Array) {
+			var emptyCopy = [];
+			return deepMerge(emptyCopy, obj);
+		} else {
+			var emptyCopy = Object.create(Object.getPrototypeOf(obj));
+			return deepMerge(emptyCopy, obj);
+		}
 	}
 }
 
 function deepMerge(target, obj1 /* plus any number of object arguments */) {
 	for (var i = 1; i < arguments.length; i++) {
 		var obj = arguments[i];
-		for (var k in obj) {
-			// hasOwnProperty checking is not needed for our non-OOP stuff
-			var value = obj[k];
-			if (!value || typeof value != "object") {
-				target[k] = value;
-			} else if (k in target) {
-				deepMerge(target[k], value);
-			} else {
-				target[k] = deepCopy(value);
+		if (obj instanceof Array) {
+			for (var k = 0; k < obj.length; k++) {
+				var value = obj[k];
+				console.log(value);
+				console.log(typeof(value));
+				if (!value || typeof value != "object") {
+					target.push(value);
+				} else {
+					target.push(deepCopy(value));
+				}
+			}
+		} else {
+			for (var k in obj) {
+				// hasOwnProperty checking is not needed for our non-OOP stuff
+				var value = obj[k];
+				if (!value || typeof value != "object") {
+					target[k] = value;
+				} else if (k in target) {
+					deepMerge(target[k], value);
+				} else {
+					target[k] = deepCopy(value);
+				}
 			}
 		}
 	}
