@@ -583,13 +583,13 @@ function onHistoryRemove() {
 		if (r.dl_history === undefined) {
 			return;
 		}
-		for (const index in h) {
-			if (h[index] === url) {
-				h.splice(index, 1);
+		for (const index in r.dl_history) {
+			if (r.dl_history[index] === url) {
+				r.dl_history.splice(index, 1);
 				break;
 			}
 		}
-		getLocalStorage().set({'dl_history': h}).then(loadDownloadHistory);
+		getLocalStorage().set({'dl_history': r.dl_history}).then(loadDownloadHistory);
 	});
 }
 function addHistory(url) {
