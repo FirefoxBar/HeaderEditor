@@ -348,15 +348,7 @@ function importFromString(str) {
 	for (let key of tableNames) {
 		for (let item of content[key]) {
 			delete item.id;
-			if (typeof(item.isFunction) === 'undefined') {
-				item.matchType = item.type;
-				item.isFunction = 0;
-				delete item.type;
-			}
-			if (typeof(item.enable) === 'undefined') {
-				item.enable = 1;
-			}
-			waitToImport[key].push(item);
+			waitToImport[key].push(upgradeRuleFormat(item));
 		}
 	}
 	showImportModal();

@@ -167,6 +167,8 @@ function saveRule(tableName, o) {
 				};
 				return;
 			}
+			// Check base informations
+			upgradeRuleFormat(o);
 			// Create
 			// Make sure it's not null - that makes indexeddb sad
 			delete o["id"];
@@ -478,11 +480,7 @@ function upgradeTo2() {
 				if (cursor) {
 					let s = cursor.value;
 					s.id = cursor.key;
-					s.matchType = s.type;
-					delete s.type;
-					s.isFunction = 0;
-					s.enable = 1;
-					os.put(s);
+					os.put(upgradeRuleFormat(s));
 					cursor.continue();
 				} else {
 					updateCache(k);
@@ -490,6 +488,20 @@ function upgradeTo2() {
 			};
 		});
 	}
+}
+
+function upgradeRuleFormat(s) {
+	if (typeof(s.matchType) === "undefined") {
+		s.matchType = s.type;
+		delete s.type;
+	}
+	if (typeof(s.isFunction) === "undefined") {
+		s.isFunction = 0;
+	}
+	if (typeof(s.enable) === "undefined") {
+		s.enable = 1;
+	}
+	return s;
 }
 
 function initStorage() {
