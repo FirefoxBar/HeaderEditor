@@ -44,3 +44,20 @@ function loadFromFile(formatToFilter){
 		fileInput.click();
 	});
 }
+
+/**
+ * Create export format from caches
+ */
+function createExportFormat(arr) {
+	const result = {};
+	for (var k in arr) {
+		result[k] = [];
+		arr[k].forEach(e => {
+			let copy = deepCopy(e);
+			delete copy["_reg"];
+			delete copy["_func"];
+			result[k].push(copy);
+		});
+	}
+	return result;
+}
