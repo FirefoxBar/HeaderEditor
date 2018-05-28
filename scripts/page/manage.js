@@ -648,7 +648,8 @@ function findItemInGroup(id, type) {
 			return i;
 		}
 	}
-	return Object.keys(cachedGroupList)[0];
+	const ungrouped = t('ungrouped');
+	return typeof(cachedGroupList[ungrouped]) === "undefined" ? Object.keys(cachedGroupList)[0] : ungrouped;
 }
 function initGroup() {
 	const groupMenu = document.querySelector('#group-dialog .mdl-dialog__content');
