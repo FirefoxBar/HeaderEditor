@@ -28,16 +28,35 @@
 				<md-table md-card v-for="g of group" :key="g.name" class="group-item">
 					<md-table-toolbar>{{g.name}}</md-table-toolbar>
 					<md-table-row>
-						<md-table-head>{{t('enable')}}</md-table-head>
-						<md-table-head>{{t('name')}}</md-table-head>
-						<md-table-head>{{t('ruleType')}}</md-table-head>
-						<md-table-head>{{t('action')}}</md-table-head>
+						<md-table-head class="cell-enable">{{t('enable')}}</md-table-head>
+						<md-table-head class="cell-name">{{t('name')}}</md-table-head>
+						<md-table-head class="cell-type">{{t('ruleType')}}</md-table-head>
+						<md-table-head class="cell-action">{{t('action')}}</md-table-head>
 					</md-table-row>
 					<md-table-row v-for="r of g.rule" :key="r.id">
-						<md-table-cell><md-switch :v-modal="r.enable" value="1" class="md-primary" :data-type="r.ruleType" :data-id="r.id" @change="onRuleEnable"></md-switch></md-table-cell>
-						<md-table-cell>{{r.name}}</md-table-cell>
-						<md-table-cell>{{r.ruleType}}</md-table-cell>
-						<md-table-cell></md-table-cell>
+						<md-table-cell class="cell-enable"><md-switch v-modal="r.enable" :value="1" class="md-primary" :data-type="r.ruleType" :data-id="r.id" @click="onRuleEnable"></md-switch></md-table-cell>
+						<md-table-cell class="cell-name">
+							<span>{{r.name}}</span>
+							<md-tooltip md-direction="bottom">
+								<p>{{t('matchType')}}: {{t('match_' + r.matchType)}}</p>
+								<p>{{t('matchRule')}}: {{t('match_' + r.pattern)}}</p>
+								<p>{{t('exec_type')}}: {{t('exec_' + (r.isFunction ? 'function' : 'normal'))}}</p>
+								<p v-if="r.ruleType === 'redirect'">{{t('redirectTo')}}: {{r.to}}</p>
+								<p v-if="r.ruleType === 'modifySendHeader' || r.ruleType === 'modifyReceiveHeader'">{{t('headerName')}}: {{r.action.name}}</p>
+								<p v-if="r.ruleType === 'modifySendHeader' || r.ruleType === 'modifyReceiveHeader'">{{t('headerValue')}}: {{r.action.value}}</p>
+							</md-tooltip>
+						</md-table-cell>
+						<md-table-cell class="cell-type">{{t('rule_' + r.ruleType)}}</md-table-cell>
+						<md-table-cell class="cell-action">
+							<md-menu md-size="medium" md-align-trigger>
+								<md-button md-menu-trigger><md-icon>playlist_add</md-icon>{{t('group')}}</md-button>
+								<md-menu-content>
+									<md-menu-item>My Item 1</md-menu-item>
+								</md-menu-content>
+							</md-menu>
+							<md-button @click="editRule(r)"><md-icon>mode_edit</md-icon>{{t('edit')}}</md-button>
+							<md-button @click="removeRule(r)"><md-icon>delete</md-icon>{{t('delete')}}</md-button>
+						</md-table-cell>
 					</md-table-row>
 				</md-card>
 			</md-tab>
@@ -146,7 +165,7 @@
 							</md-card-header-text>
 						</md-card-header>
 						<md-card-content>
-							<md-autocomplete v-model="edit.group" :md-options="Object.keys(group)" :md-fuzzy-search="false">
+							<md-autocomplete v-model="edit.group" :md-options="groupList" :md-fuzzy-search="false">
 								<label>{{t('group')}}</label>
 								<template slot="md-autocomplete-item" slot-scope="{ item, term }">
 									<md-highlight-text :md-term="term">{{item}}</md-highlight-text>

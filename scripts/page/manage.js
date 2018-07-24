@@ -97,6 +97,9 @@ function startPageInit() {
 						return 'Matched';
 					}
 				}
+			},
+			groupList: function() {
+				return Object.keys(this.group);
 			}
 		},
 		methods: {
@@ -123,7 +126,7 @@ function startPageInit() {
 				this.edit.matchRule = "";
 				this.edit.excludeRule = "";
 				this.edit.redirectTo = "";
-				this.edit.redirectTo = "";
+				this.edit.headerName = "";
 				this.edit.headerValue = "";
 				this.edit.execType = 0;
 				this.edit.code = "";
@@ -148,30 +151,30 @@ function startPageInit() {
 					data.group = t('ungrouped');
 				}
 				if (data.name === '') {
-					showAlert(t('name_empty'));
+					this.showAlert(t('name_empty'));
 					return;
 				}
 				if (data.matchType !== 'all' && data.matchRule === '') {
-					showAlert(t('match_rule_empty'));
+					this.showAlert(t('match_rule_empty'));
 					return;
 				}
 				if (data.isFunction) {
 					data.code = this.edit.code;
 					if (data.code === '') {
-						showAlert(t('code_empty'));
+						this.showAlert(t('code_empty'));
 						return;
 					}
 					// test code
 					try {
 						new Function('val', 'detail', data.code);
 					} catch (e) {
-						showAlert(e.message);
+						this.showAlert(e.message);
 						return;
 					}
 				} else {
 					if (data.ruleType === 'redirect') {
 						if (this.edit.redirectTo === '') {
-							showAlert(t('redirect_empty'));
+							this.showAlert(t('redirect_empty'));
 							return;
 						}
 						data.action = 'redirect';
@@ -179,7 +182,7 @@ function startPageInit() {
 					}
 					if ((this.edit.ruleType === 'modifySendHeader' || this.edit.ruleType === 'modifyReceiveHeader')) {
 						if (this.edit.headerName === '') {
-							showAlert(t('header_empty'));
+							this.showAlert(t('header_empty'));
 							return;
 						}
 						data.action = {
@@ -195,11 +198,11 @@ function startPageInit() {
 				if (this.edit.id !== -1) {
 					data.id = this.edit.id;
 				}
-				saveRule(table, data).then(function(response) {
-					if (data.id && data.id !== -1) {
+				window.saveRule(table, data).then(function(response) {
+					if (_this.edit.id && _this.edit.id !== -1) {
 						// Move group if required
 						if (_this.edit.oldGroup != data.group) {
-							delete _this.group[data.group][table + '-' + data.id];
+							_this.$delete(_this.group[data.group].rule, table + '-' + data.id);
 						}
 					}
 					if (!_this.group[response.group]) {
@@ -208,10 +211,41 @@ function startPageInit() {
 							rule: {}
 						});
 					}
-					_this.$set(_this.group[response.group], table + '-' + response.id, response);
+					_this.$set(_this.group[response.group].rule, table + '-' + response.id, response);
 					browser.runtime.sendMessage({"method": "updateCache", "type": table});
 					_this.showToast(_this.t('saved'));
 					_this.closeEditPage();
+				});
+			},
+			editRule: function(rule) {
+				this.edit.id = rule.id;
+				this.edit.name = rule.name;
+				this.edit.ruleType = rule.ruleType;
+				this.edit.ruleTypeEditable = false;
+				this.edit.matchType = rule.matchType;
+				this.edit.matchRule = rule.pattern;
+				this.edit.excludeRule = rule.exclude;
+				this.edit.redirectTo = rule.to || "";
+				this.edit.headerName = typeof(rule.action.name) === "string" ? rule.action.name : "";
+				this.edit.headerValue = typeof(rule.action.value) === "string" ? rule.action.value : "";
+				this.edit.execType = rule.isFunction ? 1 : 0;
+				this.edit.code = rule.code || "";
+				this.edit.oldGroup = rule.group;
+				this.edit.group = rule.group;
+				this.editTitle = t('edit');
+				this.isShowEdit = true;
+			},
+			removeRule: function(r) {
+				const _this = this;
+				const table = ruleType2tableName(r.ruleType);
+				const key = table + '-' + r.id;
+				deleteRule(table, r.id).then((response) => {
+					browser.runtime.sendMessage({"method": "updateCache", "type": table});
+					Object.keys(_this.group).forEach(e => {
+						if (typeof(_this.group[e].rule[key]) !== "undefined") {
+							_this.$delete(_this.group[e].rule, key);
+						}
+					});
 				});
 			},
 			// Enable or disable a rule
@@ -227,7 +261,7 @@ function startPageInit() {
 					name: t('ungrouped'),
 					rule: {}
 				});
-				function appendRule(type, response) {
+				function appendRule(table, response) {
 					for (const item of response) {
 						if (typeof(_this.group[item.group]) === "undefined") {
 							_this.$set(_this.group, item.group, {
@@ -235,19 +269,19 @@ function startPageInit() {
 								rule: {}
 							});
 						}
-						_this.$set(_this.group[item.group], type + '-' + item.id, item);
+						_this.$set(_this.group[item.group].rule, table + '-' + item.id, item);
 					}
 				}
-				function checkResult(type, response) {
+				function checkResult(table, response) {
 					if (!response) { // Firefox is starting up
-						requestRules(type);
+						requestRules(table);
 						return;
 					}
-					appendRule(type, response);
+					appendRule(table, response);
 				}
-				function requestRules(type) {
+				function requestRules(table) {
 					setTimeout(() => {
-						checkResult(type, getRules(type));
+						checkResult(table, getRules(table));
 					}, 20);
 				}
 				for (const t of tableNames) {

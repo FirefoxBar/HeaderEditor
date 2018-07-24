@@ -1,11 +1,21 @@
 body {
 	background-color: #EEE;
 }
+.md-tooltip {
+	height: auto;
+	font-size: 13px;
+}
+.md-tooltip p {
+	margin: 3px;
+}
+.md-button:not(.md-icon-button) .md-icon {
+	margin-right: 5px;
+}
 .main-menu .md-tabs-navigation {
 	position: fixed;
 	top: 0;
 	left: 0;
-	z-index: 999;
+	z-index: 1;
 	width: 100%;
 }
 .main-menu .md-tabs-navigation .md-button-content {
@@ -25,7 +35,4 @@ body {
 .main-menu .md-tabs-content {
 	height: auto !important;
 	background-color: #EEE;
-}
-.md-menu-content.md-select-menu {
-	z-index: 9999;
 }
