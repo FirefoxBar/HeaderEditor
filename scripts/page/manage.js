@@ -1,41 +1,337 @@
-let waitToImport = null;
+function startPageInit() {
+	init({
+		data: function() {
+			return {
+				isShowEdit: false,
+				editTitle: t('add'),
+				edit: {
+					id: -1,
+					name: "",
+					ruleType: "cancel",
+					ruleTypeEditable: true,
+					matchType: "all",
+					matchRule: "",
+					excludeRule: "",
+					redirectTo: "",
+					headerName: "",
+					headerValue: "",
+					execType: 0,
+					code: "",
+					test: "",
+					oldGroup: "",
+					group: t('ungrouped')
+				},
+				activeTab: 0,
+				group: {},
+				alert: {
+					show: false,
+					text: ""
+				},
+				toast: {
+					show: false,
+					text: ""
+				}
+			};
+		},
+		computed: {
+			testResult: function() {
+				if (this.edit.test === "") {
+					return "";
+				}
+				let isMatch = 0;
+				switch (this.edit.matchType) {
+					case 'all':
+						isMatch = 1;
+						break;
+					case 'regexp':
+						try {
+							let reg = new RegExp(this.edit.matchRule, 'g');
+							isMatch = reg.test(this.edit.test) ? 1 : 0;
+						} catch (e) {
+							isMatch = -1;
+						}
+						break;
+					case 'prefix':
+						isMatch = this.edit.test.indexOf(this.edit.matchRule) === 0 ? 1 : 0;
+						break;
+					case 'domain':
+						isMatch = getDomain(this.edit.test) === this.edit.matchRule ? 1 : 0;
+						break;
+					case 'url':
+						isMatch = this.edit.test === this.edit.matchRule ? 1 : 0;
+						break;
+					default:
+						break;
+				}
+				if (isMatch === 1 && typeof(this.edit.matchRule) === 'string' && this.edit.excludeRule.length > 0) {
+					try {
+						let reg = new RegExp(this.edit.excludeRule);
+						isMatch = reg.test(this.edit.test) ? 2 : 1;
+					} catch (e) {
+						isMatch = 1;
+					}
+				}
+				if (isMatch === -1) {
+					return t('test_invalid_regexp');
+				} else if (isMatch === 0) {
+					return t('test_mismatch');
+				} else if (isMatch === 2) {
+					return t('test_exclude');
+				}
+				if (this.edit.execType == 1) {
+					return t('test_custom_code');
+				} else {
+					// if this is a redirect rule, show the result
+					if (this.edit.ruleType === 'redirect') {
+						let redirect = '';
+						if (this.edit.matchType === 'regexp') {
+							redirect = this.edit.test.replace(new RegExp(this.edit.matchRule, 'g'), this.edit.redirectTo);
+						} else {
+							redirect = this.edit.redirectTo;
+						}
+						if (/^(http|https|ftp|file)%3A/.test(redirect)) {
+							redirect = decodeURIComponent(redirect);
+						}
+						return redirect;
+					} else {
+						return 'Matched';
+					}
+				}
+			}
+		},
+		methods: {
+			showAlert: function(text) {
+				this.alert.text = text;
+				this.alert.show = true;
+			},
+			showToast: function(text) {
+				this.toast.text = text;
+				this.toast.show = true;
+			},
+			// Show add page
+			showAddPage: function() {
+				this.editTitle = t('add');
+				this.isShowEdit = true;
+			},
+			closeEditPage: function() {
+				this.isShowEdit = false;
+				this.edit.id = -1;
+				this.edit.name = "";
+				this.edit.ruleType = "cancel";
+				this.edit.ruleTypeEditable = true;
+				this.edit.matchType = "all";
+				this.edit.matchRule = "";
+				this.edit.excludeRule = "";
+				this.edit.redirectTo = "";
+				this.edit.redirectTo = "";
+				this.edit.headerValue = "";
+				this.edit.execType = 0;
+				this.edit.code = "";
+				this.edit.test = "";
+				this.edit.oldGroup = "";
+				this.edit.group = t('ungrouped');
+			},
+			saveRule: function() {
+				const _this = this;
+				const data = {
+					"enable": 1,
+					"name": this.edit.name,
+					"ruleType": this.edit.ruleType,
+					"matchType": this.edit.matchType,
+					"pattern": this.edit.matchRule,
+					"exclude": this.edit.excludeRule,
+					"group": this.edit.group,
+					"isFunction": this.edit.execType == 1
+				};
+				const table = ruleType2tableName(data.ruleType);
+				if (data.group === '') {
+					data.group = t('ungrouped');
+				}
+				if (data.name === '') {
+					showAlert(t('name_empty'));
+					return;
+				}
+				if (data.matchType !== 'all' && data.matchRule === '') {
+					showAlert(t('match_rule_empty'));
+					return;
+				}
+				if (data.isFunction) {
+					data.code = this.edit.code;
+					if (data.code === '') {
+						showAlert(t('code_empty'));
+						return;
+					}
+					// test code
+					try {
+						new Function('val', 'detail', data.code);
+					} catch (e) {
+						showAlert(e.message);
+						return;
+					}
+				} else {
+					if (data.ruleType === 'redirect') {
+						if (this.edit.redirectTo === '') {
+							showAlert(t('redirect_empty'));
+							return;
+						}
+						data.action = 'redirect';
+						data.to = this.edit.redirectTo;
+					}
+					if ((this.edit.ruleType === 'modifySendHeader' || this.edit.ruleType === 'modifyReceiveHeader')) {
+						if (this.edit.headerName === '') {
+							showAlert(t('header_empty'));
+							return;
+						}
+						data.action = {
+							"name": this.edit.headerName,
+							"value": this.edit.headerValue
+						};
+					}
+				}
+				//make save data
+				if (this.edit.ruleType === 'cancel') {
+					data.action = 'cancel';
+				}
+				if (this.edit.id !== -1) {
+					data.id = this.edit.id;
+				}
+				saveRule(table, data).then(function(response) {
+					if (data.id && data.id !== -1) {
+						// Move group if required
+						if (_this.edit.oldGroup != data.group) {
+							delete _this.group[data.group][table + '-' + data.id];
+						}
+					}
+					if (!_this.group[response.group]) {
+						_this.$set(_this.group, response.group, {
+							name: response.group,
+							rule: {}
+						});
+					}
+					_this.$set(_this.group[response.group], table + '-' + response.id, response);
+					browser.runtime.sendMessage({"method": "updateCache", "type": table});
+					_this.showToast(_this.t('saved'));
+					_this.closeEditPage();
+				});
+			},
+			// Enable or disable a rule
+			onRuleEnable: function(e) {
+				console.log(e);
+			}
+		},
+		mounted: function() {
+			const _this = this;
+			// Load rules
+			(function() {
+				_this.$set(_this.group, t('ungrouped'), {
+					name: t('ungrouped'),
+					rule: {}
+				});
+				function appendRule(type, response) {
+					for (const item of response) {
+						if (typeof(_this.group[item.group]) === "undefined") {
+							_this.$set(_this.group, item.group, {
+								name: item.group,
+								rule: {}
+							});
+						}
+						_this.$set(_this.group[item.group], type + '-' + item.id, item);
+					}
+				}
+				function checkResult(type, response) {
+					if (!response) { // Firefox is starting up
+						requestRules(type);
+						return;
+					}
+					appendRule(type, response);
+				}
+				function requestRules(type) {
+					setTimeout(() => {
+						checkResult(type, getRules(type));
+					}, 20);
+				}
+				for (const t of tableNames) {
+					requestRules(t);
+				}
+			})();
+		}
+	});
+}
+
+(function() {
+	const wait = [];
+	// Upgrade
+	if (localStorage.getItem('dl_history')) {
+		getLocalStorage().set({'dl_history': JSON.parse(localStorage.getItem('dl_history'))});
+		localStorage.removeItem('dl_history');
+	}
+	// Put a version mark
+	const oldVersion = parseInt(localStorage.getItem('version_mark'));
+	if (!(oldVersion >= 1)) {
+		localStorage.setItem('version_mark', '1');
+		// Upgrade group
+		function rebindRuleWithGroup(group) {
+			return new Promise(resolve => {
+				const cacheQueue = [];
+				function findGroup(type, id) {
+					Object.keys(group).forEach(e => {
+						if (group[e].includes(type + '-' + id)) {
+							return e;
+						}
+					});
+					return browser.i18n.getMessage('ungrouped');
+				}
+				for (const k of tableNames) {
+					getDatabase().then((db) => {
+						const tx = db.transaction([k], "readwrite");
+						const os = tx.objectStore(k);
+						os.openCursor().onsuccess = function(e) {
+							const cursor = e.target.result;
+							if (cursor) {
+								const s = cursor.value;
+								s.id = cursor.key;
+								if (typeof(s.group) === "undefined") {
+									s.group = findGroup(ruleType2tableName(s.ruleType), s.id);
+									os.put(s);
+								}
+								cursor.continue();
+							} else {
+								cacheQueue.push(browser.runtime.sendMessage({"method": "updateCache", "type": k}));
+							}
+						};
+					});
+				}
+				Promise.all(cacheQueue).then(resolve);
+			});
+		}
+		wait.push(new Promise(resolve => {
+			if (localStorage.getItem('groups')) {
+				const g = JSON.parse(localStorage.getItem('groups'));
+				localStorage.removeItem('groups');
+				rebindRuleWithGroup(g).then(resolve);
+			} else {
+				getLocalStorage().get('groups').then(r => {
+					if (r.groups !== undefined) {
+						rebindRuleWithGroup(r.groups).then(resolve);
+					} else {
+						const g = {};
+						g[browser.i18n.getMessage('ungrouped')] = [];
+						rebindRuleWithGroup(g).then(resolve);
+					}
+				});
+			}
+		}))
+	}
+	if (wait.length) {
+		Promise.all(wait).then(startPageInit);
+	} else {
+		startPageInit();
+	}
+})();
+
+/*let waitToImport = null;
 let cachedGroupList = {};
 let templateId = 1; // used by template
-
-function loadRulesList() {
-	function appendRule(type, response) {
-		for (var i = 0; i < response.length; i++) {
-			addRuleEl(response[i], type);
-		}
-	}
-	function checkResult(type, response) {
-		if (!response) { // Firefox is starting up
-			requestRules(type);
-			return;
-		}
-		appendRule(type, response);
-	}
-	function requestRules(type) {
-		setTimeout(() => {
-			checkResult(type, getRules(type));
-		}, 20);
-	}
-	for (let t of tableNames) {
-		requestRules(t);
-	}
-}
-
-function ruleType2tableName(ruleType) {
-	if (ruleType === 'cancel' || ruleType === 'redirect') {
-		return 'request';
-	}
-	if (ruleType === 'modifySendHeader') {
-		return 'sendHeader';
-	}
-	if (ruleType === 'modifyReceiveHeader') {
-		return 'receiveHeader';
-	}
-}
 
 function addRuleEl(rule, type, notAutoMove) {
 	let e = template.rule.cloneNode(true);
@@ -103,73 +399,6 @@ function addRuleEl(rule, type, notAutoMove) {
 	return e;
 }
 
-function initEditChange() {
-	const body = document.getElementById('edit-body');
-	body.querySelectorAll('input[name="ruleType"]').forEach(e => {
-		e.addEventListener('change', function() {
-			body.setAttribute('data-type', this.value);
-		});
-	});
-	body.querySelectorAll('input[name="execType"]').forEach(e => {
-		e.addEventListener('change', function() {
-			body.setAttribute('data-isfunction', this.value);
-		});
-	});
-	body.querySelectorAll('input[name="matchType"]').forEach(e => {
-		e.addEventListener('change', function() {
-			body.setAttribute('data-match', this.value);
-		});
-	});
-	body.querySelector('.group-choose').addEventListener('click', () => {
-		chooseGroup().then(r => {
-			body.querySelector('.group-name').innerHTML = r;
-			body.querySelector('.group-name').setAttribute('data-name', r);
-		}).catch(() => {});
-	});
-}
-function clearEditPage() {
-	const body = document.getElementById('edit-body');
-	mdlSetValue(body.querySelector('#ruleId'), '');
-	body.querySelectorAll('input[type="text"]').forEach((e) => {
-		mdlSetValue(e, '');
-	});
-	body.querySelectorAll('textarea').forEach((e) => {
-		e.value = '';
-	});
-	// remove disabled
-	mdlRadioDisable("ruleType", false, body);
-	mdlRadioDisable("matchType", false, body);
-	['ruleType', 'execType', 'matchType'].forEach((e) => {
-		mdlRadioSet(e, body.querySelector('input[name="' + e + '"]').value, body);
-	});
-	body.setAttribute('data-type', body.querySelector('input[name="ruleType"]').value);
-	body.setAttribute('data-isfunction', body.querySelector('input[name="execType"]').value);
-	body.setAttribute('data-match', body.querySelector('input[name="matchType"]').value);
-	// Group
-	body.querySelector('.group-name').innerHTML = t('ungrouped');
-	body.querySelector('.group-name').setAttribute('data-name', t('ungrouped'));
-}
-function showEditPage() {
-	document.getElementById('main-head').parentElement.style.display = 'none';
-	document.getElementById('main-body').style.display = 'none';
-	document.getElementById('edit-head').style.display = 'flex';
-	document.getElementById('edit-body').style.display = 'block';
-}
-function hideEditPage() {
-	document.getElementById('edit-head').style.display = 'none';
-	document.getElementById('edit-body').style.display = 'none';
-	document.getElementById('main-head').parentElement.style.display = 'flex';
-	document.getElementById('main-body').style.display = 'block';
-}
-function onEditCancelClick() {
-	hideEditPage();
-}
-function onAddRuleClick() {
-	clearEditPage();
-	document.querySelector('#edit-head .mdl-layout-title').innerHTML = t('add');
-	document.querySelector('#edit-body .title').innerHTML = t('add');
-	showEditPage();
-}
 
 //edit
 function onEditRuleClick() {
@@ -923,15 +1152,6 @@ function initAddAntiHotLink(url) {
 }
 
 document.addEventListener('DOMContentLoaded', () => {
-	// Upgrade
-	if (localStorage.getItem('dl_history')) {
-		getLocalStorage().set({'dl_history': JSON.parse(localStorage.getItem('dl_history'))});
-		localStorage.removeItem('dl_history');
-	}
-	if (localStorage.getItem('groups')) {
-		getLocalStorage().set({'groups': JSON.parse(localStorage.getItem('groups'))});
-		localStorage.removeItem('groups');
-	}
 
 	setFloatButton('default-button');
 	document.getElementById('rule-save').addEventListener('click', onRuleSaveClick);
@@ -1000,3 +1220,4 @@ document.addEventListener('DOMContentLoaded', () => {
 		}, 300);
 	}
 });
+*/

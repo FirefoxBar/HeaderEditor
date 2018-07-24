@@ -1,6 +1,6 @@
 function getDatabase() {
 	return new Promise((resolve, reject) => {
-		let dbOpenRequest = window.indexedDB.open("headereditor", 2);
+		const dbOpenRequest = window.indexedDB.open("headereditor", 2);
 		dbOpenRequest.onsuccess = function(e) {
 			resolve(e.target.result);
 		};
@@ -15,9 +15,7 @@ function getDatabase() {
 					event.target.result.createObjectStore(t, {keyPath: 'id', autoIncrement: true});
 				}
 			} else {
-				if (event.oldVersion < 2) {
-					upgradeTo2();
-				}
+				upgradeToNewest();
 			}
 		}
 	});
@@ -29,8 +27,8 @@ function runTryCatch(func) {
 	} catch(e) {}
 }
 
-var cachedRules = {};
-for (let t of tableNames) {
+const cachedRules = {};
+for (const t of tableNames) {
 	cachedRules[t] = null;
 }
 function getRules(type, options) {
@@ -462,15 +460,15 @@ function getLocalStorage() {
 
 
 
-function upgradeTo2() {
-	for (let k of tableNames) {
+function upgradeToNewest() {
+	for (const k of tableNames) {
 		getDatabase().then((db) => {
-			let tx = db.transaction([k], "readwrite");
-			let os = tx.objectStore(k);
+			const tx = db.transaction([k], "readwrite");
+			const os = tx.objectStore(k);
 			os.openCursor().onsuccess = function(e) {
-				let cursor = e.target.result;
+				const cursor = e.target.result;
 				if (cursor) {
-					let s = cursor.value;
+					const s = cursor.value;
 					s.id = cursor.key;
 					os.put(upgradeRuleFormat(s));
 					cursor.continue();
@@ -498,7 +496,7 @@ function upgradeRuleFormat(s) {
 
 function initStorage() {
 	setTimeout(() => {
-		let queue = [];
+		const queue = [];
 		if (cachedRules.request === null) {
 			queue.push(updateCache('request'));
 		}

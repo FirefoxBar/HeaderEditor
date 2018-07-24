@@ -6,8 +6,8 @@
 	<title>Header Editor</title>
 	<link rel="icon" type="image/png" href="images/128.png">
 	<link rel="stylesheet" href="third-party/material-design-icons/material-icons.min.css"/>
-	<link rel="stylesheet" href="third-party/dialog-polyfill/dialog-polyfill.min.css"/>
-	<link rel="stylesheet" href="third-party/mdl/material.min.css"/>
+	<link rel="stylesheet" href="third-party/vue-material/vue-material.min.css"/>
+	<link rel="stylesheet" href="third-party/vue-material/theme/default.css"/>
 	<link rel="stylesheet" href="styles/page.css"/>
 	<link rel="stylesheet" href="styles/manage.css"/>
 	<link rel="stylesheet" media="screen and (max-width: 640px)" href="styles/manage-mobile.css">
@@ -20,427 +20,154 @@
 		display: none;
 	}
 	</style>
-	<template data-id="rule">
-		<tr class="rule-item" data-id="" data-type="">
-			<td class="batch mdl-data-table__cell--non-numeric">
-				<label class="mdl-checkbox batch-checkbox" for="checkbox-1">
-					<input type="checkbox" id="checkbox-1" class="mdl-checkbox__input" name="batch">
-				</label>
-			</td>
-			<td class="enable mdl-data-table__cell--non-numeric">
-				<label class="mdl-switch enable-switcher"><input type="checkbox" class="mdl-switch__input activate" name="enable"/></label>
-			</td>
-			<td class="name mdl-data-table__cell--non-numeric">
-				<div class="name-label"></div>
-				<div class="detail">
-					<p><span i18n-text="matchType"></span>: <span class="match-type"></span></p>
-					<p><span i18n-text="matchRule"></span>: <span class="pattern"></span></p>
-					<p><span i18n-text="exec_type"></span>: <span class="exec_type"></span></p>
-					<p class="is_redirect"><span i18n-text="redirectTo"></span>: <span class="redirectTo"></span></p>
-					<p class="is_header"><span i18n-text="headerName"></span>: <span class="headerName"></span></p>
-					<p class="is_header"><span i18n-text="headerValue"></span>: <span class="headerValue"></span></p>
-				</div>
-			</td>
-			<td class="rule-type mdl-data-table__cell--non-numeric"></td>
-			<td class="action mdl-data-table__cell--non-numeric">
-				<button class="move-group mdl-button mdl-js-button mdl-js-ripple-effect" i18n-title="group"><i class="material-icons">playlist_add</i><span i18n-text="group"></span></button>
-				<button class=" edit mdl-button mdl-js-button mdl-js-ripple-effect" i18n-title="edit"><i class="material-icons">mode_edit</i><span i18n-text="edit"></span></button>
-				<button class="remove mdl-button mdl-js-button mdl-js-ripple-effect" i18n-title="delete"><i class="material-icons">delete</i><span i18n-text="delete"></span></button>
-			</td>
-		</tr>
-	</template>
-	<template data-id="groupItem">
-		<div class="group-item empty">
-			<div class="mdl-card mdl-shadow--2dp closeable-box">
-				<div class="mdl-card__title mdl-card--expand">
-					<h2 class="mdl-card__title-text" i18n-title="pack_up_or_unfurl">
-						<span class="title"></span>
-					</h2>
-				</div>
-				<div class="mdl-card__supporting-text mdl-grid">
-					<div class="rule-list-box">
-						<table class="mdl-data-table mdl-js-data-table rule-list">
-							<thead>
-								<tr>
-									<th i18n-text="batch_mode" class="batch mdl-data-table__cell--non-numeric"></th>
-									<th i18n-text="enable" class="enable mdl-data-table__cell--non-numeric"></th>
-									<th i18n-text="name" class="name mdl-data-table__cell--non-numeric"></th>
-									<th i18n-text="ruleType" class="rule-type mdl-data-table__cell--non-numeric"></th>
-									<th i18n-text="action" class="action mdl-data-table__cell--non-numeric"></th>
-								</tr>
-							</thead>
-							<tbody class="rules-list"></tbody>
-						</table>
-					</div>
-				</div>
-				<div class="mdl-card__menu">
-					<button class="remove mdl-button mdl-js-button mdl-button--icon" i18n-title="delete"><i class="material-icons">delete</i></button>
-					<button class="rename mdl-button mdl-js-button mdl-button--icon" i18n-title="edit"><i class="material-icons">mode_edit</i></button>
-					<button class="share mdl-button mdl-js-button mdl-button--icon" i18n-title="share"><i class="material-icons">share</i></button>
-					<button class="toggle-box mdl-button mdl-js-button mdl-button--icon" i18n-title="pack_up_or_unfurl"><i class="material-icons">keyboard_arrow_up</i></button>
-				</div>
-			</div>
-		</div>
-	</template>
-	<template data-id="groupMenuList">
-		<div class="mdl-cell mdl-cell--6-col">
-			<label class="mdl-radio mdl-js-radio mdl-js-ripple-effect" for="group-menu-">
-				<input type="radio" id="group-menu-" class="mdl-radio__button" name="group-choose" value="">
-				<span class="mdl-radio__label"></span>
-			</label>
-		</div>
-	</template>
-	<template data-id="groupMenuListNew">
-		<div class="mdl-cell mdl-cell--12-col">
-			<label class="mdl-radio mdl-js-radio mdl-js-ripple-effect" for="group-menu-" data-isnew="1">
-				<input type="radio" id="group-menu-" class="mdl-radio__button" name="group-choose" value="">
-				<span class="mdl-radio__label">
-					<span i18n-text="add"></span>
-					<div class="mdl-textfield mdl-js-textfield">
-						<input class="mdl-textfield__input" type="text" id="group-add">
-						<label class="mdl-textfield__label" for="group-add"></label>
-					</div>
-				</span>
-			</label>
-		</div>
-	</template>
-	<template data-id="importRule">
-		<tr data-oldid="">
-			<td class="name mdl-data-table__cell--non-numeric"></td>
-			<td class="rule-type mdl-data-table__cell--non-numeric"></td>
-			<td class="show-keep mdl-data-table__cell--non-numeric">
-				<label class="mdl-radio mdl-js-radio mdl-js-ripple-effect" for="import-">
-					<input type="radio" id="import-" class="mdl-radio__button" value="old">
-					<span class="mdl-radio__label" i18n-text="import_not_override"></span>
-				</label>
-				<label class="mdl-radio mdl-js-radio mdl-js-ripple-effect" for="import-">
-					<input type="radio" id="import-" class="mdl-radio__button" value="new">
-					<span class="mdl-radio__label" i18n-text="import_override"></span>
-				</label>
-			</td>
-			<td class="show-new mdl-data-table__cell--non-numeric">
-				<label class="mdl-radio mdl-js-radio mdl-js-ripple-effect" for="import-">
-					<input type="radio" id="import-" class="mdl-radio__button" value="no">
-					<span class="mdl-radio__label" i18n-text="import_drop"></span>
-				</label>
-				<label class="mdl-radio mdl-js-radio mdl-js-ripple-effect" for="import-">
-					<input type="radio" id="import-" class="mdl-radio__button" value="yes">
-					<span class="mdl-radio__label" i18n-text="import_new"></span>
-				</label>
-			</td>
-		</tr>
-	</template>
-	<template data-id="dlHistory">
-		<li class="mdl-list__item">
-			<span class="mdl-list__item-primary-content">
-				<i class="material-icons mdl-list__item-icon">link</i>
-				<span class="url"></span>
-			</span>
-			<span class="mdl-list__item-secondary-action">
-				<button type="button" class="mdl-button mdl-js-button mdl-button--icon download"><i class="material-icons">file_download</i></button>
-				<button type="button" class="mdl-button mdl-js-button mdl-button--icon edit"><i class="material-icons">mode_edit</i></button>
-				<button type="button" class="mdl-button mdl-js-button mdl-button--icon remove"><i class="material-icons">delete</i></button>
-			</span>
-		</li>
-	</template>
 </head>
 <body>
-<div class="mdl-layout mdl-js-layout mdl-layout--fixed-header">
-	<header class="mdl-layout__header">
-		<div id="edit-head" class="mdl-layout__header-row" style="display:none">
-			<button id="edit-back" role="button" tabindex="0" class="mdl-layout__drawer-button"><i class="material-icons">arrow_back</i></button>
-			<span class="mdl-layout-title"></span>
-			<div class="mdl-layout-spacer"></div>
-			<nav class="mdl-navigation wrapper">
-				<button id="save-rule" class="mdl-button mdl-js-button mdl-button--icon"><i class="material-icons">save</i></button>
-			</nav>
-		</div>
-		<div id="main-head" class="mdl-layout__tab-bar mdl-js-ripple-effect">
-			<a href="#rule-panel" class="mdl-layout__tab is-active"><i class="material-icons">list</i><span i18n-text="rule_list"></span></a>
-			<a href="#option-panel" class="mdl-layout__tab"><i class="material-icons">settings</i><span i18n-text="options"></span></a>
-			<a href="#import-panel" class="mdl-layout__tab"><i class="material-icons">settings_backup_restore</i><span i18n-text="export_and_import"></span></a>
-			<div class="mdl-layout-spacer"></div>
-			<a href="https://github.com/FirefoxBar/HeaderEditor/wiki" class="mdl-layout__tab"><i class="material-icons">help</i><span i18n-text="help"></span></a>
-		</div>
-	</header>
-	<main id="edit-body" class="mdl-layout__content" style="display:none">
-		<div class="page-content mdl-grid">
-			<div class="mdl-cell mdl-cell--8-col">
-				<div class="mdl-card mdl-shadow--2dp">
-					<div class="mdl-card__title mdl-card--expand">
-						<h2 class="mdl-card__title-text">
-							<span class="title"></span>
-						</h2>
-					</div>
-					<div class="mdl-card__supporting-text">
-						<input id="ruleId" type="hidden">
-						<div class="mdl-textfield mdl-js-textfield mdl-textfield--floating-label">
-							<input class="mdl-textfield__input" type="text" id="rule-name">
-							<label class="mdl-textfield__label" for="rule-name" i18n-text="name"></label>
-						</div>
-						<div class="form-group">
-							<div class="left">
-								<span i18n-text="ruleType"></span>
+	<div id="app">
+		<md-tabs class="md-primary main-menu" md-elevation="1" md-active-tab="tab-rule-list">
+			<md-tab id="tab-rule-list" :md-label="t('rule_list')" md-icon="list">
+				<md-table md-card v-for="g of group" :key="g.name" class="group-item">
+					<md-table-toolbar>{{g.name}}</md-table-toolbar>
+					<md-table-row>
+						<md-table-head>{{t('enable')}}</md-table-head>
+						<md-table-head>{{t('name')}}</md-table-head>
+						<md-table-head>{{t('ruleType')}}</md-table-head>
+						<md-table-head>{{t('action')}}</md-table-head>
+					</md-table-row>
+					<md-table-row v-for="r of g.rule" :key="r.id">
+						<md-table-cell><md-switch :v-modal="r.enable" value="1" class="md-primary" :data-type="r.ruleType" :data-id="r.id" @change="onRuleEnable"></md-switch></md-table-cell>
+						<md-table-cell>{{r.name}}</md-table-cell>
+						<md-table-cell>{{r.ruleType}}</md-table-cell>
+						<md-table-cell></md-table-cell>
+					</md-table-row>
+				</md-card>
+			</md-tab>
+			<md-tab id="tab-options" :md-label="t('options')" md-icon="settings"></md-tab>
+			<md-tab id="tab-export-import" :md-label="t('export_and_import')" md-icon="settings_backup_restore"></md-tab>
+		</md-tabs>
+		<div id="edit-page" v-show="isShowEdit">
+			<md-toolbar class="md-primary" md-elevation="1">
+				<md-button class="md-icon-button" @click="closeEditPage">
+				  	<md-icon>arrow_back</md-icon>
+				</md-button>
+				<h2 class="md-title" style="flex: 1">{{editTitle}}</h2>
+			</md-toolbar>
+			<div class="md-layout md-gutter">
+				<div class="md-layout-item md-size-70 md-small-size-100">
+					<md-card>
+						<md-card-header>
+							<md-card-header-text>
+								<div class="md-title">{{editTitle}}</div>
+							</md-card-header-text>
+						</md-card-header>
+						<md-card-content>
+							<md-field>
+								<label for="rule-name">{{t('name')}}</label>
+								<md-input id="rule-name" v-model="edit.name" />
+							</md-field>
+							<div class="form-group">
+								<div class="left">{{t('ruleType')}}</div>
+								<div class="right">
+									<md-radio class="md-primary" v-model="edit.ruleType" value="cancel"  :disabled="!edit.ruleTypeEditable">{{t('rule_cancel')}}</md-radio>
+									<md-radio class="md-primary" v-model="edit.ruleType" value="redirect"  :disabled="!edit.ruleTypeEditable">{{t('rule_redirect')}}</md-radio>
+									<md-radio class="md-primary" v-model="edit.ruleType" value="modifySendHeader"  :disabled="!edit.ruleTypeEditable">{{t('rule_modifySendHeader')}}</md-radio>
+									<md-radio class="md-primary" v-model="edit.ruleType" value="modifyReceiveHeader"  :disabled="!edit.ruleTypeEditable">{{t('rule_modifyReceiveHeader')}}</md-radio>
+								</div>
 							</div>
-							<div class="right">
-								<label class="mdl-radio mdl-js-radio mdl-js-ripple-effect" for="rule-type-cancel">
-									<input type="radio" id="rule-type-cancel" class="mdl-radio__button" name="ruleType" value="cancel">
-									<span class="mdl-radio__label" i18n-text="rule_cancel"></span>
-								</label>
-								<label class="mdl-radio mdl-js-radio mdl-js-ripple-effect" for="rule-type-redirect">
-									<input type="radio" id="rule-type-redirect" class="mdl-radio__button" name="ruleType" value="redirect">
-									<span class="mdl-radio__label" i18n-text="rule_redirect"></span>
-								</label>
-								<label class="mdl-radio mdl-js-radio mdl-js-ripple-effect" for="rule-type-modifySendHeader">
-									<input type="radio" id="rule-type-modifySendHeader" class="mdl-radio__button" name="ruleType" value="modifySendHeader">
-									<span class="mdl-radio__label" i18n-text="rule_modifySendHeader"></span>
-								</label>
-								<label class="mdl-radio mdl-js-radio mdl-js-ripple-effect" for="rule-type-modifyReceiveHeader">
-									<input type="radio" id="rule-type-modifyReceiveHeader" class="mdl-radio__button" name="ruleType" value="modifyReceiveHeader">
-									<span class="mdl-radio__label" i18n-text="rule_modifyReceiveHeader"></span>
-								</label>
+							<div class="form-group">
+								<div class="left">{{t('matchType')}}</div>
+								<div class="right">
+									<md-radio class="md-primary" v-model="edit.matchType" value="all">{{t('match_all')}}</md-radio>
+									<md-radio class="md-primary" v-model="edit.matchType" value="regexp">{{t('match_regexp')}}</md-radio>
+									<md-radio class="md-primary" v-model="edit.matchType" value="prefix">{{t('match_prefix')}}</md-radio>
+									<md-radio class="md-primary" v-model="edit.matchType" value="domain">{{t('match_domain')}}</md-radio>
+									<md-radio class="md-primary" v-model="edit.matchType" value="url">{{t('match_url')}}</md-radio>
+								</div>
 							</div>
-						</div>
-						<!-- Match type -->
-						<div class="form-group">
-							<div class="left">
-								<span i18n-text="matchType"></span>
+							<!-- Rule match rule -->
+							<md-field v-show="edit.matchType != 'all'">
+								<label for="rule-matchRule">{{t('matchRule')}}</label>
+								<md-input id="rule-matchRule" v-model="edit.matchRule" />
+							</md-field>
+							<!-- Rule exclude rule -->
+							<md-field v-show="edit.matchType != 'all'">
+								<label for="rule-excludeRule">{{t('excludeRule')}}</label>
+								<md-input id="rule-excludeRule" v-model="edit.excludeRule" />
+							</md-field>
+							<!-- isFunction or not -->
+							<div class="form-group">
+								<div class="left">{{t('exec_type')}}</div>
+								<div class="right">
+									<md-radio class="md-primary" v-model="edit.execType" :value="0">{{t('exec_normal')}}</md-radio>
+									<md-radio class="md-primary" v-model="edit.execType" :value="1">{{t('exec_function')}}</md-radio>
+								</div>
 							</div>
-							<div class="right">
-								<label class="mdl-radio mdl-js-radio mdl-js-ripple-effect" for="match-type-all">
-									<input type="radio" id="match-type-all" class="mdl-radio__button" name="matchType" value="all">
-									<span class="mdl-radio__label" i18n-text="match_all"></span>
-								</label>
-								<label class="mdl-radio mdl-js-radio mdl-js-ripple-effect" for="match-type-regexp">
-									<input type="radio" id="match-type-regexp" class="mdl-radio__button" name="matchType" value="regexp">
-									<span class="mdl-radio__label" i18n-text="match_regexp"></span>
-								</label>
-								<label class="mdl-radio mdl-js-radio mdl-js-ripple-effect" for="match-type-prefix">
-									<input type="radio" id="match-type-prefix" class="mdl-radio__button" name="matchType" value="prefix">
-									<span class="mdl-radio__label" i18n-text="match_prefix"></span>
-								</label>
-								<label class="mdl-radio mdl-js-radio mdl-js-ripple-effect" for="match-type-domain">
-									<input type="radio" id="match-type-domain" class="mdl-radio__button" name="matchType" value="domain">
-									<span class="mdl-radio__label" i18n-text="match_domain"></span>
-								</label>
-								<label class="mdl-radio mdl-js-radio mdl-js-ripple-effect" for="match-type-url">
-									<input type="radio" id="match-type-url" class="mdl-radio__button" name="matchType" value="url">
-									<span class="mdl-radio__label" i18n-text="match_url"></span>
-								</label>
+							<!-- redirect to -->
+							<md-field v-show="edit.ruleType == 'redirect' && edit.execType == 0">
+								<label for="rule-redirectTo">{{t('redirectTo')}}</label>
+								<md-input id="rule-redirectTo" v-model="edit.redirectTo" />
+							</md-field>
+							<!-- header mondify -->
+							<div v-show="(edit.ruleType == 'modifySendHeader' || edit.ruleType == 'modifyReceiveHeader') && edit.execType == 0">
+								<md-field>
+									<label for="rule-headerName">{{t('headerName')}}</label>
+									<md-input id="rule-headerName" v-model="edit.headerName" />
+								</md-field>
+								<md-field>
+									<label for="rule-headerValue">{{t('headerValue')}}</label>
+									<md-input id="rule-headerValue" v-model="edit.headerValue" />
+								</md-field>
 							</div>
-						</div>
-						<!-- Rule match rule -->
-						<div class="mdl-textfield mdl-js-textfield mdl-textfield--floating-label match_rule">
-							<input class="mdl-textfield__input" type="text" id="matchRule">
-							<label class="mdl-textfield__label" for="matchRule" i18n-text="matchRule"></label>
-						</div>
-						<!-- Rule exclude rule -->
-						<div class="mdl-textfield mdl-js-textfield mdl-textfield--floating-label match_rule">
-							<input class="mdl-textfield__input" type="text" id="excludeRule">
-							<label class="mdl-textfield__label" for="excludeRule" i18n-text="excludeRule"></label>
-						</div>
-						<!-- isFunction or not -->
-						<div id="isFunctionBox" class="form-group">
-							<div class="left">
-								<span i18n-text="exec_type"></span>
-							</div>
-							<div class="right">
-								<label class="mdl-radio mdl-js-radio mdl-js-ripple-effect" for="exec-normal">
-									<input type="radio" id="exec-normal" class="mdl-radio__button" name="execType" value="0">
-									<span class="mdl-radio__label" i18n-text="exec_normal"></span>
-								</label>
-								<label class="mdl-radio mdl-js-radio mdl-js-ripple-effect" for="exec-function">
-									<input type="radio" id="exec-function" class="mdl-radio__button" name="execType" value="1">
-									<span class="mdl-radio__label" i18n-text="exec_function"></span>
-								</label>
-							</div>
-						</div>
-						<!-- redirect to -->
-						<div class="match_rule mdl-textfield mdl-js-textfield mdl-textfield--floating-label redirect_to default-hide">
-							<input class="mdl-textfield__input" type="text" id="redirectTo">
-							<label class="mdl-textfield__label" for="redirectTo" i18n-text="redirectTo"></label>
-						</div>
-						<!-- header mondify -->
-						<div class="mdl-textfield mdl-js-textfield mdl-textfield--floating-label header_mondify default-hide">
-							<input class="mdl-textfield__input" type="text" id="headerName">
-							<label class="mdl-textfield__label" for="headerName" i18n-text="headerName"></label>
-						</div>
-						<div class="mdl-textfield mdl-js-textfield mdl-textfield--floating-label header_mondify default-hide">
-							<input class="mdl-textfield__input" type="text" id="headerValue">
-							<label class="mdl-textfield__label" for="headerValue" i18n-text="headerValue"></label>
-						</div>
-						<div class="mdl-textfield mdl-js-textfield mdl-textfield--floating-label custom-code default-hide">
-							<textarea class="mdl-textfield__input" type="text" rows="10" id="custom-code"></textarea>
-							<label class="mdl-textfield__label" for="custom-code" i18n-text="code"></label>
-						</div>
-					</div>
+							<md-field v-show="edit.execType == 1">
+								<label for="rule-code">{{t('code')}}</label>
+								<md-textarea id="rule-code" v-model="edit.code"></md-textarea>
+							</md-field>
+						</md-card-content>
+					</md-card>
 				</div>
-			</div>
-			<div class="mdl-cell mdl-cell--4-col">
-				<div class="mdl-card mdl-shadow--2dp">
-					<div class="mdl-card__title mdl-card--expand">
-						<h2 class="mdl-card__title-text">
-							<span class="title"></span>
-						</h2>
-					</div>
-					<div class="mdl-card__supporting-text">
-						<div class="mdl-textfield mdl-js-textfield mdl-textfield--floating-label realtime-test">
-							<input class="mdl-textfield__input" type="text" id="test-url">
-							<label class="mdl-textfield__label" for="test-url" i18n-text="test_url"></label>
-						</div>
-						<pre id="test-url-result" style="border-radius:3px;background-color:#f7f7f7;padding:8px;font-size:13px"></pre>
-						<div class="form-group">
-							<div class="left">
-								<span i18n-text="group"></span>
-							</div>
-							<div class="right">
-								<span class="group-name"></span>
-								<button class="mdl-button mdl-js-button mdl-button--icon group-choose"><i class="material-icons">more_vert</i></button>
-							</div>
-						</div>
-						<button class="mdl-button mdl-js-button mdl-button--raised mdl-js-ripple-effect" id="rule-save" i18n-text="save"></button>
-					</div>
+				<div class="md-layout-item md-size-30 md-small-size-100 edit-right">
+					<md-card>
+						<md-card-header>
+							<md-card-header-text>
+								<div class="md-title">{{t('test_url')}}</div>
+							</md-card-header-text>
+						</md-card-header>
+						<md-card-content>
+							<md-field>
+								<label for="rule-test"></label>
+								<md-input id="rule-test" v-model="edit.test" />
+							</md-field>
+							<code>{{testResult}}</code>
+						</md-card-content>
+					</md-card>
+					<md-card>
+						<md-card-header>
+							<md-card-header-text>
+								<div class="md-title">{{t('save')}}</div>
+							</md-card-header-text>
+						</md-card-header>
+						<md-card-content>
+							<md-autocomplete v-model="edit.group" :md-options="Object.keys(group)" :md-fuzzy-search="false">
+								<label>{{t('group')}}</label>
+								<template slot="md-autocomplete-item" slot-scope="{ item, term }">
+									<md-highlight-text :md-term="term">{{item}}</md-highlight-text>
+								</template>
+							</md-autocomplete>
+							<md-button class="md-raised" @click="saveRule">{{t('save')}}</md-button>
+						</md-card-content>
+					</md-card>
 				</div>
 			</div>
 		</div>
-	</main>
-	<main id="main-body" class="mdl-layout__content">
-		<section class="mdl-layout__tab-panel is-active" id="rule-panel">
-			<div class="page-content">
-				<div id="groups"></div>
-			</div>
-			<div id="default-button" class="float-button">
-				<button id="batch-mode" class="mdl-button mdl-js-button mdl-button--fab mdl-js-ripple-effect mdl-button--colored" i18n-title="batch_management">
-					<i class="material-icons">playlist_add_check</i>
-				</button>
-				<button id="add-rule" class="mdl-button mdl-js-button mdl-button--fab mdl-js-ripple-effect mdl-button--colored" i18n-title="add">
-					<i class="material-icons">add</i>
-				</button>
-			</div>
-			<!-- Batch operation -->
-			<div id="batch-button" class="float-button">
-				<!-- select/unselect all -->
-				<button id="batch-select-all" class="mdl-button mdl-js-button mdl-button--fab mdl-js-ripple-effect mdl-button--colored" i18n-title="select_all">
-					<i class="material-icons">done_all</i>
-				</button>
-				<!-- enable/disable selected -->
-				<button id="batch-enable" class="mdl-button mdl-js-button mdl-button--fab mdl-js-ripple-effect mdl-button--colored" i18n-title="enable">
-					<i class="material-icons">touch_app</i>
-				</button>
-				<button id="batch-group" class="mdl-button mdl-js-button mdl-button--fab mdl-js-ripple-effect mdl-button--colored" i18n-title="group">
-					<i class="material-icons">playlist_add</i>
-				</button>
-				<button id="batch-share" class="mdl-button mdl-js-button mdl-button--fab mdl-js-ripple-effect mdl-button--colored" i18n-title="share">
-					<i class="material-icons">share</i>
-				</button>
-				<button id="batch-delete" class="mdl-button mdl-js-button mdl-button--fab mdl-js-ripple-effect mdl-button--colored" i18n-title="delete">
-					<i class="material-icons">delete</i>
-				</button>
-				<button id="batch-mode-exit" class="mdl-button mdl-js-button mdl-button--fab mdl-js-ripple-effect mdl-button--colored" i18n-title="cancel">
-					<i class="material-icons">cancel</i>
-				</button>
-			</div>
-		</section>
-		<section class="mdl-layout__tab-panel" id="option-panel">
-			<div class="page-content">
-				<div class="mdl-card mdl-shadow--2dp option">
-					<div class="mdl-card__title mdl-card--expand">
-						<h2 class="mdl-card__title-text" i18n-text="options"></h2>
-					</div>
-					<div class="mdl-card__supporting-text mdl-grid">
-						<label class="mdl-checkbox mdl-js-checkbox mdl-js-ripple-effect mdl-cell mdl-cell--6-col" id="manage-hide-empty-label" for="manage-hide-empty">
-							<input type="checkbox" id="manage-hide-empty" class="mdl-checkbox__input">
-							<span class="mdl-checkbox__label" i18n-text="hide_empty_group"></span>
-						</label>
-						<label class="mdl-checkbox mdl-js-checkbox mdl-js-ripple-effect mdl-cell mdl-cell--6-col" id="manage-collapse-group-label" for="manage-collapse-group">
-							<input type="checkbox" id="manage-collapse-group" class="mdl-checkbox__input">
-							<span class="mdl-checkbox__label" i18n-text="manage_collapse_group"></span>
-						</label>
-						<label class="mdl-checkbox mdl-js-checkbox mdl-js-ripple-effect mdl-cell mdl-cell--6-col" id="add-hot-link-label" for="add-hot-link">
-							<input type="checkbox" id="add-hot-link" class="mdl-checkbox__input">
-							<span class="mdl-checkbox__label" i18n-text="add_anti_hot_link_to_menu"></span>
-						</label>
-						<label class="mdl-checkbox mdl-js-checkbox mdl-js-ripple-effect mdl-cell mdl-cell--6-col" id="exclude-he-label" for="exclude-he">
-							<input type="checkbox" id="exclude-he" class="mdl-checkbox__input">
-							<span class="mdl-checkbox__label" i18n-text="rules_no_effect_for_he"></span>
-						</label>
-					</div>
-				</div>
-			</div>
-		</section>
-		<section class="mdl-layout__tab-panel" id="import-panel">
-			<div class="page-content">
-				<div class="mdl-card mdl-shadow--2dp">
-					<div class="mdl-card__title mdl-card--expand">
-						<h2 class="mdl-card__title-text">
-							<span class="title" i18n-text="local_files"></span>
-						</h2>
-					</div>
-					<div class="mdl-card__supporting-text">
-						<button class="mdl-button mdl-js-button mdl-button--raised mdl-js-ripple-effect" id="export" i18n-text="export"></button>
-						<button class="mdl-button mdl-js-button mdl-button--raised mdl-js-ripple-effect" id="import" i18n-text="import"></button>
-					</div>
-				</div>
-				<div class="mdl-card mdl-shadow--2dp">
-					<div class="mdl-card__title mdl-card--expand">
-						<h2 class="mdl-card__title-text">
-							<span class="title" i18n-text="download_rule"></span>
-						</h2>
-					</div>
-					<div class="mdl-card__supporting-text">
-						<div class="download-input">
-							<div class="mdl-textfield mdl-js-textfield">
-								<input class="mdl-textfield__input" type="text" id="download-url">
-								<label class="mdl-textfield__label" for="download-url">URL</label>
-							</div>
-							<div class="buttons">
-								<button id="download-submit" type="button" class="mdl-button mdl-js-button mdl-button--icon"><i class="material-icons">file_download</i></button>
-								<a href="https://github.com/FirefoxBar/HeaderEditor/wiki/Third-party-rules" class="mdl-button mdl-js-button mdl-js-ripple-effect" target="_blank"><i class="material-icons">search</i> <span i18n-text="third_party_rules"></span></a>
-							</div>
-						</div>
-						<ul id="download-history" class="mdl-list"></ul>
-					</div>
-				</div>
-				<div id="import-confirm" class="mdl-card mdl-shadow--2dp waiting-select">
-					<div class="mdl-card__title mdl-card--expand">
-						<h2 class="mdl-card__title-text">
-							<span class="title" i18n-text="import"></span>
-						</h2>
-					</div>
-					<div class="mdl-card__supporting-text">
-						<div class="import-loading"><div class="mdl-spinner mdl-js-spinner is-active"></div></div>
-						<div class="import-waiting-select" i18n-text="select_or_download"></div>
-						<table class="import-table mdl-data-table mdl-js-data-table rule-list" style="border:0">
-							<thead>
-								<tr>
-									<th class="mdl-data-table__cell--non-numeric" i18n-text="name"></th>
-									<th class="mdl-data-table__cell--non-numeric" i18n-text="ruleType"></th>
-									<th class="mdl-data-table__cell--non-numeric" i18n-text="action"></th>
-								</tr>
-							</thead>
-							<tbody id="import-list"></tbody>
-						</table>
-					</div>
-					<div class="mdl-card__actions mdl-card--border">
-						<button id="import-group" class="mdl-button mdl-button--colored mdl-js-button mdl-js-ripple-effect"><span i18n-text="group"></span>&nbsp;<span class="group-name"></span></button>
-						<button id="import-save" class="mdl-button mdl-button--colored mdl-js-button mdl-js-ripple-effect" i18n-text="save"></button>
-						<button id="import-cancel" class="mdl-button mdl-button--colored mdl-js-button mdl-js-ripple-effect" i18n-text="cancel"></button>
-					</div>
-				</div>
-			</div>
-		</section>
-	</main>
-</div>
-<!-- Choose group dialog -->
-<dialog id="group-dialog" class="mdl-dialog">
-	<div class="mdl-dialog__content mdl-grid"></div>
-	<div class="mdl-dialog__actions">
-		<button type="button" class="mdl-button ok" i18n-text="ok"></button>
-		<button type="button" class="mdl-button close" i18n-text="cancel"></button>
+		<div class="float-button">
+			<md-button class="md-fab md-primary" @click="showAddPage">
+				<md-icon>add</md-icon>
+			</md-button>
+		</div>
+		<md-dialog-alert :md-active.sync="alert.show" :md-content="alert.text" md-confirm-text="OK" />
+		<md-snackbar md-position="center" :md-duration="4000" :md-active.sync="toast.show" md-persistent>{{toast.text}}</md-snackbar>
 	</div>
-</dialog>
-<script src="third-party/dialog-polyfill/dialog-polyfill.min.js"></script>
-<script src="third-party/mdl/material.min.js"></script>
+<script src="third-party/vue/vue.js"></script>
+<script src="third-party/vue-material/vue-material.min.js"></script>
 <script src="scripts/fileSaveLoad.js"></script>
 <script src="scripts/page/element.js"></script>
 <script src="scripts/page/manage.js"></script>

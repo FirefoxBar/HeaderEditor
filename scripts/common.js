@@ -121,3 +121,15 @@ function getURL(url, isPost) {
 		}
 	});
 }
+
+function ruleType2tableName(ruleType) {
+	if (ruleType === 'cancel' || ruleType === 'redirect') {
+		return 'request';
+	}
+	if (ruleType === 'modifySendHeader') {
+		return 'sendHeader';
+	}
+	if (ruleType === 'modifyReceiveHeader') {
+		return 'receiveHeader';
+	}
+}

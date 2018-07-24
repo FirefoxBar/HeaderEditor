@@ -1,93 +1,31 @@
 body {
 	background-color: #EEE;
 }
-.mdl-checkbox {
-	height: auto;
-}
-.mdl-button:not(.mdl-button--icon):not(.mdl-button--fab) .material-icons {
-	margin-right: 5px;
-}
-.mdl-card {
-	min-height: 0;
+.main-menu .md-tabs-navigation {
+	position: fixed;
+	top: 0;
+	left: 0;
+	z-index: 999;
 	width: 100%;
-	z-index: auto;
 }
-.mdl-card__supporting-text {
-	width: 100%;
-	box-sizing: border-box;
+.main-menu .md-tabs-navigation .md-button-content {
+	flex-direction: row;
+	align-items: center;
 }
-.mdl-layout__content {
+.main-menu .md-tabs-navigation .md-button-content .md-icon {
+	margin-right: 10px;
+}
+.main-menu .md-tabs-navigation .md-button-content .md-tab-label {
+	margin-top: 0;
+}
+.main-menu .md-tabs-container {
+	padding-top: 72px;
 	background-color: #EEE;
 }
-.section-spacer {
-	-webkit-flex-grow: 1;
-	-ms-flex-positive: 1;
-	flex-grow: 1;
+.main-menu .md-tabs-content {
+	height: auto !important;
+	background-color: #EEE;
 }
-.mdl-button .mdl-spinner {
-	display: none;
-	vertical-align: middle;
-	width: 25px;
-	height: 25px;
-	margin-left: 5px;
-}
-.mdl-menu .mdl-menu__item.active {
-	color: rgb(255, 64, 129);
-	font-weight: bold;
-}
-.mdl-layout__drawer-button .material-icons {
-	max-width: 24px;
-}
-.page-content {
-	padding: 10px;
-}
-.page-content > .mdl-card {
-	margin-bottom: 10px;
-}
-.page-content .mdl-card .mdl-card--expand {
-	flex-grow: 0;
-	-webkit-flex-grow: 0;
-	-ms-flex-positive: 0;
-}
-.page-content .mdl-card .mdl-card__supporting-text {
-	flex-grow: 1;
-	-webkit-flex-grow: 1;
-	-ms-flex-positive: 1;
-}
-.mdl-tabs__tab .material-icons {
-	vertical-align: middle;
-}
-.closeable-box.close .mdl-card__supporting-text,
-.closeable-box.close .mdl-card__actions {
-	display: none;
-}
-.closeable-box .toggle-box {
-	transition: .2s;
-}
-.closeable-box.close .toggle-box {
-	transform: rotate(180deg);
-}
-#group-dialog {
-	width: 800px;
-	max-width: 90%;
-}
-#group-dialog .mdl-grid {
-	padding: 0;
-}
-#group-dialog .mdl-grid .mdl-textfield {
-	padding-top: 0;
-	padding-bottom: 0;
-}
-#group-dialog .mdl-grid .mdl-textfield__label:after {
-	bottom: 0;
-}
-@media screen and (max-width: 1024px) {
-	.hide-on-mobile {
-		display: none !important;
-	}
-}
-@media screen and (min-width: 1025px) {
-	.hide-on-desktop {
-		display: none !important;
-	}
+.md-menu-content.md-select-menu {
+	z-index: 9999;
 }

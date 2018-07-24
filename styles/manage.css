@@ -1,83 +1,5 @@
-.mdl-layout__tab-bar-left-button,
-.mdl-layout__tab-bar-right-button {
-	display: none;
-}
-.mdl-layout__tab-bar-container {
-	height: 64px;
-}
-.mdl-layout__tab {
-	height: 64px;
-	line-height: 64px;
-}
-.mdl-layout__tab-bar {
-	padding-left: 0;
-	padding-right: 0;
-	width: 100%;
-	height: 64px;
-	overflow: hidden;
-}
-.mdl-tabs__panel > .mdl-card {
-	margin-bottom: 10px;
-}
-.mdl-layout__tab .material-icons {
-	vertical-align: middle;
-	margin-right: 12px;
-}
 .group-item {
-	margin-bottom: 10px;
-}
-.group-item .mdl-card__title-text {
-	cursor: pointer;
-}
-#import-confirm .mdl-card__supporting-text,
-.group-item .mdl-card__supporting-text {
-	padding-top: 0;
-	padding-bottom: 0;
-	padding-left: 0;
-	padding-right: 0;
-}
-.rule-list-box {
-	width: 100%;
-	overflow: auto;
-}
-.rule-list {
-	border: none;
-	width: 100%;
-}
-.rule-list .batch-checkbox {
-	vertical-align: top;
-}
-.rule-list .enable {
-	width: 80px;
-}
-.rule-list .detail {
-	max-width: 400px;
-}
-.rule-list .detail > p {
-	max-width: 400px;
-	margin-bottom: 0;
-}
-.rule-list .rule-item .detail.exec-func .is_redirect,
-.rule-list .rule-item .detail.exec-func .is_header,
-.rule-list .rule-item[data-type="modifySendHeader"] .detail .is_redirect,
-.rule-list .rule-item[data-type="modifyReceiveHeader"] .detail .is_redirect,
-.rule-list .rule-item[data-type="redirect"] .detail .is_header,
-.rule-list .rule-item[data-type="cancel"] .detail .is_redirect,
-.rule-list .rule-item[data-type="cancel"] .detail .is_header {
-	display: none;
-}
-.rule-list .action {
-	width: 400px;
-}
-.rule-list .batch {
-	width: 100px;
-	display: none;
-}
-.rule-list th.batch {
-	cursor: pointer;
-}
-.rule-list.batch-mode .batch {
-	display: table-cell;
+	margin-bottom: 16px;
 }
 .float-button {
 	position: fixed;
@@ -85,7 +7,6 @@
 	bottom: 20px;
 	width: 56px;
 	z-index: 99;
-	display: none;
 }
 .float-button .mdl-button {
 	margin-top: 15px;
@@ -97,106 +18,41 @@
 	display: inline-block;
 	vertical-align: middle;
 }
-.form-group .left {
+#edit-page {
+	position: fixed;
+	top: 0;
+	left: 0;
+	width: 100%;
+	height: 100%;
+	z-index: 1999;
+	background-color: #EEE;
+}
+#edit-page .md-gutter {
+	padding: 20px;
+	height: calc(100% - 64px);
+	overflow: auto;
+}
+#edit-page .form-group > * {
+	padding-top: 10px;
+	padding-bottom: 10px;
+	font-size: 16px;
+	display: inline-block;
+	vertical-align: middle;
+}
+#edit-page .form-group .left {
 	width: 10%;
 	min-width: 160px;
 }
-.form-group .right {
+#edit-page .form-group .right {
 	width: 89%;
 	max-width: calc(100% - 190px);
 }
-.form-group .right .mdl-radio {
+#edit-page .form-group .right .mdl-radio {
 	margin-right: 10px;
 }
-#edit-body .mdl-card__supporting-text > * {
-	width: 100%;
+#edit-page .edit-right {
+	padding-left: 0;
 }
-#edit-body .default-hide {
-	display: none;
-}
-#edit-body[data-match="all"] .match_rule {
-	display: none;
-}
-#edit-body[data-type="cancel"] #isFunctionBox {
-	display: none;
-}
-#edit-body[data-type="redirect"] .redirect_to,
-#edit-body[data-type="redirect"] .realtime-test {
-	display: block;
-}
-#edit-body[data-type="modifySendHeader"] .header_mondify,
-#edit-body[data-type="modifyReceiveHeader"] .header_mondify {
-	display: block;
-}
-#edit-body[data-isfunction="1"] .redirect_to,
-#edit-body[data-isfunction="1"] .header_mondify{
-	display: none;
-}
-#edit-body[data-isfunction="1"] .custom-code {
-	display: block;
-}
-.download-input .mdl-textfield {
-	margin-top: 5px;
-	margin-right: 10px;
-	padding-top: 0;
-	padding-bottom: 0;
-}
-.download-input .mdl-textfield__label {
-	top: 4px;
-	bottom: auto;
-	overflow: visible;
-}
-.download-input .mdl-textfield__label:after {
-	bottom: -4px;
-}
-.download-input .buttons {
-	display: inline-block;
-}
-#download-history .mdl-list__item-primary-content {
-	max-width: calc(100% - 108px);
-}
-#download-history .mdl-list__item-primary-content .url {
-	max-width: 100%;
-	overflow: hidden;
-	white-space: nowrap;
-	text-overflow: ellipsis;
-}
-#import-confirm .mdl-card__supporting-text {
-	padding-bottom: 10px;
-	overflow: auto;
-}
-#import-confirm.waiting-confirm .mdl-card__supporting-text {
-	padding-bottom: 0;
-}
-#import-confirm .import-loading,
-#import-confirm .import-waiting-select {
-	text-align: center;
-	font-size: 16px;
-}
-#import-confirm .mdl-spinner {
-	width: 70px;
-	height: 70px;
-}
-#import-confirm .import-loading,
-#import-confirm .import-waiting-select,
-#import-confirm .import-table,
-#import-confirm .mdl-card__actions {
-	display: none;
-}
-#import-confirm.loading .import-loading,
-#import-confirm.waiting-select .import-waiting-select,
-#import-confirm.waiting-confirm .mdl-card__actions {
-	display: block;
-}
-#import-confirm.waiting-confirm .import-table {
-	display: table;
-}
-#import-list .mdl-radio {
-	margin-right: 10px;
-}
-#import-list tr.keep .show-new {
-	display: none;
-}
-#import-list tr.new .show-keep {
-	display: none;
+#edit-page .edit-right .md-card {
+	margin-bottom: 20px;
 }
