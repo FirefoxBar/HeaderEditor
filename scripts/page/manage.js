@@ -1,8 +1,73 @@
+const PageManage = {
+	getTestResult: function(data) {
+		let isMatch = 0;
+		switch (data.matchType) {
+			case 'all':
+				isMatch = 1;
+				break;
+			case 'regexp':
+				try {
+					let reg = new RegExp(data.matchRule, 'g');
+					isMatch = reg.test(data.test) ? 1 : 0;
+				} catch (e) {
+					isMatch = -1;
+				}
+				break;
+			case 'prefix':
+				isMatch = data.test.indexOf(data.matchRule) === 0 ? 1 : 0;
+				break;
+			case 'domain':
+				isMatch = getDomain(data.test) === data.matchRule ? 1 : 0;
+				break;
+			case 'url':
+				isMatch = data.test === data.matchRule ? 1 : 0;
+				break;
+			default:
+				break;
+		}
+		if (isMatch === 1 && typeof(data.matchRule) === 'string' && data.excludeRule.length > 0) {
+			try {
+				let reg = new RegExp(data.excludeRule);
+				isMatch = reg.test(data.test) ? 2 : 1;
+			} catch (e) {
+				isMatch = 1;
+			}
+		}
+		if (isMatch === -1) {
+			return t('test_invalid_regexp');
+		} else if (isMatch === 0) {
+			return t('test_mismatch');
+		} else if (isMatch === 2) {
+			return t('test_exclude');
+		}
+		if (data.execType == 1) {
+			return t('test_custom_code');
+		} else {
+			// if this is a redirect rule, show the result
+			if (data.ruleType === 'redirect') {
+				let redirect = '';
+				if (data.matchType === 'regexp') {
+					redirect = data.test.replace(new RegExp(data.matchRule, 'g'), data.redirectTo);
+				} else {
+					redirect = data.redirectTo;
+				}
+				if (/^(http|https|ftp|file)%3A/.test(redirect)) {
+					redirect = decodeURIComponent(redirect);
+				}
+				return redirect;
+			} else {
+				return 'Matched';
+			}
+		}
+	}
+}
+
 function startPageInit() {
 	init({
 		data: function() {
 			return {
 				isShowEdit: false,
+				isChooseGroup: false,
 				editTitle: t('add'),
 				edit: {
 					id: -1,
@@ -23,6 +88,8 @@ function startPageInit() {
 				},
 				activeTab: 0,
 				group: {},
+				choosenGroup: "",
+				choosenNewGroup: "",
 				alert: {
 					show: false,
 					text: ""
@@ -38,65 +105,7 @@ function startPageInit() {
 				if (this.edit.test === "") {
 					return "";
 				}
-				let isMatch = 0;
-				switch (this.edit.matchType) {
-					case 'all':
-						isMatch = 1;
-						break;
-					case 'regexp':
-						try {
-							let reg = new RegExp(this.edit.matchRule, 'g');
-							isMatch = reg.test(this.edit.test) ? 1 : 0;
-						} catch (e) {
-							isMatch = -1;
-						}
-						break;
-					case 'prefix':
-						isMatch = this.edit.test.indexOf(this.edit.matchRule) === 0 ? 1 : 0;
-						break;
-					case 'domain':
-						isMatch = getDomain(this.edit.test) === this.edit.matchRule ? 1 : 0;
-						break;
-					case 'url':
-						isMatch = this.edit.test === this.edit.matchRule ? 1 : 0;
-						break;
-					default:
-						break;
-				}
-				if (isMatch === 1 && typeof(this.edit.matchRule) === 'string' && this.edit.excludeRule.length > 0) {
-					try {
-						let reg = new RegExp(this.edit.excludeRule);
-						isMatch = reg.test(this.edit.test) ? 2 : 1;
-					} catch (e) {
-						isMatch = 1;
-					}
-				}
-				if (isMatch === -1) {
-					return t('test_invalid_regexp');
-				} else if (isMatch === 0) {
-					return t('test_mismatch');
-				} else if (isMatch === 2) {
-					return t('test_exclude');
-				}
-				if (this.edit.execType == 1) {
-					return t('test_custom_code');
-				} else {
-					// if this is a redirect rule, show the result
-					if (this.edit.ruleType === 'redirect') {
-						let redirect = '';
-						if (this.edit.matchType === 'regexp') {
-							redirect = this.edit.test.replace(new RegExp(this.edit.matchRule, 'g'), this.edit.redirectTo);
-						} else {
-							redirect = this.edit.redirectTo;
-						}
-						if (/^(http|https|ftp|file)%3A/.test(redirect)) {
-							redirect = decodeURIComponent(redirect);
-						}
-						return redirect;
-					} else {
-						return 'Matched';
-					}
-				}
+				return PageManage.getTestResult(this.edit);
 			},
 			groupList: function() {
 				return Object.keys(this.group);
@@ -110,6 +119,43 @@ function startPageInit() {
 			showToast: function(text) {
 				this.toast.text = text;
 				this.toast.show = true;
+			},
+			onChooseCancel: function() {
+				this.choosenNewGroup = "";
+				this.choosenGroup = "";
+				this.isChooseGroup = false;
+			},
+			onChooseOK: function() {
+				this.isChooseGroup = false;
+			},
+			chooseGroup: function() {
+				const _this = this;
+				return new Promise(resolve => {
+					_this.choosenNewGroup = "";
+					_this.choosenGroup = _this.t('ungrouped');
+					_this.isChooseGroup = true;
+					let _t = setInterval(() => {
+						if (_this.isChooseGroup === false) {
+							clearInterval(_t);
+							_t = null;
+							if (_this.choosenGroup === '_new') {
+								if (_this.choosenNewGroup === "") {
+									resolve(null);
+								}
+								if (typeof(_this.group[_this.choosenNewGroup]) === "undefined") {
+									_this.$set(_this.group, _this.choosenNewGroup, {
+										name: _this.choosenNewGroup,
+										collapse: prefs.get('manage-collapse-group'),
+										rule: {}
+									});
+								}
+								resolve(_this.choosenNewGroup);
+							} else {
+								resolve(_this.choosenGroup === "" ? null : _this.choosenGroup);
+							}
+						}
+					}, 100);
+				});
 			},
 			// Show add page
 			showAddPage: function() {
@@ -208,6 +254,7 @@ function startPageInit() {
 					if (!_this.group[response.group]) {
 						_this.$set(_this.group, response.group, {
 							name: response.group,
+							collapse: prefs.get('manage-collapse-group'),
 							rule: {}
 						});
 					}
@@ -251,6 +298,34 @@ function startPageInit() {
 			// Enable or disable a rule
 			onRuleEnable: function(e) {
 				console.log(e);
+			},
+			changeRuleGroup: function(rule, newGroup) {
+				const _this = this;
+				return new Promise(resolve => {
+					const table = ruleType2tableName(rule.ruleType);
+					const oldGroup = rule.group;
+					_this.$delete(_this.group[oldGroup].rule, table + '-' + rule.id);
+					rule.group = newGroup;
+					_this.$set(_this.group[newGroup].rule, table + '-' + rule.id, rule);
+					window.saveRule(table, rule).then(function(response) {
+						resolve(response);
+					});
+				});
+			},
+			onChangeRuleGroup: function(rule) {
+				const _this = this;
+				this.chooseGroup()
+				.then(r => {
+					if (r !== null) {
+						_this.changeRuleGroup(rule, r);
+					}
+				});
+			},
+			onGroupShare: function(name) {
+				//
+			},
+			onGroupDelete: function(name) {
+				//
 			}
 		},
 		mounted: function() {
@@ -259,6 +334,7 @@ function startPageInit() {
 			(function() {
 				_this.$set(_this.group, t('ungrouped'), {
 					name: t('ungrouped'),
+					collapse: prefs.get('manage-collapse-group'),
 					rule: {}
 				});
 				function appendRule(table, response) {
@@ -266,6 +342,7 @@ function startPageInit() {
 						if (typeof(_this.group[item.group]) === "undefined") {
 							_this.$set(_this.group, item.group, {
 								name: item.group,
+								collapse: prefs.get('manage-collapse-group'),
 								rule: {}
 							});
 						}

@@ -23,11 +23,11 @@ browser.runtime.onMessage.addListener(function(request, sender, sendResponse) {
 			});
 			return true;
 		case "openURL":
-			openURL(request);
+			openURL(request, sendResponse);
 			break;
 		case "getRules":
 			sendResponse(getRules(request.type, request.options));
-			break;
+			return;
 		case "saveRule":
 			saveRule(request.type, request.content).then(sendResponse);
 			break;
@@ -47,6 +47,8 @@ browser.runtime.onMessage.addListener(function(request, sender, sendResponse) {
 			}
 			break;
 	}
+	sendResponse();
+	return true;
 });
 
 function getActiveTab(callback) {

@@ -8,8 +8,8 @@ body {
 .md-tooltip p {
 	margin: 3px;
 }
-.md-button:not(.md-icon-button) .md-icon {
-	margin-right: 5px;
+.md-button.with-icon .md-icon {
+	margin-right: 6px;
 }
 .main-menu .md-tabs-navigation {
 	position: fixed;

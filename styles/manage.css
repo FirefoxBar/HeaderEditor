@@ -8,6 +8,9 @@
 .group-item .cell-enable {
 	width: 80px;
 }
+.group-item .cell-name {
+	width: 50%;
+}
 .group-item .cell-action {
 	width: 400px;
 }
@@ -69,4 +72,21 @@
 }
 #edit-page .edit-right .md-card {
 	margin-bottom: 20px;
+}
+.md-radio-input .md-radio .md-radio-container {
+	margin-top: 8px;
+}
+.md-radio-input .md-radio .md-radio-label {
+	height: 32px;
+}
+.md-radio .md-field {
+	margin: 0;
+	padding: 0;
+	min-height: 32px;
+}
+.md-radio .md-field label {
+	top: 8px;
+}
+.md-radio .md-field.md-inline.md-focused label {
+	top: 8px;
 }
