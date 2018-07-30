@@ -44,11 +44,11 @@
 									<span>{{t('rename')}}</span>
 									<md-icon>mode_edit</md-icon>
 								</md-menu-item>
-								<md-menu-item>
+								<md-menu-item @click="onGroupShare(g.name)">
 									<span>{{t('share')}}</span>
 									<md-icon>share</md-icon>
 								</md-menu-item>
-								<md-menu-item>
+								<md-menu-item @click="onGroupDelete(g.name)">
 									<span>{{t('delete')}}</span>
 									<md-icon>delete</md-icon>
 								</md-menu-item>
@@ -62,7 +62,9 @@
 						<md-table-head class="cell-action">{{t('action')}}</md-table-head>
 					</md-table-row>
 					<md-table-row v-for="r of g.rule" :key="r.id" v-show="!g.collapse">
-						<md-table-cell class="cell-enable"><md-switch v-modal="r.enable" :value="1" class="md-primary" :data-type="r.ruleType" :data-id="r.id" @click="onRuleEnable"></md-switch></md-table-cell>
+						<md-table-cell class="cell-enable">
+							<md-switch v-model="r.enable" class="md-primary" :true-value="1" :false-value="0" :data-type="r.ruleType" :data-id="r.id" @change="newValue => onRuleEnable(r, newValue)"></md-switch>
+						</md-table-cell>
 						<md-table-cell class="cell-name">
 							<span>{{r.name}}</span>
 							<md-tooltip md-direction="bottom">

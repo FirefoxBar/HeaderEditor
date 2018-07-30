@@ -296,8 +296,11 @@ function startPageInit() {
 				});
 			},
 			// Enable or disable a rule
-			onRuleEnable: function(e) {
-				console.log(e);
+			onRuleEnable: function(rule, newValue) {
+				const table = ruleType2tableName(rule.ruleType);
+				window.saveRule(table, rule).then(response => {
+					browser.runtime.sendMessage({"method": "updateCache", "type": table});
+				});
 			},
 			changeRuleGroup: function(rule, newGroup) {
 				const _this = this;
@@ -322,10 +325,29 @@ function startPageInit() {
 				});
 			},
 			onGroupShare: function(name) {
-				//
+				const result = {};
+				for (const k of tableNames) {
+					result[k] = [];
+				}
+				Object.values(this.group[name].rule).forEach(e => {
+					result[ruleType2tableName(e.ruleType)].push(e);
+				});
+				saveAsFile(
+					JSON.stringify(createExportFormat(result), null, "\t"),
+					DateFormat(HE_DUMP_FILE_NAME).replace('{ADDITIONAL}', '-' + name)
+				);
 			},
 			onGroupDelete: function(name) {
-				//
+				// Delete group, but not delete rules, put all rules to "ungrouped"
+				const ungrouped = t('ungrouped');
+				if (name === ungrouped) {
+					return;
+				}
+				const _this = this;
+				Object.values(this.group[name].rule).forEach(e => {
+					_this.changeRuleGroup(e, ungrouped);
+				});
+				this.$delete(this.group, name);
 			}
 		},
 		mounted: function() {
@@ -334,7 +356,7 @@ function startPageInit() {
 			(function() {
 				_this.$set(_this.group, t('ungrouped'), {
 					name: t('ungrouped'),
-					collapse: prefs.get('manage-collapse-group'),
+					collapse: !prefs.get('manage-collapse-group'),
 					rule: {}
 				});
 				function appendRule(table, response) {
@@ -342,7 +364,7 @@ function startPageInit() {
 						if (typeof(_this.group[item.group]) === "undefined") {
 							_this.$set(_this.group, item.group, {
 								name: item.group,
-								collapse: prefs.get('manage-collapse-group'),
+								collapse: !prefs.get('manage-collapse-group'),
 								rule: {}
 							});
 						}

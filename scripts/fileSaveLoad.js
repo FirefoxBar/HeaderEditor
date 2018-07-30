@@ -50,10 +50,11 @@ function loadFromFile(formatToFilter){
  */
 function createExportFormat(arr) {
 	const result = {};
-	for (var k in arr) {
+	for (const k in arr) {
 		result[k] = [];
 		arr[k].forEach(e => {
 			let copy = deepCopy(e);
+			delete copy["id"];
 			delete copy["_reg"];
 			delete copy["_func"];
 			result[k].push(copy);
