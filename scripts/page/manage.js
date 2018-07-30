@@ -86,6 +86,10 @@ function startPageInit() {
 					oldGroup: "",
 					group: t('ungrouped')
 				},
+				options: {
+					collapseGroup: prefs.get('manage-collapse-group'),
+					rulesNoEffectForHe: prefs.get('exclude-he')
+				},
 				activeTab: 0,
 				group: {},
 				choosenGroup: "",
@@ -356,7 +360,7 @@ function startPageInit() {
 			(function() {
 				_this.$set(_this.group, t('ungrouped'), {
 					name: t('ungrouped'),
-					collapse: !prefs.get('manage-collapse-group'),
+					collapse: prefs.get('manage-collapse-group'),
 					rule: {}
 				});
 				function appendRule(table, response) {
@@ -364,7 +368,7 @@ function startPageInit() {
 						if (typeof(_this.group[item.group]) === "undefined") {
 							_this.$set(_this.group, item.group, {
 								name: item.group,
-								collapse: !prefs.get('manage-collapse-group'),
+								collapse: prefs.get('manage-collapse-group'),
 								rule: {}
 							});
 						}
@@ -387,6 +391,10 @@ function startPageInit() {
 					requestRules(t);
 				}
 			})();
+			this.$watch('options', (newOpt) => {
+				prefs.set('manage-collapse-group', newOpt.collapseGroup);
+				prefs.set('exclude-he', newOpt.rulesNoEffectForHe);
+			}, { deep: true });
 		}
 	});
 }
@@ -1295,12 +1303,6 @@ document.addEventListener('DOMContentLoaded', () => {
 	initEditChange();
 	// options
 	document.getElementById('manage-hide-empty').addEventListener('change', onHideEmptyGroupChange);
-	setupLivePrefs([
-		"manage-hide-empty",
-		"manage-collapse-group",
-		"add-hot-link",
-		"exclude-he"
-	]);
 	// group
 	initGroup();
 

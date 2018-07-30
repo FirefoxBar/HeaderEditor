@@ -85,8 +85,30 @@
 					</md-table-row>
 				</md-card>
 			</md-tab>
-			<md-tab id="tab-options" :md-label="t('options')" md-icon="settings"></md-tab>
-			<md-tab id="tab-export-import" :md-label="t('export_and_import')" md-icon="settings_backup_restore"></md-tab>
+			<md-tab id="tab-options" :md-label="t('options')" md-icon="settings">
+				<md-card>
+					<md-card-header>
+						<div class="md-title">{{t('options')}}</div>
+					</md-card-header>
+					<md-card-content>
+						<div class="md-layout md-gutter">
+							<div class="md-layout-item md-size-50"><md-checkbox v-model="options.collapseGroup">{{t('manage_collapse_group')}}</md-checkbox></div>
+							<div class="md-layout-item md-size-50"><md-checkbox v-model="options.rulesNoEffectForHe">{{t('rules_no_effect_for_he')}}</md-checkbox></div>
+						</div>
+					</md-card-content>
+				</md-card>
+			</md-tab>
+			<md-tab id="tab-export-import" :md-label="t('export_and_import')" md-icon="settings_backup_restore">
+				<md-card>
+					<md-card-header>
+						<div class="md-title">{{t('local_files')}}</div>
+					</md-card-header>
+					<md-card-content>
+						<md-button class="md-raised" md-primary>{{t('export')}}</md-button>
+						<md-button class="md-raised" md-primary>{{t('import')}}</md-button>
+					</md-card-content>
+				</md-card>
+			</md-tab>
 		</md-tabs>
 		<div id="edit-page" v-show="isShowEdit">
 			<md-toolbar class="md-primary" md-elevation="1">
@@ -196,7 +218,7 @@
 									<md-highlight-text :md-term="term">{{item}}</md-highlight-text>
 								</template>
 							</md-autocomplete>
-							<md-button class="md-raised" @click="saveRule">{{t('save')}}</md-button>
+							<md-button class="md-raised" @click="saveRule" md-primary>{{t('save')}}</md-button>
 						</md-card-content>
 					</md-card>
 				</div>

@@ -41,11 +41,6 @@ browser.runtime.onMessage.addListener(function(request, sender, sendResponse) {
 				updateCache(request.type).then(sendResponse);
 			}
 			break;
-		case 'prefChanged':
-			if (request.prefName === 'add-hot-link') {
-				toggleAntiHotLinkMenu(request.value);
-			}
-			break;
 	}
 	sendResponse();
 	return true;

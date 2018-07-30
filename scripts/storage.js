@@ -220,27 +220,6 @@ function notifyBackground(request) {
 function isCheckbox(el) {
 	return el.nodeName.toLowerCase() == "input" && "checkbox" == el.type.toLowerCase();
 }
-function setupLivePrefs(IDs) {
-	var localIDs = {};
-	IDs.forEach(function(id) {
-		localIDs[id] = true;
-		updateElement(id).addEventListener("change", function() {
-			notifyBackground({"method": "prefChanged", "prefName": this.id, "value": isCheckbox(this) ? this.checked : this.value});
-			prefs.set(this.id, isCheckbox(this) ? this.checked : this.value);
-		});
-	});
-	browser.runtime.onMessage.addListener(function(request) {
-		if (request.prefName in localIDs) {
-			updateElement(request.prefName);
-		}
-	});
-	function updateElement(id) {
-		var el = document.getElementById(id);
-		el[isCheckbox(el) ? "checked" : "value"] = prefs.get(id);
-		el.dispatchEvent(new Event("change", {bubbles: true, cancelable: true}));
-		return el;
-	}
-}
 
 var prefs = browser.extension.getBackgroundPage().prefs || new function Prefs() {
 	const _this = this;
@@ -248,9 +227,7 @@ var prefs = browser.extension.getBackgroundPage().prefs || new function Prefs() 
 	let boundMethods = {};
 
 	let defaults = {
-		"manage-hide-empty": false, // Hide empty groups
 		"manage-collapse-group": true, // Collapse groups
-		"add-hot-link": true,
 		"exclude-he": true // rules take no effect on HE or not
 	};
 	// when browser is strarting up, the setting is default
