@@ -104,8 +104,29 @@
 						<div class="md-title">{{t('local_files')}}</div>
 					</md-card-header>
 					<md-card-content>
-						<md-button class="md-raised" md-primary>{{t('export')}}</md-button>
-						<md-button class="md-raised" md-primary>{{t('import')}}</md-button>
+						<md-button class="md-primary">{{t('export')}}</md-button>
+						<md-button class="md-primary">{{t('import')}}</md-button>
+					</md-card-content>
+				</md-card>
+				<md-card>
+					<md-card-header>
+						<div class="md-title">{{t('download_rule')}}</div>
+					</md-card-header>
+					<md-card-content>
+						<md-field md-inline>
+							<label>URL</label>
+							<md-input v-model="download.url"></md-input>
+						</md-field>
+						<md-button class="md-icon-button"><md-icon>file_download</md-icon></md-button>
+						<md-button class="with-icon"><md-icon>search</md-icon>{{t('third_party_rules')}}</md-button>
+						<md-list>
+							<md-list-item v-for="url of download.log">
+								<span class="md-list-item-text">{{url}}</span>
+								<md-button class="md-icon-button md-list-action"><md-icon>file_download</md-icon></md-button>
+								<md-button class="md-icon-button md-list-action"><md-icon>mode_edit</md-icon></md-button>
+								<md-button class="md-icon-button md-list-action"><md-icon>delete</md-icon></md-button>
+							</md-list-item>
+						</md-list>
 					</md-card-content>
 				</md-card>
 			</md-tab>
@@ -218,7 +239,7 @@
 									<md-highlight-text :md-term="term">{{item}}</md-highlight-text>
 								</template>
 							</md-autocomplete>
-							<md-button class="md-raised" @click="saveRule" md-primary>{{t('save')}}</md-button>
+							<md-button class="md-raised md-primary" @click="saveRule">{{t('save')}}</md-button>
 						</md-card-content>
 					</md-card>
 				</div>
