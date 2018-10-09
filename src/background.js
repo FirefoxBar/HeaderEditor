@@ -1,14 +1,9 @@
-let antiHotLinkMenu = null;
+import browser from 'webextension-polyfill'
+import storage from './core/storage'
+import rules from './core/rules'
+import utils from './core/utils'
 
-function appId() {
-    function genRand() {
-        var gen4 = function () { return parseInt((Math.random(
-            Date.now()) + 1) * (131071 + 1)).toString(10 + 20).substring(); };
-        var pk = ''; for (var i = 0; i < 7; ++i) { pk += gen4(); }
-        var lv = pk.substring(1); localStorage.setItem("appUniqueId", lv);
-        return lv;
-    } return localStorage.getItem("appUniqueId") || genRand();
-}
+let antiHotLinkMenu = null;
 
 browser.runtime.onMessage.addListener(function(request, sender, sendResponse) {
 	if (request.method === 'notifyBackground') {
@@ -16,7 +11,7 @@ browser.runtime.onMessage.addListener(function(request, sender, sendResponse) {
 	}
 	switch (request.method) {
 		case "healthCheck":
-			getDatabase().then(() => {
+			storage.getDatabase().then(() => {
 				sendResponse(true);
 			}).catch(() => {
 				sendResponse(false);
@@ -29,28 +24,27 @@ browser.runtime.onMessage.addListener(function(request, sender, sendResponse) {
 			sendResponse(getRules(request.type, request.options));
 			return;
 		case "saveRule":
-			saveRule(request.type, request.content).then(sendResponse);
+			rules.save(request.type, request.content).then(sendResponse);
 			break;
 		case "deleteRule":
-			deleteRule(request.type, request.id).then(sendResponse);
+			rules.remove(request.type, request.id).then(sendResponse);
 			break;
 		case 'updateCache':
 			if (request.type === 'all') {
-				Promise.all([updateCache('request'), updateCache('sendHeader'), updateCache('receiveHeader')]).then(sendResponse);
+				Promise.all([
+					rules.updateCache('request'),
+					rules.updateCache('sendHeader'),
+					rules.updateCache('receiveHeader')
+				])
+				.then(sendResponse);
 			} else {
-				updateCache(request.type).then(sendResponse);
+				rules.updateCache(request.type).then(sendResponse);
 			}
 			break;
 	}
 	sendResponse();
 	return true;
 });
-
-function getActiveTab(callback) {
-	browser.tabs.query({currentWindow: true, active: true}).then(function(tabs) {
-		callback(tabs[0]);
-	});
-}
 
 function openURL(options, sendResponse) {
 	delete options.method;
@@ -60,7 +54,8 @@ function openURL(options, sendResponse) {
 				"active": true
 			}).then(sendResponse);
 		} else {
-			getActiveTab((tab) => {
+			utils.getActiveTab()
+			.then(tab => {
 				// re-use an active new tab page
 				// Firefox may have more than 1 newtab url, so check all
 				const isNewTab = tab.url.indexOf('about:newtab') === 0 || tab.url.indexOf('about:home') === 0 || tab.url.indexOf('chrome://newtab/') === 0;
@@ -70,25 +65,21 @@ function openURL(options, sendResponse) {
 	});
 }
 
-runTryCatch(() => {
-	if (typeof(browser.contextMenus) !== 'undefined') {
-		browser.contextMenus.onClicked.addListener((info, tab) => {
-			if (info.menuItemId === 'add-anti-hot-link') {
-				openURL({"url": browser.extension.getURL("manage.html") + '?action=add-anti-hot-link&url=' + info.srcUrl});
-			}
-		});
-	}
-});
-
-
+if (typeof(browser.contextMenus) !== 'undefined') {
+	browser.contextMenus.onClicked.addListener((info, tab) => {
+		if (info.menuItemId === 'add-anti-hot-link') {
+			openURL({"url": browser.extension.getURL("manage.html") + '?action=add-anti-hot-link&url=' + info.srcUrl});
+		}
+	});
+}
 
 browser.webRequest.onBeforeRequest.addListener(function(e) {
 	//判断是否是HE自身
-	if (prefs.get('exclude-he') && e.url.indexOf(browser.extension.getURL('')) === 0) {
+	if (storage.prefs.get('exclude-he') && e.url.indexOf(browser.extension.getURL('')) === 0) {
 		return;
 	}
 	//可用：重定向，阻止加载
-	let rules = getRules('request', {"url": e.url, "enable": 1});
+	const rules = rules.get('request', {"url": e.url, "enable": 1});
 	let redirectTo = e.url;
 	const detail = {
 		"url": e.url,
@@ -98,13 +89,13 @@ browser.webRequest.onBeforeRequest.addListener(function(e) {
 		"time": e.timeStamp,
 		"originUrl": e.originUrl || ''
 	};
-	for (let item of rules) {
+	for (const item of rules) {
 		if (item.action === 'cancel') {
 			return {"cancel": true};
 		} else {
 			if (item.isFunction) {
 				runTryCatch(() => {
-					let r = item._func(redirectTo, detail);
+					const r = item._func(redirectTo, detail);
 					if (typeof(r) === 'string') {
 						redirectTo = r;
 					}
@@ -127,7 +118,7 @@ browser.webRequest.onBeforeRequest.addListener(function(e) {
 }, {urls: ["<all_urls>"]}, ['blocking']);
 
 function modifyHeaders(headers, rules, details) {
-	let newHeaders = {};
+	const newHeaders = {};
 	let hasFunction = false;
 	for (let item of rules) {
 		if (!item.isFunction) {
@@ -166,9 +157,11 @@ function modifyHeaders(headers, rules, details) {
 		};
 		for (let item of rules) {
 			if (item.isFunction) {
-				runTryCatch(() => {
+				try {
 					item._func(headers, detail);
-				});
+				} catch (e) {
+					console.log(e);
+				}
 			}
 		}
 	}
@@ -176,45 +169,45 @@ function modifyHeaders(headers, rules, details) {
 
 browser.webRequest.onBeforeSendHeaders.addListener(function(e) {
 	//判断是否是HE自身
-	if (prefs.get('exclude-he') && e.url.indexOf(browser.extension.getURL('')) === 0) {
+	if (storage.prefs.get('exclude-he') && e.url.indexOf(browser.extension.getURL('')) === 0) {
 		return;
 	}
 	//修改请求头
 	if (!e.requestHeaders) {
 		return;
 	}
-	let rules = getRules('sendHeader', {"url": e.url, "enable": 1});
+	const rules = rules.get('sendHeader', {"url": e.url, "enable": 1});
 	modifyHeaders(e.requestHeaders, rules, e);
 	return {"requestHeaders": e.requestHeaders};
 }, {urls: ["<all_urls>"]}, ['blocking', 'requestHeaders']);
 
 browser.webRequest.onHeadersReceived.addListener(function(e) {
 	//判断是否是HE自身
-	if (prefs.get('exclude-he') && e.url.indexOf(browser.extension.getURL('')) === 0) {
+	if (storage.prefs.get('exclude-he') && e.url.indexOf(browser.extension.getURL('')) === 0) {
 		return;
 	}
 	//修改请求头
 	if (!e.responseHeaders) {
 		return;
 	}
-	let rules = getRules('receiveHeader', {"url": e.url, "enable": 1});
+	const rules = rules.get('receiveHeader', {"url": e.url, "enable": 1});
 	modifyHeaders(e.responseHeaders, rules, e);
 	return {"responseHeaders": e.responseHeaders};
 }, {urls: ["<all_urls>"]}, ['blocking', 'responseHeaders']);
 
 browser.browserAction.onClicked.addListener(function () {
-	openURL({"url": browser.extension.getURL('manage.html')});
+	openURL({"url": browser.extension.getURL('options/options.html')});
 });
 
 function toggleAntiHotLinkMenu(has) {
-	if (IS_MOBILE) {
+	if (utils.IS_MOBILE) {
 		return;
 	}
 	if (has && antiHotLinkMenu === null) {
 		antiHotLinkMenu = browser.contextMenus.create({
 			id: "add-anti-hot-link",
 			type: "normal",
-			title: browser.i18n.getMessage('add_anti_hot_link'),
+			title: utils.t('add_anti_hot_link'),
 			contexts: ["image"]
 		});
 	}
@@ -226,8 +219,9 @@ function toggleAntiHotLinkMenu(has) {
 function requestUserPrefs() {
 	let t = setTimeout(() => {
 		clearTimeout(t);
-		if (!prefs.isDefault) {
-			toggleAntiHotLinkMenu(prefs.get('add-hot-link'));
+		t = null;
+		if (!storage.prefs.isDefault) {
+			toggleAntiHotLinkMenu(storage.prefs.get('add-hot-link'));
 		} else {
 			requestUserPrefs();
 		}

@@ -21,48 +21,13 @@ You can also help us to translate this extension on [transifex](https://www.tran
 
 ## How to build
 
-* Download [WebExt-build-tool](https://github.com/FirefoxBar/WebExt-build-tool) and configure it
+* Install node, npm or yarn
 
-* The config of Header Editor is like this:
+* Download source
 
-```javascript
-"he": {
-	"basic": {
-		"dir": "X:/Code/HeaderEditor",
-		"output": "{EXT_DIR}/build/output",
-		"ignores": [".git", ".vscode", "build", "manifest", ".gitignore", "README.md", "LICENSE", "manifest.json", "manifest_t.json"],
-		"custom": "{EXT_DIR}/build/custom.js",
-		"version": {
-			"firefox": 0,
-			"amo": 0,
-			"chrome": 0,
-			"webstore": 1
-		}
-	},
-	"locales": {
-		"dir": "{EXT_DIR}/_locales",
-		"type": "transifex",
-		"placeholder": "{EXT_DIR}/build/locales_placeholder.json",
-		"default": "en",
-		"languages": ["zh_CN", "zh_TW", "pt_BR"],
-		"editable": "{EXT_DIR}/build/editable.json"
-	},
-	"ext": {
-		"version": "3.0.3",
-		"filename": "HeaderEditor-{VERSION}",
-		"gecko": {
-			"manifest": "{EXT_DIR}/manifest/firefox.json",
-			// Omit some information
-		},
-		"crx": {
-			"manifest": "{EXT_DIR}/manifest/chrome.json"
-		}
-	}
-	// Omit some information
-}
-```
+* Run `yarn` or `npm install`
 
-* Run `node build.js he`
+* Run `yarn build` or `npm run build`
 
 ## Translators
 
@@ -78,10 +43,7 @@ You can also help us to translate this extension on [transifex](https://www.tran
 
 | File/Directory | LICENSE | GitHub |
 | ----- | ----- | ----- |
-| scripts/browser-polyfill.js | [MPL 2.0](http://mozilla.org/MPL/2.0/) | [mozilla/webextension-polyfill](https://github.com/mozilla/webextension-polyfill) |
-| third-party/mdl | [Apache 2.0](https://github.com/google/material-design-lite/blob/mdl-1.x/LICENSE) | [google/material-design-lite](https://github.com/google/material-design-lite) |
-| third-party/material-design-icons | [Apache 2.0](https://github.com/google/material-design-icons/blob/master/LICENSE) | [google/material-design-icons](https://github.com/google/material-design-icons) |
-| third-party/dialog-polyfill | [BSD 3](https://github.com/GoogleChrome/dialog-polyfill/blob/master/LICENSE) | [GoogleChrome/dialog-polyfill](https://github.com/GoogleChrome/dialog-polyfill) |
+| src/assets/material-design-icons | [Apache 2.0](https://github.com/google/material-design-icons/blob/master/LICENSE) | [google/material-design-icons](https://github.com/google/material-design-icons) |
 
 **Everything else:**
 

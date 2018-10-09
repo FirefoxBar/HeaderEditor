@@ -1,1 +1,4 @@
-manifest.json
+/node_modules
+/*.log
+/dist
+/dist-zip
