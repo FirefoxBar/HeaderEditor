@@ -79,7 +79,7 @@ browser.webRequest.onBeforeRequest.addListener(function(e) {
 		return;
 	}
 	//可用：重定向，阻止加载
-	const rules = rules.get('request', {"url": e.url, "enable": 1});
+	const rule = rules.get('request', {"url": e.url, "enable": 1});
 	let redirectTo = e.url;
 	const detail = {
 		"url": e.url,
@@ -89,7 +89,7 @@ browser.webRequest.onBeforeRequest.addListener(function(e) {
 		"time": e.timeStamp,
 		"originUrl": e.originUrl || ''
 	};
-	for (const item of rules) {
+	for (const item of rule) {
 		if (item.action === 'cancel') {
 			return {"cancel": true};
 		} else {
@@ -117,10 +117,10 @@ browser.webRequest.onBeforeRequest.addListener(function(e) {
 	}
 }, {urls: ["<all_urls>"]}, ['blocking']);
 
-function modifyHeaders(headers, rules, details) {
+function modifyHeaders(headers, rule, details) {
 	const newHeaders = {};
 	let hasFunction = false;
-	for (let item of rules) {
+	for (const item of rule) {
 		if (!item.isFunction) {
 			newHeaders[item.action.name] = item.action.value;
 		} else {
@@ -155,7 +155,7 @@ function modifyHeaders(headers, rules, details) {
 			"time": details.timeStamp,
 			"originUrl": details.originUrl || ''
 		};
-		for (let item of rules) {
+		for (const item of rule) {
 			if (item.isFunction) {
 				try {
 					item._func(headers, detail);
@@ -176,8 +176,8 @@ browser.webRequest.onBeforeSendHeaders.addListener(function(e) {
 	if (!e.requestHeaders) {
 		return;
 	}
-	const rules = rules.get('sendHeader', {"url": e.url, "enable": 1});
-	modifyHeaders(e.requestHeaders, rules, e);
+	const rule = rules.get('sendHeader', {"url": e.url, "enable": 1});
+	modifyHeaders(e.requestHeaders, rule, e);
 	return {"requestHeaders": e.requestHeaders};
 }, {urls: ["<all_urls>"]}, ['blocking', 'requestHeaders']);
 
@@ -190,8 +190,8 @@ browser.webRequest.onHeadersReceived.addListener(function(e) {
 	if (!e.responseHeaders) {
 		return;
 	}
-	const rules = rules.get('receiveHeader', {"url": e.url, "enable": 1});
-	modifyHeaders(e.responseHeaders, rules, e);
+	const rule = rules.get('receiveHeader', {"url": e.url, "enable": 1});
+	modifyHeaders(e.responseHeaders, rule, e);
 	return {"responseHeaders": e.responseHeaders};
 }, {urls: ["<all_urls>"]}, ['blocking', 'responseHeaders']);
 
