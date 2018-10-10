@@ -1,5 +1,6 @@
-import utils from './utils'
-import storage from './storage'
+import utils from './utils';
+import storage from './storage';
+import merge from 'merge';
 
 const cache = {};
 for (const t of utils.TABLE_NAMES) {
@@ -167,7 +168,7 @@ function remove(tableName, id) {
 }
 
 function get(type, options) {
-	return options ? filterRules(cache[type], options) : cache[type];
+	return options ? filter(cache[type], options) : cache[type];
 }
 
 function createExport(arr) {
@@ -175,7 +176,7 @@ function createExport(arr) {
 	for (const k in arr) {
 		result[k] = [];
 		arr[k].forEach(e => {
-			let copy = deepCopy(e);
+			const copy = merge(true, e);
 			delete copy["id"];
 			delete copy["_reg"];
 			delete copy["_func"];
@@ -183,6 +184,19 @@ function createExport(arr) {
 		});
 	}
 	return result;
+}
+
+function fromJson(str) {
+	const list = JSON.parse(str);
+	utils.TABLE_NAMES.forEach(e => {
+		if (list[e]) {
+			list[e].map(ee => {
+				delete ee.id;
+				return utils.upgradeRuleFormat(ee);
+			});
+		}
+	});
+	return list;
 }
 
 function init() {
@@ -212,5 +226,6 @@ export default {
 	save,
 	remove,
 	updateCache,
-	createExport
+	createExport,
+	fromJson
 }

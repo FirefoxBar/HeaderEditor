@@ -1,5 +1,5 @@
-import utils from './utils'
-import browser from 'webextension-polyfill'
+import utils from './utils';
+import browser from 'webextension-polyfill';
 
 export default {
 	save(text, fileName) {

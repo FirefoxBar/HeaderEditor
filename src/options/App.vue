@@ -78,8 +78,8 @@
 						<div class="md-title">{{t('local_files')}}</div>
 					</md-card-header>
 					<md-card-content>
-						<md-button class="md-primary">{{t('export')}}</md-button>
-						<md-button class="md-primary">{{t('import')}}</md-button>
+						<md-button class="md-primary" @click="onExportAll">{{t('export')}}</md-button>
+						<md-button class="md-primary" @click="onImport">{{t('import')}}</md-button>
 					</md-card-content>
 				</md-card>
 				<md-card>
@@ -94,13 +94,43 @@
 						<md-button class="md-icon-button"><md-icon>file_download</md-icon></md-button>
 						<md-button class="with-icon"><md-icon>search</md-icon>{{t('third_party_rules')}}</md-button>
 						<md-list>
-							<md-list-item v-for="url of download.log">
+							<md-list-item v-for="url of download.log" :key="url">
 								<span class="md-list-item-text">{{url}}</span>
 								<md-button class="md-icon-button md-list-action"><md-icon>file_download</md-icon></md-button>
 								<md-button class="md-icon-button md-list-action"><md-icon>mode_edit</md-icon></md-button>
 								<md-button class="md-icon-button md-list-action"><md-icon>delete</md-icon></md-button>
 							</md-list-item>
 						</md-list>
+					</md-card-content>
+				</md-card>
+				<!-- import list -->
+				<md-card>
+					<md-card-header>
+						<div class="md-title">{{t('import')}}</div>
+					</md-card-header>
+					<md-card-content>
+						<md-progress-bar md-mode="indeterminate" v-show="imports.loading"></md-progress-bar>
+						<md-table v-show="!imports.loading">
+							<md-table-row>
+								<md-table-head class="cell-name">{{t('name')}}</md-table-head>
+								<md-table-head class="cell-type">{{t('ruleType')}}</md-table-head>
+								<md-table-head class="cell-group">{{t('suggested_group')}}</md-table-head>
+								<md-table-head class="cell-action">{{t('action')}}</md-table-head>
+							</md-table-row>
+							<md-table-row v-for="r of imports.list" :key="r.id">
+								<md-table-cell class="cell-name">{{r.name}}</md-table-cell>
+								<md-table-cell class="cell-type">{{t('rule_' + r.ruleType)}}</md-table-cell>
+								<md-table-cell class="cell-group">
+									<md-field><md-input v-model="r.group"></md-input></md-field>
+								</md-table-cell>
+								<md-table-cell class="cell-action">
+									<md-radio class="md-primary" v-model="r.import_action" :value="1">{{t('import_new')}}</md-radio>
+									<md-radio class="md-primary" v-model="r.import_action" :value="2" v-show="r.import_old_id">{{t('import_override')}}</md-radio>
+									<md-radio class="md-primary" v-model="r.import_action" :value="3">{{t('import_drop')}}</md-radio>
+								</md-table-cell>
+							</md-table-row>
+							<md-tab
+						</md-table>
 					</md-card-content>
 				</md-card>
 			</md-tab>
@@ -227,7 +257,7 @@
 		<md-dialog :md-active.sync="isChooseGroup">
 			<md-dialog-title>{{t('group')}}</md-dialog-title>
 			<md-list>
-				<md-list-item v-for="g of groupList">
+				<md-list-item v-for="g of groupList" :key="g">
 					<md-radio v-model="choosenGroup" :value="g" />
 					<span class="md-list-item-text">{{g}}</span>
 				</md-list-item>
@@ -250,11 +280,11 @@
 </template>
 
 <script>
-import browser from 'webextension-polyfill'
-import utils from '../core/utils'
-import rules from '../core/rules'
-import file from '../core/file'
-import storage from '../core/storage'
+import browser from 'webextension-polyfill';
+import utils from '../core/utils';
+import rules from '../core/rules';
+import file from '../core/file';
+import storage from '../core/storage';
 
 export default {
 	data: function() {
@@ -298,6 +328,10 @@ export default {
 			toast: {
 				show: false,
 				text: ""
+			},
+			imports: {
+				loading: false,
+				list: []
 			}
 		};
 	},
@@ -374,23 +408,23 @@ export default {
 	},
 	methods: {
 		t: utils.t,
-		showAlert: function(text) {
+		showAlert(text) {
 			this.alert.text = text;
 			this.alert.show = true;
 		},
-		showToast: function(text) {
+		showToast(text) {
 			this.toast.text = text;
 			this.toast.show = true;
 		},
-		onChooseCancel: function() {
+		onChooseCancel() {
 			this.choosenNewGroup = "";
 			this.choosenGroup = "";
 			this.isChooseGroup = false;
 		},
-		onChooseOK: function() {
+		onChooseOK() {
 			this.isChooseGroup = false;
 		},
-		chooseGroup: function() {
+		chooseGroup() {
 			const _this = this;
 			return new Promise(resolve => {
 				_this.choosenNewGroup = "";
@@ -420,11 +454,11 @@ export default {
 			});
 		},
 		// Show add page
-		showAddPage: function() {
+		showAddPage() {
 			this.editTitle = utils.t('add');
 			this.isShowEdit = true;
 		},
-		closeEditPage: function() {
+		closeEditPage() {
 			this.isShowEdit = false;
 			this.edit.id = -1;
 			this.edit.name = "";
@@ -442,7 +476,7 @@ export default {
 			this.edit.oldGroup = "";
 			this.edit.group = utils.t('ungrouped');
 		},
-		saveRule: function() {
+		saveRule() {
 			const _this = this;
 			const data = {
 				"enable": 1,
@@ -454,7 +488,7 @@ export default {
 				"group": this.edit.group,
 				"isFunction": this.edit.execType == 1
 			};
-			const table = utils.ruleType2tableName(data.ruleType);
+			const table = utils.getTableName(data.ruleType);
 			if (data.group === '') {
 				data.group = utils.t('ungrouped');
 			}
@@ -526,7 +560,7 @@ export default {
 				_this.closeEditPage();
 			});
 		},
-		editRule: function(rule) {
+		editRule(rule) {
 			this.edit.id = rule.id;
 			this.edit.name = rule.name;
 			this.edit.ruleType = rule.ruleType;
@@ -544,11 +578,11 @@ export default {
 			this.editTitle = utils.t('edit');
 			this.isShowEdit = true;
 		},
-		removeRule: function(r) {
+		removeRule(r) {
 			const _this = this;
-			const table = ruleType2tableName(r.ruleType);
+			const table = utils.getTableName(r.ruleType);
 			const key = table + '-' + r.id;
-			deleteRule(table, r.id).then((response) => {
+			rules.remove(table, r.id).then((response) => {
 				browser.runtime.sendMessage({"method": "updateCache", "type": table});
 				Object.keys(_this.group).forEach(e => {
 					if (typeof(_this.group[e].rule[key]) !== "undefined") {
@@ -558,16 +592,16 @@ export default {
 			});
 		},
 		// Enable or disable a rule
-		onRuleEnable: function(rule, newValue) {
-			const table = ruleType2tableName(rule.ruleType);
+		onRuleEnable(rule, newValue) {
+			const table = utils.getTableName(rule.ruleType);
 			window.saveRule(table, rule).then(response => {
 				browser.runtime.sendMessage({"method": "updateCache", "type": table});
 			});
 		},
-		changeRuleGroup: function(rule, newGroup) {
+		changeRuleGroup(rule, newGroup) {
 			const _this = this;
 			return new Promise(resolve => {
-				const table = ruleType2tableName(rule.ruleType);
+				const table = utils.getTableName(rule.ruleType);
 				const oldGroup = rule.group;
 				_this.$delete(_this.group[oldGroup].rule, table + '-' + rule.id);
 				rule.group = newGroup;
@@ -577,7 +611,7 @@ export default {
 				});
 			});
 		},
-		onChangeRuleGroup: function(rule) {
+		onChangeRuleGroup(rule) {
 			const _this = this;
 			this.chooseGroup()
 			.then(r => {
@@ -586,20 +620,20 @@ export default {
 				}
 			});
 		},
-		onGroupShare: function(name) {
+		onGroupShare(name) {
 			const result = {};
 			for (const k of utils.TABLE_NAMES) {
 				result[k] = [];
 			}
 			Object.values(this.group[name].rule).forEach(e => {
-				result[ruleType2tableName(e.ruleType)].push(e);
+				result[utils.getTableName(e.ruleType)].push(e);
 			});
-			saveAsFile(
-				JSON.stringify(createExportFormat(result), null, "\t"),
-				DateFormat(HE_DUMP_FILE_NAME).replace('{ADDITIONAL}', '-' + name)
+			file.save(
+				JSON.stringify(rules.createExport(result), null, "\t"),
+				utils.getExportName(name)
 			);
 		},
-		onGroupDelete: function(name) {
+		onGroupDelete(name) {
 			// Delete group, but not delete rules, put all rules to "ungrouped"
 			const ungrouped = utils.t('ungrouped');
 			if (name === ungrouped) {
@@ -610,9 +644,54 @@ export default {
 				_this.changeRuleGroup(e, ungrouped);
 			});
 			this.$delete(this.group, name);
+		},
+		onExportAll() {
+			const result = {};
+			utils.TABLE_NAMES.forEach(k => {
+				result[k] = rules.get(k);
+			});
+			file.save(
+				JSON.stringify(rules.createExport(result), null, "\t"),
+				utils.getExportName(name)
+			);
+		},
+		onImport() {
+			file.load('.json').then(content => {
+				this.showImportConfirm(content);
+			});
+		},
+		showImportConfirm(content) {
+			this.imports.loading = true;
+			try {
+				this.imports.list = [];
+				const list = rules.fromJson(content);
+				utils.TABLE_NAMES.forEach(tableName => {
+					if (!list[tableName]) {
+						return;
+					}
+					list[tableName].forEach(e => {
+						if (!e.group) {
+							e.group = utils.t('ungrouped');
+						}
+						e.id = Math.random();
+						const rule = rules.get(tableName, { "name": e.name });
+						e.import_action = 1;
+						if (rule.length) {
+							e.import_action = 2;
+							e.import_old_id = rule[0].id;
+						}
+						this.imports.list.push(e);
+					});
+				});
+			} catch (e) {
+				console.log(e);
+				this.imports.loading = false;
+				return;
+			}
+			this.imports.loading = false;
 		}
 	},
-	mounted: function() {
+	mounted() {
 		const _this = this;
 		// Load rules
 		(function() {

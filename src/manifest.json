@@ -6,7 +6,7 @@
 	"homepage_url": "http://team.firefoxcn.net",
 	"manifest_version": 2,
 	"icons": {
-		"128": "images/128.png"
+		"128": "assets/images/128.png"
 	},
 	"permissions": [
 		"tabs",

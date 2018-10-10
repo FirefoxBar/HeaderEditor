@@ -1,7 +1,7 @@
-import browser from 'webextension-polyfill'
-import utils from './utils'
-import merge from 'merge'
-import equal from 'fast-deep-equal'
+import browser from 'webextension-polyfill';
+import utils from './utils';
+import merge from 'merge';
+import equal from 'fast-deep-equal';
 
 function getDatabase() {
 	return new Promise((resolve, reject) => {

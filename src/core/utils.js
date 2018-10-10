@@ -1,4 +1,5 @@
-import browser from 'webextension-polyfill'
+import browser from 'webextension-polyfill';
+import dateFormat from 'dateformat';
 
 const IS_ANDROID = navigator.userAgent.includes('Android');
 const IS_CHROME = /Chrome\/(\d+)\.(\d+)/.test(navigator.userAgent);
@@ -20,6 +21,9 @@ export default {
 	CHROME_VERSION: CHROME_VERSION,
 	FIREFOX_VERSION: FIREFOX_VERSION,
 	TABLE_NAMES: ['request', 'sendHeader', 'receiveHeader'],
+	getExportName(additional) {
+		return 'HE_' + dateFormat(new Date(), 'isoUtcDateTime').replace(/\:/g, '-') + (additional ? "_" + additional : "") + '.json';
+	},
 	// Get Active Tab
 	getActiveTab() {
 		return new Promise(resolve => {
@@ -54,7 +58,7 @@ export default {
 			}
 		})
 	},
-	ruleType2tableName(ruleType) {
+	getTableName(ruleType) {
 		if (ruleType === 'cancel' || ruleType === 'redirect') {
 			return 'request';
 		}
