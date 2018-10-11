@@ -881,6 +881,15 @@ export default {
 				storage.prefs.set('exclude-he', newOpt.rulesNoEffectForHe);
 			}, { deep: true });
 		});
+	},
+	watch: {
+		isShowEdit(newVal, oldVal) {
+			if (newVal) {
+				document.body.style.overflow = "hidden";
+			} else {
+				document.body.style.overflow = "auto";
+			}
+		}
 	}
 }
 </script>
