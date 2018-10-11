@@ -115,7 +115,7 @@ function filter(rules, options) {
 }
 
 function save(tableName, o) {
-	return new Promise((resolve) => {
+	return new Promise(resolve => {
 		storage.getDatabase().then((db) => {
 			const tx = db.transaction([tableName], "readwrite");
 			const os = tx.objectStore(tableName);

@@ -21,7 +21,7 @@ function getDatabase() {
 				}
 			} else {
 				utils.TABLE_NAMES.forEach(k => {
-					const tx = event.target.result.transaction([k], "readwrite");
+					const tx = event.target.transaction;
 					const os = tx.objectStore(k);
 					os.openCursor().onsuccess = function(e) {
 						const cursor = e.target.result;
@@ -31,8 +31,6 @@ function getDatabase() {
 							// upgrade rule format
 							os.put(utils.upgradeRuleFormat(s));
 							cursor.continue();
-						} else {
-							updateCache(k);
 						}
 					};
 				})

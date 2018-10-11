@@ -80,6 +80,7 @@ export default {
 		if (typeof(s.enable) === "undefined") {
 			s.enable = true;
 		}
+		return s;
 	},
 	t(key, params) {
 		const s = browser.i18n.getMessage(key, params)

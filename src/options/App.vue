@@ -56,6 +56,7 @@
 								<md-table-cell class="cell-action">
 									<md-button class="with-icon" @click="onChangeRuleGroup(r)"><md-icon>playlist_add</md-icon>{{t('group')}}</md-button>
 									<md-button class="with-icon" @click="onEditRule(r)"><md-icon>mode_edit</md-icon>{{t('edit')}}</md-button>
+									<md-button class="with-icon" @click="onCloneRule(r)"><md-icon>file_copy</md-icon>{{t('clone')}}</md-button>
 									<md-button class="with-icon" @click="onRemoveRule(r)"><md-icon>delete</md-icon>{{t('delete')}}</md-button>
 								</md-table-cell>
 							</md-table-row>
@@ -297,6 +298,7 @@
 <script>
 import browser from 'webextension-polyfill';
 import merge from 'merge';
+import parsePath from 'parse-path';
 import utils from '../core/utils';
 import rules from '../core/rules';
 import file from '../core/file';
@@ -366,7 +368,7 @@ export default {
 						break;
 					case 'regexp':
 						try {
-							let reg = new RegExp(data.matchRule, 'g');
+							const reg = new RegExp(data.matchRule, 'g');
 							isMatch = reg.test(data.test) ? 1 : 0;
 						} catch (e) {
 							isMatch = -1;
@@ -376,7 +378,7 @@ export default {
 						isMatch = data.test.indexOf(data.matchRule) === 0 ? 1 : 0;
 						break;
 					case 'domain':
-						isMatch = getDomain(data.test) === data.matchRule ? 1 : 0;
+						isMatch = parsePath(data.test).resource === data.matchRule ? 1 : 0;
 						break;
 					case 'url':
 						isMatch = data.test === data.matchRule ? 1 : 0;
@@ -386,7 +388,7 @@ export default {
 				}
 				if (isMatch === 1 && typeof(data.matchRule) === 'string' && data.excludeRule.length > 0) {
 					try {
-						let reg = new RegExp(data.excludeRule);
+						const reg = new RegExp(data.excludeRule);
 						isMatch = reg.test(data.test) ? 2 : 1;
 					} catch (e) {
 						isMatch = 1;
@@ -531,7 +533,7 @@ export default {
 		saveRule() {
 			const _this = this;
 			const data = {
-				"enable": 1,
+				"enable": true,
 				"name": this.edit.name,
 				"ruleType": this.edit.ruleType,
 				"matchType": this.edit.matchType,
@@ -630,6 +632,20 @@ export default {
 			this.edit.group = rule.group;
 			this.editTitle = utils.t('edit');
 			this.isShowEdit = true;
+		},
+		onCloneRule(r) {
+			const newName = window.prompt(utils.t('name'), r.name + "_clone");
+			if (newName) {
+				const newRule = merge(true, r);
+				const tableName = utils.getTableName(r.ruleType);
+				newRule.name = newName;
+				delete newRule["id"];
+				rules.save(tableName, newRule)
+				.then(res => {
+					browser.runtime.sendMessage({"method": "updateCache", "type": tableName});
+					this.$set(this.group[res.group].rule, tableName + '-' + res.id, res);
+				})
+			}
 		},
 		onEditChooseGroup() {
 			this.chooseGroup(this.edit.group)
