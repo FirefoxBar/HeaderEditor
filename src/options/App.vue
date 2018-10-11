@@ -14,7 +14,7 @@
 								<md-icon>more_vert</md-icon>
 							</md-button>
 							<md-menu-content>
-								<md-menu-item>
+								<md-menu-item @click="onGroupRename(g)">
 									<span>{{t('rename')}}</span>
 									<md-icon>mode_edit</md-icon>
 								</md-menu-item>
@@ -296,6 +296,7 @@
 
 <script>
 import browser from 'webextension-polyfill';
+import merge from 'merge';
 import utils from '../core/utils';
 import rules from '../core/rules';
 import file from '../core/file';
@@ -446,7 +447,7 @@ export default {
 				}
 			}
 			function checkResult(table, response) {
-				if (!response) { // Firefox is starting up
+				if (!response) { // Browser is starting up
 					requestRules(table);
 					return;
 				}
@@ -639,14 +640,13 @@ export default {
 			});
 		},
 		onRemoveRule(r) {
-			const _this = this;
 			const table = utils.getTableName(r.ruleType);
 			const key = table + '-' + r.id;
-			rules.remove(table, r.id).then((response) => {
+			rules.remove(table, r.id).then(response => {
 				browser.runtime.sendMessage({"method": "updateCache", "type": table});
-				Object.keys(_this.group).forEach(e => {
-					if (typeof(_this.group[e].rule[key]) !== "undefined") {
-						_this.$delete(_this.group[e].rule, key);
+				Object.keys(this.group).forEach(e => {
+					if (typeof(this.group[e].rule[key]) !== "undefined") {
+						this.$delete(this.group[e].rule, key);
 					}
 				});
 			});
@@ -679,6 +679,19 @@ export default {
 					_this.changeRuleGroup(rule, r);
 				}
 			});
+		},
+		onGroupRename(g) {
+			const name = window.prompt(utils.t('name'), g.name);
+			if (name) {
+				const queue = [];
+				Object.values(g.rule).forEach(r => {
+					r.group = name;
+					queue.push(rules.save(utils.getTableName(r.ruleType), r));
+				});
+				Promise.all(queue).then(() => {
+					g.name = name;
+				});
+			}
 		},
 		onGroupShare(name) {
 			const result = {};
