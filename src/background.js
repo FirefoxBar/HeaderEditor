@@ -11,55 +11,50 @@ browser.runtime.onMessage.addListener(function(request, sender, sendResponse) {
 	}
 	switch (request.method) {
 		case "healthCheck":
-			storage.getDatabase().then(() => {
-				sendResponse(true);
-			}).catch(() => {
-				sendResponse(false);
-			});
-			return true;
+			return new Promise(resolve => {
+				storage.getDatabase().then(() => {
+					resolve(true);
+				}).catch(() => {
+					resolve(false);
+				});
+			})
 		case "openURL":
-			openURL(request, sendResponse);
-			break;
+			return openURL(request);
 		case "getRules":
 			sendResponse(getRules(request.type, request.options));
 			return;
 		case "saveRule":
-			rules.save(request.type, request.content).then(sendResponse);
-			break;
+			return rules.save(request.type, request.content);
 		case "deleteRule":
-			rules.remove(request.type, request.id).then(sendResponse);
-			break;
+			return rules.remove(request.type, request.id);
 		case 'updateCache':
 			if (request.type === 'all') {
-				Promise.all([
+				return Promise.all([
 					rules.updateCache('request'),
 					rules.updateCache('sendHeader'),
 					rules.updateCache('receiveHeader')
-				])
-				.then(sendResponse);
+				]);
 			} else {
-				rules.updateCache(request.type).then(sendResponse);
+				return rules.updateCache(request.type);
 			}
-			break;
 	}
 	sendResponse();
-	return true;
 });
 
-function openURL(options, sendResponse) {
+function openURL(options) {
 	delete options.method;
 	browser.tabs.query({currentWindow: true, url: options.url}).then((tabs) => {
 		if (tabs.length) {
-			browser.tabs.update(tabs[0].id, {
+			return browser.tabs.update(tabs[0].id, {
 				"active": true
-			}).then(sendResponse);
+			});
 		} else {
 			utils.getActiveTab()
 			.then(tab => {
 				// re-use an active new tab page
 				// Firefox may have more than 1 newtab url, so check all
 				const isNewTab = tab.url.indexOf('about:newtab') === 0 || tab.url.indexOf('about:home') === 0 || tab.url.indexOf('chrome://newtab/') === 0;
-				browser.tabs[isNewTab ? "update" : "create"](options).then(sendResponse);
+				return browser.tabs[isNewTab ? "update" : "create"](options);
 			});
 		}
 	});
