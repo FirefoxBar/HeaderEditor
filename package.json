@@ -16,6 +16,7 @@
 		"dateformat": "^3.0.3",
 		"fast-deep-equal": "^2.0.1",
 		"merge": "^1.2.0",
+		"parse-path": "^3.0.4",
 		"vue": "^2.5.17",
 		"vue-material": "^1.0.0-beta-10.2",
 		"webextension-polyfill": "^0.3.1"

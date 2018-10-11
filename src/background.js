@@ -79,7 +79,7 @@ browser.webRequest.onBeforeRequest.addListener(function(e) {
 		return;
 	}
 	//可用：重定向，阻止加载
-	const rule = rules.get('request', {"url": e.url, "enable": 1});
+	const rule = rules.get('request', {"url": e.url, "enable": true});
 	let redirectTo = e.url;
 	const detail = {
 		"url": e.url,
@@ -176,7 +176,7 @@ browser.webRequest.onBeforeSendHeaders.addListener(function(e) {
 	if (!e.requestHeaders) {
 		return;
 	}
-	const rule = rules.get('sendHeader', {"url": e.url, "enable": 1});
+	const rule = rules.get('sendHeader', {"url": e.url, "enable": true});
 	modifyHeaders(e.requestHeaders, rule, e);
 	return {"requestHeaders": e.requestHeaders};
 }, {urls: ["<all_urls>"]}, ['blocking', 'requestHeaders']);
@@ -190,7 +190,7 @@ browser.webRequest.onHeadersReceived.addListener(function(e) {
 	if (!e.responseHeaders) {
 		return;
 	}
-	const rule = rules.get('receiveHeader', {"url": e.url, "enable": 1});
+	const rule = rules.get('receiveHeader', {"url": e.url, "enable": true});
 	modifyHeaders(e.responseHeaders, rule, e);
 	return {"responseHeaders": e.responseHeaders};
 }, {urls: ["<all_urls>"]}, ['blocking', 'responseHeaders']);

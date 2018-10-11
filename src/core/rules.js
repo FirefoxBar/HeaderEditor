@@ -1,6 +1,7 @@
 import utils from './utils';
 import storage from './storage';
 import merge from 'merge';
+import parsePath from 'parse-path';
 
 const cache = {};
 for (const t of utils.TABLE_NAMES) {
@@ -16,7 +17,7 @@ function updateCache(type) {
 			os.openCursor().onsuccess = function(event) {
 				const cursor = event.target.result;
 				if (cursor) {
-					let s = cursor.value;
+					const s = cursor.value;
 					let isValidRule = true;
 					s.id = cursor.key;
 					// Init function here
@@ -95,7 +96,7 @@ function filter(rules, options) {
 					result = url.indexOf(rule.pattern) === 0;
 					break;
 				case 'domain':
-					result = getDomain(url) === rule.pattern;
+					result = parsePath(url).resource === rule.pattern;
 					break;
 				case 'url':
 					result = url === rule.pattern;

@@ -5,7 +5,7 @@ import equal from 'fast-deep-equal';
 
 function getDatabase() {
 	return new Promise((resolve, reject) => {
-		const dbOpenRequest = window.indexedDB.open("headereditor", 2);
+		const dbOpenRequest = window.indexedDB.open("headereditor", 3);
 		dbOpenRequest.onsuccess = function(e) {
 			resolve(e.target.result);
 		};

@@ -9,7 +9,7 @@ const CHROME_VERSION = IS_CHROME ? (() => {
 })() : null;
 const IS_FIREFOX = !IS_CHROME;
 const FIREFOX_VERSION = IS_FIREFOX ? (() => {
-	let a = navigator.userAgent.match(/Firefox\/(\d+)\.(\d+)/);
+	const a = navigator.userAgent.match(/Firefox\/(\d+)\.(\d+)/);
 	return parseFloat(a[1] + '.' + a[2]);
 })() : null;
 
@@ -37,7 +37,7 @@ export default {
 	},
 	getURL(url, isPost) {
 		return new Promise((resolve, fail) => {
-			var xhr = new XMLHttpRequest();
+			const xhr = new XMLHttpRequest();
 			xhr.onreadystatechange = () => {
 				if (xhr.readyState == 4) {
 					if (xhr.status >= 400) {
@@ -48,7 +48,7 @@ export default {
 				}
 			};
 			if (url.length > 2000 || isPost) {
-				var parts = url.split("?");
+				const parts = url.split("?");
 				xhr.open("POST", parts[0], true);
 				xhr.setRequestHeader("Content-type","application/x-www-form-urlencoded");
 				xhr.send(parts[1]);
@@ -75,14 +75,14 @@ export default {
 			delete s.type;
 		}
 		if (typeof(s.isFunction) === "undefined") {
-			s.isFunction = 0;
+			s.isFunction = false;
 		}
 		if (typeof(s.enable) === "undefined") {
-			s.enable = 1;
+			s.enable = true;
 		}
 	},
 	t(key, params) {
-		var s = browser.i18n.getMessage(key, params)
+		const s = browser.i18n.getMessage(key, params)
 		return s || key;
 	}
 }
