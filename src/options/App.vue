@@ -2,9 +2,9 @@
 	<div>
 		<md-tabs class="md-primary main-menu" md-elevation="1" md-active-tab="tab-rule-list">
 			<md-tab id="tab-rule-list" :md-label="t('rule_list')" md-icon="list">
-				<md-table md-card v-for="g of group" :key="g.name" class="group-item">
-					<md-table-toolbar>
-						<h1 class="md-title">{{g.name}}</h1>
+				<md-card v-for="g of group" :key="g.name" class="group-item">
+					<md-card-header>
+						<div class="md-title">{{g.name}}</div>
 						<md-button class="md-icon-button" md-direction="bottom-end" @click="g.collapse = !g.collapse">
 							<md-icon v-show="!g.collapse">keyboard_arrow_up</md-icon>
 							<md-icon v-show="g.collapse">keyboard_arrow_down</md-icon>
@@ -13,7 +13,7 @@
 							<md-button class="md-icon-button" md-menu-trigger>
 								<md-icon>more_vert</md-icon>
 							</md-button>
-								<md-menu-content>
+							<md-menu-content>
 								<md-menu-item>
 									<span>{{t('rename')}}</span>
 									<md-icon>mode_edit</md-icon>
@@ -28,36 +28,40 @@
 								</md-menu-item>
 							</md-menu-content>
 						</md-menu>
-					</md-table-toolbar>
-					<md-table-row v-show="!g.collapse">
-						<md-table-head class="cell-enable">{{t('enable')}}</md-table-head>
-						<md-table-head class="cell-name">{{t('name')}}</md-table-head>
-						<md-table-head class="cell-type">{{t('ruleType')}}</md-table-head>
-						<md-table-head class="cell-action">{{t('action')}}</md-table-head>
-					</md-table-row>
-					<md-table-row v-for="r of g.rule" :key="r.id" v-show="!g.collapse">
-						<md-table-cell class="cell-enable">
-							<md-switch v-model="r.enable" class="md-primary" :true-value="1" :false-value="0" :data-type="r.ruleType" :data-id="r.id" @change="newValue => onRuleEnable(r, newValue)"></md-switch>
-						</md-table-cell>
-						<md-table-cell class="cell-name">
-							<span>{{r.name}}</span>
-							<md-tooltip md-direction="bottom">
-								<p>{{t('matchType')}}: {{t('match_' + r.matchType)}}</p>
-								<p>{{t('matchRule')}}: {{r.pattern}}</p>
-								<p>{{t('exec_type')}}: {{t('exec_' + (r.isFunction ? 'function' : 'normal'))}}</p>
-								<p v-if="r.ruleType === 'redirect'">{{t('redirectTo')}}: {{r.to}}</p>
-								<p v-if="r.ruleType === 'modifySendHeader' || r.ruleType === 'modifyReceiveHeader'">{{t('headerName')}}: {{r.action.name}}</p>
-								<p v-if="r.ruleType === 'modifySendHeader' || r.ruleType === 'modifyReceiveHeader'">{{t('headerValue')}}: {{r.action.value}}</p>
-							</md-tooltip>
-						</md-table-cell>
-						<md-table-cell class="cell-type">{{t('rule_' + r.ruleType)}}</md-table-cell>
-						<md-table-cell class="cell-action">
-							<md-button class="with-icon" @click="onChangeRuleGroup(r)"><md-icon>playlist_add</md-icon>{{t('group')}}</md-button>
-							<md-button class="with-icon" @click="editRule(r)"><md-icon>mode_edit</md-icon>{{t('edit')}}</md-button>
-							<md-button class="with-icon" @click="removeRule(r)"><md-icon>delete</md-icon>{{t('delete')}}</md-button>
-						</md-table-cell>
-					</md-table-row>
-				</md-table>
+					</md-card-header>
+					<md-card-content>
+						<md-table v-show="!g.collapse">
+							<md-table-row>
+								<md-table-head class="cell-enable">{{t('enable')}}</md-table-head>
+								<md-table-head class="cell-name">{{t('name')}}</md-table-head>
+								<md-table-head class="cell-type">{{t('ruleType')}}</md-table-head>
+								<md-table-head class="cell-action">{{t('action')}}</md-table-head>
+							</md-table-row>
+							<md-table-row v-for="r of g.rule" :key="r.id">
+								<md-table-cell class="cell-enable">
+									<md-switch v-model="r.enable" class="md-primary" :true-value="1" :false-value="0" :data-type="r.ruleType" :data-id="r.id" @change="newValue => onRuleEnable(r, newValue)"></md-switch>
+								</md-table-cell>
+								<md-table-cell class="cell-name">
+									<span>{{r.name}}</span>
+									<md-tooltip md-direction="bottom">
+										<p>{{t('matchType')}}: {{t('match_' + r.matchType)}}</p>
+										<p>{{t('matchRule')}}: {{r.pattern}}</p>
+										<p>{{t('exec_type')}}: {{t('exec_' + (r.isFunction ? 'function' : 'normal'))}}</p>
+										<p v-if="r.ruleType === 'redirect'">{{t('redirectTo')}}: {{r.to}}</p>
+										<p v-if="r.ruleType === 'modifySendHeader' || r.ruleType === 'modifyReceiveHeader'">{{t('headerName')}}: {{r.action.name}}</p>
+										<p v-if="r.ruleType === 'modifySendHeader' || r.ruleType === 'modifyReceiveHeader'">{{t('headerValue')}}: {{r.action.value}}</p>
+									</md-tooltip>
+								</md-table-cell>
+								<md-table-cell class="cell-type">{{t('rule_' + r.ruleType)}}</md-table-cell>
+								<md-table-cell class="cell-action">
+									<md-button class="with-icon" @click="onChangeRuleGroup(r)"><md-icon>playlist_add</md-icon>{{t('group')}}</md-button>
+									<md-button class="with-icon" @click="onEditRule(r)"><md-icon>mode_edit</md-icon>{{t('edit')}}</md-button>
+									<md-button class="with-icon" @click="onRemoveRule(r)"><md-icon>delete</md-icon>{{t('delete')}}</md-button>
+								</md-table-cell>
+							</md-table-row>
+						</md-table>
+					</md-card-content>
+				</md-card>
 			</md-tab>
 			<md-tab id="tab-options" :md-label="t('options')" md-icon="settings">
 				<md-card>
@@ -104,13 +108,13 @@
 					</md-card-content>
 				</md-card>
 				<!-- import list -->
-				<md-card>
+				<md-card class="import-confirm">
 					<md-card-header>
 						<div class="md-title">{{t('import')}}</div>
 					</md-card-header>
 					<md-card-content>
-						<md-progress-bar md-mode="indeterminate" v-show="imports.loading"></md-progress-bar>
-						<md-table v-show="!imports.loading">
+						<md-progress-bar md-mode="indeterminate" v-show="imports.status == 1"></md-progress-bar>
+						<md-table v-show="imports.status == 2" class="import-table">
 							<md-table-row>
 								<md-table-head class="cell-name">{{t('name')}}</md-table-head>
 								<md-table-head class="cell-type">{{t('ruleType')}}</md-table-head>
@@ -121,7 +125,8 @@
 								<md-table-cell class="cell-name">{{r.name}}</md-table-cell>
 								<md-table-cell class="cell-type">{{t('rule_' + r.ruleType)}}</md-table-cell>
 								<md-table-cell class="cell-group">
-									<md-field><md-input v-model="r.group"></md-input></md-field>
+									<span>{{r.group}}</span>
+									<md-button class="md-primary" @click="onImportRuleChooseGroup(r)">{{t('choose')}}</md-button>
 								</md-table-cell>
 								<md-table-cell class="cell-action">
 									<md-radio class="md-primary" v-model="r.import_action" :value="1">{{t('import_new')}}</md-radio>
@@ -129,8 +134,14 @@
 									<md-radio class="md-primary" v-model="r.import_action" :value="3">{{t('import_drop')}}</md-radio>
 								</md-table-cell>
 							</md-table-row>
-							<md-tab
 						</md-table>
+						<md-card-actions md-alignment="left">
+							<span>{{t('save_to')}}</span>
+							<md-radio class="md-primary" v-model="imports.group_type" :value="0">{{t('suggested_group')}}</md-radio>
+							<md-radio class="md-primary" v-model="imports.group_type" :value="1">{{t('chooseGroup')}}</md-radio>
+							<md-button>{{t('save')}}</md-button>
+							<md-button>{{t('cancel')}}</md-button>
+						</md-card-actions>
 					</md-card-content>
 				</md-card>
 			</md-tab>
@@ -158,8 +169,8 @@
 							<div class="form-group">
 								<div class="left">{{t('ruleType')}}</div>
 								<div class="right">
-									<md-radio class="md-primary" v-model="edit.ruleType" value="cancel"	:disabled="!edit.ruleTypeEditable">{{t('rule_cancel')}}</md-radio>
-									<md-radio class="md-primary" v-model="edit.ruleType" value="redirect"	:disabled="!edit.ruleTypeEditable">{{t('rule_redirect')}}</md-radio>
+									<md-radio class="md-primary" v-model="edit.ruleType" value="cancel" :disabled="!edit.ruleTypeEditable">{{t('rule_cancel')}}</md-radio>
+									<md-radio class="md-primary" v-model="edit.ruleType" value="redirect" :disabled="!edit.ruleTypeEditable">{{t('rule_redirect')}}</md-radio>
 									<md-radio class="md-primary" v-model="edit.ruleType" value="modifySendHeader"	:disabled="!edit.ruleTypeEditable">{{t('rule_modifySendHeader')}}</md-radio>
 									<md-radio class="md-primary" v-model="edit.ruleType" value="modifyReceiveHeader"	:disabled="!edit.ruleTypeEditable">{{t('rule_modifyReceiveHeader')}}</md-radio>
 								</div>
@@ -237,12 +248,10 @@
 							</md-card-header-text>
 						</md-card-header>
 						<md-card-content>
-							<md-autocomplete v-model="edit.group" :md-options="groupList" :md-fuzzy-search="false">
-								<label>{{t('group')}}</label>
-								<template slot="md-autocomplete-item" slot-scope="{ item, term }">
-									<md-highlight-text :md-term="term">{{item}}</md-highlight-text>
-								</template>
-							</md-autocomplete>
+							<p class="group">
+								<span>{{t('group')}}</span><span>{{edit.group}}</span>
+								<md-button class="md-primary" @click="onEditChooseGroup">{{t('choose')}}</md-button>
+							</p>
 							<md-button class="md-raised md-primary" @click="saveRule">{{t('save')}}</md-button>
 						</md-card-content>
 					</md-card>
@@ -330,7 +339,8 @@ export default {
 				text: ""
 			},
 			imports: {
-				loading: false,
+				status: 0,
+				group_type: 0,
 				list: []
 			}
 		};
@@ -424,11 +434,11 @@ export default {
 		onChooseOK() {
 			this.isChooseGroup = false;
 		},
-		chooseGroup() {
+		chooseGroup(name) {
 			const _this = this;
 			return new Promise(resolve => {
 				_this.choosenNewGroup = "";
-				_this.choosenGroup = utils.t('ungrouped');
+				_this.choosenGroup = name ? name : utils.t('ungrouped');
 				_this.isChooseGroup = true;
 				let _t = setInterval(() => {
 					if (_this.isChooseGroup === false) {
@@ -560,7 +570,7 @@ export default {
 				_this.closeEditPage();
 			});
 		},
-		editRule(rule) {
+		onEditRule(rule) {
 			this.edit.id = rule.id;
 			this.edit.name = rule.name;
 			this.edit.ruleType = rule.ruleType;
@@ -578,7 +588,15 @@ export default {
 			this.editTitle = utils.t('edit');
 			this.isShowEdit = true;
 		},
-		removeRule(r) {
+		onEditChooseGroup() {
+			this.chooseGroup(this.edot.group)
+			.then(r => {
+				if (r !== null) {
+					this.edit.group = r;
+				}
+			});
+		},
+		onRemoveRule(r) {
 			const _this = this;
 			const table = utils.getTableName(r.ruleType);
 			const key = table + '-' + r.id;
@@ -594,7 +612,7 @@ export default {
 		// Enable or disable a rule
 		onRuleEnable(rule, newValue) {
 			const table = utils.getTableName(rule.ruleType);
-			window.saveRule(table, rule).then(response => {
+			rules.save(table, rule).then(response => {
 				browser.runtime.sendMessage({"method": "updateCache", "type": table});
 			});
 		},
@@ -606,7 +624,7 @@ export default {
 				_this.$delete(_this.group[oldGroup].rule, table + '-' + rule.id);
 				rule.group = newGroup;
 				_this.$set(_this.group[newGroup].rule, table + '-' + rule.id, rule);
-				window.saveRule(table, rule).then(function(response) {
+				rules.save(table, rule).then(function(response) {
 					resolve(response);
 				});
 			});
@@ -660,8 +678,16 @@ export default {
 				this.showImportConfirm(content);
 			});
 		},
+		onImportRuleChooseGroup(rule) {
+			this.chooseGroup(rule.group)
+			.then(r => {
+				if (r !== null) {
+					rule.group = r;
+				}
+			});
+		},
 		showImportConfirm(content) {
-			this.imports.loading = true;
+			this.imports.status = 1;
 			try {
 				this.imports.list = [];
 				const list = rules.fromJson(content);
@@ -685,10 +711,10 @@ export default {
 				});
 			} catch (e) {
 				console.log(e);
-				this.imports.loading = false;
+				this.imports.status = 0;
 				return;
 			}
-			this.imports.loading = false;
+			this.imports.status = 2;
 		}
 	},
 	mounted() {
@@ -729,14 +755,12 @@ export default {
 			}
 		})();
 		// Load download history
-		(function() {
-			storage.getLocalStorage().get('dl_history').then(r => {
-				if (r.dl_history === undefined) {
-					return;
-				}
-				_this.$set(_this.download, 'log', r.dl_history);
-			});
-		})();
+		storage.getLocalStorage().get('dl_history').then(r => {
+			if (r.dl_history === undefined) {
+				return;
+			}
+			_this.$set(_this.download, 'log', r.dl_history);
+		});
 		this.$watch('options', (newOpt) => {
 			storage.prefs.set('manage-collapse-group', newOpt.collapseGroup);
 			storage.prefs.set('exclude-he', newOpt.rulesNoEffectForHe);
