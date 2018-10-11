@@ -216,15 +216,7 @@ function toggleAntiHotLinkMenu(has) {
 		antiHotLinkMenu = null;
 	}
 }
-function requestUserPrefs() {
-	let t = setTimeout(() => {
-		clearTimeout(t);
-		t = null;
-		if (!storage.prefs.isDefault) {
-			toggleAntiHotLinkMenu(storage.prefs.get('add-hot-link'));
-		} else {
-			requestUserPrefs();
-		}
-	}, 10);
-}
-requestUserPrefs();
+storage.prefs.onReady()
+.then(prefs => {
+	toggleAntiHotLinkMenu(prefs.get('add-hot-link'));
+})

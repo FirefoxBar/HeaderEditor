@@ -183,6 +183,33 @@
 	background-color: #fafafa !important;
 }
 
+.download-input {
+	>* {
+		vertical-align: middle;
+	}
+	.url {
+		display: inline-flex;
+		width: calc(100% - 110px);
+		margin: 0;
+		padding-top: 0;
+		min-height: 32px;
+
+		&,
+		&.md-focused {
+			label {
+				top: 6px;
+			}
+		}
+	}
+}
+
+.download-list {
+	.md-list-item-content .md-list-action {
+		margin-right: 0;
+		margin-left: 0;
+	}
+}
+
 .import-confirm {
 	.md-card-content {
 		padding-left: 0;

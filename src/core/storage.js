@@ -41,46 +41,93 @@ function getDatabase() {
 	});
 };
 
-const prefs = browser.extension.getBackgroundPage().prefs || new function Prefs() {
-	function defineReadonlyProperty(obj, key, value) {
-		const copy = merge(true, value);
-		// In ES6, freezing a literal is OK (it returns the same value), but in previous versions it's an exception.
-		if (typeof copy == "object") {
-			Object.freeze(copy);
+const prefs = browser.extension.getBackgroundPage().prefs || new class {
+	constructor() {
+		this.boundMethods = {};
+		this.boundWrappers = {};
+		const defaults = {
+			"add-hot-link": false,
+			"manage-collapse-group": true, // Collapse groups
+			"exclude-he": true // rules take no effect on HE or not
+		};
+		// when browser is strarting up, the setting is default
+		this.isDefault = true;
+		this.waitQueue = [];
+	
+		this.values = merge(true, defaults);
+
+		Object.keys(defaults).forEach(key => {
+			this.set(key, defaults[key], true);
+		});
+	
+		getSync().get("settings").then(result => {
+			const synced = result.settings;
+			for (const key in defaults) {
+				if (synced && (key in synced)) {
+					this.set(key, synced[key], true);
+				} else {
+					const value = tryMigrating(key);
+					if (value !== undefined) {
+						this.set(key, value);
+					}
+				}
+			}
+			this.isDefault = false;
+			this.waitQueue.forEach(resolve => resolve(this));
+		});
+	
+		browser.storage.onChanged.addListener((changes, area) => {
+			if (area == "sync" && "settings" in changes) {
+				const synced = changes.settings.newValue;
+				if (synced) {
+					for (const key in defaults) {
+						if (key in synced) {
+							this.set(key, synced[key], true);
+						}
+					}
+				} else {
+					// user manually deleted our settings, we'll recreate them
+					getSync().set({"settings": this.values});
+				}
+			}
+		});
+	
+		function tryMigrating(key) {
+			if (!(key in localStorage)) {
+				return undefined;
+			}
+			const value = localStorage[key];
+			delete localStorage[key];
+			localStorage["DEPRECATED: " + key] = value;
+			switch (typeof defaults[key]) {
+				case "boolean":
+					return value.toLowerCase() === "true";
+				case "number":
+					return Number(value);
+				case "object":
+					try {
+						return JSON.parse(value);
+					} catch(e) {
+						console.log("Cannot migrate from localStorage %s = '%s': %o", key, value, e);
+						return undefined;
+					}
+			}
+			return value;
 		}
-		Object.defineProperty(obj, key, {value: copy, configurable: true})
 	}
-
-	const _this = this;
-	let boundWrappers = {};
-	let boundMethods = {};
-
-	let defaults = {
-		"add-hot-link": false,
-		"manage-collapse-group": true, // Collapse groups
-		"exclude-he": true // rules take no effect on HE or not
-	};
-	// when browser is strarting up, the setting is default
-	this.isDefault = true;
-
-	let values = merge(true, defaults);
-	let syncTimeout; // see broadcast() function below
-
-	Object.defineProperty(this, "readOnlyValues", {value: {}});
-
-	Prefs.prototype.get = function(key, defaultValue) {
-		if (key in boundMethods) {
-			if (key in boundWrappers) {
-				return boundWrappers[key];
+	get(key, defaultValue) {
+		if (key in this.boundMethods) {
+			if (key in this.boundWrappers) {
+				return this.boundWrappers[key];
 			} else {
-				if (key in values) {
-					boundWrappers[key] = boundMethods[key](values[key]);
-					return boundWrappers[key];
+				if (key in this.values) {
+					this.boundWrappers[key] = this.boundMethods[key](this.values[key]);
+					return this.boundWrappers[key];
 				}
 			}
 		}
-		if (key in values) {
-			return values[key];
+		if (key in this.values) {
+			return this.values[key];
 		}
 		if (defaultValue !== undefined) {
 			return defaultValue;
@@ -89,96 +136,36 @@ const prefs = browser.extension.getBackgroundPage().prefs || new function Prefs(
 			return defaults[key];
 		}
 		console.warn('No default preference for ' + key);
-	};
-
-	Prefs.prototype.getAll = function(key) {
-		return merge(true, values);
-	};
-
-	Prefs.prototype.set = function(key, value, options) {
-		let oldValue = merge(true, values[key]);
-		values[key] = value;
-		defineReadonlyProperty(this.readOnlyValues, key, value);
-		if ((!options || !options.noBroadcast) && !equal(value, oldValue)) {
-			_this.broadcast(key, value, options);
-		}
-	};
-
-	Prefs.prototype.bindAPI = function(apiName, apiMethod) {
-		boundMethods[apiName] = apiMethod;
-	};
-
-	Prefs.prototype.remove = function(key) {
-		_this.set(key, undefined)
-	};
-
-	Prefs.prototype.broadcast = function(key, value, options) {
-		if (!options || !options.noSync) {
-			clearTimeout(syncTimeout);
-			syncTimeout = setTimeout(function() {
-				getSync().set({"settings": values});
-			}, 0);
-		}
-	};
-
-	Object.keys(defaults).forEach(function(key) {
-		_this.set(key, defaults[key], {noBroadcast: true});
-	});
-
-	getSync().get("settings").then(function(result) {
-		_this.isDefault = false;
-		const synced = result.settings;
-		for (const key in defaults) {
-			if (synced && (key in synced)) {
-				_this.set(key, synced[key], {noSync: true});
-			} else {
-				const value = tryMigrating(key);
-				if (value !== undefined) {
-					_this.set(key, value);
-				}
-			}
-		}
-	});
-
-	browser.storage.onChanged.addListener(function(changes, area) {
-		if (area == "sync" && "settings" in changes) {
-			const synced = changes.settings.newValue;
-			if (synced) {
-				for (key in defaults) {
-					if (key in synced) {
-						_this.set(key, synced[key], {noSync: true});
-					}
-				}
-			} else {
-				// user manually deleted our settings, we'll recreate them
-				getSync().set({"settings": values});
-			}
-		}
-	});
-
-	function tryMigrating(key) {
-		if (!(key in localStorage)) {
-			return undefined;
-		}
-		const value = localStorage[key];
-		delete localStorage[key];
-		localStorage["DEPRECATED: " + key] = value;
-		switch (typeof defaults[key]) {
-			case "boolean":
-				return value.toLowerCase() === "true";
-			case "number":
-				return Number(value);
-			case "object":
-				try {
-					return JSON.parse(value);
-				} catch(e) {
-					console.log("Cannot migrate from localStorage %s = '%s': %o", key, value, e);
-					return undefined;
-				}
-		}
-		return value;
 	}
-};
+	getAll() {
+		return merge(true, this.values);
+	}
+	set(key, value, noSync) {
+		const oldValue = merge(true, this.values[key]);
+		if (!equal(value, oldValue)) {
+			this.values[key] = value;
+			if (!noSync) {
+				getSync().set({"settings": this.values});
+			}
+		}
+	}
+	bindAPI(apiName, apiMethod) {
+		this.boundMethods[apiName] = apiMethod;
+	}
+	remove(key) {
+		this.set(key, undefined)
+	}
+	onReady() {
+		const _this = this;
+		return new Promise(resolve => {
+			if (!_this.isDefault) {
+				resolve(_this);
+			} else {
+				_this.waitQueue.push(resolve);
+			}
+		});
+	}
+}
 
 function getSync() {
 	if ("sync" in browser.storage) {

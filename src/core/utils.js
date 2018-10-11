@@ -41,7 +41,7 @@ export default {
 			xhr.onreadystatechange = () => {
 				if (xhr.readyState == 4) {
 					if (xhr.status >= 400) {
-						fail();
+						fail(xhr.status);
 					} else {
 						resolve(xhr.responseText);
 					}

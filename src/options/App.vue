@@ -91,18 +91,20 @@
 						<div class="md-title">{{t('download_rule')}}</div>
 					</md-card-header>
 					<md-card-content>
-						<md-field md-inline>
-							<label>URL</label>
-							<md-input v-model="download.url"></md-input>
-						</md-field>
-						<md-button class="md-icon-button"><md-icon>file_download</md-icon></md-button>
-						<md-button class="with-icon"><md-icon>search</md-icon>{{t('third_party_rules')}}</md-button>
-						<md-list>
+						<div class="download-input">
+							<md-field md-inline class="url">
+								<label>URL</label>
+								<md-input v-model="download.url"></md-input>
+							</md-field>
+							<md-button class="md-icon-button" @click="onDownloadClick"><md-icon>file_download</md-icon></md-button>
+							<md-button class="md-icon-button" :title="t('third_party_rules')"><md-icon>search</md-icon></md-button>
+						</div>
+						<md-list class="download-list">
 							<md-list-item v-for="url of download.log" :key="url">
 								<span class="md-list-item-text">{{url}}</span>
-								<md-button class="md-icon-button md-list-action"><md-icon>file_download</md-icon></md-button>
-								<md-button class="md-icon-button md-list-action"><md-icon>mode_edit</md-icon></md-button>
-								<md-button class="md-icon-button md-list-action"><md-icon>delete</md-icon></md-button>
+								<md-button class="md-icon-button md-list-action" @click="onDownloadLogClick(url)"><md-icon>file_download</md-icon></md-button>
+								<md-button class="md-icon-button md-list-action" @click="download.url = url"><md-icon>mode_edit</md-icon></md-button>
+								<md-button class="md-icon-button md-list-action" @click="onRemoveDownload(url)"><md-icon>delete</md-icon></md-button>
 							</md-list-item>
 						</md-list>
 					</md-card-content>
@@ -323,8 +325,8 @@ export default {
 				group: utils.t('ungrouped')
 			},
 			options: {
-				collapseGroup: storage.prefs.get('manage-collapse-group'),
-				rulesNoEffectForHe: storage.prefs.get('exclude-he')
+				collapseGroup: true,
+				rulesNoEffectForHe: true
 			},
 			download: {
 				url: "",
@@ -428,7 +430,7 @@ export default {
 			this.group = {};
 			this.$set(this.group, utils.t('ungrouped'), {
 				name: utils.t('ungrouped'),
-				collapse: storage.prefs.get('manage-collapse-group'),
+				collapse: this.options.collapseGroup,
 				rule: {}
 			});
 			function appendRule(table, response) {
@@ -436,7 +438,7 @@ export default {
 					if (typeof(_this.group[item.group]) === "undefined") {
 						_this.$set(_this.group, item.group, {
 							name: item.group,
-							collapse: storage.prefs.get('manage-collapse-group'),
+							collapse: _this.options.collapseGroup,
 							rule: {}
 						});
 					}
@@ -793,21 +795,63 @@ export default {
 				return;
 			}
 			this.imports.status = 2;
+		},
+		saveDownloadHistory() {
+			storage.getLocalStorage().set({
+				dl_history: JSON.stringify(this.download.log)
+			});
+		},
+		onDownloadClick() {
+			this.imports.status = 1;
+			if (!this.download.log.includes(this.download.url)) {
+				this.download.log.push(this.download.url);
+				this.saveDownloadHistory();
+			}
+			utils.getURL(this.download.url)
+			.then(r => {
+				this.showImportConfirm(r);
+				this.download.url = "";
+			})
+			.catch(e => {
+				this.showToast(e.message);
+				this.imports.status = 0;
+			});
+		},
+		onDownloadLogClick(url) {
+			this.imports.status = 1;
+			utils.getURL(url)
+			.then(r => {
+				this.showImportConfirm(r);
+			})
+			.catch(e => {
+				this.showToast(e.message);
+				this.imports.status = 0;
+			});
+		},
+		onRemoveDownload(url) {
+			if (this.download.log.includes(url)) {
+				this.download.log.splice(this.download.log.indexOf(url), 1);
+				this.saveDownloadHistory();
+			}
 		}
 	},
 	mounted() {
-		this.loadRules();
 		// Load download history
 		storage.getLocalStorage().get('dl_history').then(r => {
 			if (r.dl_history === undefined) {
 				return;
 			}
-			_this.$set(_this.download, 'log', r.dl_history);
+			this.$set(this.download, 'log', JSON.parse(r.dl_history));
 		});
-		this.$watch('options', (newOpt) => {
-			storage.prefs.set('manage-collapse-group', newOpt.collapseGroup);
-			storage.prefs.set('exclude-he', newOpt.rulesNoEffectForHe);
-		}, { deep: true });
+		storage.prefs.onReady().then(prefs => {
+			this.options.collapseGroup = prefs.get('manage-collapse-group');
+			this.options.rulesNoEffectForHe = prefs.get('exclude-he');
+			this.loadRules();
+			this.$watch('options', (newOpt) => {
+				storage.prefs.set('manage-collapse-group', newOpt.collapseGroup);
+				storage.prefs.set('exclude-he', newOpt.rulesNoEffectForHe);
+			}, { deep: true });
+		});
 	}
 }
 </script>
