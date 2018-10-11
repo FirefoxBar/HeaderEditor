@@ -56,6 +56,7 @@ const prefs = browser.extension.getBackgroundPage().prefs || new function Prefs(
 	let boundMethods = {};
 
 	let defaults = {
+		"add-hot-link": false,
 		"manage-collapse-group": true, // Collapse groups
 		"exclude-he": true // rules take no effect on HE or not
 	};
@@ -87,7 +88,7 @@ const prefs = browser.extension.getBackgroundPage().prefs || new function Prefs(
 		if (key in defaults) {
 			return defaults[key];
 		}
-		console.warn("No default preference for '%s'", key);
+		console.warn('No default preference for ' + key);
 	};
 
 	Prefs.prototype.getAll = function(key) {

@@ -129,8 +129,8 @@ function save(tableName, o) {
 						}
 						rule[prop] = o[prop];
 					}
-					request = os.put(rule);
-					request.onsuccess = function(event) {
+					const req = os.put(rule);
+					req.onsuccess = function(event) {
 						updateCache(tableName);
 						resolve(rule);
 					};

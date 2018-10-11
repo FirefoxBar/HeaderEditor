@@ -16,11 +16,11 @@ const config = {
 	entry: {
 		'background': './background.js',
 		'popup/popup': './popup/popup.js',
-		'options/options': './options/options.js',
+		'options/options': './options/options.js'
 	},
 	output: {
 		path: __dirname + '/dist',
-		filename: '[name].js',
+		filename: '[name].js'
 	},
 	resolve: {
 		extensions: ['.js', '.vue'],

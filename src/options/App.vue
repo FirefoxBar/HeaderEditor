@@ -109,40 +109,44 @@
 				</md-card>
 				<!-- import list -->
 				<md-card class="import-confirm">
-					<md-card-header>
-						<div class="md-title">{{t('import')}}</div>
-					</md-card-header>
-					<md-card-content>
-						<md-progress-bar md-mode="indeterminate" v-show="imports.status == 1"></md-progress-bar>
-						<md-table v-show="imports.status == 2" class="import-table">
-							<md-table-row>
-								<md-table-head class="cell-name">{{t('name')}}</md-table-head>
-								<md-table-head class="cell-type">{{t('ruleType')}}</md-table-head>
-								<md-table-head class="cell-group">{{t('suggested_group')}}</md-table-head>
-								<md-table-head class="cell-action">{{t('action')}}</md-table-head>
-							</md-table-row>
-							<md-table-row v-for="r of imports.list" :key="r.id">
-								<md-table-cell class="cell-name">{{r.name}}</md-table-cell>
-								<md-table-cell class="cell-type">{{t('rule_' + r.ruleType)}}</md-table-cell>
-								<md-table-cell class="cell-group">
-									<span>{{r.group}}</span>
-									<md-button class="md-primary" @click="onImportRuleChooseGroup(r)">{{t('choose')}}</md-button>
-								</md-table-cell>
-								<md-table-cell class="cell-action">
-									<md-radio class="md-primary" v-model="r.import_action" :value="1">{{t('import_new')}}</md-radio>
-									<md-radio class="md-primary" v-model="r.import_action" :value="2" v-show="r.import_old_id">{{t('import_override')}}</md-radio>
-									<md-radio class="md-primary" v-model="r.import_action" :value="3">{{t('import_drop')}}</md-radio>
-								</md-table-cell>
-							</md-table-row>
-						</md-table>
-						<md-card-actions md-alignment="left">
+					<md-card-area>
+						<md-card-header>
+							<div class="md-title">{{t('import')}}</div>
+						</md-card-header>
+						<md-card-content>
+							<md-progress-bar md-mode="indeterminate" v-show="imports.status == 1"></md-progress-bar>
+							<md-table v-show="imports.status == 2" class="import-table">
+								<md-table-row>
+									<md-table-head class="cell-name">{{t('name')}}</md-table-head>
+									<md-table-head class="cell-type">{{t('ruleType')}}</md-table-head>
+									<md-table-head class="cell-group">{{t('suggested_group')}}</md-table-head>
+									<md-table-head class="cell-action">{{t('action')}}</md-table-head>
+								</md-table-row>
+								<md-table-row v-for="r of imports.list" :key="r.id">
+									<md-table-cell class="cell-name">{{r.name}}</md-table-cell>
+									<md-table-cell class="cell-type">{{t('rule_' + r.ruleType)}}</md-table-cell>
+									<md-table-cell class="cell-group">
+										<span>{{r.group}}</span>
+										<md-button class="md-primary" @click="onImportRuleChooseGroup(r)">{{t('choose')}}</md-button>
+									</md-table-cell>
+									<md-table-cell class="cell-action">
+										<md-radio class="md-primary" v-model="r.import_action" :value="1">{{t('import_new')}}</md-radio>
+										<md-radio class="md-primary" v-model="r.import_action" :value="2" v-show="r.import_old_id">{{t('import_override')}}</md-radio>
+										<md-radio class="md-primary" v-model="r.import_action" :value="3">{{t('import_drop')}}</md-radio>
+									</md-table-cell>
+								</md-table-row>
+							</md-table>
+						</md-card-content>
+					</md-card-area>
+					<md-card-actions md-alignment="left" v-show="imports.status == 2">
+						<div class="save-to">
 							<span>{{t('save_to')}}</span>
-							<md-radio class="md-primary" v-model="imports.group_type" :value="0">{{t('suggested_group')}}</md-radio>
-							<md-radio class="md-primary" v-model="imports.group_type" :value="1">{{t('chooseGroup')}}</md-radio>
-							<md-button>{{t('save')}}</md-button>
-							<md-button>{{t('cancel')}}</md-button>
-						</md-card-actions>
-					</md-card-content>
+							<md-radio class="md-primary" v-model="imports.group_type" :value="0">{{imports.group_name}}<md-button class="md-primary" @click="onImportChooseGroup">{{t('choose')}}</md-button></md-radio>
+							<md-radio class="md-primary" v-model="imports.group_type" :value="1">{{t('suggested_group')}}</md-radio>
+						</div>
+						<md-button @click="onImportSave">{{t('save')}}</md-button>
+						<md-button @click="imports.status = 0">{{t('cancel')}}</md-button>
+					</md-card-actions>
 				</md-card>
 			</md-tab>
 		</md-tabs>
@@ -263,14 +267,14 @@
 				<md-icon>add</md-icon>
 			</md-button>
 		</div>
-		<md-dialog :md-active.sync="isChooseGroup">
+		<md-dialog :md-active.sync="isChooseGroup" class="group-dialog">
 			<md-dialog-title>{{t('group')}}</md-dialog-title>
 			<md-list>
 				<md-list-item v-for="g of groupList" :key="g">
 					<md-radio v-model="choosenGroup" :value="g" />
 					<span class="md-list-item-text">{{g}}</span>
 				</md-list-item>
-				<md-list-item class="md-radio-input">
+				<md-list-item class="md-radio-input new">
 					<md-radio v-model="choosenGroup" value="_new" />
 					<md-field md-inline>
 						<label>{{t('add')}}</label>
@@ -341,6 +345,7 @@ export default {
 			imports: {
 				status: 0,
 				group_type: 0,
+				group_name: "",
 				list: []
 			}
 		};
@@ -418,6 +423,40 @@ export default {
 	},
 	methods: {
 		t: utils.t,
+		loadRules() {
+			const _this = this;
+			this.group = {};
+			this.$set(this.group, utils.t('ungrouped'), {
+				name: utils.t('ungrouped'),
+				collapse: storage.prefs.get('manage-collapse-group'),
+				rule: {}
+			});
+			function appendRule(table, response) {
+				for (const item of response) {
+					if (typeof(_this.group[item.group]) === "undefined") {
+						_this.$set(_this.group, item.group, {
+							name: item.group,
+							collapse: storage.prefs.get('manage-collapse-group'),
+							rule: {}
+						});
+					}
+					_this.$set(_this.group[item.group].rule, table + '-' + item.id, item);
+				}
+			}
+			function checkResult(table, response) {
+				if (!response) { // Firefox is starting up
+					requestRules(table);
+					return;
+				}
+				appendRule(table, response);
+			}
+			function requestRules(table) {
+				setTimeout(() => {
+					checkResult(table, rules.get(table));
+				}, 20);
+			}
+			utils.TABLE_NAMES.forEach(t => requestRules(t));
+		},
 		showAlert(text) {
 			this.alert.text = text;
 			this.alert.show = true;
@@ -571,6 +610,7 @@ export default {
 			});
 		},
 		onEditRule(rule) {
+			console.log(rule);
 			this.edit.id = rule.id;
 			this.edit.name = rule.name;
 			this.edit.ruleType = rule.ruleType;
@@ -589,7 +629,7 @@ export default {
 			this.isShowEdit = true;
 		},
 		onEditChooseGroup() {
-			this.chooseGroup(this.edot.group)
+			this.chooseGroup(this.edit.group)
 			.then(r => {
 				if (r !== null) {
 					this.edit.group = r;
@@ -686,8 +726,46 @@ export default {
 				}
 			});
 		},
+		onImportChooseGroup() {
+			this.chooseGroup(this.imports.group_name)
+			.then(r => {
+				if (r !== null) {
+					this.imports.group_name = r;
+				}
+			});
+		},
+		onImportSave() {
+			this.imports.status = 1;
+			const queue = [];
+			this.imports.list.forEach(e => {
+				//不导入
+				if (e.import_action == 3) {
+					return;
+				}
+				if (e.import_action == 2) {
+					e.id = e.import_old_id;
+				} else {
+					delete e["id"];
+				}
+				delete e["import_action"];
+				delete e["import_old_id"];
+				const tableName = utils.getTableName(e.ruleType);
+				e.group = this.imports.group_type === 0 ? this.imports.group_name : e.group;
+
+				queue.push(rules.save(tableName, e));
+			});
+			Promise.all(queue).then(() => {
+				this.imports.status = 0;
+				this.showToast(utils.t('import_success'));
+				const t = setTimeout(() => {
+					this.loadRules();
+					clearTimeout(t);
+				}, 300);
+			});
+		},
 		showImportConfirm(content) {
 			this.imports.status = 1;
+			this.imports.group_name = utils.t('ungrouped');
 			try {
 				this.imports.list = [];
 				const list = rules.fromJson(content);
@@ -718,42 +796,7 @@ export default {
 		}
 	},
 	mounted() {
-		const _this = this;
-		// Load rules
-		(function() {
-			_this.$set(_this.group, utils.t('ungrouped'), {
-				name: utils.t('ungrouped'),
-				collapse: storage.prefs.get('manage-collapse-group'),
-				rule: {}
-			});
-			function appendRule(table, response) {
-				for (const item of response) {
-					if (typeof(_this.group[item.group]) === "undefined") {
-						_this.$set(_this.group, item.group, {
-							name: item.group,
-							collapse: storage.prefs.get('manage-collapse-group'),
-							rule: {}
-						});
-					}
-					_this.$set(_this.group[item.group].rule, table + '-' + item.id, item);
-				}
-			}
-			function checkResult(table, response) {
-				if (!response) { // Firefox is starting up
-					requestRules(table);
-					return;
-				}
-				appendRule(table, response);
-			}
-			function requestRules(table) {
-				setTimeout(() => {
-					checkResult(table, rules.get(table));
-				}, 20);
-			}
-			for (const t of utils.TABLE_NAMES) {
-				requestRules(t);
-			}
-		})();
+		this.loadRules();
 		// Load download history
 		storage.getLocalStorage().get('dl_history').then(r => {
 			if (r.dl_history === undefined) {
