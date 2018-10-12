@@ -153,11 +153,14 @@
 					</md-card-actions>
 				</md-card>
 			</md-tab>
+			<md-tab id="tab-help" :md-label="t('help')" md-icon="live_help">
+				<md-button @click="onOpenHelp" class="with-icon"><md-icon>open_in_new</md-icon>{{t('view')}}</md-button>
+			</md-tab>
 		</md-tabs>
 		<div id="edit-page" v-show="isShowEdit">
 			<md-toolbar class="md-primary" md-elevation="1">
 				<md-button class="md-icon-button" @click="closeEditPage">
-						<md-icon>arrow_back</md-icon>
+					<md-icon>arrow_back</md-icon>
 				</md-button>
 				<h2 class="md-title" style="flex: 1">{{editTitle}}</h2>
 			</md-toolbar>
@@ -288,7 +291,7 @@
 					</md-card-content>
 				</md-card-area>
 				<md-card-actions md-alignment="left">
-					<md-button class="md-icon-button" @mousedown="e => onDragStart(e, r)" @touchstart="e => onDragStart(e, r)" style="cursor:move"><md-icon>360</md-icon></md-button>
+					<md-button class="md-icon-button" @mousedown="e => onDragStart(e, r)" @touchstart="e => onDragStart(e, r)" style="cursor:move"><md-icon>open_with</md-icon></md-button>
 					<md-button class="md-primary" @click="dragable_rule.splice(dragable_rule.indexOf(r), 1)">{{t('close')}}</md-button>
 				</md-card-actions>
 			</md-card>
@@ -950,6 +953,12 @@ export default {
 				if (!end) requestAnimationFrame(setNewOffset);
 			}
 			setNewOffset();
+		},
+		onOpenHelp() {
+			browser.runtime.sendMessage({
+				method: "openURL",
+				url: "https://github.com/FirefoxBar/HeaderEditor/wiki"
+			});
 		}
 	},
 	mounted() {

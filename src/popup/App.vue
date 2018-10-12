@@ -34,6 +34,7 @@ export default {
 </script>
 
 <style lang="scss">
+@import "../style.scss";
 .popup-page {
 	padding: 15px 17px;
 	.md-switch {
