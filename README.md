@@ -33,7 +33,7 @@ Translate this extension: [transifex](https://www.transifex.com/sytec/header-edi
 
 Thanks to the following personnel for their contribution:
 
-(YFdyh000)[https://github.com/yfdyh000]
+[YFdyh000](https://github.com/yfdyh000)
 
 #### Language maintainers
 
