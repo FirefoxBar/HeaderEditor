@@ -36,6 +36,8 @@ export default {
 <style lang="scss">
 @import "../style.scss";
 .popup-page {
+	min-width: 180px;
+	max-width: 400px;
 	padding: 15px 17px;
 	.md-switch {
 		margin: 0;
