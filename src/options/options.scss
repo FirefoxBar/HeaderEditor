@@ -45,6 +45,19 @@ body {
 		line-height: 30px;
 	}
 
+	.cell-batch {
+		width: 70px;
+
+		.md-table-head-label,
+		.md-table-cell-container {
+			padding-right: 16px;
+		}
+
+		.md-checkbox {
+			margin: 0;
+		}
+	}
+
 	.cell-enable {
 		width: 80px;
 	}
@@ -76,7 +89,13 @@ body {
 	width: 56px;
 	z-index: 2;
 
+	.md-speed-dial {
+		position: relative;
+		bottom: 0;
+		right: 0;
+	}
 	.md-button {
+		margin: 0;
 		margin-top: 15px;
 	}
 }
@@ -154,6 +173,7 @@ body {
 	>* {
 		vertical-align: middle;
 	}
+
 	.url {
 		display: inline-flex;
 		width: calc(100% - 110px);

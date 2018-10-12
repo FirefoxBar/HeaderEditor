@@ -32,12 +32,16 @@
 					<md-card-content>
 						<md-table v-show="!g.collapse">
 							<md-table-row>
+								<md-table-head class="cell-batch"><span @click="onBatchSelectGroup(g)" style="cursor: pointer">{{t('batch_mode')}}</span></md-table-head>
 								<md-table-head class="cell-enable">{{t('enable')}}</md-table-head>
 								<md-table-head class="cell-name">{{t('name')}}</md-table-head>
 								<md-table-head class="cell-type">{{t('ruleType')}}</md-table-head>
 								<md-table-head class="cell-action">{{t('action')}}</md-table-head>
 							</md-table-row>
 							<md-table-row v-for="r of g.rule" :key="r._v_key">
+								<md-table-cell class="cell-batch">
+									<md-checkbox v-model="batch" :value="r" class="md-primary"></md-checkbox>
+								</md-table-cell>
 								<md-table-cell class="cell-enable">
 									<md-switch v-model="r.enable" class="md-primary" :data-type="r.ruleType" :data-id="r.id" @change="newValue => onRuleEnable(r, newValue)"></md-switch>
 								</md-table-cell>
@@ -270,6 +274,25 @@
 			</div>
 		</div>
 		<div class="float-button">
+			<md-speed-dial class="md-bottom-right">
+				<md-speed-dial-target class="md-primary" :title="t('select_all')" @click="onBatchAll">
+					<md-icon>done_all</md-icon>
+				</md-speed-dial-target>
+				<md-speed-dial-content>
+					<md-button class="md-icon-button" :title="t('enable')" @click="onBatchEnable">
+						<md-icon>touch_app</md-icon>
+					</md-button>
+					<md-button class="md-icon-button" :title="t('group')" @click="onBatchGroup">
+						<md-icon>playlist_add</md-icon>
+					</md-button>
+					<md-button class="md-icon-button" :title="t('share')" @click="onBatchShare">
+						<md-icon>share</md-icon>
+					</md-button>
+					<md-button class="md-icon-button" :title="t('delete')" @click="onBatchDelete">
+						<md-icon>delete</md-icon>
+					</md-button>
+				</md-speed-dial-content>
+			</md-speed-dial>
 			<md-button class="md-fab md-primary" @click="showAddPage">
 				<md-icon>add</md-icon>
 			</md-button>
@@ -379,7 +402,8 @@ export default {
 				group_type: 0,
 				group_name: "",
 				list: []
-			}
+			},
+			batch: []
 		};
 	},
 	computed: {
@@ -689,9 +713,16 @@ export default {
 				}
 			});
 		},
-		onRemoveRule(r) {
+		onRemoveRule(r, fromBatch) {
 			const table = utils.getTableName(r.ruleType);
 			const key = table + '-' + r.id;
+			// remove from other
+			if (this.batch.includes(r) && !fromBatch) {
+				this.batch.splice(this.batch.indexOf(r), 1);
+			}
+			if (this.dragable_rule.includes(r)) {
+				this.dragable_rule.splice(this.dragable_rule.indexOf(r), 1);
+			}
 			rules.remove(table, r.id).then(response => {
 				browser.runtime.sendMessage({"method": "updateCache", "type": table});
 				Object.keys(this.group).forEach(e => {
@@ -745,7 +776,7 @@ export default {
 		onGroupShare(name) {
 			const result = {};
 			utils.TABLE_NAMES.forEach(t => {
-				result[k] = [];
+				result[t] = [];
 			});
 			Object.values(this.group[name].rule).forEach(e => {
 				result[utils.getTableName(e.ruleType)].push(e);
@@ -961,6 +992,96 @@ export default {
 				method: "openURL",
 				url: "https://github.com/FirefoxBar/HeaderEditor/wiki"
 			});
+		},
+		onBatchAll() {
+			const groups = Object.values(this.group);
+			const firstRule = Object.values(groups[0].rule)[0];
+			const isUnSelect = this.batch.includes(firstRule);
+			if (isUnSelect) {
+				groups.forEach(g => {
+					Object.values(g.rule).forEach(r => {
+						if (this.batch.includes(r)) {
+							this.batch.splice(this.batch.indexOf(r), 1);
+						}
+					});
+				});
+			} else {
+				groups.forEach(g => {
+					Object.values(g.rule).forEach(r => {
+						if (!this.batch.includes(r)) {
+							this.batch.push(r);
+						}
+					});
+				});
+			}
+		},
+		onBatchSelectGroup(g) {
+			const rule = Object.values(g.rule);
+			if (this.batch.includes(rule[0])) {
+				rule.forEach(e => {
+					if (this.batch.includes(e)) {
+						this.batch.splice(this.batch.indexOf(e), 1);
+					}
+				});
+			} else {
+				rule.forEach(e => {
+					if (!this.batch.includes(e)) {
+						this.batch.push(e);
+					}
+				});
+			}
+		},
+		onBatchEnable() {
+			const table = [];
+			const queue = [];
+			const setTo = !this.batch[0].enable;
+			this.batch.forEach(rule => {
+				if (rule.enable === setTo) {
+					return;
+				}
+				rule.enable = setTo;
+				const tableName = utils.getTableName(rule.ruleType);
+				queue.push(rules.save(tableName, rule));
+				if (!table.includes(tableName)) {
+					table.push(tableName);
+				}
+			});
+			Promise.all(queue)
+			.then(() => {
+				table.forEach(t => {
+					browser.runtime.sendMessage({"method": "updateCache", "type": t});
+				});
+			});
+		},
+		onBatchGroup() {
+			this.chooseGroup()
+			.then(r => {
+				if (r !== null) {
+					this.batch.forEach(rule => {
+						this.changeRuleGroup(rule, r);
+					});
+				}
+			});
+		},
+		onBatchShare() {
+			const result = {};
+			utils.TABLE_NAMES.forEach(t => {
+				result[t] = [];
+			});
+			this.batch.forEach(e => {
+				result[utils.getTableName(e.ruleType)].push(e);
+			});
+			file.save(
+				JSON.stringify(rules.createExport(result), null, "\t"),
+				utils.getExportName()
+			);
+		},
+		onBatchDelete() {
+			if (!confirm(utils.t('delete_confirm'))) {
+				return;
+			}
+			this.batch.forEach(e => this.onRemoveRule(e, true));
+			this.batch = [];
 		}
 	},
 	mounted() {
