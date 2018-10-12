@@ -1,6 +1,6 @@
 <template>
 	<div class="popup-page">
-		<md-switch v-model="disable_all" class="md-primary">{{t('disable_add')}}</md-switch>
+		<md-switch v-model="disable_all" class="md-primary">{{t('disable_all')}}</md-switch>
 		<md-button @click="openManage" class="md-raised md-primary">{{t('manage')}}</md-button>
 	</div>
 </template>
