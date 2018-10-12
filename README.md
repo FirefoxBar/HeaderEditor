@@ -51,25 +51,15 @@ If you have any advice on translations, please contact the maintainer(s) directl
 
 ## How to build
 
-* Install node, npm or yarn
+* Install node, npm or yarn. (It is recommended to use yarn, or the build result may be inconsistent with the release version)
 
-* Download source
+* Download source and extract
 
 * Run `yarn` or `npm install`
 
 * Run `yarn build` or `npm run build`
 
-## Translators
-
-Thanks to the following personnel for their contribution:
-
-* en: [ShuangYa](https://github.com/sylingd)
-
-* zh-CN: [ShuangYa](https://github.com/sylingd)
-
-* zh-TW: [zhtw2013](https://github.com/zhtw2013)
-
-* pt-BR: [Kassio Cruz](https://www.transifex.com/user/profile/kassiocs/)
+* If you want to enter development mode, please run `yarn watch:dev` or `npm run watch:dev`
 
 ## Licenses
 
