@@ -924,15 +924,17 @@ export default {
 					last.y = e.touches[0].pageY;
 					offset.left += e.touches[0].pageX - last.x;
 					last.x = e.touches[0].pageX;
+					e.stopPropagation();
+					e.preventDefault();
 				}
-				document.addEventListener('touchmove', onTouchMove);
-				document.addEventListener('touchend', () => {
+				document.body.addEventListener('touchmove', onTouchMove, { passive: false });
+				document.body.addEventListener('touchend', () => {
 					end = true;
-					document.removeEventListener('mousemove', onTouchMove);
+					document.body.removeEventListener('mousemove', onTouchMove);
 				});
-				document.addEventListener('touchcancel', () => {
+				document.body.addEventListener('touchcancel', () => {
 					end = true;
-					document.removeEventListener('mousemove', onTouchMove);
+					document.body.removeEventListener('mousemove', onTouchMove);
 				});
 			} else {
 				function onMouseMove(e) {
@@ -941,10 +943,10 @@ export default {
 					offset.left += e.pageX - last.x;
 					last.x = e.pageX;
 				}
-				document.addEventListener('mousemove', onMouseMove);
-				document.addEventListener('mouseup', () => {
+				document.body.addEventListener('mousemove', onMouseMove);
+				document.body.addEventListener('mouseup', () => {
 					end = true;
-					document.removeEventListener('mousemove', onMouseMove);
+					document.body.removeEventListener('mousemove', onMouseMove);
 				});
 			}
 			function setNewOffset() {
