@@ -57,6 +57,7 @@
 									<md-button class="with-icon" @click="onChangeRuleGroup(r)"><md-icon>playlist_add</md-icon>{{t('group')}}</md-button>
 									<md-button class="with-icon" @click="onEditRule(r)"><md-icon>mode_edit</md-icon>{{t('edit')}}</md-button>
 									<md-button class="with-icon" @click="onCloneRule(r)"><md-icon>file_copy</md-icon>{{t('clone')}}</md-button>
+									<md-button class="with-icon" @click="onViewRule(r)"><md-icon>search</md-icon>{{t('view')}}</md-button>
 									<md-button class="with-icon" @click="onRemoveRule(r)"><md-icon>delete</md-icon>{{t('delete')}}</md-button>
 								</md-table-cell>
 							</md-table-row>
@@ -270,6 +271,28 @@
 				<md-icon>add</md-icon>
 			</md-button>
 		</div>
+		<div class="drags">
+			<md-card class="rule-drag-view dragbox" v-for="r of dragable_rule" :key="r._v_key">
+				<md-card-area>
+					<md-card-header>
+						<div class="md-title">{{r.name}}</div>
+					</md-card-header>
+					<md-card-content>
+						<p>{{t('matchType')}}: {{t('match_' + r.matchType)}}</p>
+						<p>{{t('matchRule')}}: {{r.pattern}}</p>
+						<p>{{t('exec_type')}}: {{t('exec_' + (r.isFunction ? 'function' : 'normal'))}}</p>
+						<p v-if="r.ruleType === 'redirect'">{{t('redirectTo')}}: {{r.to}}</p>
+						<p v-if="(r.ruleType === 'modifySendHeader' || r.ruleType === 'modifyReceiveHeader') && !r.isFunction">{{t('headerName')}}: {{r.action.name}}</p>
+						<p v-if="(r.ruleType === 'modifySendHeader' || r.ruleType === 'modifyReceiveHeader') && !r.isFunction">{{t('headerValue')}}: {{r.action.value}}</p>
+						<pre v-if="r.isFunction">{{r.code}}</pre>
+					</md-card-content>
+				</md-card-area>
+				<md-card-actions md-alignment="left">
+					<md-button class="md-icon-button" @mousedown="e => onDragStart(e, r)" @touchstart="e => onDragStart(e, r)" style="cursor:move"><md-icon>360</md-icon></md-button>
+					<md-button class="md-primary" @click="dragable_rule.splice(dragable_rule.indexOf(r), 1)">{{t('close')}}</md-button>
+				</md-card-actions>
+			</md-card>
+		</div>
 		<md-dialog :md-active.sync="isChooseGroup" class="group-dialog">
 			<md-dialog-title>{{t('group')}}</md-dialog-title>
 			<md-list>
@@ -339,6 +362,7 @@ export default {
 			group: {},
 			choosenGroup: "",
 			choosenNewGroup: "",
+			dragable_rule: [],
 			alert: {
 				show: false,
 				text: ""
@@ -532,7 +556,6 @@ export default {
 			this.edit.group = utils.t('ungrouped');
 		},
 		saveRule() {
-			const _this = this;
 			const data = {
 				"enable": true,
 				"name": this.edit.name,
@@ -595,24 +618,26 @@ export default {
 			if (this.edit.id !== -1) {
 				data.id = this.edit.id;
 			}
-			rules.save(table, data).then(function(response) {
-				if (_this.edit.id && _this.edit.id !== -1) {
+			rules.save(table, data).then(response => {
+				const v_key = table + '-' + response.id;
+				if (this.edit.id && this.edit.id !== -1) {
 					// Move group if required
-					if (_this.edit.oldGroup != data.group) {
-						_this.$delete(_this.group[data.group].rule, table + '-' + data.id);
+					if (this.edit.oldGroup != data.group) {
+						this.$delete(this.group[data.group].rule, v_key);
 					}
 				}
-				if (!_this.group[response.group]) {
-					_this.$set(_this.group, response.group, {
+				if (!this.group[response.group]) {
+					this.$set(_this.group, response.group, {
 						name: response.group,
 						collapse: storage.prefs.get('manage-collapse-group'),
 						rule: {}
 					});
 				}
-				_this.$set(_this.group[response.group].rule, table + '-' + response.id, response);
+				response._v_key = v_key;
+				this.$set(_this.group[response.group].rule, v_key, response);
 				browser.runtime.sendMessage({"method": "updateCache", "type": table});
-				_this.showToast(utils.t('saved'));
-				_this.closeEditPage();
+				this.showToast(utils.t('saved'));
+				this.closeEditPage();
 			});
 		},
 		onEditRule(rule) {
@@ -646,6 +671,11 @@ export default {
 					browser.runtime.sendMessage({"method": "updateCache", "type": tableName});
 					this.$set(this.group[res.group].rule, tableName + '-' + res.id, res);
 				})
+			}
+		},
+		onViewRule(r) {
+			if (!this.dragable_rule.includes(r)) {
+				this.dragable_rule.push(r);
 			}
 		},
 		onEditChooseGroup() {
@@ -864,6 +894,64 @@ export default {
 				this.download.log.splice(this.download.log.indexOf(url), 1);
 				this.saveDownloadHistory();
 			}
+		},
+		onDragStart(e, r) {
+			const isTouch = e instanceof TouchEvent;
+			const box = (el => {
+				let p = el;
+				while (p = p.parentElement) {
+					if (p.classList.contains('dragbox')) {
+						return p;
+					}
+				}
+			})(e.currentTarget);
+			const offset = (el => {
+				const rect = el.getBoundingClientRect();
+				return {
+					top: rect.top,
+					left: rect.left
+				};
+			})(box);
+			const last = {
+				x: e.pageX || e.touches[0].pageX,
+				y: e.pageY || e.touches[0].pageY
+			};
+			let end = false;
+			if (isTouch) {
+				function onTouchMove(e) {
+					offset.top += e.touches[0].pageY - last.y;
+					last.y = e.touches[0].pageY;
+					offset.left += e.touches[0].pageX - last.x;
+					last.x = e.touches[0].pageX;
+				}
+				document.addEventListener('touchmove', onTouchMove);
+				document.addEventListener('touchend', () => {
+					end = true;
+					document.removeEventListener('mousemove', onTouchMove);
+				});
+				document.addEventListener('touchcancel', () => {
+					end = true;
+					document.removeEventListener('mousemove', onTouchMove);
+				});
+			} else {
+				function onMouseMove(e) {
+					offset.top += e.pageY - last.y;
+					last.y = e.pageY;
+					offset.left += e.pageX - last.x;
+					last.x = e.pageX;
+				}
+				document.addEventListener('mousemove', onMouseMove);
+				document.addEventListener('mouseup', () => {
+					end = true;
+					document.removeEventListener('mousemove', onMouseMove);
+				});
+			}
+			function setNewOffset() {
+				box.style.top = offset.top + "px";
+				box.style.left = offset.left + "px";
+				if (!end) requestAnimationFrame(setNewOffset);
+			}
+			setNewOffset();
 		}
 	},
 	mounted() {

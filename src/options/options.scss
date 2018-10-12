@@ -51,6 +51,15 @@ body {
 
 }
 
+.dragbox {
+	background: #fff;
+	z-index: 999;
+	position: fixed;
+	left: 0;
+	top: 0;
+	width: 400px;
+}
+
 .group-dialog {
 	.new {
 		.md-field {
@@ -107,6 +116,12 @@ body {
 	.cell-action .md-button {
 		margin-top: 0;
 		margin-bottom: 0;
+	}
+}
+
+.rule-drag-view {
+	pre {
+		overflow: auto;
 	}
 }
 
