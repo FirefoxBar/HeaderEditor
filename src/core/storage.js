@@ -44,6 +44,7 @@ const prefs = browser.extension.getBackgroundPage().prefs || new class {
 		this.boundMethods = {};
 		this.boundWrappers = {};
 		const defaults = {
+			"disable-all": false,
 			"add-hot-link": false,
 			"manage-collapse-group": true, // Collapse groups
 			"exclude-he": true // rules take no effect on HE or not

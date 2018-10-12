@@ -69,6 +69,9 @@ if (typeof(browser.contextMenus) !== 'undefined') {
 }
 
 browser.webRequest.onBeforeRequest.addListener(function(e) {
+	if (storage.prefs.get('disable-all')) {
+		return;
+	}
 	//判断是否是HE自身
 	if (storage.prefs.get('exclude-he') && e.url.indexOf(browser.extension.getURL('')) === 0) {
 		return;
@@ -165,6 +168,9 @@ function modifyHeaders(headers, rule, details) {
 }
 
 browser.webRequest.onBeforeSendHeaders.addListener(function(e) {
+	if (storage.prefs.get('disable-all')) {
+		return;
+	}
 	//判断是否是HE自身
 	if (storage.prefs.get('exclude-he') && e.url.indexOf(browser.extension.getURL('')) === 0) {
 		return;
@@ -179,6 +185,9 @@ browser.webRequest.onBeforeSendHeaders.addListener(function(e) {
 }, {urls: ["<all_urls>"]}, ['blocking', 'requestHeaders']);
 
 browser.webRequest.onHeadersReceived.addListener(function(e) {
+	if (storage.prefs.get('disable-all')) {
+		return;
+	}
 	//判断是否是HE自身
 	if (storage.prefs.get('exclude-he') && e.url.indexOf(browser.extension.getURL('')) === 0) {
 		return;
@@ -191,10 +200,6 @@ browser.webRequest.onHeadersReceived.addListener(function(e) {
 	modifyHeaders(e.responseHeaders, rule, e);
 	return {"responseHeaders": e.responseHeaders};
 }, {urls: ["<all_urls>"]}, ['blocking', 'responseHeaders']);
-
-browser.browserAction.onClicked.addListener(function () {
-	openURL({"url": browser.extension.getURL('options/options.html')});
-});
 
 function toggleAntiHotLinkMenu(has) {
 	if (utils.IS_MOBILE) {

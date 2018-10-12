@@ -627,14 +627,14 @@ export default {
 					}
 				}
 				if (!this.group[response.group]) {
-					this.$set(_this.group, response.group, {
+					this.$set(this.group, response.group, {
 						name: response.group,
 						collapse: storage.prefs.get('manage-collapse-group'),
 						rule: {}
 					});
 				}
 				response._v_key = v_key;
-				this.$set(_this.group[response.group].rule, v_key, response);
+				this.$set(this.group[response.group].rule, v_key, response);
 				browser.runtime.sendMessage({"method": "updateCache", "type": table});
 				this.showToast(utils.t('saved'));
 				this.closeEditPage();
@@ -719,11 +719,10 @@ export default {
 			});
 		},
 		onChangeRuleGroup(rule) {
-			const _this = this;
 			this.chooseGroup()
 			.then(r => {
 				if (r !== null) {
-					_this.changeRuleGroup(rule, r);
+					this.changeRuleGroup(rule, r);
 				}
 			});
 		},
@@ -759,9 +758,8 @@ export default {
 			if (name === ungrouped) {
 				return;
 			}
-			const _this = this;
 			Object.values(this.group[name].rule).forEach(e => {
-				_this.changeRuleGroup(e, ungrouped);
+				this.changeRuleGroup(e, ungrouped);
 			});
 			this.$delete(this.group, name);
 		},
