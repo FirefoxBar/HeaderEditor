@@ -3,6 +3,8 @@ import storage from './core/storage'
 import rules from './core/rules'
 import utils from './core/utils'
 
+window.IS_BACKGROUND = true;
+
 let antiHotLinkMenu = null;
 
 browser.runtime.onMessage.addListener(function(request, sender, sendResponse) {
@@ -218,6 +220,11 @@ function toggleAntiHotLinkMenu(has) {
 		antiHotLinkMenu = null;
 	}
 }
+
+storage.prefs.watch('add-hot-link', val => {
+	toggleAntiHotLinkMenu(val);
+});
+
 storage.prefs.onReady()
 .then(prefs => {
 	toggleAntiHotLinkMenu(prefs.get('add-hot-link'));

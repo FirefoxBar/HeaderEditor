@@ -78,6 +78,7 @@
 						<div class="md-layout md-gutter">
 							<div class="md-layout-item md-size-50"><md-checkbox v-model="options.collapseGroup">{{t('manage_collapse_group')}}</md-checkbox></div>
 							<div class="md-layout-item md-size-50"><md-checkbox v-model="options.rulesNoEffectForHe">{{t('rules_no_effect_for_he')}}</md-checkbox></div>
+							<div class="md-layout-item md-size-50"><md-checkbox v-model="options.addHotLink">{{t('add_anti_hot_link_to_menu')}}</md-checkbox></div>
 						</div>
 					</md-card-content>
 				</md-card>
@@ -668,7 +669,6 @@ export default {
 			});
 		},
 		onEditRule(rule) {
-			console.log(rule);
 			this.edit.id = rule.id;
 			this.edit.name = rule.name;
 			this.edit.ruleType = rule.ruleType;
@@ -687,7 +687,7 @@ export default {
 			this.isShowEdit = true;
 		},
 		onCloneRule(r) {
-			const newName = window.prompt(utils.t('name'), r.name + "_clone");
+			const newName = window.prompt(utils.t('enter_group_name'), r.name + "_clone");
 			if (newName) {
 				const newRule = merge(true, r);
 				const tableName = utils.getTableName(r.ruleType);
@@ -761,7 +761,7 @@ export default {
 			});
 		},
 		onGroupRename(g) {
-			const name = window.prompt(utils.t('name'), g.name);
+			const name = window.prompt(utils.t('enter_group_name'), g.name);
 			if (name) {
 				const queue = [];
 				Object.values(g.rule).forEach(r => {
@@ -1093,14 +1093,32 @@ export default {
 			this.$set(this.download, 'log', JSON.parse(r.dl_history));
 		});
 		storage.prefs.onReady().then(prefs => {
-			this.options.collapseGroup = prefs.get('manage-collapse-group');
-			this.options.rulesNoEffectForHe = prefs.get('exclude-he');
+			this.$set(this.options, 'addHotLink', prefs.get('add-hot-link'));
+			this.$set(this.options, 'collapseGroup', prefs.get('manage-collapse-group'));
+			this.$set(this.options, 'rulesNoEffectForHe', prefs.get('exclude-he'));
 			this.loadRules();
-			this.$watch('options', (newOpt) => {
+			this.$watch('options', newOpt => {
 				storage.prefs.set('manage-collapse-group', newOpt.collapseGroup);
 				storage.prefs.set('exclude-he', newOpt.rulesNoEffectForHe);
+				storage.prefs.set('add-hot-link', newOpt.addHotLink);
 			}, { deep: true });
 		});
+		// init anti-hot-link
+		const query = parsePath(location.href).query;
+		if (query.action && query.action === "add-anti-hot-link") {
+			this.edit.id = -1;
+			this.edit.name = rule.name;
+			this.edit.ruleType = 'modifySendHeader';
+			this.edit.ruleTypeEditable = true;
+			this.edit.matchType = 'domain';
+			this.edit.matchRule = parsePath(query.url).resource;
+			this.edit.headerName = "referer";
+			this.edit.headerValue = "";
+			this.edit.execType = 0;
+			this.edit.group = utils.t('ungrouped');
+			this.editTitle = utils.t('add');
+			this.isShowEdit = true;
+		}
 	},
 	watch: {
 		isShowEdit(newVal, oldVal) {

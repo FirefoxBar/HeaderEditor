@@ -2,6 +2,7 @@ import browser from 'webextension-polyfill';
 import utils from './utils';
 import merge from 'merge';
 import equal from 'fast-deep-equal';
+import notify from './notify';
 
 function getDatabase() {
 	return new Promise((resolve, reject) => {
@@ -45,10 +46,11 @@ const prefs = browser.extension.getBackgroundPage().prefs || new class {
 		this.boundWrappers = {};
 		const defaults = {
 			"disable-all": false,
-			"add-hot-link": false,
+			"add-hot-link": true,
 			"manage-collapse-group": true, // Collapse groups
 			"exclude-he": true // rules take no effect on HE or not
 		};
+		this.watchQueue = {};
 		// when browser is strarting up, the setting is default
 		this.isDefault = true;
 		this.waitQueue = [];
@@ -82,6 +84,9 @@ const prefs = browser.extension.getBackgroundPage().prefs || new class {
 					for (const key in defaults) {
 						if (key in synced) {
 							this.set(key, synced[key], true);
+							if (this.watchQueue[key]) {
+								this.watchQueue[key].forEach(cb => cb(synced[key], key));
+							}
 						}
 					}
 				} else {
@@ -153,6 +158,12 @@ const prefs = browser.extension.getBackgroundPage().prefs || new class {
 	}
 	remove(key) {
 		this.set(key, undefined)
+	}
+	watch(key, callback) {
+		if (typeof(this.watchQueue[key]) === "undefined") {
+			this.watchQueue[key] = [];
+		}
+		this.watchQueue[key].push(callback);
 	}
 	onReady() {
 		const _this = this;
