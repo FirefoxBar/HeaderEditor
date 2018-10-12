@@ -1,5 +1,5 @@
 <template>
-	<div>
+	<div class="main">
 		<md-tabs class="md-primary main-menu" md-elevation="1" md-active-tab="tab-rule-list">
 			<md-tab id="tab-rule-list" :md-label="t('rule_list')" md-icon="list">
 				<md-card v-for="g of group" :key="g.name" class="group-item">
@@ -39,7 +39,7 @@
 							</md-table-row>
 							<md-table-row v-for="r of g.rule" :key="r._v_key">
 								<md-table-cell class="cell-enable">
-									<md-switch v-model="r.enable" class="md-primary" :true-value="1" :false-value="0" :data-type="r.ruleType" :data-id="r.id" @change="newValue => onRuleEnable(r, newValue)"></md-switch>
+									<md-switch v-model="r.enable" class="md-primary" :data-type="r.ruleType" :data-id="r.id" @change="newValue => onRuleEnable(r, newValue)"></md-switch>
 								</md-table-cell>
 								<md-table-cell class="cell-name">
 									<span>{{r.name}}</span>
@@ -783,6 +783,7 @@ export default {
 				delete e["import_old_id"];
 				const tableName = utils.getTableName(e.ruleType);
 				e.group = this.imports.group_type === 0 ? this.imports.group_name : e.group;
+				e.enable = true;
 
 				queue.push(rules.save(tableName, e));
 			});
