@@ -9,15 +9,45 @@ You can get this extension from [Mozilla Add-ons](https://addons.mozilla.org/en-
 
 But if you want to stay up-to-date with the latest developments, you should [install our self-distributed version](https://github.com/FirefoxBar/HeaderEditor/releases).
 
-This is a WebExtension. Require Firefox 52 or later.
-
 For more documentation, Please visit [wiki](https://github.com/FirefoxBar/HeaderEditor/wiki)
+
+## About Permissions
+
+Header Editor require those permissions:
+
+* tabs: Open links or switch to a tab
+
+* webRequest, webRequestBlocking, _all_urls_: Modify the requests
+
+* contextMenus: Add anti-hot-link to right-click menu
+
+* storage, unlimitedStorage: Storage rules and settings
+
+* downloads: Export rules
 
 ## Contribution
 
-You can contribute codes by [submiting a pull request](https://github.com/FirefoxBar/HeaderEditor/compare).
+Contribute codes: [submiting a pull request](https://github.com/FirefoxBar/HeaderEditor/compare)
 
-You can also help us to translate this extension on [transifex](https://www.transifex.com/sytec/header-editor/).
+Translate this extension: [transifex](https://www.transifex.com/sytec/header-editor/)
+
+Thanks to the following personnel for their contribution:
+
+(YFdyh000)[https://github.com/yfdyh000]
+
+#### Language maintainers
+
+The following are language maintainers, Thanks for their contribution.
+
+If you have any advice on translations, please contact the maintainer(s) directly.
+
+* en: [ShuangYa](https://github.com/sylingd)
+
+* zh-CN: [ShuangYa](https://github.com/sylingd)
+
+* zh-TW: [zhtw2013](https://github.com/zhtw2013)
+
+* pt-BR: [Kassio Cruz](https://www.transifex.com/user/profile/kassiocs/)
 
 ## How to build
 
@@ -30,6 +60,8 @@ You can also help us to translate this extension on [transifex](https://www.tran
 * Run `yarn build` or `npm run build`
 
 ## Translators
+
+Thanks to the following personnel for their contribution:
 
 * en: [ShuangYa](https://github.com/sylingd)
 
