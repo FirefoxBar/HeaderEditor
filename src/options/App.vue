@@ -316,7 +316,7 @@
 				</md-card-area>
 				<md-card-actions md-alignment="left">
 					<md-button class="md-icon-button" @mousedown="e => onDragStart(e, r)" @touchstart="e => onDragStart(e, r)" style="cursor:move"><md-icon>open_with</md-icon></md-button>
-					<md-button class="md-primary" @click="dragable_rule.splice(dragable_rule.indexOf(r), 1)">{{t('close')}}</md-button>
+					<md-button class="md-primary" @click="dragable_rule.splice(dragable_rule.indexOf(r), 1)">{{t('cancel')}}</md-button>
 				</md-card-actions>
 			</md-card>
 		</div>
