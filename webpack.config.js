@@ -88,7 +88,7 @@ const config = {
 						jsonContent['content_security_policy'] = "script-src 'self' 'unsafe-eval'; object-src 'self'";
 					}
 
-					return JSON.stringify(jsonContent, null, 2);
+					return JSON.stringify(jsonContent);
 				},
 			},
 		]),
