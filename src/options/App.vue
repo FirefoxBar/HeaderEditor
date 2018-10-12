@@ -37,7 +37,7 @@
 								<md-table-head class="cell-type">{{t('ruleType')}}</md-table-head>
 								<md-table-head class="cell-action">{{t('action')}}</md-table-head>
 							</md-table-row>
-							<md-table-row v-for="r of g.rule" :key="r.id">
+							<md-table-row v-for="r of g.rule" :key="r._v_key">
 								<md-table-cell class="cell-enable">
 									<md-switch v-model="r.enable" class="md-primary" :true-value="1" :false-value="0" :data-type="r.ruleType" :data-id="r.id" @change="newValue => onRuleEnable(r, newValue)"></md-switch>
 								</md-table-cell>
@@ -48,8 +48,8 @@
 										<p>{{t('matchRule')}}: {{r.pattern}}</p>
 										<p>{{t('exec_type')}}: {{t('exec_' + (r.isFunction ? 'function' : 'normal'))}}</p>
 										<p v-if="r.ruleType === 'redirect'">{{t('redirectTo')}}: {{r.to}}</p>
-										<p v-if="r.ruleType === 'modifySendHeader' || r.ruleType === 'modifyReceiveHeader'">{{t('headerName')}}: {{r.action.name}}</p>
-										<p v-if="r.ruleType === 'modifySendHeader' || r.ruleType === 'modifyReceiveHeader'">{{t('headerValue')}}: {{r.action.value}}</p>
+										<p v-if="(r.ruleType === 'modifySendHeader' || r.ruleType === 'modifyReceiveHeader') && !r.isFunction">{{t('headerName')}}: {{r.action.name}}</p>
+										<p v-if="(r.ruleType === 'modifySendHeader' || r.ruleType === 'modifyReceiveHeader') && !r.isFunction">{{t('headerValue')}}: {{r.action.value}}</p>
 									</md-tooltip>
 								</md-table-cell>
 								<md-table-cell class="cell-type">{{t('rule_' + r.ruleType)}}</md-table-cell>
@@ -437,7 +437,7 @@ export default {
 				rule: {}
 			});
 			function appendRule(table, response) {
-				for (const item of response) {
+				response.forEach(item => {
 					if (typeof(_this.group[item.group]) === "undefined") {
 						_this.$set(_this.group, item.group, {
 							name: item.group,
@@ -445,8 +445,9 @@ export default {
 							rule: {}
 						});
 					}
-					_this.$set(_this.group[item.group].rule, table + '-' + item.id, item);
-				}
+					item["_v_key"] = table + '-' + item.id;
+					_this.$set(_this.group[item.group].rule, item["_v_key"], item);
+				});
 			}
 			function checkResult(table, response) {
 				if (!response) { // Browser is starting up
@@ -711,9 +712,9 @@ export default {
 		},
 		onGroupShare(name) {
 			const result = {};
-			for (const k of utils.TABLE_NAMES) {
+			utils.TABLE_NAMES.forEach(t => {
 				result[k] = [];
-			}
+			});
 			Object.values(this.group[name].rule).forEach(e => {
 				result[utils.getTableName(e.ruleType)].push(e);
 			});

@@ -89,12 +89,14 @@ browser.webRequest.onBeforeRequest.addListener(function(e) {
 			return {"cancel": true};
 		} else {
 			if (item.isFunction) {
-				runTryCatch(() => {
+				try {
 					const r = item._func(redirectTo, detail);
 					if (typeof(r) === 'string') {
 						redirectTo = r;
 					}
-				});
+				} catch (e) {
+					console.log(e);
+				}
 			} else {
 				if (item.matchType === 'regexp') {
 					redirectTo = redirectTo.replace(item._reg, item.to);
@@ -105,7 +107,7 @@ browser.webRequest.onBeforeRequest.addListener(function(e) {
 		}
 	}
 	if (redirectTo !== e.url) {
-		if (/^(http|https|ftp|file)%3A/.test(redirectTo)) {
+		if (/^([a-zA-Z0-9]+)%3A/.test(redirectTo)) {
 			redirectTo = decodeURIComponent(redirectTo);
 		}
 		return {"redirectUrl": redirectTo};
@@ -115,26 +117,26 @@ browser.webRequest.onBeforeRequest.addListener(function(e) {
 function modifyHeaders(headers, rule, details) {
 	const newHeaders = {};
 	let hasFunction = false;
-	for (const item of rule) {
+	rule.forEach((item, idx) => {
 		if (!item.isFunction) {
 			newHeaders[item.action.name] = item.action.value;
+			rule.splice(idx, 1);
 		} else {
 			hasFunction = true;
 		}
-	}
-	for (let i = 0; i < headers.length; i++) {
-		const name = headers[i].name;
+	});
+	headers.forEach((item, idx) => {
+		const name = item.name.toLowerCase();
 		if (newHeaders[name] === undefined) {
-			continue;
+			return;
 		}
 		if (newHeaders[name] === '_header_editor_remove_') {
-			headers.splice(i, 1);
-			i--;
+			headers.splice(idx, 1);
 		} else {
-			headers[i].value = newHeaders[name];
+			item.value = newHeaders[name];
 		}
 		delete newHeaders[name];
-	}
+	});
 	for (const k in newHeaders) {
 		headers.push({
 			"name": k,
@@ -150,7 +152,7 @@ function modifyHeaders(headers, rule, details) {
 			"time": details.timeStamp,
 			"originUrl": details.originUrl || ''
 		};
-		for (const item of rule) {
+		rule.forEach(item => {
 			if (item.isFunction) {
 				try {
 					item._func(headers, detail);
@@ -158,7 +160,7 @@ function modifyHeaders(headers, rule, details) {
 					console.log(e);
 				}
 			}
-		}
+		});
 	}
 }
 

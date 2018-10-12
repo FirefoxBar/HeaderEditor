@@ -80,6 +80,9 @@ export default {
 		if (typeof(s.enable) === "undefined") {
 			s.enable = true;
 		}
+		if ((s.ruleType === "modifySendHeader" || s.ruleType === "modifyReceiveHeader") && !s.isFunction) {
+			s.action.name = s.action.name.toLowerCase();
+		}
 		return s;
 	},
 	t(key, params) {

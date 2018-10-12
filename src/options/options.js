@@ -30,8 +30,8 @@ if (!(oldVersion >= 1)) {
 				});
 				return browser.i18n.getMessage('ungrouped');
 			}
-			for (const k of utils.TABLE_NAMES) {
-				getDatabase().then((db) => {
+			utils.TABLE_NAMES.forEach(k => {
+				getDatabase().then(db => {
 					const tx = db.transaction([k], "readwrite");
 					const os = tx.objectStore(k);
 					os.openCursor().onsuccess = function(e) {
@@ -49,7 +49,7 @@ if (!(oldVersion >= 1)) {
 						}
 					};
 				});
-			}
+			})
 			Promise.all(cacheQueue).then(resolve);
 		});
 	}

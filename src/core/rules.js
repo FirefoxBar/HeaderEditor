@@ -4,9 +4,7 @@ import merge from 'merge';
 import parsePath from 'parse-path';
 
 const cache = {};
-for (const t of utils.TABLE_NAMES) {
-	cache[t] = null;
-}
+utils.TABLE_NAMES.forEach(t => cache[t] = null);
 
 function updateCache(type) {
 	return new Promise((resolve, reject) => {
@@ -115,6 +113,7 @@ function filter(rules, options) {
 }
 
 function save(tableName, o) {
+	delete o["_v_key"];
 	return new Promise(resolve => {
 		storage.getDatabase().then((db) => {
 			const tx = db.transaction([tableName], "readwrite");
@@ -181,6 +180,7 @@ function createExport(arr) {
 			delete copy["id"];
 			delete copy["_reg"];
 			delete copy["_func"];
+			delete copy["_v_key"];
 			result[k].push(copy);
 		});
 	}

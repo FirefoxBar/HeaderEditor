@@ -16,9 +16,9 @@ function getDatabase() {
 		dbOpenRequest.onupgradeneeded = function(event) {
 			if (event.oldVersion == 0) {
 				// Installed
-				for (const t of utils.TABLE_NAMES) {
+				utils.TABLE_NAMES.forEach(t => {
 					event.target.result.createObjectStore(t, {keyPath: 'id', autoIncrement: true});
-				}
+				});
 			} else {
 				utils.TABLE_NAMES.forEach(k => {
 					const tx = event.target.transaction;
