@@ -168,7 +168,8 @@ function remove(tableName, id) {
 }
 
 function get(type, options) {
-	return options ? filter(cache[type], options) : cache[type];
+	// When browser is starting up, pass all requests
+	return cache[type] ? (options ? filter(cache[type], options) : cache[type]) : null;
 }
 
 function createExport(arr) {
