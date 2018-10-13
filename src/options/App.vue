@@ -275,11 +275,15 @@
 			</div>
 		</div>
 		<div class="float-button">
-			<md-speed-dial class="md-bottom-right">
-				<md-speed-dial-target class="md-primary" :title="t('select_all')" @click="onBatchAll">
-					<md-icon>done_all</md-icon>
+			<md-speed-dial class="md-bottom-right" md-event="click">
+				<md-speed-dial-target class="md-primary" :title="t('batch_mode')" @click="onBatchEnter">
+					<md-icon v-show="isBatch">exit_to_app</md-icon>
+					<md-icon v-show="!isBatch">playlist_add_check</md-icon>
 				</md-speed-dial-target>
 				<md-speed-dial-content>
+					<md-button class="md-icon-button" :title="t('select_all')" @click="onBatchAll">
+						<md-icon>done_all</md-icon>
+					</md-button>
 					<md-button class="md-icon-button" :title="t('enable')" @click="onBatchEnable">
 						<md-icon>touch_app</md-icon>
 					</md-button>
@@ -358,6 +362,7 @@ export default {
 	data: function() {
 		return {
 			isShowEdit: false,
+			isBatch: false,
 			isChooseGroup: false,
 			editTitle: utils.t('add'),
 			edit: {
@@ -993,6 +998,10 @@ export default {
 				url: "https://github.com/FirefoxBar/HeaderEditor/wiki"
 			});
 		},
+		onBatchEnter() {
+			this.isBatch = !this.isBatch;
+			this.batch = [];
+		},
 		onBatchAll() {
 			const groups = Object.values(this.group);
 			const firstRule = Object.values(groups[0].rule)[0];
@@ -1126,6 +1135,13 @@ export default {
 				document.body.style.overflow = "hidden";
 			} else {
 				document.body.style.overflow = "auto";
+			}
+		},
+		isBatch(newVal, oldVal) {
+			if (newVal) {
+				document.body.classList.add('batch-on');
+			} else {
+				document.body.classList.remove('batch-on');
 			}
 		}
 	}

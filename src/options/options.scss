@@ -47,6 +47,7 @@ body {
 
 	.cell-batch {
 		width: 70px;
+		display: none;
 
 		.md-table-head-label,
 		.md-table-cell-container {
@@ -74,6 +75,10 @@ body {
 		margin-top: 0;
 		margin-bottom: 0;
 	}
+}
+
+body.batch-on .group-item .cell-batch {
+	display: table-cell;
 }
 
 .rule-drag-view {
