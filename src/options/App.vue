@@ -1116,7 +1116,7 @@ export default {
 		const query = parsePath(location.href).query;
 		if (query.action && query.action === "add-anti-hot-link") {
 			this.edit.id = -1;
-			this.edit.name = rule.name;
+			this.edit.name = "";
 			this.edit.ruleType = 'modifySendHeader';
 			this.edit.ruleTypeEditable = true;
 			this.edit.matchType = 'domain';
