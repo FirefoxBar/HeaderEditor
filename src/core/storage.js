@@ -181,7 +181,6 @@ function getSync() {
 	if ("sync" in browser.storage) {
 		return browser.storage.sync;
 	}
-	// In old Firefox version, sync is not supported, use local to instead of it
 	if ("local" in browser.storage) {
 		return browser.storage.local;
 	}

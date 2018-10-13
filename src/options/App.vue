@@ -896,7 +896,7 @@ export default {
 		},
 		saveDownloadHistory() {
 			storage.getLocalStorage().set({
-				dl_history: JSON.stringify(this.download.log)
+				dl_history: this.download.log
 			});
 		},
 		onDownloadClick() {
@@ -1099,7 +1099,7 @@ export default {
 			if (r.dl_history === undefined) {
 				return;
 			}
-			this.$set(this.download, 'log', JSON.parse(r.dl_history));
+			this.$set(this.download, 'log', r.dl_history);
 		});
 		storage.prefs.onReady().then(prefs => {
 			this.$set(this.options, 'addHotLink', prefs.get('add-hot-link'));

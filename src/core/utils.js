@@ -76,9 +76,13 @@ export default {
 		}
 		if (typeof(s.isFunction) === "undefined") {
 			s.isFunction = false;
+		} else {
+			s.isFunction = s.isFunction ? true : false;
 		}
 		if (typeof(s.enable) === "undefined") {
 			s.enable = true;
+		} else {
+			s.enable = s.enable ? true : false;
 		}
 		if ((s.ruleType === "modifySendHeader" || s.ruleType === "modifyReceiveHeader") && !s.isFunction) {
 			s.action.name = s.action.name.toLowerCase();
