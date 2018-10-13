@@ -933,7 +933,7 @@ export default {
 			}
 		},
 		onDragStart(e, r) {
-			const isTouch = e instanceof TouchEvent;
+			const isTouch = typeof(TouchEvent) !== "undefined" && e instanceof TouchEvent;
 			const box = (el => {
 				let p = el;
 				while (p = p.parentElement) {
