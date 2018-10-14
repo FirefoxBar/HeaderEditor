@@ -2,6 +2,8 @@
 
 [![GitHub release](https://img.shields.io/github/release/FirefoxBar/HeaderEditor.svg)](https://github.com/FirefoxBar/HeaderEditor/releases)
 [![license](https://img.shields.io/github/license/FirefoxBar/HeaderEditor.svg)](https://github.com/FirefoxBar/HeaderEditor/blob/master/LICENSE)
+[![Mozilla Add-on](https://img.shields.io/amo/users/header-editor.svg)](https://addons.mozilla.org/en-US/firefox/addon/header-editor/)
+[![Chrome Web Store](https://img.shields.io/chrome-web-store/users/eningockdidmgiojffjmkdblpjocbhgh.svg)](https://chrome.google.com/webstore/detail/header-editor/eningockdidmgiojffjmkdblpjocbhgh)
 
 An extension which can modify the request, include request headers, response headers, redirect requests, and cancel requests.
 
