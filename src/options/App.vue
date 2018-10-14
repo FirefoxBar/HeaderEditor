@@ -359,7 +359,7 @@ import file from '../core/file';
 import storage from '../core/storage';
 
 export default {
-	data: function() {
+	data() {
 		return {
 			isShowEdit: false,
 			isBatch: false,

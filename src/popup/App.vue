@@ -11,7 +11,7 @@ import utils from '../core/utils';
 import browser from 'webextension-polyfill';
 
 export default {
-	data () {
+	data() {
 		return {
 			disable_all: false
 		}
@@ -20,6 +20,7 @@ export default {
 		t: utils.t,
 		openManage() {
 			browser.runtime.sendMessage({"method": "openURL", "url": browser.extension.getURL('options/options.html')});
+			window.close();
 		}
 	},
 	mounted() {
