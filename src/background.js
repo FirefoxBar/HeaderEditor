@@ -126,26 +126,28 @@ browser.webRequest.onBeforeRequest.addListener(function(e) {
 function modifyHeaders(headers, rule, details) {
 	const newHeaders = {};
 	let hasFunction = false;
-	rule.forEach((item, idx) => {
-		if (!item.isFunction) {
-			newHeaders[item.action.name] = item.action.value;
-			rule.splice(idx, 1);
+	for (let i = 0; i < rule.length; i++) {
+		if (!rule[i].isFunction) {
+			newHeaders[rule[i].action.name] = rule[i].action.value;
+			rule.splice(i, 1);
+			i--;
 		} else {
 			hasFunction = true;
 		}
-	});
-	headers.forEach((item, idx) => {
-		const name = item.name.toLowerCase();
+	}
+	for (let i = 0; i < headers.length; i++) {
+		const name = headers[i].name;
 		if (newHeaders[name] === undefined) {
-			return;
+			continue;
 		}
 		if (newHeaders[name] === '_header_editor_remove_') {
-			headers.splice(idx, 1);
+			headers.splice(i, 1);
+			i--;
 		} else {
-			item.value = newHeaders[name];
+			headers[i].value = newHeaders[name];
 		}
 		delete newHeaders[name];
-	});
+	}
 	for (const k in newHeaders) {
 		headers.push({
 			"name": k,
