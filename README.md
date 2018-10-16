@@ -1,5 +1,6 @@
 # Header Editor
 
+[![Build Status](https://travis-ci.org/FirefoxBar/HeaderEditor.svg?branch=master)](https://travis-ci.org/FirefoxBar/HeaderEditor)
 [![GitHub release](https://img.shields.io/github/release/FirefoxBar/HeaderEditor.svg)](https://github.com/FirefoxBar/HeaderEditor/releases)
 [![license](https://img.shields.io/github/license/FirefoxBar/HeaderEditor.svg)](https://github.com/FirefoxBar/HeaderEditor/blob/master/LICENSE)
 [![Mozilla Add-on](https://img.shields.io/amo/users/header-editor.svg)](https://addons.mozilla.org/en-US/firefox/addon/header-editor/)
