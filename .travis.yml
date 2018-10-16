@@ -1,0 +1,34 @@
+sudo: false
+language: node_js
+node_js:
+  - 'node'
+
+addons:
+  apt:
+    packages:
+      - zip
+      - unzip
+
+before_install:
+  - curl -o- -L https://yarnpkg.com/install.sh | bash
+  - export PATH="$HOME/.yarn/bin:$PATH"
+  - openssl aes-256-cbc -K $encrypted_1fc90f464345_key -iv $encrypted_1fc90f464345_iv -in encrypt.zip.enc -out encrypt.zip -d
+  - unzip encrypt.zip
+
+install:
+  - yarn
+
+script:
+  - yarn build
+
+notifications:
+  email: false
+
+# deploy:
+  # provider: script
+  # skip_cleanup: true
+  # script:
+    # - yarn pack:all
+    # - yarn release
+  # on:
+    # tags: true

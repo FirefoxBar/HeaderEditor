@@ -4,12 +4,45 @@
 	"description": "Header Editor",
 	"author": "ShuangYa",
 	"license": "GPL-2.0",
+	"repository": {
+		"type": "git",
+		"url": "https://github.com/FirefoxBar/HeaderEditor.git"
+	},
 	"scripts": {
 		"lint": "eslint --ext .js,.vue src",
 		"build": "cross-env NODE_ENV=production webpack --hide-modules",
 		"build:dev": "cross-env NODE_ENV=development webpack --hide-modules",
 		"watch": "npm run build -- --watch",
-		"watch:dev": "cross-env HMR=true npm run build:dev -- --watch"
+		"watch:dev": "cross-env HMR=true npm run build:dev -- --watch",
+		"release": "node scripts/release.js",
+		"pack:all": "node scripts/pack-check.js && node scripts/pack.js",
+		"pack:amo": "node scripts/pack-check.js && node scripts/pack.js --platform=amo",
+		"pack:xpi": "node scripts/pack-check.js && node scripts/pack.js --platform=xpi",
+		"pack:cws": "node scripts/pack-check.js && node scripts/pack.js --platform=cws",
+		"pack:crx": "node scripts/pack-check.js && node scripts/pack.js --platform=crx"
+	},
+	"webextension": {
+		"name": "HeaderEditor",
+		"autobuild": {
+			"xpi": true,
+			"amo": true,
+			"cwx": true,
+			"crx": false
+		},
+		"firefox": {
+			"version": "52.0",
+			"xpi": "headereditor@addon.firefoxcn.net",
+			"amo": "headereditor-amo@addon.firefoxcn.net",
+			"update": "https://ext.firefoxcn.net/headereditor/install/update.json"
+		},
+		"chrome": {
+			"id": "eningockdidmgiojffjmkdblpjocbhgh",
+			"update": "https://ext.firefoxcn.net/headereditor/install/update.xml"
+		},
+		"github": {
+			"enable": true,
+			"tag": "{VER}"
+		}
 	},
 	"dependencies": {
 		"dateformat": "^3.0.3",
@@ -25,8 +58,10 @@
 		"@babel/plugin-proposal-optional-chaining": "^7.0.0",
 		"@babel/preset-env": "^7.0.0",
 		"@types/chrome": "^0.0.72",
+		"arg": "^2.0.0",
 		"babel-eslint": "^9.0.0",
 		"babel-loader": "^8.0.2",
+		"chrome-webstore-upload": "^0.2.2",
 		"copy-webpack-plugin": "^4.5.2",
 		"core-js": "^2.5.7",
 		"cross-env": "^5.2.0",
@@ -42,8 +77,11 @@
 		"eslint-plugin-vue": "^5.0.0-beta.3",
 		"file-loader": "^1.1.11",
 		"mini-css-extract-plugin": "^0.4.1",
+		"node-rsa": "^1.0.1",
 		"node-sass": "^4.9.3",
+		"publish-release": "^1.6.0",
 		"sass-loader": "^7.1.0",
+		"sign-addon": "^0.3.1",
 		"vue-loader": "^15.4.0",
 		"vue-template-compiler": "^2.5.17",
 		"webpack": "^4.16.5",

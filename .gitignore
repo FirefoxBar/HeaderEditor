@@ -1,4 +1,6 @@
 /node_modules
 /*.log
 /dist
-/dist-zip
+/dist-pack
+/build-temp
+/encrypt
