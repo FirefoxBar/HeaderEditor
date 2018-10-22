@@ -5,7 +5,7 @@
 				<md-card v-for="g of group" :key="g.name" class="group-item">
 					<md-card-header>
 						<div class="md-title">{{g.name}}</div>
-						<md-button class="md-icon-button" md-direction="bottom-end" @click="g.collapse = !g.collapse">
+						<md-button class="md-icon-button" @click="g.collapse = !g.collapse">
 							<md-icon v-show="!g.collapse">keyboard_arrow_up</md-icon>
 							<md-icon v-show="g.collapse">keyboard_arrow_down</md-icon>
 						</md-button>
@@ -857,6 +857,7 @@ export default {
 			Promise.all(queue).then(() => {
 				this.imports.status = 0;
 				this.showToast(utils.t('import_success'));
+				browser.runtime.sendMessage({"method": "updateCache", "type": 'all'});
 				const t = setTimeout(() => {
 					this.loadRules();
 					clearTimeout(t);
