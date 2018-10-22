@@ -28,12 +28,14 @@ storage.getLocalStorage().get('version_mark')
 				return new Promise(resolve => {
 					const cacheQueue = [];
 					function findGroup(type, id) {
-						Object.keys(group).forEach(e => {
-							if (group[e].includes(type + '-' + id)) {
-								return e;
+						let result = browser.i18n.getMessage('ungrouped');
+						for (const k in group) {
+							if (group[k].includes(type + '-' + id)) {
+								result = k;
+								break;
 							}
-						});
-						return browser.i18n.getMessage('ungrouped');
+						}
+						return result;
 					}
 					utils.TABLE_NAMES.forEach(k => {
 						storage.getDatabase().then(db => {
@@ -45,7 +47,7 @@ storage.getLocalStorage().get('version_mark')
 									const s = cursor.value;
 									s.id = cursor.key;
 									if (typeof(s.group) === "undefined") {
-										s.group = findGroup(utils.getTableName(s.ruleType), s.id);
+										s.group = findGroup(k, s.id);
 										os.put(s);
 									}
 									cursor.continue();
