@@ -31,7 +31,7 @@ module.exports = function(manifest) {
 					id: package.webextension.firefox.amo
 				})
 				.then(() => {
-					fs.unlinkSync(`${buildTemp}xpi.zip`);
+					fs.unlinkSync(`${buildTemp}amo.zip`);
 					resolve();
 				});
 			}
