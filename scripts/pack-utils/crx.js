@@ -6,7 +6,7 @@ const package = require('../../package.json');
 const buildTemp = fs.realpathSync(__dirname + '/../../build-temp/') + '/';
 const copyDist = buildTemp + 'copy-dist/';
 const exec = require('child_process').exec;
-const privKey = fs.realpathSync(__dirname + '/../../encrypt/crx.pem');
+const privKey = fs.realpathSync(__dirname + '/../..') + '/encrypt/crx.pem';
 
 function generatePublicKey(privateKey) {
 	const key = new RSA(privateKey);

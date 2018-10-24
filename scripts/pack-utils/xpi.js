@@ -13,7 +13,7 @@ module.exports = function(manifest, outputDir) {
 		const newManifest = merge(true, manifest);
 		newManifest.application = {
 			gecko: {
-				id: package.webextension.firefox.amo,
+				id: package.webextension.firefox.xpi,
 				strict_min_version: package.webextension.firefox.version,
 				update_url: package.webextension.firefox.update
 			}
@@ -29,7 +29,7 @@ module.exports = function(manifest, outputDir) {
 					version: package.version,
 					apiKey: AMOUser.key,
 					apiSecret: AMOUser.secret,
-					id: package.webextension.firefox.amo,
+					id: package.webextension.firefox.xpi,
 					downloadDir: buildTemp
 				})
 				.then(result => {
