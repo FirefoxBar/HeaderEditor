@@ -136,7 +136,7 @@ function modifyHeaders(headers, rule, details) {
 		}
 	}
 	for (let i = 0; i < headers.length; i++) {
-		const name = headers[i].name;
+		const name = headers[i].name.toLowerCase();
 		if (newHeaders[name] === undefined) {
 			continue;
 		}
