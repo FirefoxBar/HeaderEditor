@@ -5,12 +5,12 @@ const rootDir = fs.realpathSync(__dirname + '/../') + '/';
 const output = rootDir + 'dist-pack/';
 const GitHubUser = require(rootDir + 'encrypt/github.json');
 
-if (!package.github.enable) {
+if (!package.webextension.github.enable) {
 	console.log("GitHub not enabled");
 }
 
 const assets = [];
-const assetName = package.name + "-" + package.version;
+const assetName = package.webextension.name + "-" + package.version;
 
 if (fs.existsSync(output + assetName + '.crx')) {
 	assets.push(output + assetName + '.crx');
@@ -21,7 +21,7 @@ if (fs.existsSync(output + assetName + '.xpi')) {
 
 // Get git names
 const gitName = package.repository.url.match(/(\w+)\/(\w+)\.git/);
-const tagName = package.github.tag.replace('{VER}', package.version);
+const tagName = package.webextension.github.tag.replace('{VER}', package.version);
 
 publishRelease({
 	token: GitHubUser.token,
