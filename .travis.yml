@@ -29,11 +29,9 @@ script:
 notifications:
   email: false
 
-# deploy:
-  # provider: script
-  # skip_cleanup: true
-  # script:
-    # - yarn pack:all
-    # - yarn release
-  # on:
-    # tags: true
+deploy:
+  provider: script
+  skip_cleanup: true
+  script: yarn travis:release
+  on:
+    tags: true
