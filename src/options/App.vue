@@ -5,7 +5,7 @@
 				<div class="loading-box" v-show="isLoadingRules">
 					<md-progress-spinner md-mode="indeterminate" :md-stroke="4"></md-progress-spinner>
 				</div>
-				<md-card v-for="g of group" :key="g.name" class="group-item" v-show="!isLoadingRules">
+				<md-card v-for="g of group" :key="g.name" class="group-item" v-show="!isLoadingRules && Object.keys(g.rule).length > 0">
 					<md-card-header>
 						<div class="md-title">{{g.name}}</div>
 						<md-button class="md-icon-button" @click="g.collapse = !g.collapse">
