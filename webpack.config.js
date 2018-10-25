@@ -93,7 +93,10 @@ const config = {
 			},
 		]),
 		new WebpackShellPlugin({
-			onBuildEnd: ['node scripts/remove-evals.js'],
+			onBuildEnd: [
+				'node scripts/remove-evals.js',
+				'node scripts/replace-icons.js'
+			],
 		}),
 	],
 };

@@ -1,30 +1,30 @@
 <template>
 	<div class="main">
 		<md-tabs class="md-primary main-menu" md-elevation="1" md-active-tab="tab-rule-list">
-			<md-tab id="tab-rule-list" :md-label="t('rule_list')" md-icon="list">
+			<md-tab id="tab-rule-list" :md-label="t('rule_list')">
 				<md-card v-for="g of group" :key="g.name" class="group-item">
 					<md-card-header>
 						<div class="md-title">{{g.name}}</div>
 						<md-button class="md-icon-button" @click="g.collapse = !g.collapse">
-							<md-icon v-show="!g.collapse">keyboard_arrow_up</md-icon>
-							<md-icon v-show="g.collapse">keyboard_arrow_down</md-icon>
+							<md-icon v-show="!g.collapse" v-html="'@icon(keyboard_arrow_up)'"></md-icon>
+							<md-icon v-show="g.collapse" v-html="'@icon(keyboard_arrow_down)'"></md-icon>
 						</md-button>
 						<md-menu md-size="big" md-direction="bottom-end">
 							<md-button class="md-icon-button" md-menu-trigger>
-								<md-icon>more_vert</md-icon>
+								<md-icon v-html="'@icon(more_vert)'"></md-icon>
 							</md-button>
 							<md-menu-content>
 								<md-menu-item @click="onGroupRename(g)">
 									<span>{{t('rename')}}</span>
-									<md-icon>mode_edit</md-icon>
+									<md-icon v-html="'@icon(mode_edit)'"></md-icon>
 								</md-menu-item>
 								<md-menu-item @click="onGroupShare(g.name)">
 									<span>{{t('share')}}</span>
-									<md-icon>share</md-icon>
+									<md-icon v-html="'@icon(share)'"></md-icon>
 								</md-menu-item>
 								<md-menu-item @click="onGroupDelete(g.name)">
 									<span>{{t('delete')}}</span>
-									<md-icon>delete</md-icon>
+									<md-icon v-html="'@icon(delete)'"></md-icon>
 								</md-menu-item>
 							</md-menu-content>
 						</md-menu>
@@ -58,18 +58,18 @@
 								</md-table-cell>
 								<md-table-cell class="cell-type">{{t('rule_' + r.ruleType)}}</md-table-cell>
 								<md-table-cell class="cell-action">
-									<md-button class="with-icon" @click="onChangeRuleGroup(r)"><md-icon>playlist_add</md-icon>{{t('group')}}</md-button>
-									<md-button class="with-icon" @click="onEditRule(r)"><md-icon>mode_edit</md-icon>{{t('edit')}}</md-button>
-									<md-button class="with-icon" @click="onCloneRule(r)"><md-icon>file_copy</md-icon>{{t('clone')}}</md-button>
-									<md-button class="with-icon" @click="onViewRule(r)"><md-icon>search</md-icon>{{t('view')}}</md-button>
-									<md-button class="with-icon" @click="onRemoveRule(r)"><md-icon>delete</md-icon>{{t('delete')}}</md-button>
+									<md-button class="with-icon" @click="onChangeRuleGroup(r)"><md-icon v-html="'@icon(playlist_add)'"></md-icon>{{t('group')}}</md-button>
+									<md-button class="with-icon" @click="onEditRule(r)"><md-icon v-html="'@icon(mode_edit)'"></md-icon>{{t('edit')}}</md-button>
+									<md-button class="with-icon" @click="onCloneRule(r)"><md-icon v-html="'@icon(content_copy)'"></md-icon>{{t('clone')}}</md-button>
+									<md-button class="with-icon" @click="onViewRule(r)"><md-icon v-html="'@icon(search)'"></md-icon>{{t('view')}}</md-button>
+									<md-button class="with-icon" @click="onRemoveRule(r)"><md-icon v-html="'@icon(delete)'"></md-icon>{{t('delete')}}</md-button>
 								</md-table-cell>
 							</md-table-row>
 						</md-table>
 					</md-card-content>
 				</md-card>
 			</md-tab>
-			<md-tab id="tab-options" :md-label="t('options')" md-icon="settings">
+			<md-tab id="tab-options" :md-label="t('options')">
 				<md-card>
 					<md-card-header>
 						<div class="md-title">{{t('options')}}</div>
@@ -83,7 +83,7 @@
 					</md-card-content>
 				</md-card>
 			</md-tab>
-			<md-tab id="tab-export-import" :md-label="t('export_and_import')" md-icon="settings_backup_restore">
+			<md-tab id="tab-export-import" :md-label="t('export_and_import')">
 				<md-card>
 					<md-card-header>
 						<div class="md-title">{{t('local_files')}}</div>
@@ -103,15 +103,15 @@
 								<label>URL</label>
 								<md-input v-model="download.url"></md-input>
 							</md-field>
-							<md-button class="md-icon-button" @click="onDownloadClick"><md-icon>file_download</md-icon></md-button>
-							<md-button class="md-icon-button" :title="t('third_party_rules')"><md-icon>search</md-icon></md-button>
+							<md-button class="md-icon-button" @click="onDownloadClick"><md-icon v-html="'@icon(file_download)'"></md-icon></md-button>
+							<md-button class="md-icon-button" :title="t('third_party_rules')"><md-icon v-html="'@icon(search)'"></md-icon></md-button>
 						</div>
 						<md-list class="download-list">
 							<md-list-item v-for="url of download.log" :key="url">
 								<span class="md-list-item-text">{{url}}</span>
-								<md-button class="md-icon-button md-list-action" @click="onDownloadLogClick(url)"><md-icon>file_download</md-icon></md-button>
-								<md-button class="md-icon-button md-list-action" @click="download.url = url"><md-icon>mode_edit</md-icon></md-button>
-								<md-button class="md-icon-button md-list-action" @click="onRemoveDownload(url)"><md-icon>delete</md-icon></md-button>
+								<md-button class="md-icon-button md-list-action" @click="onDownloadLogClick(url)"><md-icon v-html="'@icon(file_download)'"></md-icon></md-button>
+								<md-button class="md-icon-button md-list-action" @click="download.url = url"><md-icon v-html="'@icon(mode_edit)'"></md-icon></md-button>
+								<md-button class="md-icon-button md-list-action" @click="onRemoveDownload(url)"><md-icon v-html="'@icon(delete)'"></md-icon></md-button>
 							</md-list-item>
 						</md-list>
 					</md-card-content>
@@ -158,14 +158,14 @@
 					</md-card-actions>
 				</md-card>
 			</md-tab>
-			<md-tab id="tab-help" :md-label="t('help')" md-icon="live_help">
-				<md-button @click="onOpenHelp" class="with-icon"><md-icon>open_in_new</md-icon>{{t('view')}}</md-button>
+			<md-tab id="tab-help" :md-label="t('help')">
+				<md-button @click="onOpenHelp" class="with-icon"><md-icon v-html="'@icon(open_in_new)'"></md-icon>{{t('view')}}</md-button>
 			</md-tab>
 		</md-tabs>
 		<div id="edit-page" v-show="isShowEdit">
 			<md-toolbar class="md-primary" md-elevation="1">
 				<md-button class="md-icon-button" @click="closeEditPage">
-					<md-icon>arrow_back</md-icon>
+					<md-icon v-html="'@icon(arrow_back)'"></md-icon>
 				</md-button>
 				<h2 class="md-title" style="flex: 1">{{editTitle}}</h2>
 			</md-toolbar>
@@ -277,29 +277,29 @@
 		<div class="float-button">
 			<md-speed-dial class="md-bottom-right" md-event="click">
 				<md-speed-dial-target class="md-primary" :title="t('batch_mode')" @click="onBatchEnter">
-					<md-icon v-show="isBatch">exit_to_app</md-icon>
-					<md-icon v-show="!isBatch">playlist_add_check</md-icon>
+					<md-icon v-show="isBatch" v-html="'@icon(exit_to_app)'"></md-icon>
+					<md-icon v-show="!isBatch" v-html="'@icon(playlist_add_check)'"></md-icon>
 				</md-speed-dial-target>
 				<md-speed-dial-content>
 					<md-button class="md-icon-button" :title="t('select_all')" @click="onBatchAll">
-						<md-icon>done_all</md-icon>
+						<md-icon v-html="'@icon(done_all)'"></md-icon>
 					</md-button>
 					<md-button class="md-icon-button" :title="t('enable')" @click="onBatchEnable">
-						<md-icon>touch_app</md-icon>
+						<md-icon v-html="'@icon(touch_app)'"></md-icon>
 					</md-button>
 					<md-button class="md-icon-button" :title="t('group')" @click="onBatchGroup">
-						<md-icon>playlist_add</md-icon>
+						<md-icon v-html="'@icon(playlist_add)'"></md-icon>
 					</md-button>
 					<md-button class="md-icon-button" :title="t('share')" @click="onBatchShare">
-						<md-icon>share</md-icon>
+						<md-icon v-html="'@icon(share)'"></md-icon>
 					</md-button>
 					<md-button class="md-icon-button" :title="t('delete')" @click="onBatchDelete">
-						<md-icon>delete</md-icon>
+						<md-icon v-html="'@icon(delete)'"></md-icon>
 					</md-button>
 				</md-speed-dial-content>
 			</md-speed-dial>
 			<md-button class="md-fab md-primary" @click="showAddPage">
-				<md-icon>add</md-icon>
+				<md-icon v-html="'@icon(add)'">add</md-icon>
 			</md-button>
 		</div>
 		<div class="drags">
@@ -319,7 +319,7 @@
 					</md-card-content>
 				</md-card-area>
 				<md-card-actions md-alignment="left">
-					<md-button class="md-icon-button" @mousedown="e => onDragStart(e, r)" @touchstart="e => onDragStart(e, r)" style="cursor:move"><md-icon>open_with</md-icon></md-button>
+					<md-button class="md-icon-button" @mousedown="e => onDragStart(e, r)" @touchstart="e => onDragStart(e, r)" style="cursor:move"><md-icon v-html="'@icon(open_with)'"></md-icon></md-button>
 					<md-button class="md-primary" @click="dragable_rule.splice(dragable_rule.indexOf(r), 1)">{{t('cancel')}}</md-button>
 				</md-card-actions>
 			</md-card>
