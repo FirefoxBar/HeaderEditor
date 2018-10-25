@@ -11,7 +11,7 @@ module.exports = function(manifest, outputDir) {
 	return new Promise(resolve => {
 		// replace manifest
 		const newManifest = merge(true, manifest);
-		newManifest.application = {
+		newManifest.applications = {
 			gecko: {
 				id: package.webextension.firefox.xpi,
 				strict_min_version: package.webextension.firefox.version,

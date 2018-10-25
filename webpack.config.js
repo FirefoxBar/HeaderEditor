@@ -25,6 +25,9 @@ const config = {
 	resolve: {
 		extensions: ['.js', '.vue'],
 	},
+	performance: {
+		hints: false
+	},
 	module: {
 		rules: [{
 				test: /\.vue$/,
