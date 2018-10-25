@@ -854,10 +854,11 @@ export default {
 
 				queue.push(rules.save(tableName, e));
 			});
-			Promise.all(queue).then(() => {
+			Promise.all(queue)
+			.then(() => browser.runtime.sendMessage({"method": "updateCache", "type": 'all'}))
+			.then(() => {
 				this.imports.status = 0;
 				this.showToast(utils.t('import_success'));
-				browser.runtime.sendMessage({"method": "updateCache", "type": 'all'});
 				const t = setTimeout(() => {
 					this.loadRules();
 					clearTimeout(t);
