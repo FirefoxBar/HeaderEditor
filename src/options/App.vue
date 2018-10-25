@@ -2,7 +2,10 @@
 	<div class="main">
 		<md-tabs class="md-primary main-menu" md-elevation="1" md-active-tab="tab-rule-list">
 			<md-tab id="tab-rule-list" :md-label="t('rule_list')">
-				<md-card v-for="g of group" :key="g.name" class="group-item">
+				<div class="loading-box" v-show="isLoadingRules">
+					<md-progress-spinner md-mode="indeterminate" :md-stroke="4"></md-progress-spinner>
+				</div>
+				<md-card v-for="g of group" :key="g.name" class="group-item" v-show="!isLoadingRules">
 					<md-card-header>
 						<div class="md-title">{{g.name}}</div>
 						<md-button class="md-icon-button" @click="g.collapse = !g.collapse">
@@ -361,6 +364,7 @@ import storage from '../core/storage';
 export default {
 	data() {
 		return {
+			isLoadingRules: true,
 			isShowEdit: false,
 			isBatch: false,
 			isChooseGroup: false,
@@ -487,6 +491,8 @@ export default {
 		t: utils.t,
 		loadRules() {
 			const _this = this;
+			let finish_count = 0;
+			this.isLoadingRules = true;
 			this.group = {};
 			this.$set(this.group, utils.t('ungrouped'), {
 				name: utils.t('ungrouped'),
@@ -505,6 +511,9 @@ export default {
 					item["_v_key"] = table + '-' + item.id;
 					_this.$set(_this.group[item.group].rule, item["_v_key"], item);
 				});
+				if (++finish_count >= 3) {
+					_this.isLoadingRules = false;
+				}
 			}
 			function checkResult(table, response) {
 				if (!response) { // Browser is starting up
