@@ -68,7 +68,7 @@ body {
 	}
 
 	.cell-type {
-		width: 180px;
+		width: 270px;
 	}
 
 	.cell-action {
@@ -102,6 +102,9 @@ body.batch-on .group-item .cell-batch {
 		position: relative;
 		bottom: 0;
 		right: 0;
+		&:not(.md-active) .md-speed-dial-content {
+			max-height: 0;
+		}
 	}
 	.md-button {
 		margin: 0;
