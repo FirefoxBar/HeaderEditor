@@ -52,7 +52,7 @@ module.exports = function(manifest, outputDir) {
 			} else {
 				createCrx(fs.readFileSync(`${buildTemp}crx.zip`))
 				.then(content => {
-					const out = outputDir + package.webextension.name + '-' + package.version + '.crx';
+					const out = outputDir + package.webextension.dist.replace('{VER}', package.version) + '.crx';
 					fs.writeFileSync(out, content);
 					fs.unlinkSync(`${buildTemp}crx.zip`);
 					resolve(out);

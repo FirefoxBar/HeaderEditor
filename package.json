@@ -23,7 +23,7 @@
 		"pack:crx": "node scripts/pack-check.js && node scripts/pack.js --platform=crx"
 	},
 	"webextension": {
-		"name": "HeaderEditor",
+		"dist": "HeaderEditor-{VER}",
 		"autobuild": {
 			"xpi": true,
 			"amo": true,

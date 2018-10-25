@@ -36,7 +36,7 @@ module.exports = function(manifest, outputDir) {
 					if (result.success) {
 						console.log("Downloaded signed addon");
 						fs.unlinkSync(`${buildTemp}xpi.zip`);
-						const out = outputDir + package.webextension.name + '-' + package.version + '.xpi';
+						const out = outputDir + package.webextension.dist.replace('{VER}', package.version) + '.xpi';
 						// Move download file to output dir
 						if (result.downloadedFiles[0]) {
 							fs.renameSync(result.downloadedFiles[0], out);
