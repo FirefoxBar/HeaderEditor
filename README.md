@@ -53,6 +53,8 @@ If you have any advice on translations, please contact the maintainer(s) directl
 
 * pt-BR: [Kassio Cruz](https://www.transifex.com/user/profile/kassiocs/)
 
+* pl: [Pabli](https://github.com/pabli24)
+
 ## How to build
 
 * Install node, npm or yarn. (It is recommended to use yarn, or the build result may be inconsistent with the release version)
