@@ -8,6 +8,7 @@ const GitHubUser = require(rootDir + 'encrypt/github.json');
 
 if (!package.webextension.github.enable) {
 	console.log("GitHub not enabled");
+	process.exit(0);
 }
 
 const assets = [];
