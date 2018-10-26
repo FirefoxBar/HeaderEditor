@@ -86,6 +86,7 @@ browser.webRequest.onBeforeRequest.addListener(function(e) {
 	}
 	let redirectTo = e.url;
 	const detail = {
+		"id": e.requestId,
 		"url": e.url,
 		"method": e.method,
 		"isFrame": e.frameId === 0,
