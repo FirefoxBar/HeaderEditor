@@ -157,6 +157,7 @@ function modifyHeaders(headers, rule, details) {
 	}
 	if (hasFunction) {
 		const detail = {
+			"id": e.requestId,
 			"url": details.url,
 			"method": details.method,
 			"isFrame": details.frameId === 0,
