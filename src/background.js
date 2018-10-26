@@ -116,7 +116,7 @@ browser.webRequest.onBeforeRequest.addListener(function(e) {
 			}
 		}
 	}
-	if (redirectTo !== e.url) {
+	if (redirectTo && redirectTo !== e.url) {
 		if (/^([a-zA-Z0-9]+)%3A/.test(redirectTo)) {
 			redirectTo = decodeURIComponent(redirectTo);
 		}
@@ -166,12 +166,10 @@ function modifyHeaders(headers, rule, details) {
 			"originUrl": details.originUrl || ''
 		};
 		rule.forEach(item => {
-			if (item.isFunction) {
-				try {
-					item._func(headers, detail);
-				} catch (e) {
-					console.log(e);
-				}
+			try {
+				item._func(headers, detail);
+			} catch (e) {
+				console.log(e);
 			}
 		});
 	}
