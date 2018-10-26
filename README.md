@@ -9,9 +9,7 @@ https://img.shields.io/travis/FirefoxBar/HeaderEditor/master.svg?style=flat-squa
 
 An extension which can modify the request, include request headers, response headers, redirect requests, and cancel requests.
 
-You can get this extension from [Mozilla Add-ons](https://addons.mozilla.org/en-US/firefox/addon/header-editor/) and [Chrome WebStore](https://chrome.google.com/webstore/detail/header-editor/eningockdidmgiojffjmkdblpjocbhgh)。
-
-But if you want to stay up-to-date with the latest developments, you should [install our self-distributed version](https://github.com/FirefoxBar/HeaderEditor/releases).
+Get this extension from [Mozilla Add-ons](https://addons.mozilla.org/en-US/firefox/addon/header-editor/) and [Chrome Web Store](https://chrome.google.com/webstore/detail/header-editor/eningockdidmgiojffjmkdblpjocbhgh), or [install our self-distributed version](https://github.com/FirefoxBar/HeaderEditor/releases).
 
 For more documentation, Please visit [wiki](https://github.com/FirefoxBar/HeaderEditor/wiki)
 
