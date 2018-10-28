@@ -113,7 +113,9 @@ function filter(rules, options) {
 }
 
 function save(tableName, o) {
-	delete o["_v_key"], o["_func"], o["_reg"];
+	delete o["_v_key"];
+	delete o["_func"];
+	delete o["_reg"];
 	return new Promise(resolve => {
 		storage.getDatabase().then((db) => {
 			const tx = db.transaction([tableName], "readwrite");
