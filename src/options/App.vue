@@ -691,8 +691,8 @@ export default {
 			this.edit.matchRule = rule.pattern;
 			this.edit.excludeRule = rule.exclude;
 			this.edit.redirectTo = rule.to || "";
-			this.edit.headerName = typeof(rule.action.name) === "string" ? rule.action.name : "";
-			this.edit.headerValue = typeof(rule.action.value) === "string" ? rule.action.value : "";
+			this.edit.headerName = (rule.action && rule.action.name) ? rule.action.name : "";
+			this.edit.headerValue = (rule.action && rule.action.value) ? rule.action.value : "";
 			this.edit.execType = rule.isFunction ? 1 : 0;
 			this.edit.code = rule.code || "";
 			this.edit.oldGroup = rule.group;
