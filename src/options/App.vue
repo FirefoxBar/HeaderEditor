@@ -355,7 +355,6 @@
 <script>
 import browser from 'webextension-polyfill';
 import merge from 'merge';
-import parsePath from 'parse-path';
 import utils from '../core/utils';
 import rules from '../core/rules';
 import file from '../core/file';
@@ -439,7 +438,7 @@ export default {
 						isMatch = data.test.indexOf(data.matchRule) === 0 ? 1 : 0;
 						break;
 					case 'domain':
-						isMatch = parsePath(data.test).resource === data.matchRule ? 1 : 0;
+						isMatch = utils.getDomain(data.test) === data.matchRule ? 1 : 0;
 						break;
 					case 'url':
 						isMatch = data.test === data.matchRule ? 1 : 0;
@@ -1124,14 +1123,25 @@ export default {
 			}, { deep: true });
 		});
 		// init anti-hot-link
-		const query = parsePath(location.href).query;
+		const query = (() => {
+			const params = {};
+			const urlParts = location.href.split("?", 2);
+			if (urlParts.length == 1) {
+				return params;
+			}
+			urlParts[1].split("&").forEach(keyValue => {
+				const splitKeyValue = keyValue.split("=", 2);
+				params[decodeURIComponent(splitKeyValue[0])] = decodeURIComponent(splitKeyValue[1]);
+			});
+			return params;
+		})();
 		if (query.action && query.action === "add-anti-hot-link") {
 			this.edit.id = -1;
 			this.edit.name = "";
 			this.edit.ruleType = 'modifySendHeader';
 			this.edit.ruleTypeEditable = true;
 			this.edit.matchType = 'domain';
-			this.edit.matchRule = parsePath(query.url).resource;
+			this.edit.matchRule = utils.getDomain(query.url);
 			this.edit.headerName = "referer";
 			this.edit.headerValue = "";
 			this.edit.execType = 0;

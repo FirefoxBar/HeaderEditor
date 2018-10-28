@@ -1,7 +1,6 @@
 import utils from './utils';
 import storage from './storage';
 import merge from 'merge';
-import parsePath from 'parse-path';
 
 const cache = {};
 utils.TABLE_NAMES.forEach(t => cache[t] = null);
@@ -94,7 +93,7 @@ function filter(rules, options) {
 					result = url.indexOf(rule.pattern) === 0;
 					break;
 				case 'domain':
-					result = parsePath(url).resource === rule.pattern;
+					result = utils.getDomain(url) === rule.pattern;
 					break;
 				case 'url':
 					result = url === rule.pattern;

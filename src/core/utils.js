@@ -106,5 +106,12 @@ export default {
 	t(key, params) {
 		const s = browser.i18n.getMessage(key, params)
 		return s || key;
+	},
+	getDomain(url) {
+		if (url.indexOf("file:") == 0) {
+			return '';
+		}
+		var d = /.*?:\/*([^\/:]+)/.exec(url)[1];
+		return d;
 	}
 }
