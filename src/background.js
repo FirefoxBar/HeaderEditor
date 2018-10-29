@@ -96,13 +96,16 @@ browser.webRequest.onBeforeRequest.addListener(function(e) {
 	};
 	for (const item of rule) {
 		if (item.action === 'cancel') {
-			return {"cancel": true};
+			return { "cancel": true };
 		} else {
 			if (item.isFunction) {
 				try {
 					const r = item._func(redirectTo, detail);
 					if (typeof(r) === 'string') {
 						redirectTo = r;
+					}
+					if (r === '_header_editor_cancel_') {
+						return { "cancel": true };
 					}
 				} catch (e) {
 					console.log(e);
