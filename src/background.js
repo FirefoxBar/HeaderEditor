@@ -45,21 +45,27 @@ browser.runtime.onMessage.addListener(function(request, sender, sendResponse) {
 
 function openURL(options) {
 	delete options.method;
-	browser.tabs.query({currentWindow: true, url: options.url}).then((tabs) => {
-		if (tabs.length) {
-			return browser.tabs.update(tabs[0].id, {
-				"active": true
-			});
-		} else {
-			utils.getActiveTab()
-			.then(tab => {
-				// re-use an active new tab page
-				// Firefox may have more than 1 newtab url, so check all
-				const isNewTab = tab.url.indexOf('about:newtab') === 0 || tab.url.indexOf('about:home') === 0 || tab.url.indexOf('chrome://newtab/') === 0;
-				return browser.tabs[isNewTab ? "update" : "create"](options);
-			});
-		}
-	});
+	return new Promise(resolve => {
+		browser.tabs.query({currentWindow: true, url: options.url})
+		.then(tabs => {
+			if (tabs.length) {
+				browser.tabs.update(tabs[0].id, {
+					"active": true
+				}).then(resolve);
+			} else {
+				utils.getActiveTab()
+				.then(tab => {
+					// re-use an active new tab page
+					// Firefox may have more than 1 newtab url, so check all
+					const isNewTab = tab.url.indexOf('about:newtab') === 0 || tab.url.indexOf('about:home') === 0 || tab.url.indexOf('chrome://newtab/') === 0;
+					browser.tabs[isNewTab ? "update" : "create"](options).then(resolve);
+				});
+			}
+		})
+		.catch(e => {
+			browser.tabs.create(options).then(resolve);
+		})
+	})
 }
 
 if (typeof(browser.contextMenus) !== 'undefined') {

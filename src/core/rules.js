@@ -119,6 +119,8 @@ function save(tableName, o) {
 		storage.getDatabase().then((db) => {
 			const tx = db.transaction([tableName], "readwrite");
 			const os = tx.objectStore(tableName);
+			// Check base informations
+			utils.upgradeRuleFormat(o);
 			// Update
 			if (o.id) {
 				const request = os.get(Number(o.id));
@@ -138,8 +140,6 @@ function save(tableName, o) {
 				};
 				return;
 			}
-			// Check base informations
-			utils.upgradeRuleFormat(o);
 			// Create
 			// Make sure it's not null - that makes indexeddb sad
 			delete o["id"];
