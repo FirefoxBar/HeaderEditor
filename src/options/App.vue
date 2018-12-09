@@ -700,7 +700,7 @@ export default {
 			this.isShowEdit = true;
 		},
 		onCloneRule(r) {
-			const newName = window.prompt(utils.t('enter_group_name'), r.name + "_clone");
+			const newName = window.prompt(utils.t('name'), r.name + "_clone");
 			if (newName) {
 				const newRule = merge(true, r);
 				const tableName = utils.getTableName(r.ruleType);
