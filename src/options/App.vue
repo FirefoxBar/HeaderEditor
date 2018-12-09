@@ -858,8 +858,9 @@ export default {
 				delete e["import_old_id"];
 				const tableName = utils.getTableName(e.ruleType);
 				e.group = this.imports.group_type === 0 ? this.imports.group_name : e.group;
-				e.enable = true;
-
+				if (typeof(e.enable) === "undefined") {
+					e.enable = true;
+				}
 				queue.push(rules.save(tableName, e));
 			});
 			Promise.all(queue)
