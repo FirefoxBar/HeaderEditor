@@ -117,7 +117,7 @@ export default {
 	createHeaderListener(type) {
 		const result = ['blocking'];
 		result.push(type);
-		if (IS_CHROME && CHROME_VERSION >= 72) {
+		if (IS_CHROME && chrome.webRequest.OnBeforeSendHeadersOptions.hasOwnProperty('EXTRA_HEADERS')) {
 			result.push('extraHeaders');
 		}
 		return result;
