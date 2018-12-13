@@ -50,7 +50,7 @@ function openURL(options) {
 		.then(tabs => {
 			if (tabs.length) {
 				browser.tabs.update(tabs[0].id, {
-					"active": true
+					active: true
 				}).then(resolve);
 			} else {
 				utils.getActiveTab()
@@ -71,7 +71,7 @@ function openURL(options) {
 if (typeof(browser.contextMenus) !== 'undefined') {
 	browser.contextMenus.onClicked.addListener((info, tab) => {
 		if (info.menuItemId === 'add-anti-hot-link') {
-			openURL({"url": browser.extension.getURL("options/options.html") + '?action=add-anti-hot-link&url=' + info.srcUrl});
+			openURL({ url: browser.extension.getURL("options/options.html") + '?action=add-anti-hot-link&url=' + info.srcUrl });
 		}
 	});
 }
@@ -85,24 +85,24 @@ browser.webRequest.onBeforeRequest.addListener(function(e) {
 		return;
 	}
 	//可用：重定向，阻止加载
-	const rule = rules.get('request', {"url": e.url, "enable": true});
+	const rule = rules.get('request', { url: e.url, enable: true });
 	// Browser is starting up, pass all requests
 	if (rule === null) {
 		return;
 	}
 	let redirectTo = e.url;
 	const detail = {
-		"id": e.requestId,
-		"url": e.url,
-		"method": e.method,
-		"isFrame": e.frameId === 0,
-		"type": e.type,
-		"time": e.timeStamp,
-		"originUrl": e.originUrl || ''
+		id: e.requestId,
+		url: e.url,
+		method: e.method,
+		isFrame: e.frameId === 0,
+		type: e.type,
+		time: e.timeStamp,
+		originUrl: e.originUrl || ''
 	};
 	for (const item of rule) {
 		if (item.action === 'cancel') {
-			return { "cancel": true };
+			return { cancel: true };
 		} else {
 			if (item.isFunction) {
 				try {
@@ -129,9 +129,9 @@ browser.webRequest.onBeforeRequest.addListener(function(e) {
 		if (/^([a-zA-Z0-9]+)%3A/.test(redirectTo)) {
 			redirectTo = decodeURIComponent(redirectTo);
 		}
-		return {"redirectUrl": redirectTo};
+		return { redirectUrl: redirectTo };
 	}
-}, {urls: ["<all_urls>"]}, ['blocking']);
+}, { urls: ["<all_urls>"] }, ['blocking']);
 
 function modifyHeaders(headers, rule, details) {
 	const newHeaders = {};
@@ -202,8 +202,8 @@ browser.webRequest.onBeforeSendHeaders.addListener(function(e) {
 		return;
 	}
 	modifyHeaders(e.requestHeaders, rule, e);
-	return {"requestHeaders": e.requestHeaders};
-}, {urls: ["<all_urls>"]}, ['blocking', 'requestHeaders']);
+	return { requestHeaders: e.requestHeaders };
+}, { urls: ["<all_urls>"] }, utils.createHeaderListener('requestHeaders'));
 
 browser.webRequest.onHeadersReceived.addListener(function(e) {
 	if (storage.prefs.get('disable-all')) {
@@ -223,8 +223,8 @@ browser.webRequest.onHeadersReceived.addListener(function(e) {
 		return;
 	}
 	modifyHeaders(e.responseHeaders, rule, e);
-	return {"responseHeaders": e.responseHeaders};
-}, {urls: ["<all_urls>"]}, ['blocking', 'responseHeaders']);
+	return { responseHeaders: e.responseHeaders };
+}, { urls: ["<all_urls>"] }, utils.createHeaderListener('responseHeaders'));
 
 function toggleAntiHotLinkMenu(has) {
 	if (utils.IS_MOBILE) {

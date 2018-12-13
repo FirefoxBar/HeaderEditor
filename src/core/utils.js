@@ -113,5 +113,13 @@ export default {
 		}
 		var d = /.*?:\/*([^\/:]+)/.exec(url)[1];
 		return d;
+	},
+	createHeaderListener(type) {
+		const result = ['blocking'];
+		result.push(type);
+		if (IS_CHROME && CHROME_VERSION >= 72) {
+			result.push('extraHeaders');
+		}
+		return result;
 	}
 }
