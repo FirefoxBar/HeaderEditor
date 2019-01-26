@@ -1,5 +1,6 @@
 import browser from 'webextension-polyfill';
 import dateFormat from 'dateformat';
+import { rejects } from 'assert';
 
 const IS_ANDROID = navigator.userAgent.includes('Android');
 const IS_CHROME = /Chrome\/(\d+)\.(\d+)/.test(navigator.userAgent);
@@ -35,27 +36,52 @@ export default {
 	trimNewLines(s) {
 		return s.replace(/^[\s\n]+/, "").replace(/[\s\n]+$/, "");
 	},
-	getURL(url, isPost) {
-		return new Promise((resolve, fail) => {
-			const xhr = new XMLHttpRequest();
-			xhr.onreadystatechange = () => {
-				if (xhr.readyState == 4) {
-					if (xhr.status >= 400) {
-						fail(xhr.status);
-					} else {
-						resolve(xhr.responseText);
+	fetchUrl(param) {
+		return new Promise((resolve, reject) => {
+			const fetchParam = {
+				method: param.post ? 'POST' : 'GET',
+				headers: {}
+			};
+			let url = param.url;
+			if (param.query) {
+				url += '?' + (new URLSearchParams(param.query)).toString();
+			}
+			if (fetchParam.method === 'POST') {
+				//遍历一下，查找是否有File
+				let hasFile = false;
+				for (const name in param.post) {
+					if (param.post[name] instanceof File) {
+						hasFile = true;
+						break;
 					}
 				}
-			};
-			if (url.length > 2000 || isPost) {
-				const parts = url.split("?");
-				xhr.open("POST", parts[0], true);
-				xhr.setRequestHeader("Content-type","application/x-www-form-urlencoded");
-				xhr.send(parts[1]);
-			} else {
-				xhr.open("GET", url, true);
-				xhr.send();
+				if (hasFile) {
+					const formBody = new FormData();
+					for (const name in param.post) {
+						if (param.post[name] instanceof File) {
+							formBody.append(name, param.post[name], param.post[name].name);
+						} else {
+							formBody.append(name, param.post[name]);
+						}
+					}
+					fetchParam.body = formBody;
+				} else {
+					fetchParam.headers['Content-Type'] = 'application/x-www-form-urlencoded';
+					const body = [];
+					for (const name in param.post) {
+						body.push(encodeURIComponent(name) + "=" + encodeURIComponent(param.post[name]));
+					}
+					fetchParam.body = body.join('&');
+				}
 			}
+			if (param.header) {
+				for (const name in param.header) {
+					fetchParam.headers[name] = param.header[name];
+				}
+			}
+			fetch(url, fetchParam)
+			.then(r => resolve(r.text()))
+			.catch(reject)
 		})
 	},
 	getTableName(ruleType) {

@@ -67,12 +67,6 @@ If you have any advice on translations, please contact the maintainer(s) directl
 
 ## Licenses
 
-| File/Directory | LICENSE | GitHub |
-| ----- | ----- | ----- |
-| src/assets/material-design-icons | [Apache 2.0](https://github.com/google/material-design-icons/blob/master/LICENSE) | [google/material-design-icons](https://github.com/google/material-design-icons) |
-
-**Everything else:**
-
 Copyright © 2017-2018 [FirefoxBar Team](http://team.firefoxcn.net)
 
 Open source licensed under [GPLv2](LICENSE).
