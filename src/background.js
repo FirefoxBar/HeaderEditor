@@ -6,6 +6,8 @@ import utils from './core/utils'
 window.IS_BACKGROUND = true;
 
 let antiHotLinkMenu = null;
+let disableAll = false;
+let excludeHe = true;
 
 browser.runtime.onMessage.addListener(function(request, sender, sendResponse) {
 	if (request.method === 'notifyBackground') {
@@ -77,11 +79,11 @@ if (typeof(browser.contextMenus) !== 'undefined') {
 }
 
 browser.webRequest.onBeforeRequest.addListener(function(e) {
-	if (storage.prefs.get('disable-all')) {
+	if (disableAll) {
 		return;
 	}
 	//判断是否是HE自身
-	if (storage.prefs.get('exclude-he') && e.url.indexOf(browser.extension.getURL('')) === 0) {
+	if (excludeHe && e.url.indexOf(browser.extension.getURL('')) === 0) {
 		return;
 	}
 	//可用：重定向，阻止加载
@@ -150,7 +152,7 @@ function modifyHeaders(headers, rule, details) {
 		if (newHeaders[name] === undefined) {
 			continue;
 		}
-		if (newHeaders[name] === '_header_editor_remove_') {
+		if (newHeaders[name] === "_header_editor_remove_") {
 			headers.splice(i, 1);
 			i--;
 		} else {
@@ -185,11 +187,11 @@ function modifyHeaders(headers, rule, details) {
 }
 
 browser.webRequest.onBeforeSendHeaders.addListener(function(e) {
-	if (storage.prefs.get('disable-all')) {
+	if (disableAll) {
 		return;
 	}
 	//判断是否是HE自身
-	if (storage.prefs.get('exclude-he') && e.url.indexOf(browser.extension.getURL('')) === 0) {
+	if (excludeHe && e.url.indexOf(browser.extension.getURL('')) === 0) {
 		return;
 	}
 	//修改请求头
@@ -206,11 +208,11 @@ browser.webRequest.onBeforeSendHeaders.addListener(function(e) {
 }, { urls: ["<all_urls>"] }, utils.createHeaderListener('requestHeaders'));
 
 browser.webRequest.onHeadersReceived.addListener(function(e) {
-	if (storage.prefs.get('disable-all')) {
+	if (disableAll) {
 		return;
 	}
 	//判断是否是HE自身
-	if (storage.prefs.get('exclude-he') && e.url.indexOf(browser.extension.getURL('')) === 0) {
+	if (excludeHe && e.url.indexOf(browser.extension.getURL('')) === 0) {
 		return;
 	}
 	//修改请求头
@@ -248,7 +250,20 @@ storage.prefs.watch('add-hot-link', val => {
 	toggleAntiHotLinkMenu(val);
 });
 
+storage.prefs.watch('exclude-he', val => {
+	excludeHe = val;
+});
+
+storage.prefs.watch('disable-all', val => {
+	disableAll = val;
+	browser.browserAction.setIcon({
+		path: "/assets/images/128" + (val ? "w" : "") + ".png"
+	});
+});
+
 storage.prefs.onReady()
 .then(prefs => {
+	excludeHe = prefs.get('exclude-he');
+	disableAll = prefs.get('disable-all')
 	toggleAntiHotLinkMenu(prefs.get('add-hot-link'));
 })
