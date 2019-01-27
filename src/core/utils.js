@@ -1,6 +1,5 @@
 import browser from 'webextension-polyfill';
 import dateFormat from 'dateformat';
-import { rejects } from 'assert';
 
 const IS_ANDROID = navigator.userAgent.includes('Android');
 const IS_CHROME = /Chrome\/(\d+)\.(\d+)/.test(navigator.userAgent);
