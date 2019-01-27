@@ -19,7 +19,7 @@
 							<md-menu-content>
 								<md-menu-item @click="onGroupRename(g)">
 									<span>{{t('rename')}}</span>
-									<md-icon class="iconfont icon-mode-edit"></md-icon>
+									<md-icon class="iconfont icon-edit"></md-icon>
 								</md-menu-item>
 								<md-menu-item @click="onGroupShare(g.name)">
 									<span>{{t('share')}}</span>
