@@ -62,7 +62,7 @@
 								<md-table-cell class="cell-type">{{t('rule_' + r.ruleType)}}</md-table-cell>
 								<md-table-cell class="cell-action">
 									<md-button class="with-icon" @click="onChangeRuleGroup(r)"><md-icon class="iconfont icon-playlist-add"></md-icon>{{t('group')}}</md-button>
-									<md-button class="with-icon" @click="onEditRule(r)"><md-icon class="iconfont icon-mode-edit"></md-icon>{{t('edit')}}</md-button>
+									<md-button class="with-icon" @click="onEditRule(r)"><md-icon class="iconfont icon-edit"></md-icon>{{t('edit')}}</md-button>
 									<md-button class="with-icon" @click="onCloneRule(r)"><md-icon class="iconfont icon-content-copy"></md-icon>{{t('clone')}}</md-button>
 									<md-button class="with-icon" @click="onViewRule(r)"><md-icon class="iconfont icon-search"></md-icon>{{t('view')}}</md-button>
 									<md-button class="with-icon" @click="onRemoveRule(r)"><md-icon class="iconfont icon-delete"></md-icon>{{t('delete')}}</md-button>
@@ -113,7 +113,7 @@
 							<md-list-item v-for="url of download.log" :key="url">
 								<span class="md-list-item-text">{{url}}</span>
 								<md-button class="md-icon-button md-list-action" @click="onDownloadLogClick(url)"><md-icon class="iconfont icon-file-download"></md-icon></md-button>
-								<md-button class="md-icon-button md-list-action" @click="download.url = url"><md-icon class="iconfont icon-mode-edit"></md-icon></md-button>
+								<md-button class="md-icon-button md-list-action" @click="download.url = url"><md-icon class="iconfont icon-edit"></md-icon></md-button>
 								<md-button class="md-icon-button md-list-action" @click="onRemoveDownload(url)"><md-icon class="iconfont icon-delete"></md-icon></md-button>
 							</md-list-item>
 						</md-list>
