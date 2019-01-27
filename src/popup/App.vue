@@ -23,7 +23,7 @@ export default {
 			window.close();
 		}
 	},
-	mounted() {
+	created() {
 		storage.prefs.onReady().then(prefs => {
 			this.enable_he = !prefs.get('disable-all');
 			this.$watch('enable_he', newOpt => {

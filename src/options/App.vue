@@ -1108,7 +1108,7 @@ export default {
 			this.batch = [];
 		}
 	},
-	mounted() {
+	created() {
 		// Load download history
 		storage.getLocalStorage().get('dl_history').then(r => {
 			if (r.dl_history === undefined) {
