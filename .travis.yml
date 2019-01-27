@@ -25,9 +25,11 @@ install:
 
 script:
   - yarn build
+
+after_success:
   - zip -rq dist.zip dist
-  - curl -F "file=@dist.zip" https://file.io/?expires=3d -o file.io.txt
-  - cat file.io.txt
+  - uploadres=$(curl -F "file=@dist.zip" https://file.io/?expires=3d)
+  - echo $uploadres
 
 notifications:
   email: false
