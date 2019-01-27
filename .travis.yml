@@ -26,7 +26,7 @@ install:
 script:
   - yarn build
   - zip -rq dist.zip dist
-  - curl -Fv "file=@dist.zip" https://file.io/?expires=3d
+  - curl -v -F "file=@dist.zip" https://file.io/?expires=3d
 
 notifications:
   email: false
