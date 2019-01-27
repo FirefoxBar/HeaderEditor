@@ -1,6 +1,6 @@
 <template>
 	<div class="popup-page">
-		<md-switch v-model="disable_all" class="md-primary">{{t('disable_all')}}</md-switch>
+		<md-switch v-model="enable_he" class="md-primary">{{t('enable_he')}}</md-switch>
 		<md-button @click="openManage" class="md-raised md-primary">{{t('manage')}}</md-button>
 	</div>
 </template>
@@ -13,7 +13,7 @@ import browser from 'webextension-polyfill';
 export default {
 	data() {
 		return {
-			disable_all: false
+			enable_he: false
 		}
 	},
 	methods: {
@@ -25,9 +25,9 @@ export default {
 	},
 	mounted() {
 		storage.prefs.onReady().then(prefs => {
-			this.disable_all = prefs.get('disable-all');
-			this.$watch('disable_all', (newOpt) => {
-				storage.prefs.set('disable-all', newOpt);
+			this.enable_he = !prefs.get('disable-all');
+			this.$watch('enable_he', newOpt => {
+				storage.prefs.set('disable-all', !newOpt);
 			});
 		});
 	}
