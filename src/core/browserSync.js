@@ -11,7 +11,7 @@ export default {
 	save(rules) {
 		return new Promise((resolve, reject) => {
 			if (utils.IS_CHROME) {
-				const que = [];
+				const toSave = {};
 				// split
 				const limit = chrome.storage.sync.QUOTA_BYTES_PER_ITEM - 500;
 				let index = 0;
@@ -37,17 +37,13 @@ export default {
 						rules[utils.TABLE_NAMES[t]].push(toPut);
 						one[utils.TABLE_NAMES[t]].splice(one[utils.TABLE_NAMES[t]].indexOf(toPut), 1);
 					}
-					const saveOne = {};
-					saveOne["backup_" + (index++)] = one;
-					que.push(storage.getSync().set(saveOne));
+					toSave["backup_" + (index++)] = one;
 				}
-				que.push(storage.getSync().set({
-					backup: {
-						time: new Date().getTime(),
-						index: index - 1
-					}
-				}));
-				Promise.all(que).then(resolve).catch(reject);
+				toSave.backup = {
+					time: new Date().getTime(),
+					index: index - 1
+				}
+				storage.getSync().set(toSave).then(resolve).catch(reject);
 			} else {
 				storage.getSync().set({
 					backup: {
