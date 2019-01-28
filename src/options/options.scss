@@ -259,6 +259,15 @@ body.batch-on .group-item .cell-batch {
 	}
 }
 
+.group-dialog {
+	max-width: 400px;
+	width: 80%;
+	.md-dialog-content {
+		padding-left: 5px;
+		padding-right: 5px;
+	}
+}
+
 .cloud-dialog {
 	max-width: 768px;
 	width: 80%;
