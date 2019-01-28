@@ -339,19 +339,21 @@
 		</md-dialog>
 		<md-dialog :md-active.sync="isChooseGroup" class="group-dialog">
 			<md-dialog-title>{{t('group')}}</md-dialog-title>
-			<md-list>
-				<md-list-item v-for="g of groupList" :key="g">
-					<md-radio v-model="choosenGroup" :value="g" />
-					<span class="md-list-item-text">{{g}}</span>
-				</md-list-item>
-				<md-list-item class="md-radio-input new">
-					<md-radio v-model="choosenGroup" value="_new" />
-					<md-field md-inline>
-						<label>{{t('add')}}</label>
-						<md-input v-model="choosenNewGroup"></md-input>
-					</md-field>
-				</md-list-item>
-			</md-list>
+			<md-dialog-content>
+				<md-list>
+					<md-list-item v-for="g of groupList" :key="g">
+						<md-radio v-model="choosenGroup" :value="g" />
+						<span class="md-list-item-text">{{g}}</span>
+					</md-list-item>
+					<md-list-item class="md-radio-input new">
+						<md-radio v-model="choosenGroup" value="_new" />
+						<md-field md-inline>
+							<label>{{t('add')}}</label>
+							<md-input v-model="choosenNewGroup"></md-input>
+						</md-field>
+					</md-list-item>
+				</md-list>
+			</md-dialog-content>
 			<md-dialog-actions>
 				<md-button class="md-primary" @click="onChooseCancel">Close</md-button>
 				<md-button class="md-primary" @click="onChooseOK">OK</md-button>
