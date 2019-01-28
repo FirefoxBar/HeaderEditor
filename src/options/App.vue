@@ -87,15 +87,9 @@
 				</md-card>
 			</md-tab>
 			<md-tab id="tab-export-import" :md-label="t('export_and_import')">
-				<md-card>
-					<md-card-header>
-						<div class="md-title">{{t('local_files')}}</div>
-					</md-card-header>
-					<md-card-content>
-						<md-button class="md-primary" @click="onExportAll">{{t('export')}}</md-button>
-						<md-button class="md-primary" @click="onImport">{{t('import')}}</md-button>
-					</md-card-content>
-				</md-card>
+				<md-button class="with-icon" @click="onExportAll"><md-icon class="iconfont icon-save"></md-icon>{{t('export')}}</md-button>
+				<md-button class="with-icon" @click="onImport"><md-icon class="iconfont icon-folder-open"></md-icon>{{t('import')}}</md-button>
+				<md-button class="with-icon" @click="cloud.show = true"><md-icon class="iconfont icon-cloud"></md-icon>{{t('cloud_backup')}}</md-button>
 				<md-card>
 					<md-card-header>
 						<div class="md-title">{{t('download_rule')}}</div>
@@ -327,6 +321,22 @@
 				</md-card-actions>
 			</md-card>
 		</div>
+		<md-dialog :md-active.sync="cloud.show" class="cloud-dialog">
+			<md-dialog-title>{{t('cloud_backup')}}</md-dialog-title>
+			<md-dialog-content>
+				<p v-if="cloud.has">{{t("cloud_backup_at", cloudDate)}}</p>
+				<p v-else>{{t("cloud_no_backup")}}</p>
+				<p>
+					<md-button class="with-icon" @click="cloudUpload"><md-icon class="iconfont icon-cloud-upload"></md-icon>{{t("upload")}}</md-button>
+					<md-button class="with-icon" @click="cloudDownload"><md-icon class="iconfont icon-cloud-download" :disabled="!cloud.has"></md-icon>{{t("download")}}</md-button>
+					<md-button class="with-icon" @click="cloudRemove"><md-icon class="iconfont icon-delete" :disabled="!cloud.has"></md-icon>{{t('delete')}}</md-button>
+				</p>
+			</md-dialog-content>
+			<md-dialog-actions>
+				<md-button @click="onOpenCloudHelp" class="md-primary with-icon"><md-icon class="iconfont icon-open-in-new"></md-icon>{{t('help')}}</md-button>
+				<md-button class="md-primary" @click="cloud.show = false">Close</md-button>
+			</md-dialog-actions>
+		</md-dialog>
 		<md-dialog :md-active.sync="isChooseGroup" class="group-dialog">
 			<md-dialog-title>{{t('group')}}</md-dialog-title>
 			<md-list>
@@ -355,10 +365,12 @@
 <script>
 import browser from 'webextension-polyfill';
 import merge from 'merge';
+import dateFormat from 'dateformat';
 import utils from '../core/utils';
 import rules from '../core/rules';
 import file from '../core/file';
 import storage from '../core/storage';
+import browserSync from '../core/browserSync';
 
 export default {
 	data() {
@@ -412,11 +424,19 @@ export default {
 				group_name: "",
 				list: []
 			},
-			batch: []
+			batch: [],
+			cloud: {
+				show: false,
+				has: false,
+				time: null
+			}
 		};
 	},
 	computed: {
-		testResult: function() {
+		cloudDate() {
+			return dateFormat(new Date(this.cloud.time), 'yyyy-mm-dd h:MM:ss');
+		},
+		testResult() {
 			if (this.edit.test === "") {
 				return "";
 			}
@@ -879,7 +899,7 @@ export default {
 			this.imports.group_name = utils.t('ungrouped');
 			try {
 				this.imports.list = [];
-				const list = rules.fromJson(content);
+				const list = typeof content === "string" ? rules.fromJson(content) : content;
 				utils.TABLE_NAMES.forEach(tableName => {
 					if (!list[tableName]) {
 						return;
@@ -1106,6 +1126,42 @@ export default {
 			}
 			this.batch.forEach(e => this.onRemoveRule(e, true));
 			this.batch = [];
+		},
+		cloudUpload() {
+			const result = {};
+			utils.TABLE_NAMES.forEach(k => {
+				result[k] = rules.get(k);
+			});
+			browserSync.save(rules.createExport(result)).then(e => {
+				browserSync.getMeta().then(r => {
+					if (r && r.time) {
+						this.cloud.time = r.time;
+						this.cloud.has = true;
+					}
+				});
+			})
+			.catch(e => {
+				alert(utils.t("cloud_over_limit"));
+			})
+		},
+		cloudDownload() {
+			this.imports.status = 1;
+			this.cloud.show = false;
+			browserSync.getContent().then(r => {
+				this.showImportConfirm(r)
+			});
+		},
+		cloudRemove() {
+			browserSync.clear().then(() => {
+				this.cloud.has = false;
+				this.cloud.time = null;
+			})
+		},
+		onOpenCloudHelp() {
+			browser.runtime.sendMessage({
+				method: "openURL",
+				url: "https://github.com/FirefoxBar/HeaderEditor/wiki/Cloud-backup"
+			});
 		}
 	},
 	created() {
@@ -1115,6 +1171,12 @@ export default {
 				return;
 			}
 			this.$set(this.download, 'log', r.dl_history);
+		});
+		browserSync.getMeta().then(r => {
+			if (r && r.time) {
+				this.cloud.time = r.time;
+				this.cloud.has = true;
+			}
 		});
 		storage.prefs.onReady().then(prefs => {
 			this.$set(this.options, 'addHotLink', prefs.get('add-hot-link'));
