@@ -13,7 +13,7 @@ import browser from 'webextension-polyfill';
 export default {
 	data() {
 		return {
-			enable_he: false
+			enable_he: true
 		}
 	},
 	methods: {
