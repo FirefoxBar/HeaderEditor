@@ -185,8 +185,8 @@ function getSync() {
 		return browser.storage.local;
 	}
 }
-function getLocalStorage() {
+function getLocal() {
 	return browser.storage.local;
 }
 
-export default { getSync, getDatabase, getLocalStorage, prefs };
+export default { getSync, getDatabase, getLocal, prefs };

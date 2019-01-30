@@ -11,16 +11,16 @@ import utils from '../core/utils';
 const wait = [];
 // Upgrade
 if (localStorage.getItem('dl_history')) {
-	storage.getLocalStorage().set({'dl_history': JSON.parse(localStorage.getItem('dl_history'))});
+	storage.getLocal().set({'dl_history': JSON.parse(localStorage.getItem('dl_history'))});
 	localStorage.removeItem('dl_history');
 }
 
 // Put a version mark
-storage.getLocalStorage().get('version_mark')
+storage.getLocal().get('version_mark')
 .then(v => {
 	const version = v.version_mark ? parseInt(v.version_mark) : 0;
 	if (!(version >= 1)) {
-		storage.getLocalStorage().set({
+		storage.getLocal().set({
 			version_mark: 1
 		});
 		// Upgrade group
@@ -66,10 +66,10 @@ storage.getLocalStorage().get('version_mark')
 				localStorage.removeItem('groups');
 				rebindRuleWithGroup(g).then(resolve);
 			} else {
-				storage.getLocalStorage().get('groups').then(r => {
+				storage.getLocal().get('groups').then(r => {
 					if (r.groups !== undefined) {
 						rebindRuleWithGroup(r.groups).then(() => {
-							storage.getLocalStorage().remove('groups');
+							storage.getLocal().remove('groups');
 							resolve();
 						});
 					} else {

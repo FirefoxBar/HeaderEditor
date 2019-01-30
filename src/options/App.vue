@@ -1156,12 +1156,12 @@ export default {
 	},
 	created() {
 		// Load download history
-		storage.getLocalStorage().get('dl_history').then(r => {
+		storage.getLocal().get('dl_history').then(r => {
 			if (r.dl_history !== undefined) {
 				this.$set(this.download, 'log', r.dl_history);
 			}
 			this.$watch('download.log', newDl => {
-				storage.getLocalStorage().set({
+				storage.getLocal().set({
 					dl_history: newDl
 				});
 			});
