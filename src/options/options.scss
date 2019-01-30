@@ -272,3 +272,10 @@ body.batch-on .group-item .cell-batch {
 	max-width: 768px;
 	width: 80%;
 }
+
+
+@media (max-width: 960px) {
+	.group-item .cell-action span {
+		display: none;
+	}
+}

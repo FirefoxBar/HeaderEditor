@@ -61,11 +61,11 @@
 								</md-table-cell>
 								<md-table-cell class="cell-type">{{t('rule_' + r.ruleType)}}</md-table-cell>
 								<md-table-cell class="cell-action">
-									<md-button class="with-icon" @click="onChangeRuleGroup(r)"><md-icon class="iconfont icon-playlist-add"></md-icon>{{t('group')}}</md-button>
-									<md-button class="with-icon" @click="onEditRule(r)"><md-icon class="iconfont icon-edit"></md-icon>{{t('edit')}}</md-button>
-									<md-button class="with-icon" @click="onCloneRule(r)"><md-icon class="iconfont icon-content-copy"></md-icon>{{t('clone')}}</md-button>
-									<md-button class="with-icon" @click="onViewRule(r)"><md-icon class="iconfont icon-search"></md-icon>{{t('view')}}</md-button>
-									<md-button class="with-icon" @click="onRemoveRule(r)"><md-icon class="iconfont icon-delete"></md-icon>{{t('delete')}}</md-button>
+									<md-button class="with-icon" @click="onChangeRuleGroup(r)"><md-icon class="iconfont icon-playlist-add"></md-icon><span>{{t('group')}}</span></md-button>
+									<md-button class="with-icon" @click="onEditRule(r)"><md-icon class="iconfont icon-edit"></md-icon><span>{{t('edit')}}</span></md-button>
+									<md-button class="with-icon" @click="onCloneRule(r)"><md-icon class="iconfont icon-content-copy"></md-icon><span>{{t('clone')}}</span></md-button>
+									<md-button class="with-icon" @click="onViewRule(r)"><md-icon class="iconfont icon-search"></md-icon><span>{{t('view')}}</span></md-button>
+									<md-button class="with-icon" @click="onRemoveRule(r)"><md-icon class="iconfont icon-delete"></md-icon><span>{{t('delete')}}</span></md-button>
 								</md-table-cell>
 							</md-table-row>
 						</md-table>
@@ -79,9 +79,9 @@
 					</md-card-header>
 					<md-card-content>
 						<div class="md-layout md-gutter">
-							<div class="md-layout-item md-size-50"><md-checkbox v-model="options.collapseGroup">{{t('manage_collapse_group')}}</md-checkbox></div>
-							<div class="md-layout-item md-size-50"><md-checkbox v-model="options.rulesNoEffectForHe">{{t('rules_no_effect_for_he')}}</md-checkbox></div>
-							<div class="md-layout-item md-size-50"><md-checkbox v-model="options.addHotLink">{{t('add_anti_hot_link_to_menu')}}</md-checkbox></div>
+							<div class="md-layout-item md-size-50 md-small-size-100"><md-checkbox v-model="options.collapseGroup">{{t('manage_collapse_group')}}</md-checkbox></div>
+							<div class="md-layout-item md-size-50 md-small-size-100"><md-checkbox v-model="options.rulesNoEffectForHe">{{t('rules_no_effect_for_he')}}</md-checkbox></div>
+							<div class="md-layout-item md-size-50 md-small-size-100"><md-checkbox v-model="options.addHotLink">{{t('add_anti_hot_link_to_menu')}}</md-checkbox></div>
 						</div>
 					</md-card-content>
 				</md-card>
