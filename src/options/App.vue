@@ -61,11 +61,11 @@
 								</md-table-cell>
 								<md-table-cell class="cell-type">{{t('rule_' + r.ruleType)}}</md-table-cell>
 								<md-table-cell class="cell-action">
-									<md-button class="with-icon" @click="onChangeRuleGroup(r)"><md-icon class="iconfont icon-playlist-add"></md-icon><span>{{t('group')}}</span></md-button>
-									<md-button class="with-icon" @click="onEditRule(r)"><md-icon class="iconfont icon-edit"></md-icon><span>{{t('edit')}}</span></md-button>
-									<md-button class="with-icon" @click="onCloneRule(r)"><md-icon class="iconfont icon-content-copy"></md-icon><span>{{t('clone')}}</span></md-button>
-									<md-button class="with-icon" @click="onViewRule(r)"><md-icon class="iconfont icon-search"></md-icon><span>{{t('view')}}</span></md-button>
-									<md-button class="with-icon" @click="onRemoveRule(r)"><md-icon class="iconfont icon-delete"></md-icon><span>{{t('delete')}}</span></md-button>
+									<md-button class="with-icon group-button" @click="onChangeRuleGroup(r)"><md-icon class="iconfont icon-playlist-add"></md-icon><span>{{t('group')}}</span></md-button>
+									<md-button class="with-icon edit-button" @click="onEditRule(r)"><md-icon class="iconfont icon-edit"></md-icon><span>{{t('edit')}}</span></md-button>
+									<md-button class="with-icon clone-button" @click="onCloneRule(r)"><md-icon class="iconfont icon-content-copy"></md-icon><span>{{t('clone')}}</span></md-button>
+									<md-button class="with-icon view-button" @click="onViewRule(r)"><md-icon class="iconfont icon-search"></md-icon><span>{{t('view')}}</span></md-button>
+									<md-button class="with-icon delete-button" @click="onRemoveRule(r)"><md-icon class="iconfont icon-delete"></md-icon><span>{{t('delete')}}</span></md-button>
 								</md-table-cell>
 							</md-table-row>
 						</md-table>

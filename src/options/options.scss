@@ -276,7 +276,8 @@ body.batch-on .group-item .cell-batch {
 
 @media (max-width: 960px) {
 	.group-item {
-		.md-table-cell-container {
+		.md-table-cell .md-table-cell-container,
+		.md-table-cell:last-child .md-table-cell-container {
 			padding-left: 6px;
 			padding-right: 6px;
 		}
@@ -285,8 +286,19 @@ body.batch-on .group-item .cell-batch {
 			display: none;
 		}
 		
-		.cell-action span {
-			display: none;
+		.cell-action {
+			.md-button {
+				min-width: auto;
+				margin: 0;
+				.md-ripple {
+					padding-left: 2px;
+					padding-right: 2px;
+				}
+			}
+			.view-button,
+			span {
+				display: none;
+			}
 		}
 	}
 
