@@ -106,9 +106,9 @@
 						<md-list class="download-list">
 							<md-list-item v-for="url of download.log" :key="url">
 								<span class="md-list-item-text">{{url}}</span>
-								<md-button class="md-icon-button md-list-action" @click="onDownloadLogClick(url)"><md-icon class="iconfont icon-file-download"></md-icon></md-button>
-								<md-button class="md-icon-button md-list-action" @click="download.url = url"><md-icon class="iconfont icon-edit"></md-icon></md-button>
-								<md-button class="md-icon-button md-list-action" @click="onRemoveDownload(url)"><md-icon class="iconfont icon-delete"></md-icon></md-button>
+								<md-button class="md-icon-button md-list-action" @click="onDownloadLogClick(url)" :title="t('download')"><md-icon class="iconfont icon-file-download"></md-icon></md-button>
+								<md-button class="md-icon-button md-list-action" @click="download.url = url" :title="t('edit')"><md-icon class="iconfont icon-edit"></md-icon></md-button>
+								<md-button class="md-icon-button md-list-action" @click="download.log.splice(download.log.indexOf(url), 1)" :title="t('delete')"><md-icon class="iconfont icon-delete"></md-icon></md-button>
 							</md-list-item>
 						</md-list>
 					</md-card-content>
@@ -927,16 +927,10 @@ export default {
 			}
 			this.imports.status = 2;
 		},
-		saveDownloadHistory() {
-			storage.getLocalStorage().set({
-				dl_history: this.download.log
-			});
-		},
 		onDownloadClick() {
 			this.imports.status = 1;
 			if (!this.download.log.includes(this.download.url)) {
 				this.download.log.push(this.download.url);
-				this.saveDownloadHistory();
 			}
 			utils.fetchUrl({
 				url: this.download.url
@@ -962,12 +956,6 @@ export default {
 				this.showToast(e.message);
 				this.imports.status = 0;
 			});
-		},
-		onRemoveDownload(url) {
-			if (this.download.log.includes(url)) {
-				this.download.log.splice(this.download.log.indexOf(url), 1);
-				this.saveDownloadHistory();
-			}
 		},
 		onDragStart(e, r) {
 			const isTouch = typeof(TouchEvent) !== "undefined" && e instanceof TouchEvent;
@@ -1169,10 +1157,14 @@ export default {
 	created() {
 		// Load download history
 		storage.getLocalStorage().get('dl_history').then(r => {
-			if (r.dl_history === undefined) {
-				return;
+			if (r.dl_history !== undefined) {
+				this.$set(this.download, 'log', r.dl_history);
 			}
-			this.$set(this.download, 'log', r.dl_history);
+			this.$watch('download.log', newDl => {
+				storage.getLocalStorage().set({
+					dl_history: newDl
+				});
+			});
 		});
 		browserSync.getMeta().then(r => {
 			if (r && r.time) {
