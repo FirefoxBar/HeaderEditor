@@ -436,7 +436,7 @@ export default {
 	},
 	computed: {
 		cloudDate() {
-			return dateFormat(new Date(this.cloud.time), 'yyyy-mm-dd h:MM:ss');
+			return dateFormat(new Date(this.cloud.time), 'yyyy-mm-dd hh:MM:ss');
 		},
 		testResult() {
 			if (this.edit.test === "") {
