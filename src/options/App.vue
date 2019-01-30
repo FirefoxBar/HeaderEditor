@@ -321,7 +321,7 @@
 				</md-card-actions>
 			</md-card>
 		</div>
-		<md-dialog :md-active.sync="cloud.show" class="cloud-dialog">
+		<md-dialog :md-active.sync="cloud.show" class="cloud-dialog" :md-fullscreen="false">
 			<md-dialog-title>{{t('cloud_backup')}}</md-dialog-title>
 			<md-dialog-content>
 				<p v-if="cloud.has">{{t("cloud_backup_at", cloudDate)}}</p>
@@ -337,7 +337,7 @@
 				<md-button class="md-primary" @click="cloud.show = false">Close</md-button>
 			</md-dialog-actions>
 		</md-dialog>
-		<md-dialog :md-active.sync="isChooseGroup" class="group-dialog">
+		<md-dialog :md-active.sync="isChooseGroup" class="group-dialog" :md-fullscreen="false">
 			<md-dialog-title>{{t('group')}}</md-dialog-title>
 			<md-dialog-content>
 				<md-list>

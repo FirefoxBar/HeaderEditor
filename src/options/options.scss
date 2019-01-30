@@ -275,7 +275,20 @@ body.batch-on .group-item .cell-batch {
 
 
 @media (max-width: 960px) {
-	.group-item .cell-action span {
-		display: none;
+	.group-item {
+		.md-table-cell-container {
+			padding-left: 6px;
+			padding-right: 6px;
+		}
+
+		.cell-type {
+			display: none;
+		}
+		
+		.cell-action span {
+			display: none;
+		}
 	}
+
+	
 }
