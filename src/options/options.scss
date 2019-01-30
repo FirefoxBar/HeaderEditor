@@ -204,9 +204,13 @@ body.batch-on .group-item .cell-batch {
 }
 
 .download-list {
-	.md-list-item-content .md-list-action {
-		margin-right: 0;
-		margin-left: 0;
+	.md-list-item-content {
+		padding-left: 4px;
+		padding-right: 6px;
+		.md-list-action {
+			margin-right: 0;
+			margin-left: 0;
+		}
 	}
 }
 
