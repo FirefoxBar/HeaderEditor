@@ -8,7 +8,7 @@ export default {
 			const fileUrl = URL.createObjectURL(blob);
 			const option = {filename: fileName, url: fileUrl};
 			// Firefox supported saveAs since version 52
-			if (utils.IS_CHROME || utils.FIREFOX_VERSION >= 52) {
+			if (utils.IS_CHROME || (!utils.IS_ANDROID && utils.FIREFOX_VERSION >= 52)) {
 				option.saveAs = true;
 			}
 			browser.downloads.download(option).then(resolve);
