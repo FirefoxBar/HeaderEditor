@@ -291,6 +291,8 @@ body.batch-on .group-item .cell-batch {
 		}
 		
 		.cell-action {
+			width: 160px;
+
 			.md-button {
 				min-width: auto;
 				margin: 0;
@@ -306,5 +308,13 @@ body.batch-on .group-item .cell-batch {
 		}
 	}
 
+	#edit-page .edit-right {
+		padding-top: 20px;
+	}
 	
+	.save-to {
+		.md-radio {
+			display: flex;
+		}
+	}
 }

@@ -1,6 +1,10 @@
+.md-tab {
+	max-width: 100%;
+	overflow: hidden;
 
-.md-tab .md-card {
-	margin-bottom: 16px;
+	.md-card {
+		margin-bottom: 16px;
+	}
 }
 
 .md-tooltip {
