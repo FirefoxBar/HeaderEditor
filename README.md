@@ -8,15 +8,15 @@ https://img.shields.io/travis/FirefoxBar/HeaderEditor/master.svg?style=flat-squa
 
 An extension which can modify the request, include request headers, response headers, redirect requests, and cancel requests.
 
-For more documentation, Please visit [wiki](https://github.com/FirefoxBar/HeaderEditor/wiki)
+For more documentations, Please visit [wiki](https://github.com/FirefoxBar/HeaderEditor/wiki)
 
 ## Get this extension
 
-* ![Firefox Logo](https://cdnjs.cloudflare.com/ajax/libs/browser-logos/42.8.0/firefox/firefox_16x16.png) [Mozilla Add-on](https://addons.mozilla.org/en-US/firefox/addon/header-editor/).
+![Firefox Logo](https://cdnjs.cloudflare.com/ajax/libs/browser-logos/42.8.0/firefox/firefox_16x16.png) [Mozilla Add-on](https://addons.mozilla.org/en-US/firefox/addon/header-editor/).
 
-* ![Chrome Logo](https://cdnjs.cloudflare.com/ajax/libs/browser-logos/42.8.0/chrome/chrome_16x16.png) [Chrome Web Store](https://chrome.google.com/webstore/detail/header-editor/eningockdidmgiojffjmkdblpjocbhgh).
+![Chrome Logo](https://cdnjs.cloudflare.com/ajax/libs/browser-logos/42.8.0/chrome/chrome_16x16.png) [Chrome Web Store](https://chrome.google.com/webstore/detail/header-editor/eningockdidmgiojffjmkdblpjocbhgh).
 
-* ![Firefox Logo](https://cdnjs.cloudflare.com/ajax/libs/browser-logos/42.8.0/firefox/firefox_16x16.png) Install our self-distributed version](https://github.com/FirefoxBar/HeaderEditor/releases).
+![Firefox Logo](https://cdnjs.cloudflare.com/ajax/libs/browser-logos/42.8.0/firefox/firefox_16x16.png) Install our [self-distributed version](https://github.com/FirefoxBar/HeaderEditor/releases).
 
 ## About Permissions
 
@@ -34,9 +34,9 @@ Header Editor require those permissions:
 
 ## Contribution
 
-Contribute codes: [submiting a pull request](https://github.com/FirefoxBar/HeaderEditor/compare)
+Contribute codes: [Submiting a pull request](https://github.com/FirefoxBar/HeaderEditor/compare)
 
-Translate this extension: [transifex](https://www.transifex.com/sytec/header-editor/)
+Translate this extension: [Transifex](https://www.transifex.com/sytec/header-editor/)
 
 Thanks to the following personnel for their contribution:
 
@@ -60,15 +60,25 @@ If you have any advice on translations, please contact the maintainer(s) directl
 
 ## How to build
 
+#### Prepare
+
 * Install node, npm or yarn. (It is recommended to use yarn, or the build result may be inconsistent with the release version)
 
 * Download source and extract
 
 * Run `yarn` or `npm install`
 
+#### Build
+
 * Run `yarn build` or `npm run build`
 
-* If you want to enter development mode, please run `yarn watch:dev` or `npm run watch:dev`
+* Find build result at `/dist`
+
+#### Development
+
+* Run `yarn watch:dev` or `npm run watch:dev`
+
+* Open browser, load extension from `/dist` directory or `/dist/manifest.json`
 
 ## Licenses
 
