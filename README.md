@@ -64,7 +64,7 @@ If you have any advice on translations, please contact the maintainer(s) directl
 
 * Install node, npm or yarn. (It is recommended to use yarn, or the build result may be inconsistent with the release version)
 
-* Download source and extract
+* Clone this project, or download the source code and extract it
 
 * Run `yarn` or `npm install`
 
@@ -82,6 +82,6 @@ If you have any advice on translations, please contact the maintainer(s) directl
 
 ## Licenses
 
-Copyright © 2017-2018 [FirefoxBar Team](http://team.firefoxcn.net)
+Copyright © 2017-2019 [FirefoxBar Team](http://team.firefoxcn.net)
 
 Open source licensed under [GPLv2](LICENSE).

@@ -161,6 +161,9 @@ function modifyHeaders(headers, rule, details) {
 		delete newHeaders[name];
 	}
 	for (const k in newHeaders) {
+		if (newHeaders[k] === "_header_editor_remove_") {
+			continue;
+		}
 		headers.push({
 			"name": k,
 			"value": newHeaders[k]
