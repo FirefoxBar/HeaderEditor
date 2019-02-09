@@ -249,6 +249,16 @@ function toggleAntiHotLinkMenu(has) {
 	}
 }
 
+function setDisableAll(disable) {
+	if (disableAll === disable) {
+		return;
+	}
+	disableAll = disable;
+	browser.browserAction.setIcon({
+		path: "/assets/images/128" + (val ? "w" : "") + ".png"
+	});
+}
+
 storage.prefs.watch('add-hot-link', val => {
 	toggleAntiHotLinkMenu(val);
 });
@@ -258,15 +268,12 @@ storage.prefs.watch('exclude-he', val => {
 });
 
 storage.prefs.watch('disable-all', val => {
-	disableAll = val;
-	browser.browserAction.setIcon({
-		path: "/assets/images/128" + (val ? "w" : "") + ".png"
-	});
+	setDisableAll(val);
 });
 
 storage.prefs.onReady()
 .then(prefs => {
 	excludeHe = prefs.get('exclude-he');
-	disableAll = prefs.get('disable-all')
+	setDisableAll(prefs.get('disable-all'));
 	toggleAntiHotLinkMenu(prefs.get('add-hot-link'));
 })
