@@ -255,7 +255,7 @@ function setDisableAll(disable) {
 	}
 	disableAll = disable;
 	browser.browserAction.setIcon({
-		path: "/assets/images/128" + (val ? "w" : "") + ".png"
+		path: "/assets/images/128" + (disable ? "w" : "") + ".png"
 	});
 }
 
