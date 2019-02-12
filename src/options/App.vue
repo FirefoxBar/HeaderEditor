@@ -223,10 +223,9 @@
 							</md-field>
 							<!-- header mondify -->
 							<div v-show="(edit.ruleType == 'modifySendHeader' || edit.ruleType == 'modifyReceiveHeader') && edit.execType == 0">
-								<md-field>
+								<md-autocomplete v-model="edit.headerName" :md-options="edit.ruleType == 'modifySendHeader' ? commonHeader.request : commonHeader.response" :md-open-on-focus="false">
 									<label for="rule-headerName">{{t('headerName')}}</label>
-									<md-input id="rule-headerName" v-model="edit.headerName" />
-								</md-field>
+								</md-autocomplete>
 								<md-field>
 									<label for="rule-headerValue">{{t('headerValue')}}</label>
 									<md-input id="rule-headerValue" v-model="edit.headerValue" />
@@ -431,7 +430,8 @@ export default {
 				show: false,
 				has: false,
 				time: null
-			}
+			},
+			commonHeader: require('./headers.json')
 		};
 	},
 	computed: {
