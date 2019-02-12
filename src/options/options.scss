@@ -277,6 +277,10 @@ body.batch-on .group-item .cell-batch {
 	width: 80%;
 }
 
+.md-menu-content {
+	z-index: 11;
+}
+
 
 @media (max-width: 960px) {
 	.group-item {
