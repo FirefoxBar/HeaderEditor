@@ -14,6 +14,9 @@ addons:
       - zip
       - unzip
 
+before_cache:
+  - rm -rf node_modules/.cache
+
 before_install:
   - curl -o- -L https://yarnpkg.com/install.sh | bash
   - export PATH="$HOME/.yarn/bin:$PATH"
