@@ -173,8 +173,11 @@ function modifyHeaders(headers, rule, details) {
 		const detail = {
 			"id": details.requestId,
 			"url": details.url,
+			"tab": details.tabId,
 			"method": details.method,
-			"isFrame": details.frameId === 0,
+			"frame": details.frameId,
+			"parentFrame": details.parentFrameId,
+			"proxy": details.proxyInfo || null,
 			"type": details.type,
 			"time": details.timeStamp,
 			"originUrl": details.originUrl || ''

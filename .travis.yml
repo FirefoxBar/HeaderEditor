@@ -1,12 +1,9 @@
-sudo: false
 language: node_js
 node_js:
   - 'node'
 
-cache:
-  yarn: true
-  directories:
-    - "node_modules"
+notifications:
+  email: false
 
 addons:
   apt:
@@ -17,11 +14,14 @@ addons:
 before_cache:
   - rm -rf node_modules/.cache
 
+cache:
+  yarn: true
+  directories:
+    - "node_modules"
+
 before_install:
   - curl -o- -L https://yarnpkg.com/install.sh | bash
   - export PATH="$HOME/.yarn/bin:$PATH"
-  - openssl aes-256-cbc -K $encrypted_1fc90f464345_key -iv $encrypted_1fc90f464345_iv -in encrypt.zip.enc -out encrypt.zip -d
-  - unzip encrypt.zip
 
 install:
   - yarn
@@ -31,11 +31,12 @@ script:
 
 after_success:
   - zip -rq dist.zip dist
-  - uploadres=$(curl -F "file=@dist.zip" https://file.io/?expires=3d)
-  - echo $uploadres
+  - res=$(curl -F "file=@dist.zip" https://file.io/?expires=3d)
+  - echo $res
 
-notifications:
-  email: false
+before_deploy:
+  - openssl aes-256-cbc -K $encrypted_1fc90f464345_key -iv $encrypted_1fc90f464345_iv -in encrypt.zip.enc -out encrypt.zip -d
+  - unzip encrypt.zip
 
 deploy:
   provider: script
