@@ -103,7 +103,7 @@ browser.webRequest.onBeforeRequest.addListener(function(e) {
 		originUrl: e.originUrl || ''
 	};
 	for (const item of rule) {
-		if (item.action === 'cancel') {
+		if (item.action === 'cancel' && !item.isFunction) {
 			return { cancel: true };
 		} else {
 			if (item.isFunction) {
@@ -112,7 +112,7 @@ browser.webRequest.onBeforeRequest.addListener(function(e) {
 					if (typeof(r) === 'string') {
 						redirectTo = r;
 					}
-					if (r === '_header_editor_cancel_') {
+					if (r === '_header_editor_cancel_' || (item.action === 'cancel' && r === true)) {
 						return { "cancel": true };
 					}
 				} catch (e) {
