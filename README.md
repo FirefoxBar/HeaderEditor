@@ -32,6 +32,8 @@ Header Editor require those permissions:
 
 * downloads: Export rules
 
+* unsafe-eval: Custom function require it, code at [src/options/App.vue#L657](https://github.com/FirefoxBar/HeaderEditor/blob/master/src/options/App.vue#L657) and [src/core/rules.js#L23](https://github.com/FirefoxBar/HeaderEditor/blob/master/src/core/rules.js#L23) (The location may change in the future, you can search for the newest location by `new Function`)
+
 ## Contribution
 
 Contribute codes: [Submiting a pull request](https://github.com/FirefoxBar/HeaderEditor/compare)
