@@ -8,6 +8,7 @@ window.IS_BACKGROUND = true;
 let antiHotLinkMenu = null;
 let disableAll = false;
 let excludeHe = true;
+const requestHeadersByRequestId = {};
 
 browser.runtime.onMessage.addListener(function(request, sender, sendResponse) {
 	if (request.method === 'notifyBackground') {
@@ -135,7 +136,7 @@ browser.webRequest.onBeforeRequest.addListener(function(e) {
 	}
 }, { urls: ["<all_urls>"] }, ['blocking']);
 
-function modifyHeaders(headers, rule, details) {
+function modifyHeaders(headers, rule, details, requestHeaders) {
 	const newHeaders = {};
 	let hasFunction = false;
 	for (let i = 0; i < rule.length; i++) {
@@ -180,6 +181,7 @@ function modifyHeaders(headers, rule, details) {
 			"proxy": details.proxyInfo || null,
 			"type": details.type,
 			"time": details.timeStamp,
+			"requestHeaders": requestHeaders,
 			"originUrl": details.originUrl || ''
 		};
 		rule.forEach(item => {
@@ -196,6 +198,7 @@ browser.webRequest.onBeforeSendHeaders.addListener(function(e) {
 	if (disableAll) {
 		return;
 	}
+	requestHeadersByRequestId[e.requestId] = e.requestHeaders;
 	//判断是否是HE自身
 	if (excludeHe && e.url.indexOf(browser.extension.getURL('')) === 0) {
 		return;
@@ -217,6 +220,8 @@ browser.webRequest.onHeadersReceived.addListener(function(e) {
 	if (disableAll) {
 		return;
 	}
+	const requestHeaders = requestHeadersByRequestId[e.requestId];
+	delete requestHeadersByRequestId[e.requestId];
 	//判断是否是HE自身
 	if (excludeHe && e.url.indexOf(browser.extension.getURL('')) === 0) {
 		return;
@@ -230,7 +235,7 @@ browser.webRequest.onHeadersReceived.addListener(function(e) {
 	if (rule === null) {
 		return;
 	}
-	modifyHeaders(e.responseHeaders, rule, e);
+	modifyHeaders(e.responseHeaders, rule, e, requestHeaders);
 	return { responseHeaders: e.responseHeaders };
 }, { urls: ["<all_urls>"] }, utils.createHeaderListener('responseHeaders'));
 
