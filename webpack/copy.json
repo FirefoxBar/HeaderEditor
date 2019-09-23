@@ -1,0 +1,26 @@
+[
+	{
+		"from": "../node_modules/vue/dist/vue.min.js",
+		"to": "external/vue.min.js"
+	},
+	{
+		"from": "../node_modules/vue-material/dist/vue-material.min.js",
+		"to": "external/vue-material.min.js"
+	},
+	{
+		"from": "public",
+		"to": "assets"
+	},
+	{
+		"from": "_locales",
+		"to": "_locales"
+	},
+	{
+		"from": "popup/popup.html",
+		"to": "popup/popup.html"
+	},
+	{
+		"from": "options/options.html",
+		"to": "options/options.html"
+	}
+]
