@@ -34,8 +34,8 @@ export default {
 }
 </script>
 
-<style lang="scss">
-@import "../style.scss";
+<style lang="less">
+@import "../style.less";
 .popup-page {
 	min-width: 260px;
 	max-width: 400px;

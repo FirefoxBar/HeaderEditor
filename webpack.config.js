@@ -43,12 +43,8 @@ const config = {
 				use: [MiniCssExtractPlugin.loader, 'css-loader'],
 			},
 			{
-				test: /\.scss$/,
-				use: [MiniCssExtractPlugin.loader, 'css-loader', 'sass-loader'],
-			},
-			{
-				test: /\.sass$/,
-				use: [MiniCssExtractPlugin.loader, 'css-loader', 'sass-loader?indentedSyntax'],
+				test: /\.less$/,
+				use: [MiniCssExtractPlugin.loader, 'css-loader', 'less-loader'],
 			},
 			{
 				test: /\.(png|jpg|gif|svg|ico|ttf|eot|woff|woff2)$/,
