@@ -5,11 +5,6 @@ import utils from './core/utils'
 
 window.IS_BACKGROUND = true;
 
-let antiHotLinkMenu = null;
-let disableAll = false;
-let excludeHe = true;
-const requestHeadersByRequestId = {};
-
 browser.runtime.onMessage.addListener(function(request, sender, sendResponse) {
 	if (request.method === 'notifyBackground') {
 		request.method = request.reason;
@@ -49,25 +44,25 @@ browser.runtime.onMessage.addListener(function(request, sender, sendResponse) {
 function openURL(options) {
 	delete options.method;
 	return new Promise(resolve => {
-		browser.tabs.query({currentWindow: true, url: options.url})
-		.then(tabs => {
-			if (tabs.length) {
-				browser.tabs.update(tabs[0].id, {
-					active: true
-				}).then(resolve);
-			} else {
-				utils.getActiveTab()
-				.then(tab => {
-					// re-use an active new tab page
-					// Firefox may have more than 1 newtab url, so check all
-					const isNewTab = tab.url.indexOf('about:newtab') === 0 || tab.url.indexOf('about:home') === 0 || tab.url.indexOf('chrome://newtab/') === 0;
-					browser.tabs[isNewTab ? "update" : "create"](options).then(resolve);
-				});
-			}
-		})
-		.catch(e => {
-			browser.tabs.create(options).then(resolve);
-		})
+		browser.tabs.query({ currentWindow: true, url: options.url })
+			.then(tabs => {
+				if (tabs.length) {
+					browser.tabs.update(tabs[0].id, {
+						active: true
+					}).then(resolve);
+				} else {
+					utils.getActiveTab()
+						.then(tab => {
+							// re-use an active new tab page
+							// Firefox may have more than 1 newtab url, so check all
+							const isNewTab = tab.url.indexOf('about:newtab') === 0 || tab.url.indexOf('about:home') === 0 || tab.url.indexOf('chrome://newtab/') === 0;
+							browser.tabs[isNewTab ? "update" : "create"](options).then(resolve);
+						});
+				}
+			})
+			.catch(e => {
+				browser.tabs.create(options).then(resolve);
+			})
 	})
 }
 
@@ -79,165 +74,266 @@ if (typeof(browser.contextMenus) !== 'undefined') {
 	});
 }
 
-browser.webRequest.onBeforeRequest.addListener(function(e) {
-	if (disableAll) {
-		return;
+const REQUEST_TYPE = {
+	REQUEST: 0,
+	RESPONSE: 1
+};
+class RequestHandler {
+	_disableAll = false;
+	excludeHe = true;
+	includeHeaders = false;
+	savedRequestHeader = new Map();
+	_deleteHeaderTimer = null;
+	_deleteHeaderQueue = new Map();
+	constructor() {
+		this.initHook();
+		this.loadPrefs();
 	}
-	//判断是否是HE自身
-	if (excludeHe && e.url.indexOf(browser.extension.getURL('')) === 0) {
-		return;
+	get disableAll() {
+		return this._disableAll;
 	}
-	//可用：重定向，阻止加载
-	const rule = rules.get('request', { url: e.url, enable: true });
-	// Browser is starting up, pass all requests
-	if (rule === null) {
-		return;
+	set disableAll(to) {
+		if (this._disableAll === to) {
+			return;
+		}
+		this._disableAll = to;
+		browser.browserAction.setIcon({
+			path: "/assets/images/128" + (to ? "w" : "") + ".png"
+		});
 	}
-	let redirectTo = e.url;
-	const detail = {
-		id: e.requestId,
-		url: e.url,
-		method: e.method,
-		isFrame: e.frameId === 0,
-		type: e.type,
-		time: e.timeStamp,
-		originUrl: e.originUrl || ''
-	};
-	for (const item of rule) {
-		if (item.action === 'cancel' && !item.isFunction) {
-			return { cancel: true };
-		} else {
-			if (item.isFunction) {
+
+	initHook() {
+		browser.webRequest.onBeforeRequest.addListener(this.handleBeforeRequest.bind(this), { urls: ["<all_urls>"] }, ['blocking']);
+		browser.webRequest.onBeforeSendHeaders.addListener(this.handleBeforeSend.bind(this), { urls: ["<all_urls>"] }, utils.createHeaderListener('requestHeaders'));
+		browser.webRequest.onHeadersReceived.addListener(this.handleReceived.bind(this), { urls: ["<all_urls>"] }, utils.createHeaderListener('requestHeaders'));
+	}
+
+	loadPrefs() {
+		storage.prefs.watch('exclude-he', val => {
+			this.excludeHe = val;
+		});
+
+		storage.prefs.watch('disable-all', val => {
+			this.disableAll = val;
+		});
+
+		storage.prefs.watch('include-headers', val => {
+			this.includeHeaders = val;
+		});
+
+		storage.prefs.onReady()
+			.then(prefs => {
+				this.excludeHe = prefs.get('exclude-he');
+				this.disableAll = prefs.get('disable-all');
+				this.includeHeaders = prefs.get('include-headers');
+			})
+	}
+
+	beforeAll(e) {
+		if (this.disableAll) {
+			return false;
+		}
+		//判断是否是HE自身
+		if (excludeHe && e.url.indexOf(browser.extension.getURL('')) === 0) {
+			return false;
+		}
+		return true;
+	}
+
+	/**
+	 * BeforeRequest事件，可撤销、重定向
+	 * @param any e
+	 */
+	handleBeforeRequest(e) {
+		if (!this.beforeAll(e)) {
+			return;
+		}
+		//可用：重定向，阻止加载
+		const rule = rules.get('request', { url: e.url, enable: true });
+		// Browser is starting up, pass all requests
+		if (rule === null) {
+			return;
+		}
+		let redirectTo = e.url;
+		const detail = this._makeDetails(e);
+		for (const item of rule) {
+			if (item.action === 'cancel' && !item.isFunction) {
+				return { cancel: true };
+			} else {
+				if (item.isFunction) {
+					try {
+						const r = item._func(redirectTo, detail);
+						if (typeof(r) === 'string') {
+							redirectTo = r;
+						}
+						if (r === '_header_editor_cancel_' || (item.action === 'cancel' && r === true)) {
+							return { "cancel": true };
+						}
+					} catch (e) {
+						console.log(e);
+					}
+				} else {
+					if (item.matchType === 'regexp') {
+						redirectTo = redirectTo.replace(item._reg, item.to);
+					} else {
+						redirectTo = item.to;
+					}
+				}
+			}
+		}
+		if (redirectTo && redirectTo !== e.url) {
+			if (/^([a-zA-Z0-9]+)%3A/.test(redirectTo)) {
+				redirectTo = decodeURIComponent(redirectTo);
+			}
+			return { redirectUrl: redirectTo };
+		}
+	}
+
+	/**
+	 * beforeSend事件，可修改请求头
+	 * @param any e
+	 */
+	handleBeforeSend(e) {
+		if (!this.beforeAll(e)) {
+			return;
+		}
+		// 修改请求头
+		if (!e.requestHeaders) {
+			return;
+		}
+		const rule = rules.get('sendHeader', { "url": e.url, "enable": true });
+		// Browser is starting up, pass all requests
+		if (rule === null) {
+			return;
+		}
+		this._modifyHeaders(e.requestHeaders, rule, e);
+		return { requestHeaders: e.requestHeaders };
+	}
+
+	handleReceived(e) {
+		if (!this.beforeAll(e)) {
+			return;
+		}
+		//修改请求头
+		if (!e.responseHeaders) {
+			return;
+		}
+		const rule = rules.get('receiveHeader', { "url": e.url, "enable": true });
+		// Browser is starting up, pass all requests
+		if (rule === null) {
+			return;
+		}
+		this._modifyHeaders(e.responseHeaders, rule, e);
+		return { responseHeaders: e.responseHeaders };
+	}
+
+	_makeDetails(request) {
+		return {
+			id: request.requestId,
+			url: request.url,
+			tab: request.tabId,
+			method: request.method,
+			frame: request.frameId,
+			parentFrame: request.parentFrameId,
+			proxy: request.proxyInfo || null,
+			type: request.type,
+			time: request.timeStamp,
+			originUrl: request.originUrl || '',
+			requestHeaders: null
+		};
+	}
+
+	_modifyHeaders(request, type, rule) {
+		const headers = request[type === REQUEST_TYPE.REQUEST ? "requestHeaders" : "responseHeaders"];
+		if (!headers) {
+			return;
+		}
+		if (this.includeHeaders && type === REQUEST_TYPE.REQUEST) {
+			// 暂存headers
+			this.savedRequestHeader.set(request.requestId, e.requestHeaders);
+			this._autoDeleteSavedHeader(e.requestId);
+		}
+		const newHeaders = {};
+		let hasFunction = false;
+		for (let i = 0; i < rule.length; i++) {
+			if (!rule[i].isFunction) {
+				newHeaders[rule[i].action.name] = rule[i].action.value;
+				rule.splice(i, 1);
+				i--;
+			} else {
+				hasFunction = true;
+			}
+		}
+		for (let i = 0; i < headers.length; i++) {
+			const name = headers[i].name.toLowerCase();
+			if (newHeaders[name] === undefined) {
+				continue;
+			}
+			if (newHeaders[name] === "_header_editor_remove_") {
+				headers.splice(i, 1);
+				i--;
+			} else {
+				headers[i].value = newHeaders[name];
+			}
+			delete newHeaders[name];
+		}
+		for (const k in newHeaders) {
+			if (newHeaders[k] === "_header_editor_remove_") {
+				continue;
+			}
+			headers.push({
+				name: k,
+				value: newHeaders[k]
+			});
+		}
+		if (hasFunction) {
+			const detail = this._makeDetails(request);
+			if (this.includeHeaders && type === REQUEST_TYPE.RESPONSE) {
+				// 取出headers并删除
+				detail.requestHeaders = this.savedRequestHeader.get(request.requestId) || null;
+				this.savedRequestHeader.delete(request.requestId);
+				this._deleteHeaderQueue.delete(request.requestId);
+			}
+			rule.forEach(item => {
 				try {
-					const r = item._func(redirectTo, detail);
-					if (typeof(r) === 'string') {
-						redirectTo = r;
-					}
-					if (r === '_header_editor_cancel_' || (item.action === 'cancel' && r === true)) {
-						return { "cancel": true };
-					}
+					item._func(headers, detail);
 				} catch (e) {
 					console.log(e);
 				}
-			} else {
-				if (item.matchType === 'regexp') {
-					redirectTo = redirectTo.replace(item._reg, item.to);
-				} else {
-					redirectTo = item.to;
-				}
-			}
+			});
 		}
 	}
-	if (redirectTo && redirectTo !== e.url) {
-		if (/^([a-zA-Z0-9]+)%3A/.test(redirectTo)) {
-			redirectTo = decodeURIComponent(redirectTo);
-		}
-		return { redirectUrl: redirectTo };
-	}
-}, { urls: ["<all_urls>"] }, ['blocking']);
 
-function modifyHeaders(headers, rule, details, requestHeaders) {
-	const newHeaders = {};
-	let hasFunction = false;
-	for (let i = 0; i < rule.length; i++) {
-		if (!rule[i].isFunction) {
-			newHeaders[rule[i].action.name] = rule[i].action.value;
-			rule.splice(i, 1);
-			i--;
-		} else {
-			hasFunction = true;
+	_autoDeleteSavedHeader(id) {
+		if (id) {
+			this._deleteHeaderQueue.set(id, new Date().getTime() / 100);
 		}
-	}
-	for (let i = 0; i < headers.length; i++) {
-		const name = headers[i].name.toLowerCase();
-		if (newHeaders[name] === undefined) {
-			continue;
+		if (this._deleteHeaderTimer !== null) {
+			return;
 		}
-		if (newHeaders[name] === "_header_editor_remove_") {
-			headers.splice(i, 1);
-			i--;
-		} else {
-			headers[i].value = newHeaders[name];
-		}
-		delete newHeaders[name];
-	}
-	for (const k in newHeaders) {
-		if (newHeaders[k] === "_header_editor_remove_") {
-			continue;
-		}
-		headers.push({
-			"name": k,
-			"value": newHeaders[k]
-		});
-	}
-	if (hasFunction) {
-		const detail = {
-			"id": details.requestId,
-			"url": details.url,
-			"tab": details.tabId,
-			"method": details.method,
-			"frame": details.frameId,
-			"parentFrame": details.parentFrameId,
-			"proxy": details.proxyInfo || null,
-			"type": details.type,
-			"time": details.timeStamp,
-			"requestHeaders": requestHeaders,
-			"originUrl": details.originUrl || ''
-		};
-		rule.forEach(item => {
-			try {
-				item._func(headers, detail);
-			} catch (e) {
-				console.log(e);
+		this._deleteHeaderTimer = setTimeout(() => {
+			// clear timeout
+			clearTimeout(this._deleteHeaderTimer);
+			this._deleteHeaderTimer = null;
+			// check time
+			const curTime = new Date().getTime() / 100;
+			// k: id, v: time
+			this._deleteHeaderQueue.entries().forEach((k, v) => {
+				if (curTime - v >= 90) {
+					this.savedRequestHeader.delete(k)
+					this._deleteHeaderQueue.delete(k);
+				}
+			});
+			if (this._deleteHeaderQueue.size > 0) {
+				this._autoDeleteSavedHeader();
 			}
-		});
+		}, 10000);
 	}
 }
 
-browser.webRequest.onBeforeSendHeaders.addListener(function(e) {
-	if (disableAll) {
-		return;
-	}
-	requestHeadersByRequestId[e.requestId] = e.requestHeaders;
-	//判断是否是HE自身
-	if (excludeHe && e.url.indexOf(browser.extension.getURL('')) === 0) {
-		return;
-	}
-	//修改请求头
-	if (!e.requestHeaders) {
-		return;
-	}
-	const rule = rules.get('sendHeader', {"url": e.url, "enable": true});
-	// Browser is starting up, pass all requests
-	if (rule === null) {
-		return;
-	}
-	modifyHeaders(e.requestHeaders, rule, e);
-	return { requestHeaders: e.requestHeaders };
-}, { urls: ["<all_urls>"] }, utils.createHeaderListener('requestHeaders'));
+new RequestHandler();
 
-browser.webRequest.onHeadersReceived.addListener(function(e) {
-	if (disableAll) {
-		return;
-	}
-	const requestHeaders = requestHeadersByRequestId[e.requestId];
-	delete requestHeadersByRequestId[e.requestId];
-	//判断是否是HE自身
-	if (excludeHe && e.url.indexOf(browser.extension.getURL('')) === 0) {
-		return;
-	}
-	//修改请求头
-	if (!e.responseHeaders) {
-		return;
-	}
-	const rule = rules.get('receiveHeader', {"url": e.url, "enable": true});
-	// Browser is starting up, pass all requests
-	if (rule === null) {
-		return;
-	}
-	modifyHeaders(e.responseHeaders, rule, e, requestHeaders);
-	return { responseHeaders: e.responseHeaders };
-}, { urls: ["<all_urls>"] }, utils.createHeaderListener('responseHeaders'));
+let antiHotLinkMenu = null;
 
 function toggleAntiHotLinkMenu(has) {
 	if (utils.IS_MOBILE) {
@@ -257,31 +353,11 @@ function toggleAntiHotLinkMenu(has) {
 	}
 }
 
-function setDisableAll(disable) {
-	if (disableAll === disable) {
-		return;
-	}
-	disableAll = disable;
-	browser.browserAction.setIcon({
-		path: "/assets/images/128" + (disable ? "w" : "") + ".png"
-	});
-}
-
 storage.prefs.watch('add-hot-link', val => {
 	toggleAntiHotLinkMenu(val);
 });
 
-storage.prefs.watch('exclude-he', val => {
-	excludeHe = val;
-});
-
-storage.prefs.watch('disable-all', val => {
-	setDisableAll(val);
-});
-
 storage.prefs.onReady()
-.then(prefs => {
-	excludeHe = prefs.get('exclude-he');
-	setDisableAll(prefs.get('disable-all'));
-	toggleAntiHotLinkMenu(prefs.get('add-hot-link'));
-})
+	.then(prefs => {
+		toggleAntiHotLinkMenu(prefs.get('add-hot-link'));
+	})
