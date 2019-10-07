@@ -10,7 +10,7 @@ const project = {
 	default: "en",
 	langs: ["zh_CN", "zh_TW", "pl", "pt_BR"]
 }
-const outputDir = path.resolve(__dirname, '../../dist/locales');
+const outputDir = path.resolve(__dirname, '../../dist/_locales');
 const placeholder = require('./placeholder.json')
 
 if (!fs.existsSync(outputDir)) {

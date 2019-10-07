@@ -38,17 +38,17 @@ Header Editor require those permissions:
 
 Contribute codes: [Submiting a pull request](https://github.com/FirefoxBar/HeaderEditor/compare)
 
-Translate this extension: [Transifex](https://www.transifex.com/sytec/header-editor/)
-
 Thanks to the following personnel for their contribution:
 
-[YFdyh000](https://github.com/yfdyh000)
+* [YFdyh000](https://github.com/yfdyh000)
 
-#### Language maintainers
+### Translation
 
-The following are language maintainers, Thanks for their contribution.
+English: Please submit a issue or pull request for file `build/locales/original.json`
 
-If you have any advice on translations, please contact the maintainer(s) directly.
+Other: [Transifex](https://www.transifex.com/sytec/header-editor/)
+
+The following are language maintainers, Thanks for their contribution. If you have any advice on translations, please contact the maintainer(s) directly.
 
 * en: [ShuangYa](https://github.com/sylingd)
 
