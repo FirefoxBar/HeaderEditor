@@ -66,7 +66,6 @@ function writeOneLanguage(obj, lang, default_language) {
 	if (typeof(default_language) !== 'undefined') {
 		// set english words to it if it is empty
 		for (const k in newObj) {
-			// remove description
 			if (newObj[k].message === '') {
 				newObj[k].message = default_language[k].message;
 			}
@@ -87,11 +86,13 @@ requestTransifex('project/' + project.name + '/resource/messages/translation/' +
 .then(r => {
 	const default_language = ksort(JSON.parse(r.content));
 	writeOneLanguage(default_language, project.default);
-	project.langs.forEach((lang) => {
+	console.log(`Write ${project.default} ok`);
+	project.langs.forEach(lang => {
 		requestTransifex('project/' + project.name + '/resource/messages/translation/' + lang + '/')
 		.then(rs => {
 			const content = ksort(JSON.parse(rs.content));
 			writeOneLanguage(content, lang, default_language);
+			console.log(`Write ${lang} ok`);
 		})
 		.catch(e => {
 			console.log(e);
