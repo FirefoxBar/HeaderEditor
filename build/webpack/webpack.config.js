@@ -4,16 +4,11 @@ const MiniCssExtractPlugin = require('mini-css-extract-plugin');
 const WebpackShellPlugin = require('webpack-shell-plugin');
 const CopyWebpackPlugin = require('copy-webpack-plugin');
 const ChromeExtensionReloader = require('webpack-chrome-extension-reloader');
-const {
-	VueLoaderPlugin
-} = require('vue-loader');
-const {
-	version
-} = require('../../package.json');
+const { VueLoaderPlugin } = require('vue-loader');
 
+const root = path.resolve(__dirname, '../..');
+const { version } = require(path.resolve(root, 'package.json'));
 const copys = require('./copy.json');
-
-const root = path.resolve(__dirname, '..');
 
 const config = {
 	mode: process.env.NODE_ENV,
