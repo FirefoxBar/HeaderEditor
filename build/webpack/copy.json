@@ -12,10 +12,6 @@
 		"to": "assets"
 	},
 	{
-		"from": "_locales",
-		"to": "_locales"
-	},
-	{
 		"from": "popup/popup.html",
 		"to": "popup/popup.html"
 	},
