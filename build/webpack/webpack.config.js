@@ -9,11 +9,11 @@ const {
 } = require('vue-loader');
 const {
 	version
-} = require('../package.json');
+} = require('../../package.json');
 
 const copys = require('./copy.json');
 
-const root = path.resolve(__dirname, '../');
+const root = path.resolve(__dirname, '..');
 
 const config = {
 	mode: process.env.NODE_ENV,
