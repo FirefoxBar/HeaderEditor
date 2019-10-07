@@ -1,7 +1,8 @@
 const package = require('../package.json');
 const arg = require('arg');
 const fs = require('fs');
-const dist = fs.realpathSync(__dirname + '/../') + '/dist/';
+const path = require('path');
+const check = require('./pack-utils/pack-check');
 const buildXpi = require('./pack-utils/xpi');
 const buildAmo = require('./pack-utils/amo');
 const buildCws = require('./pack-utils/cws');
@@ -11,11 +12,10 @@ const args = arg({
     '--platform': String
 });
 
-const manifest = require(dist + 'manifest.json');
-const output = fs.realpathSync(__dirname + '/../dist-pack/') + '/';
-if (!fs.existsSync(output)) {
-	fs.mkdirSync(output);
-}
+check();
+const dist = path.resolve(__dirname, "..", 'dist');
+const manifest = require(path.resolve(dist, 'manifest.json'));
+const output = path.resolve(__dirname, '..', 'dist-pack');
 
 const isAuto = args["--platform"] ? false : true;
 if (isAuto) {

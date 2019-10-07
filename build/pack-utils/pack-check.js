@@ -1,8 +1,9 @@
 const fs = require('fs');
-const rootDir = fs.realpathSync(__dirname + '/../') + '/';
-const dist = rootDir + 'dist';
-const tmp = rootDir + 'build-temp';
-const output = rootDir + 'dist-pack';
+const path = require('path');
+const rootDir = path.resolve(__dirname, '../..');
+const dist = path.resolve(rootDir, 'dist');
+const tmp = path.resolve(rootDir, 'build-temp');
+const output = path.resolve(rootDir, 'dist-pack');
 
 function rmdir(path, include_self) {
 	const files = fs.readdirSync(path);
@@ -33,21 +34,22 @@ function copyDir(fromPath, toPath) {
 	});
 }
 
-if (!fs.existsSync(dist)) {
-	console.error('You must rum "npm run build" first');
-	process.exit(0);
-}
-
-if (fs.existsSync(tmp)) {
-	rmdir(tmp, false);
-} else {
-	fs.mkdirSync(tmp);
-}
-// Copy dist
-copyDir(dist, tmp + '/copy-dist');
-
-if (fs.existsSync(output)) {
-	rmdir(output, false);
-} else {
-	fs.mkdirSync(output);
+module.exports = function() {
+	if (!fs.existsSync(dist)) {
+		fs.mkdirSync(dist);
+	}
+	
+	if (fs.existsSync(tmp)) {
+		rmdir(tmp, false);
+	} else {
+		fs.mkdirSync(tmp);
+	}
+	// Copy dist
+	copyDir(dist, tmp + '/copy-dist');
+	
+	if (fs.existsSync(output)) {
+		rmdir(output, false);
+	} else {
+		fs.mkdirSync(output);
+	}
 }

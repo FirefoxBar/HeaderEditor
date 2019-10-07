@@ -27,8 +27,8 @@ install:
   - yarn
 
 script:
-  - node ./build/locales/locales.js
   - yarn build
+  - node ./build/locales/locales.js
 
 after_success:
   - zip -rq dist.zip dist
