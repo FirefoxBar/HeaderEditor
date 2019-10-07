@@ -82,8 +82,8 @@
 							<div class="md-layout-item md-size-50 md-small-size-100"><md-checkbox v-model="options.collapseGroup">{{t('manage_collapse_group')}}</md-checkbox></div>
 							<div class="md-layout-item md-size-50 md-small-size-100"><md-checkbox v-model="options.rulesNoEffectForHe">{{t('rules_no_effect_for_he')}}</md-checkbox></div>
 							<div class="md-layout-item md-size-50 md-small-size-100"><md-checkbox v-model="options.addHotLink">{{t('add_anti_hot_link_to_menu')}}</md-checkbox></div>
-							<div class="md-layout-item md-size-50 md-small-size-100"><md-checkbox v-model="options.showCommonHeader">Show common heads when editing</md-checkbox></div>
-							<div class="md-layout-item md-size-50 md-small-size-100"><md-checkbox v-model="options.includeHeaders">Include request headers in custom function</md-checkbox></div>
+							<div class="md-layout-item md-size-50 md-small-size-100"><md-checkbox v-model="options.showCommonHeader">{{t('display_common_header')}}</md-checkbox></div>
+							<div class="md-layout-item md-size-50 md-small-size-100"><md-checkbox v-model="options.includeHeaders">{{t('include_header_in_custom_function')}}</md-checkbox></div>
 						</div>
 					</md-card-content>
 				</md-card>

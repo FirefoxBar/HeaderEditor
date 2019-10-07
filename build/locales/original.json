@@ -41,7 +41,12 @@
 	},
 	"cloud_backup_at": {
 		"message": "Last backup at $date$",
-		"description": "Display last backup time if any backup found"
+		"description": "Display last backup time if any backup found",
+		"placeholders": {
+			"date": {
+				"content": "$1"
+			}
+		}
 	},
 	"cloud_no_backup": {
 		"message": "No backup",
@@ -70,6 +75,10 @@
 	"description": {
 		"message": "Manage browser's requests, include modify the request headers and response headers, redirect requests, cancel requests",
 		"description": "Extension description"
+	},
+	"display_common_header": {
+		"message": "Display common header",
+		"description": "An option to enable header auto-complete when editing rules"
 	},
 	"download": {
 		"message": "Download",
@@ -166,6 +175,10 @@
 	"import_success": {
 		"message": "Successfully imported",
 		"description": "Displays when import successfully"
+	},
+	"include_header_in_custom_function": {
+		"message": "Include request headers in custom function",
+		"description": "An option to enable this feature, for more info, see wiki in GitHub"
 	},
 	"manage": {
 		"message": "Manage",
