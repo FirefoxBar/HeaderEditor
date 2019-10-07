@@ -10,17 +10,11 @@
 	},
 	"scripts": {
 		"lint": "eslint --ext .js,.vue src",
-		"build": "cross-env NODE_ENV=production webpack --config ./webpack/webpack.config.js --hide-modules",
-		"build:dev": "cross-env NODE_ENV=development webpack --config ./webpack/webpack.config.js --hide-modules",
-		"watch": "npm run build -- --watch",
-		"watch:dev": "cross-env HMR=true npm run build:dev -- --watch",
-		"travis:release": "npm run pack:all && npm run release",
-		"release": "node scripts/release.js",
-		"pack:all": "node scripts/pack-check.js && node scripts/pack.js",
-		"pack:amo": "node scripts/pack-check.js && node scripts/pack.js --platform=amo",
-		"pack:xpi": "node scripts/pack-check.js && node scripts/pack.js --platform=xpi",
-		"pack:cws": "node scripts/pack-check.js && node scripts/pack.js --platform=cws",
-		"pack:crx": "node scripts/pack-check.js && node scripts/pack.js --platform=crx"
+		"build": "cross-env NODE_ENV=production webpack --config ./build/webpack/webpack.config.js --hide-modules",
+		"build:dev": "cross-env NODE_ENV=development webpack --config ./build/webpack/webpack.config.js --hide-modules",
+		"start": "cross-env HMR=true npm run build:dev -- --watch",
+		"release": "node ./build/release.js",
+		"pack": "node ./build/pack-check.js && node ./build/pack.js"
 	},
 	"webextension": {
 		"dist": "HeaderEditor-{VER}",

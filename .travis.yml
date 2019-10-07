@@ -27,6 +27,7 @@ install:
   - yarn
 
 script:
+  - node ./build/locales/locales.js
   - yarn build
 
 after_success:
@@ -35,12 +36,16 @@ after_success:
   - echo $res
 
 before_deploy:
-  - openssl aes-256-cbc -K $encrypted_1fc90f464345_key -iv $encrypted_1fc90f464345_iv -in encrypt.zip.enc -out encrypt.zip -d
+  - openssl aes-256-cbc -K $encrypted_1fc90f464345_key -iv $encrypted_1fc90f464345_iv -in ./build/encrypt.zip.enc -out ./encrypt.zip -d
   - unzip encrypt.zip
 
 deploy:
   provider: script
   skip_cleanup: true
-  script: yarn travis:release
+  script: bash ./build/deploy.sh
   on:
     tags: true
+
+env:
+  global:
+    - secure: CWCrVum9h0996SkQgzGourEYisqdVw/PEl36Ue6D7gdsPGZgOhCzJCJkKH5Uk3fkNF4GXHA0u+8eOJGyMiHXWH1D10+fgYDUSuEEE8/kaUhAvDXymQwJim+tax1johoa5WyitjyWxCXFtfHBcBC6uDI02jkEhhiSUASsXetEFi9I9z4KI2zDLQk8s+y2PKGinusnFGcY1eSKISeDNYP3AZbaieVpgFsiVK+uTLxlmN+l2j7MfnOTZ05VAEQBRGpe0jB9aTm2nSPmXWHvVOb60RhrpI+U2xRGTej+VvoKjIYgz2oSdtC+SQQAtuBAeX+jdpkrK3/Y18n9qCDOjlHZv2RohQEcHzyIOcErF/bwW6ZqYNFOogB2svoiSNCrKPJLCTdl9L0dro+vLSUBxt6F10sTANswe8j9sNVOr9kfsamJRAGDlHItyGA5qC44miO+3ZQyEAXNLJHMctilSrmy3wZqUAOVXl6azJlZrzNt+XVZCrq5FMr+3Fc+p+RhoSheKJi2G8ICFDqqAqOgVxW6nV+3V6yG1arTqX8ArV2wHziFArwotIqdZwWnwdFCfn5kAZpoRefRx45zbj1qJEBO8ByZvwYq3LHr3tsFDenyriMXaNidqMfJlDtAKoyVKdDi/7oWSpzzvupX2ThxVeQF68IJ6v+9Y2U7SUo9LtdRFFk=
