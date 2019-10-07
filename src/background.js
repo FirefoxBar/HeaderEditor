@@ -105,7 +105,7 @@ class RequestHandler {
 	initHook() {
 		browser.webRequest.onBeforeRequest.addListener(this.handleBeforeRequest.bind(this), { urls: ["<all_urls>"] }, ['blocking']);
 		browser.webRequest.onBeforeSendHeaders.addListener(this.handleBeforeSend.bind(this), { urls: ["<all_urls>"] }, utils.createHeaderListener('requestHeaders'));
-		browser.webRequest.onHeadersReceived.addListener(this.handleReceived.bind(this), { urls: ["<all_urls>"] }, utils.createHeaderListener('requestHeaders'));
+		browser.webRequest.onHeadersReceived.addListener(this.handleReceived.bind(this), { urls: ["<all_urls>"] }, utils.createHeaderListener('responseHeaders'));
 	}
 
 	loadPrefs() {
@@ -134,7 +134,7 @@ class RequestHandler {
 			return false;
 		}
 		//判断是否是HE自身
-		if (excludeHe && e.url.indexOf(browser.extension.getURL('')) === 0) {
+		if (this.excludeHe && e.url.indexOf(browser.extension.getURL('')) === 0) {
 			return false;
 		}
 		return true;
@@ -206,7 +206,7 @@ class RequestHandler {
 		if (rule === null) {
 			return;
 		}
-		this._modifyHeaders(e.requestHeaders, rule, e);
+		this._modifyHeaders(e, REQUEST_TYPE.REQUEST, rule);
 		return { requestHeaders: e.requestHeaders };
 	}
 
@@ -223,7 +223,7 @@ class RequestHandler {
 		if (rule === null) {
 			return;
 		}
-		this._modifyHeaders(e.responseHeaders, rule, e);
+		this._modifyHeaders(e, REQUEST_TYPE.RESPONSE, rule);
 		return { responseHeaders: e.responseHeaders };
 	}
 
@@ -250,8 +250,8 @@ class RequestHandler {
 		}
 		if (this.includeHeaders && type === REQUEST_TYPE.REQUEST) {
 			// 暂存headers
-			this.savedRequestHeader.set(request.requestId, e.requestHeaders);
-			this._autoDeleteSavedHeader(e.requestId);
+			this.savedRequestHeader.set(request.requestId, request.requestHeaders);
+			this._autoDeleteSavedHeader(request.requestId);
 		}
 		const newHeaders = {};
 		let hasFunction = false;
@@ -318,12 +318,13 @@ class RequestHandler {
 			// check time
 			const curTime = new Date().getTime() / 100;
 			// k: id, v: time
-			this._deleteHeaderQueue.entries().forEach((k, v) => {
-				if (curTime - v >= 90) {
+			const it = this._deleteHeaderQueue.entries();
+			for (const k in it) {
+				if (curTime - this._deleteHeaderQueue.get(k) >= 90) {
 					this.savedRequestHeader.delete(k)
 					this._deleteHeaderQueue.delete(k);
 				}
-			});
+			}
 			if (this._deleteHeaderQueue.size > 0) {
 				this._autoDeleteSavedHeader();
 			}

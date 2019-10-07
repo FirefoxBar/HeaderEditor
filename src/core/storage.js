@@ -180,12 +180,17 @@ const prefs = browser.extension.getBackgroundPage().prefs || new class {
 }
 
 function getSync() {
-	if ("sync" in browser.storage) {
-		return browser.storage.sync;
-	}
-	if ("local" in browser.storage) {
+	// For development mode
+	if (typeof(process) !== "undefined" && process.env.NODE_ENV === "development") {
 		return browser.storage.local;
 	}
+	try {
+		if ("sync" in browser.storage) {
+			return browser.storage.sync;
+		}
+	} catch (e) {
+	}
+	return browser.storage.local;
 }
 function getLocal() {
 	return browser.storage.local;

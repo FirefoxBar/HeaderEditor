@@ -8,6 +8,8 @@ import './options.less';
 import storage from '../core/storage';
 import utils from '../core/utils';
 
+Vue.use(VueMaterial);
+
 const wait = [];
 // Upgrade
 if (localStorage.getItem('dl_history')) {
@@ -88,7 +90,6 @@ storage.getLocal().get('version_mark')
 	}
 })
 function startPageInit() {
-	Vue.use(VueMaterial);
 	new Vue({
 		el: '#app',
 		render: h => h(App)

@@ -83,6 +83,7 @@
 							<div class="md-layout-item md-size-50 md-small-size-100"><md-checkbox v-model="options.rulesNoEffectForHe">{{t('rules_no_effect_for_he')}}</md-checkbox></div>
 							<div class="md-layout-item md-size-50 md-small-size-100"><md-checkbox v-model="options.addHotLink">{{t('add_anti_hot_link_to_menu')}}</md-checkbox></div>
 							<div class="md-layout-item md-size-50 md-small-size-100"><md-checkbox v-model="options.showCommonHeader">Show common heads when editing</md-checkbox></div>
+							<div class="md-layout-item md-size-50 md-small-size-100"><md-checkbox v-model="options.includeHeaders">Include request headers in custom function</md-checkbox></div>
 						</div>
 					</md-card-content>
 				</md-card>
@@ -403,7 +404,8 @@ export default {
 			},
 			options: {
 				collapseGroup: true,
-				rulesNoEffectForHe: true
+				rulesNoEffectForHe: true,
+				includeHeaders: false
 			},
 			download: {
 				url: "",
@@ -438,7 +440,10 @@ export default {
 	},
 	computed: {
 		commonHeader() {
-			return this.options.enableHeaderPrompt ? commonHeader : [];
+			return this.options.enableHeaderPrompt ? commonHeader : {
+				request: [],
+				response: []
+			};
 		},
 		cloudDate() {
 			return dateFormat(new Date(this.cloud.time), 'yyyy-mm-dd HH:MM:ss');
@@ -1182,12 +1187,14 @@ export default {
 			this.$set(this.options, 'collapseGroup', prefs.get('manage-collapse-group'));
 			this.$set(this.options, 'rulesNoEffectForHe', prefs.get('exclude-he'));
 			this.$set(this.options, 'showCommonHeader', prefs.get('show-common-header'));
+			this.$set(this.options, 'includeHeaders', prefs.get('include-headers'));
 			this.loadRules();
 			this.$watch('options', newOpt => {
 				storage.prefs.set('manage-collapse-group', newOpt.collapseGroup);
 				storage.prefs.set('exclude-he', newOpt.rulesNoEffectForHe);
 				storage.prefs.set('add-hot-link', newOpt.addHotLink);
 				storage.prefs.set('show-common-header', newOpt.showCommonHeader);
+				storage.prefs.set('include-headers', newOpt.includeHeaders);
 			}, { deep: true });
 		});
 		// init anti-hot-link
