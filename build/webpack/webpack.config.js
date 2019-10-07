@@ -80,12 +80,7 @@ const config = {
 					return JSON.stringify(jsonContent);
 				},
 			},
-		]),
-		new WebpackShellPlugin({
-			onBuildEnd: [
-				'node scripts/remove-evals.js'
-			],
-		}),
+		])
 	],
 };
 
