@@ -103,7 +103,7 @@
 								<md-input v-model="download.url"></md-input>
 							</md-field>
 							<md-button class="md-icon-button" @click="onDownloadClick"><md-icon class="iconfont icon-file-download"></md-icon></md-button>
-							<md-button class="md-icon-button" :title="t('third_party_rules')"><md-icon class="iconfont icon-search"></md-icon></md-button>
+							<md-button class="md-icon-button" :title="t('third_party_rules')" @click="onOpenThirdParty"><md-icon class="iconfont icon-search"></md-icon></md-button>
 						</div>
 						<md-list class="download-list">
 							<md-list-item v-for="url of download.log" :key="url">
@@ -1161,6 +1161,12 @@ export default {
 			browser.runtime.sendMessage({
 				method: "openURL",
 				url: "https://github.com/FirefoxBar/HeaderEditor/wiki/Cloud-backup"
+			});
+		},
+		onOpenThirdParty() {
+			browser.runtime.sendMessage({
+				method: "openURL",
+				url: "https://github.com/FirefoxBar/HeaderEditor/wiki/Third-party-rules"
 			});
 		}
 	},
