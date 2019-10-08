@@ -1,7 +1,7 @@
 const fs = require('fs');
 const path = require('path');
 const request = require('request');
-const deepCopy = require('./deepCopy.js');
+const merge = require('merge');
 
 const project = {
 	name: "header-editor",
@@ -51,14 +51,14 @@ function addPlaceholders(obj) {
 	// Add placeholders
 	for (const k in placeholder) {
 		if (typeof(obj[k]) !== 'undefined') {
-			obj[k].placeholders = deepCopy(placeholder[k]);
+			obj[k].placeholders = merge(true, placeholder[k]);
 		} else {
 			console.log("%s not exists, please check it", k);
 		}
 	}
 }
 function writeOneLanguage(obj, lang, default_language) {
-	const newObj = deepCopy(obj);
+	const newObj = merge(true, obj);
 	for (const k in newObj) {
 		// remove description
 		delete newObj[k]["description"];
