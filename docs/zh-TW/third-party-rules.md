@@ -1,5 +1,5 @@
 ---
-title: Third-party rules
+title: 第三方规则
 lang: zh-TW
 ---
 

@@ -1,12 +1,11 @@
 ---
-title: Third-party rules
+title: 第三方规则
 lang: zh-CN
 ---
 
 ## 注意
 
 下面的规则由第三方维护，Header Editor不保证规则的时效性、安全性，若出现问题请联系规则维护者
-
 
 ## 列表
 

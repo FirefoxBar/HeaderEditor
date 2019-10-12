@@ -9,6 +9,7 @@ module.exports = {
     }
   },
   plugins: [
+    '@vuepress/back-to-top',
     ['vuepress-plugin-baidu-google-analytics', {
       hm: 'eddab75c23e1853a476011bb95a585c9',
       ignore_hash: true
@@ -34,10 +35,12 @@ module.exports = {
   themeConfig: {
     repo: "FirefoxBar/HeaderEditor",
     docsDir: 'docs',
-    editLinks: true,
+	editLinks: true,
+	sidebarDepth: 2,
+	searchMaxSuggestions: 10,
     locales: {
       '/': require('./locales/zh-CN'),
-	  '/en/': require('./locales/zh-CN'),
+	  '/en/': require('./locales/en'),
 	  '/zh-TW/': require('./locales/zh-TW')
 	}
   }
