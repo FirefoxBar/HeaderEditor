@@ -8,7 +8,7 @@ https://img.shields.io/travis/FirefoxBar/HeaderEditor/master.svg?style=flat-squa
 
 An extension which can modify the request, include request headers, response headers, redirect requests, and cancel requests.
 
-For more documentations, Please visit [wiki](https://github.com/FirefoxBar/HeaderEditor/wiki)
+For more documentations, Please visit [documentions](https://he.firefoxcn.net)
 
 ## Get this extension
 
