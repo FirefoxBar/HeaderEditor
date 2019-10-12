@@ -3,7 +3,7 @@ title: Custom function
 lang: en
 ---
 
-# Summary
+## Summary
 
 Use custom functions to achieve more flexible functionality. So far, custom functions can be used in the following events: redirect request, modify the request headers, modify the response headers.
 
@@ -74,7 +74,7 @@ val.push({"name": "test", "value": value}); //Invalid, because value is number
 val.push({"name": "test", "value": value.toString()}); //Valid
 ```
 
-# New detail since 2.3.0
+## detail object
 
 Since 2.3.0, the custom function adds the parameter `detail` for the more precise control
 

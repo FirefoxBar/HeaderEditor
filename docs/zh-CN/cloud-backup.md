@@ -3,6 +3,8 @@ title: 云备份
 lang: zh-CN
 ---
 
+## 综述
+
 自Header Editor 4.0.5起，支持云同步。
 
 **注意：你需要登录你的浏览器账号（如Firefox账号、Google账号等），并启用浏览器的同步功能**

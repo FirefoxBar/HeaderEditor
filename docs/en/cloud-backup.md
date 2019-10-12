@@ -3,6 +3,8 @@ title: Cloud backup
 lang: en
 ---
 
+## Summary
+
 Support for cloud backup started with Header Editor 4.0.5.
 
 **Important: To use cloud backup, you should login your browser's account (like Firefox account, Google account, etc), and enable synchronize in browser's setting.**
