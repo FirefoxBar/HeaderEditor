@@ -36,6 +36,12 @@ module.exports = function() {
 		fs.mkdirSync(dist);
 	}
 	
+	if (fs.existsSync(common.pack)) {
+		rmdir(common.pack, false);
+	} else {
+		fs.mkdirSync(common.pack);
+	}
+
 	if (fs.existsSync(common.dist)) {
 		rmdir(common.dist, false);
 	} else {
@@ -43,10 +49,4 @@ module.exports = function() {
 	}
 	// Copy dist
 	copyDir(dist, common.dist);
-	
-	if (fs.existsSync(common.pack)) {
-		rmdir(common.pack, false);
-	} else {
-		fs.mkdirSync(common.pack);
-	}
 }
