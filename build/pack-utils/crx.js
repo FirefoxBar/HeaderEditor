@@ -51,7 +51,7 @@ module.exports = function(manifest, outputDir) {
 			} else {
 				createCrx(fs.readFileSync(zipPath))
 				.then(content => {
-					const out = path.resolve(outputDir, common.config.dist.replace('{VER}', common.version) + '.crx');
+					const out = common.resolve(outputDir, common.config.dist.replace('{VER}', common.version) + '.crx');
 					fs.writeFileSync(out, content);
 					fs.unlinkSync(zipPath);
 					resolve(out);
