@@ -1,10 +1,11 @@
 const fs = require('fs');
+const path = require('path');
 const crypto = require('crypto');
 const publishRelease = require('publish-release');
+const rootDir = path.resolve(__dirname, '..');
 const package = require('../package.json');
-const rootDir = fs.realpathSync(__dirname + '/../') + '/';
-const output = rootDir + 'dist-pack/';
-const GitHubUser = require(rootDir + 'encrypt/github.json');
+const output = path.resolve(rootDir, 'dist-pack');
+const GitHubUser = require(path.resolve(rootDir, 'encrypt', 'github.json'));
 
 if (!package.webextension.github.enable) {
 	console.log("GitHub not enabled");
@@ -17,10 +18,11 @@ let content = "";
 const assetName = package.webextension.dist.replace('{VER}', package.version);
 
 ['crx', 'xpi'].forEach(extName => {
-	if (fs.existsSync(output + assetName + '.' + extName)) {
-		assets.push(output + assetName + '.' + extName);
+	const outputPath = path.resolve(output, assetName + '.' + extName);
+	if (fs.existsSync(outputPath)) {
+		assets.push(outputPath);
 		content += assetName + '.' + extName + ' sha256:';
-		const buffer = fs.readFileSync(output + assetName + '.' + extName);
+		const buffer = fs.readFileSync(outputPath);
 		const fsHash = crypto.createHash('sha256');
 		fsHash.update(buffer);
 		content += fsHash.digest('hex') + "\n";

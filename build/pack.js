@@ -1,6 +1,5 @@
 const package = require('../package.json');
 const arg = require('arg');
-const fs = require('fs');
 const path = require('path');
 const check = require('./pack-utils/pack-check');
 const buildXpi = require('./pack-utils/xpi');

@@ -14,7 +14,7 @@
 		"build:dev": "cross-env NODE_ENV=development webpack --config ./build/webpack/webpack.config.js --hide-modules",
 		"start": "cross-env HMR=true npm run build:dev -- --watch",
 		"release": "node ./build/release.js",
-		"pack": "node ./build/pack-check.js && node ./build/pack.js"
+		"pack": "node ./build/pack.js"
 	},
 	"webextension": {
 		"dist": "HeaderEditor-{VER}",
