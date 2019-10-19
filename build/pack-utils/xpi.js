@@ -35,7 +35,7 @@ module.exports = function(manifest, outputDir) {
 					if (result.success) {
 						console.log("Downloaded signed addon");
 						fs.unlinkSync(zipPath);
-						const out = path.resolve(outputDir, common.config.dist.replace('{VER}', common.version) + '.xpi');
+						const out = common.resolve(outputDir, common.config.dist.replace('{VER}', common.version) + '.xpi');
 						// Move download file to output dir
 						if (result.downloadedFiles[0]) {
 							fs.renameSync(result.downloadedFiles[0], out);
