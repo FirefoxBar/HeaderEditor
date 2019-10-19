@@ -4,7 +4,7 @@ const fs = require('fs');
 const common = require('./common');
 const merge = require('merge');
 const exec = require('child_process').exec;
-const privKey = fs.realpathSync(common.encrypt('crx.pem'));
+const privKey = common.encrypt('crx.pem');
 
 function generatePublicKey(privateKey) {
 	const key = new RSA(privateKey);
