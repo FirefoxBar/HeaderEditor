@@ -1030,7 +1030,7 @@ export default {
 		onOpenHelp() {
 			browser.runtime.sendMessage({
 				method: "openURL",
-				url: "https://github.com/FirefoxBar/HeaderEditor/wiki"
+				url: t('url_help')
 			});
 		},
 		onBatchEnter() {
@@ -1160,13 +1160,13 @@ export default {
 		onOpenCloudHelp() {
 			browser.runtime.sendMessage({
 				method: "openURL",
-				url: "https://github.com/FirefoxBar/HeaderEditor/wiki/Cloud-backup"
+				url: t('url_cloud_backup')
 			});
 		},
 		onOpenThirdParty() {
 			browser.runtime.sendMessage({
 				method: "openURL",
-				url: "https://github.com/FirefoxBar/HeaderEditor/wiki/Third-party-rules"
+				url: t('url_third_party_rules')
 			});
 		}
 	},

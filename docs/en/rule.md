@@ -24,7 +24,7 @@ The rule will not take effect on the URL which is match the "exclude".
 
 ### Custom function
 
-Through a custom function to realize a more flexible function, the specific use please see [here](https://github.com/FirefoxBar/HeaderEditor/wiki/Custom-function)
+Through a custom function to realize a more flexible function, the specific use please see [here](./custom-function.md)
 
 ## Other special features
 

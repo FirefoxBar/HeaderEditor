@@ -340,6 +340,18 @@
 		"message": "Upload",
 		"description": "Upload button"
 	},
+	"url_cloud_backup": {
+		"message": "https://he.firefoxcn.net/en/cloud-backup.html",
+		"description": "URL of documentions, if not translated, please use english version"
+	},
+	"url_help": {
+		"message": "https://he.firefoxcn.net/en/guide.html",
+		"description": "URL of documentions, if not translated, please use english version"
+	},
+	"url_third_party_rules": {
+		"message": "https://he.firefoxcn.net/en/third-party-rules.html",
+		"description": "URL of documentions, if not translated, please use english version"
+	},
 	"view": {
 		"message": "View",
 		"description": "View rule or a link"
