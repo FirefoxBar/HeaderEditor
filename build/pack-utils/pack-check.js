@@ -1,9 +1,6 @@
 const fs = require('fs');
-const path = require('path');
-const rootDir = path.resolve(__dirname, '../..');
-const dist = path.resolve(rootDir, 'dist');
-const tmp = path.resolve(rootDir, 'build-temp');
-const output = path.resolve(rootDir, 'dist-pack');
+const common = require('./common');
+const dist = common.resolve(common.root, 'dist');
 
 function rmdir(path, include_self) {
 	const files = fs.readdirSync(path);
@@ -39,17 +36,17 @@ module.exports = function() {
 		fs.mkdirSync(dist);
 	}
 	
-	if (fs.existsSync(tmp)) {
-		rmdir(tmp, false);
+	if (fs.existsSync(common.dist)) {
+		rmdir(common.dist, false);
 	} else {
-		fs.mkdirSync(tmp);
+		fs.mkdirSync(common.dist);
 	}
 	// Copy dist
-	copyDir(dist, tmp + '/copy-dist');
+	copyDir(dist, common.dist);
 	
-	if (fs.existsSync(output)) {
-		rmdir(output, false);
+	if (fs.existsSync(common.pack)) {
+		rmdir(common.pack, false);
 	} else {
-		fs.mkdirSync(output);
+		fs.mkdirSync(common.pack);
 	}
 }
