@@ -17,45 +17,48 @@ const manifest = require(path.resolve(dist, 'manifest.json'));
 const output = path.resolve(__dirname, '..', 'dist-pack');
 
 const isAuto = args["--platform"] ? false : true;
+
 if (isAuto) {
-	new Promise(resolve => {
+	function XPI() {
 		if (package.webextension.autobuild.xpi) {
 			console.log("Building XPI");
-			buildXpi(manifest, output).then(resolve);
+			return buildXpi(manifest, output);
 		} else {
-			resolve();
+			return Promise.resolve();
 		}
-	})
-	.then(r => {
-		console.log(r);
-	})
-	.then(r => new Promise(resolve => {
+	}
+	function AMO() {
 		if (package.webextension.autobuild.amo) {
 			console.log("Building AMO");
-			buildAmo(manifest).then(resolve);
+			return buildAmo(manifest);
 		} else {
-			resolve();
+			return Promise.resolve();
 		}
-	}))
-	.then(r => new Promise(resolve => {
+	}
+	function CWS() {
 		if (package.webextension.autobuild.cwx) {
 			console.log("Building Chrome Web Store");
-			buildCws().then(resolve);
+			return buildCws();
 		} else {
-			resolve();
+			return Promise.resolve();
 		}
-	}))
-	.then(r => new Promise(resolve => {
+	}
+	function CRX() {
 		if (package.webextension.autobuild.crx) {
 			console.log("Building CRX");
-			buildCrx(manifest, output).then(resolve);
+			return buildCrx(manifest, output);
 		} else {
-			resolve();
+			return Promise.resolve();
 		}
-	}))
-	.then(r => {
-		console.log(r);
-	});
+	}
+	XPI()
+	.then(console.log).catch(console.log)
+	.then(() => AMO())
+	.then(console.log).catch(console.log)
+	.then(() => CWS())
+	.then(console.log).catch(console.log)
+	.then(() => CRX())
+	.then(console.log).catch(console.log);
 } else {
 	switch (args["--platform"]) {
 		case 'xpi':
