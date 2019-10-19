@@ -1,12 +1,10 @@
 const crypto = require('crypto');
 const RSA = require("node-rsa");
 const fs = require('fs');
+const common = require('./common');
 const merge = require('merge');
-const package = require('../../package.json');
-const buildTemp = fs.realpathSync(__dirname + '/../../build-temp/') + '/';
-const copyDist = buildTemp + 'copy-dist/';
 const exec = require('child_process').exec;
-const privKey = fs.realpathSync(__dirname + '/../..') + '/encrypt/crx.pem';
+const privKey = fs.realpathSync(common.encrypt('crx.pem'));
 
 function generatePublicKey(privateKey) {
 	const key = new RSA(privateKey);
@@ -43,18 +41,19 @@ module.exports = function(manifest, outputDir) {
 	return new Promise(resolve => {
 		// replace manifest
 		const newManifest = merge(true, manifest);
-		newManifest.update_url = package.webextension.chrome.update;
-		fs.writeFileSync(copyDist + 'manifest.json', JSON.stringify(newManifest));
-		exec(`cd ${copyDist} && zip -r ${buildTemp}crx.zip ./*`, (error, stdout, stderr) => {
+		newManifest.update_url = common.config.chrome.update;
+		fs.writeFileSync(common.manifest, JSON.stringify(newManifest));
+		const zipPath = common.packFile('crx.zip');
+		exec(`cd ${common.dist} && zip -r ${zipPath} ./*`, (error, stdout, stderr) => {
 			if (error) {
 				console.info('Error : ' + stderr);
 				resolve();
 			} else {
-				createCrx(fs.readFileSync(`${buildTemp}crx.zip`))
+				createCrx(fs.readFileSync(zipPath))
 				.then(content => {
-					const out = outputDir + package.webextension.dist.replace('{VER}', package.version) + '.crx';
+					const out = path.resolve(outputDir, common.config.dist.replace('{VER}', common.version) + '.crx');
 					fs.writeFileSync(out, content);
-					fs.unlinkSync(`${buildTemp}crx.zip`);
+					fs.unlinkSync(zipPath);
 					resolve(out);
 				});
 			}
