@@ -87,8 +87,8 @@ class RequestHandler {
 	savedRequestHeader = new Map();
 	_deleteHeaderTimer = null;
 	_deleteHeaderQueue = new Map();
-	_textDecoder = new Map();
-	_textEncoder = new Map();
+	_textDecoder = new WeakMap();
+	_textEncoder = new WeakMap();
 
 	constructor() {
 		this.initHook();
