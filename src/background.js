@@ -232,8 +232,8 @@ class RequestHandler {
 
 		const filter = browser.webRequest.filterResponseData(e.requestId);
 		let buffers = null;
-		filter.ondata = event => {
-			let data = event.data;
+		filter.ondata = (event) => {
+			const data = event.data;
 			if ( buffers === null ) {
 				buffers = new Uint8Array(data);
 				return;
@@ -255,21 +255,28 @@ class RequestHandler {
 					return;
 			}
 
+			//缓存实例，减少开销
+			let _encoding, _textDecoder, _textEncoder;
 			for(const item of rule){
 				const encoding = !item.encoding || item.encoding === 'UTF-8' ? undefined : item.encoding;
 				try {
-					const textDecoder = new TextDecoder(encoding);
-					const _text = textDecoder.decode(buffers.buffer);
+					if(!_textDecoder || _encoding !== encoding){
+						_textDecoder = new TextDecoder(encoding);
+					}
+					const _text = _textDecoder.decode(buffers.buffer);
 					const text = item._func(_text, detail);
 					if(typeof text === 'string' && text !== _text){
-						const textEncoder = new TextEncoder(
-							encoding, encoding && ({ NONSTANDARD_allowLegacyEncoding: true })
-						);
-						buffers = textEncoder.encode(text);
+						if(!_textEncoder || _encoding !== encoding){
+							_textEncoder = new TextEncoder(
+								encoding, encoding && ({ NONSTANDARD_allowLegacyEncoding: true })
+							);
+						}
+						buffers = _textEncoder.encode(text);
 					}
 				} catch (e) {
 					console.error(e);
 				}
+				_encoding = encoding;
 			}
 
 			filter.write(buffers.buffer);
