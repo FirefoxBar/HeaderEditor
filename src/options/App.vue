@@ -80,11 +80,12 @@
 					</md-card-header>
 					<md-card-content>
 						<div class="md-layout md-gutter">
-							<div class="md-layout-item md-size-50 md-small-size-100"><md-checkbox v-model="options.collapseGroup">{{t('manage_collapse_group')}}</md-checkbox></div>
-							<div class="md-layout-item md-size-50 md-small-size-100"><md-checkbox v-model="options.rulesNoEffectForHe">{{t('rules_no_effect_for_he')}}</md-checkbox></div>
-							<div class="md-layout-item md-size-50 md-small-size-100"><md-checkbox v-model="options.addHotLink">{{t('add_anti_hot_link_to_menu')}}</md-checkbox></div>
-							<div class="md-layout-item md-size-50 md-small-size-100"><md-checkbox v-model="options.showCommonHeader">{{t('display_common_header')}}</md-checkbox></div>
-							<div class="md-layout-item md-size-50 md-small-size-100"><md-checkbox v-model="options.includeHeaders">{{t('include_header_in_custom_function')}}</md-checkbox></div>
+							<div class="md-layout-item md-size-50 md-small-size-100"><md-checkbox v-model="options['manage-collapse-group']">{{t('manage_collapse_group')}}</md-checkbox></div>
+							<div class="md-layout-item md-size-50 md-small-size-100"><md-checkbox v-model="options['exclude-he']">{{t('rules_no_effect_for_he')}}</md-checkbox></div>
+							<div class="md-layout-item md-size-50 md-small-size-100"><md-checkbox v-model="options['add-hot-link']">{{t('add_anti_hot_link_to_menu')}}</md-checkbox></div>
+							<div class="md-layout-item md-size-50 md-small-size-100"><md-checkbox v-model="options['show-common-header']">{{t('display_common_header')}}</md-checkbox></div>
+							<div class="md-layout-item md-size-50 md-small-size-100"><md-checkbox v-model="options['include-headers']">{{t('include_header_in_custom_function')}}</md-checkbox></div>
+							<div class="md-layout-item md-size-50 md-small-size-100"><md-checkbox v-model="options['modify-body']">Modify body</md-checkbox></div>
 						</div>
 					</md-card-content>
 				</md-card>
@@ -393,19 +394,14 @@ import storage from '../core/storage';
 import browserSync from '../core/browserSync';
 
 const commonHeader = require('./headers.json');
+//https://github.com/inexorabletash/text-encoding/blob/3f330964c0e97e1ed344c2a3e963f4598610a7ad/lib/encoding.js#L342-L796
+const encodingsList = require('./encodings.json');
+const displayOptions = ['add-hot-link', 'manage-collapse-group', 'exclude-he', 'show-common-header', 'include-headers', 'modify-body'];
+const initOptions = {};
+displayOptions.forEach(it => initOptions[it] = false);
 
 export default {
 	data() {
-		//https://github.com/inexorabletash/text-encoding/blob/3f330964c0e97e1ed344c2a3e963f4598610a7ad/lib/encoding.js#L342-L796
-		const encodingsList = [
-			"UTF-8", "GBK", "gb18030", "Big5", "EUC-JP", "ISO-2022-JP", "Shift_JIS", "EUC-KR",
-			"UTF-16BE", "UTF-16LE", "IBM866", "KOI8-R", "KOI8-U", "macintosh", "replacement",
-			"x-user-defined", "x-mac-cyrillic",
-			"ISO-8859-2", "ISO-8859-3", "ISO-8859-4", "ISO-8859-5", "ISO-8859-6", "ISO-8859-7", "ISO-8859-8",
-			"ISO-8859-8-I", "ISO-8859-10", "ISO-8859-13", "ISO-8859-14", "ISO-8859-15", "ISO-8859-16",
-			"windows-874", "windows-1250", "windows-1251", "windows-1252", "windows-1253", "windows-1254",
-			"windows-1255", "windows-1256", "windows-1257", "windows-1258"
-		];
 		return {
 			isLoadingRules: true,
 			isShowEdit: false,
@@ -431,11 +427,7 @@ export default {
 				oldGroup: "",
 				group: utils.t('ungrouped')
 			},
-			options: {
-				collapseGroup: true,
-				rulesNoEffectForHe: true,
-				includeHeaders: false
-			},
+			options: initOptions,
 			download: {
 				url: "",
 				log: []
@@ -1227,18 +1219,14 @@ export default {
 			}
 		});
 		storage.prefs.onReady().then(prefs => {
-			this.$set(this.options, 'addHotLink', prefs.get('add-hot-link'));
-			this.$set(this.options, 'collapseGroup', prefs.get('manage-collapse-group'));
-			this.$set(this.options, 'rulesNoEffectForHe', prefs.get('exclude-he'));
-			this.$set(this.options, 'showCommonHeader', prefs.get('show-common-header'));
-			this.$set(this.options, 'includeHeaders', prefs.get('include-headers'));
+			displayOptions.forEach(it => {
+				this.$set(this.options, it, prefs.get(it));
+			});
 			this.loadRules();
 			this.$watch('options', newOpt => {
-				storage.prefs.set('manage-collapse-group', newOpt.collapseGroup);
-				storage.prefs.set('exclude-he', newOpt.rulesNoEffectForHe);
-				storage.prefs.set('add-hot-link', newOpt.addHotLink);
-				storage.prefs.set('show-common-header', newOpt.showCommonHeader);
-				storage.prefs.set('include-headers', newOpt.includeHeaders);
+				displayOptions.forEach(it => {
+					storage.prefs.set(it, newOpt[it]);
+				});
 			}, { deep: true });
 		});
 		// init anti-hot-link

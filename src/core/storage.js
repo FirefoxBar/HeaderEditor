@@ -54,7 +54,8 @@ const prefs = browser.extension.getBackgroundPage().prefs || new class {
 			"manage-collapse-group": true, // Collapse groups
 			"exclude-he": true, // rules take no effect on HE or not
 			"show-common-header": true,
-			"include-headers": false // Include headers in custom function
+			"include-headers": false, // Include headers in custom function
+			"modify-body": false // Enable modify received body feature
 		};
 		this.watchQueue = {};
 		// when browser is strarting up, the setting is default

@@ -84,7 +84,8 @@ class RequestHandler {
 	_disableAll = false;
 	excludeHe = true;
 	includeHeaders = false;
-	savedRequestHeader = new Map();
+	modifyBody = false;
+	savedRequestHeader = new WeakMap();
 	_deleteHeaderTimer = null;
 	_deleteHeaderQueue = new Map();
 	_textDecoder = new WeakMap();
@@ -126,11 +127,16 @@ class RequestHandler {
 			this.includeHeaders = val;
 		});
 
+		storage.prefs.watch('modify-body', val => {
+			this.modifyBody = val;
+		});
+
 		storage.prefs.onReady()
 			.then(prefs => {
 				this.excludeHe = prefs.get('exclude-he');
 				this.disableAll = prefs.get('disable-all');
 				this.includeHeaders = prefs.get('include-headers');
+				this.modifyBody = prefs.get('modify-body');
 			})
 	}
 
@@ -220,9 +226,11 @@ class RequestHandler {
 		if (!this.beforeAll(e)) {
 			return;
 		}
-		//修改响应体
-		this.modifiedReceivedBody(e);
-		//修改请求头
+		// 修改响应体
+		if (this.modifyBody) {
+			this._modifyReceivedBody(e);
+		}
+		// 修改请求头
 		if (!e.responseHeaders) {
 			return;
 		}
@@ -232,6 +240,11 @@ class RequestHandler {
 			return;
 		}
 		this._modifyHeaders(e, REQUEST_TYPE.RESPONSE, rule);
+		// 删除暂存的headers
+		if (this.includeHeaders) {
+			this.savedRequestHeader.delete(e.requestId);
+			this._deleteHeaderQueue.delete(e.requestId);
+		}
 		return { responseHeaders: e.responseHeaders };
 	}
 
@@ -305,7 +318,7 @@ class RequestHandler {
 		let buffers = null;
 		filter.ondata = (event) => {
 			const data = event.data;
-			if (buffers === null ) {
+			if (buffers === null) {
 				buffers = new Uint8Array(data);
 				return;
 			}
@@ -317,7 +330,7 @@ class RequestHandler {
 			buffers = buffer;
 		}
 	
-		filter.onstop = (event) => {
+		filter.onstop = () => {
 			if (buffers === null) {
 				filter.close();
 				return;
@@ -342,7 +355,7 @@ class RequestHandler {
 			filter.close();
 		}
 
-		filter.onerror = (event) => {
+		filter.onerror = () => {
 			buffers = null;
 		}
 	}
@@ -393,10 +406,8 @@ class RequestHandler {
 		if (hasFunction) {
 			const detail = this._makeDetails(request);
 			if (this.includeHeaders && type === REQUEST_TYPE.RESPONSE) {
-				// 取出headers并删除
+				// 取出headers
 				detail.requestHeaders = this.savedRequestHeader.get(request.requestId) || null;
-				this.savedRequestHeader.delete(request.requestId);
-				this._deleteHeaderQueue.delete(request.requestId);
 			}
 			rule.forEach(item => {
 				try {
