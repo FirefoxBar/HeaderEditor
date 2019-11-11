@@ -41,7 +41,7 @@
 								<md-table-head class="cell-type">{{t('ruleType')}}</md-table-head>
 								<md-table-head class="cell-action">{{t('action')}}</md-table-head>
 							</md-table-row>
-							<md-table-row v-for="r of g.rule" :key="r._v_key" :class="{unsupported: !isSupportedStreamFilter && r.ruleType === 'modifyReceiveBody'}">
+							<md-table-row v-for="r of g.rule" :key="r._v_key" :class="{unsupported: !utils.IS_SUPPORT_STREAM_FILTER && r.ruleType === 'modifyReceiveBody'}">
 								<md-table-cell class="cell-batch">
 									<md-checkbox v-model="batch" :value="r" class="md-primary"></md-checkbox>
 								</md-table-cell>
@@ -63,7 +63,7 @@
 								<md-table-cell class="cell-type">{{t('rule_' + r.ruleType)}}</md-table-cell>
 								<md-table-cell class="cell-action">
 									<md-button class="with-icon group-button" @click="onChangeRuleGroup(r)"><md-icon class="iconfont icon-playlist-add"></md-icon><span>{{t('group')}}</span></md-button>
-									<md-button class="with-icon edit-button" @click="onEditRule(r)" :disabled="!isSupportedStreamFilter && r.ruleType === 'modifyReceiveBody'"><md-icon class="iconfont icon-edit"></md-icon><span>{{t('edit')}}</span></md-button>
+									<md-button class="with-icon edit-button" @click="onEditRule(r)" :disabled="!utils.IS_SUPPORT_STREAM_FILTER && r.ruleType === 'modifyReceiveBody'"><md-icon class="iconfont icon-edit"></md-icon><span>{{t('edit')}}</span></md-button>
 									<md-button class="with-icon clone-button" @click="onCloneRule(r)"><md-icon class="iconfont icon-content-copy"></md-icon><span>{{t('clone')}}</span></md-button>
 									<md-button class="with-icon view-button" @click="onViewRule(r)"><md-icon class="iconfont icon-search"></md-icon><span>{{t('view')}}</span></md-button>
 									<md-button class="with-icon delete-button" @click="onRemoveRule(r)"><md-icon class="iconfont icon-delete"></md-icon><span>{{t('delete')}}</span></md-button>
@@ -189,7 +189,7 @@
 									<md-radio class="md-primary" v-model="edit.ruleType" value="redirect" :disabled="!edit.ruleTypeEditable">{{t('rule_redirect')}}</md-radio>
 									<md-radio class="md-primary" v-model="edit.ruleType" value="modifySendHeader"	:disabled="!edit.ruleTypeEditable">{{t('rule_modifySendHeader')}}</md-radio>
 									<md-radio class="md-primary" v-model="edit.ruleType" value="modifyReceiveHeader"	:disabled="!edit.ruleTypeEditable">{{t('rule_modifyReceiveHeader')}}</md-radio>
-									<md-radio v-if="isSupportedStreamFilter" class="md-primary" v-model="edit.ruleType" value="modifyReceiveBody"	:disabled="!edit.ruleTypeEditable">{{t('rule_modifyReceiveBody')}}</md-radio>
+									<md-radio class="md-primary" v-model="edit.ruleType" value="modifyReceiveBody"	:disabled="!edit.ruleTypeEditable || !utils.IS_SUPPORT_STREAM_FILTER">{{t('rule_modifyReceiveBody')}}</md-radio>
 								</div>
 							</div>
 							<div class="form-group">
@@ -213,7 +213,7 @@
 								<md-input id="rule-excludeRule" v-model="edit.excludeRule" />
 							</md-field>
 							<!-- Response body encoding -->
-							<div class="form-group" v-if="isSupportedStreamFilter && edit.ruleType == 'modifyReceiveBody'">
+							<div class="form-group" v-if="edit.ruleType === 'modifyReceiveBody'">
 								<div class="left">{{t('encoding')}}</div>
 								<div class="right">
 									<md-field>
@@ -228,10 +228,10 @@
 								<div class="left">{{t('exec_type')}}</div>
 								<div class="right">
 									<md-radio class="md-primary" v-model="edit.execType" :value="0"
-										:disabled="isSupportedStreamFilter && edit.ruleType == 'modifyReceiveBody'"
+										:disabled="edit.ruleType === 'modifyReceiveBody'"
 									>{{t('exec_normal')}}</md-radio>
 									<md-radio class="md-primary" v-model="edit.execType" :value="1"
-										:disabled="isSupportedStreamFilter && edit.ruleType == 'modifyReceiveBody'"
+										:disabled="edit.ruleType === 'modifyReceiveBody'"
 									>{{t('exec_function')}}</md-radio>
 								</div>
 							</div>
@@ -250,7 +250,7 @@
 									<md-input id="rule-headerValue" v-model="edit.headerValue" />
 								</md-field>
 							</div>
-							<md-field v-show="edit.execType == 1 || (isSupportedStreamFilter && edit.ruleType == 'modifyReceiveBody')">
+							<md-field v-show="edit.execType == 1">
 								<label for="rule-code">{{t('code')}}</label>
 								<md-textarea id="rule-code" v-model="edit.code"></md-textarea>
 							</md-field>
@@ -330,7 +330,7 @@
 						<p v-if="r.ruleType === 'redirect'">{{t('redirectTo')}}: {{r.to}}</p>
 						<p v-if="(r.ruleType === 'modifySendHeader' || r.ruleType === 'modifyReceiveHeader') && !r.isFunction">{{t('headerName')}}: {{r.action.name}}</p>
 						<p v-if="(r.ruleType === 'modifySendHeader' || r.ruleType === 'modifyReceiveHeader') && !r.isFunction">{{t('headerValue')}}: {{r.action.value}}</p>
-						<pre v-if="r.isFunction || (isSupportedStreamFilter && r.ruleType === 'modifyReceiveBody')">{{r.code}}</pre>
+						<pre v-if="r.isFunction">{{r.code}}</pre>
 					</md-card-content>
 				</md-card-area>
 				<md-card-actions md-alignment="left">
@@ -412,7 +412,6 @@ export default {
 			isBatch: false,
 			isChooseGroup: false,
 			editTitle: utils.t('add'),
-			isSupportedStreamFilter: typeof browser.webRequest.filterResponseData === 'function',
 			encodingsList,
 			edit: {
 				id: -1,
@@ -660,7 +659,7 @@ export default {
 			this.edit.group = utils.t('ungrouped');
 		},
 		saveRule() {
-			if(!this.isSupportedStreamFilter && this.edit.ruleType === 'modifyReceiveBody'){
+			if (!utils.IS_SUPPORT_STREAM_FILTER && this.edit.ruleType === 'modifyReceiveBody'){
 				return;
 			}
 			const data = {
@@ -749,7 +748,7 @@ export default {
 			});
 		},
 		onEditRule(rule) {
-			if(!this.isSupportedStreamFilter && rule.ruleType === 'modifyReceiveBody'){
+			if (!utils.IS_SUPPORT_STREAM_FILTER && rule.ruleType === 'modifyReceiveBody'){
 				return;
 			}
 			this.edit.id = rule.id;

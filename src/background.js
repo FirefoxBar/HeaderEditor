@@ -76,8 +76,6 @@ if (typeof(browser.contextMenus) !== 'undefined') {
 	});
 }
 
-const isSupportedStreamFilter = typeof browser.webRequest.filterResponseData === 'function';
-
 const REQUEST_TYPE = {
 	REQUEST: 0,
 	RESPONSE: 1
@@ -89,6 +87,9 @@ class RequestHandler {
 	savedRequestHeader = new Map();
 	_deleteHeaderTimer = null;
 	_deleteHeaderQueue = new Map();
+	_textDecoder = new Map();
+	_textEncoder = new Map();
+
 	constructor() {
 		this.initHook();
 		this.loadPrefs();
@@ -214,80 +215,6 @@ class RequestHandler {
 		return { requestHeaders: e.requestHeaders };
 	}
 
-	modifiedReceivedBody(e){
-		if(!isSupportedStreamFilter){
-			return;
-		}
-
-		let rule = rules.get('receiveBody', { url: e.url, enable: true });
-		if (rule === null) {
-			return;
-		}
-		rule = rule.filter(item => item.isFunction);
-		if (rule.length === 0) {
-			return;
-		}
-
-		const detail = this._makeDetails(e);
-
-		const filter = browser.webRequest.filterResponseData(e.requestId);
-		let buffers = null;
-		filter.ondata = (event) => {
-			const data = event.data;
-			if ( buffers === null ) {
-				buffers = new Uint8Array(data);
-				return;
-			}
-			const buffer = new Uint8Array(
-					buffers.byteLength +
-					data.byteLength
-			);
-			//将响应分段数据收集拼接起来，在完成加载后整体替换。
-			//这可能会改变浏览器接收数据分段渲染的行为。
-			buffer.set(buffers);
-			buffer.set(new Uint8Array(data), buffers.buffer.byteLength);
-			buffers = buffer;
-		}
-	
-		filter.onstop = (event) => {
-			if(buffers === null) {
-					filter.close();
-					return;
-			}
-
-			//缓存实例，减少开销
-			let _encoding, _textDecoder, _textEncoder;
-			for(const item of rule){
-				const encoding = !item.encoding || item.encoding === 'UTF-8' ? undefined : item.encoding;
-				try {
-					if(!_textDecoder || _encoding !== encoding){
-						_textDecoder = new TextDecoder(encoding);
-					}
-					const _text = _textDecoder.decode(buffers.buffer);
-					const text = item._func(_text, detail);
-					if(typeof text === 'string' && text !== _text){
-						if(!_textEncoder || _encoding !== encoding){
-							_textEncoder = new TextEncoder(
-								encoding, encoding && ({ NONSTANDARD_allowLegacyEncoding: true })
-							);
-						}
-						buffers = _textEncoder.encode(text);
-					}
-				} catch (e) {
-					console.error(e);
-				}
-				_encoding = encoding;
-			}
-
-			filter.write(buffers.buffer);
-			buffers = null;
-			filter.close();
-		}
-
-		filter.onerror = (event) => {
-			buffers = null;
-		}
-	}
 
 	handleReceived(e) {
 		if (!this.beforeAll(e)) {
@@ -321,17 +248,103 @@ class RequestHandler {
 			time: request.timeStamp,
 		};
 
-		[	'originUrl',
-			'documentUrl',
-			'statusCode',
-			'statusLine',
-			'requestHeaders',
-			'responseHeaders'
-		].forEach(p => {
-			if(p in request)
+		['originUrl', 'documentUrl', 'statusCode', 'statusLine', 'requestHeaders', 'responseHeaders'].forEach(p => {
+			if (p in request) {
 				details[p] = request[p];
+			}
 		});
 		return details;
+	}
+
+	_textEncode(encoding, text) {
+		let encoder = this._textEncoder.get(encoding);
+		if (!encoder) {
+			// UTF-8使用原生API，性能更好
+			if (encoding === "UTF-8" && window.TextEncoder) {
+				encoder = new window.TextEncoder();
+			} else {
+				encoder = new TextEncoder(encoding, { NONSTANDARD_allowLegacyEncoding: true });
+			}
+			encoder = new TextEncoder(encoding, { NONSTANDARD_allowLegacyEncoding: true });
+			this._textEncoder.set(encoding, encoder);
+		}
+		return encoder.encode(text);
+	}
+
+	_textDecode(encoding, buffer) {
+		let encoder = this._textDecoder.get(encoding);
+		if (!encoder) {
+			// UTF-8使用原生API，性能更好
+			if (encoding === "UTF-8" && window.TextDecoder) {
+				encoder = new window.TextDecoder();
+			} else {
+				encoder = new TextDecoder(encoding);
+			}
+			this._textDecoder.set(encoding, encoder);
+		}
+		return encoder.decode(buffer);
+	}
+
+	_modifyReceivedBody(e) {
+		if (!utils.IS_SUPPORT_STREAM_FILTER){
+			return;
+		}
+
+		let rule = rules.get('receiveBody', { url: e.url, enable: true });
+		if (rule === null) {
+			return;
+		}
+		rule = rule.filter(item => item.isFunction);
+		if (rule.length === 0) {
+			return;
+		}
+
+		const detail = this._makeDetails(e);
+
+		const filter = browser.webRequest.filterResponseData(e.requestId);
+		let buffers = null;
+		filter.ondata = (event) => {
+			const data = event.data;
+			if (buffers === null ) {
+				buffers = new Uint8Array(data);
+				return;
+			}
+			const buffer = new Uint8Array(buffers.byteLength + data.byteLength);
+			// 将响应分段数据收集拼接起来，在完成加载后整体替换。
+			// 这可能会改变浏览器接收数据分段渲染的行为。
+			buffer.set(buffers);
+			buffer.set(new Uint8Array(data), buffers.buffer.byteLength);
+			buffers = buffer;
+		}
+	
+		filter.onstop = (event) => {
+			if (buffers === null) {
+				filter.close();
+				return;
+			}
+
+			// 缓存实例，减少开销
+			for(const item of rule){
+				const encoding = !item.encoding || item.encoding === 'UTF-8' ? undefined : item.encoding;
+				try {
+					const _text = this._textDecode(encoding, buffers.buffer);
+					const text = item._func(_text, detail);
+					if (typeof text === 'string' && text !== _text){
+						buffers = this._textEncode(encoding, text);
+					}
+				} catch (e) {
+					console.error(e);
+				}
+			}
+
+			filter.write(buffers.buffer);
+			buffers = null;
+			filter.close();
+		}
+
+		filter.onerror = (event) => {
+			buffers = null;
+		}
 	}
 
 	_modifyHeaders(request, type, rule) {
