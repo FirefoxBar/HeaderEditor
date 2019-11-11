@@ -6,7 +6,7 @@ import notify from './notify';
 
 function getDatabase() {
 	return new Promise((resolve, reject) => {
-		const dbOpenRequest = window.indexedDB.open("headereditor", 3);
+		const dbOpenRequest = window.indexedDB.open("headereditor", 4);
 		dbOpenRequest.onsuccess = function(e) {
 			resolve(e.target.result);
 		};
@@ -23,6 +23,10 @@ function getDatabase() {
 			} else {
 				utils.TABLE_NAMES.forEach(k => {
 					const tx = event.target.transaction;
+					if(!tx.objectStoreNames.contains(k)){
+						event.target.result.createObjectStore(k, {keyPath: 'id', autoIncrement: true});
+						return;
+					}
 					const os = tx.objectStore(k);
 					os.openCursor().onsuccess = function(e) {
 						const cursor = e.target.result;
