@@ -20,7 +20,7 @@ export default {
 	IS_CHROME: IS_CHROME,
 	CHROME_VERSION: CHROME_VERSION,
 	FIREFOX_VERSION: FIREFOX_VERSION,
-	TABLE_NAMES: ['request', 'sendHeader', 'receiveHeader'],
+	TABLE_NAMES: ['request', 'sendHeader', 'receiveHeader', 'receiveBody'],
 	getExportName(additional) {
 		return 'HE_' + dateFormat(new Date(), 'isoUtcDateTime').replace(/\:/g, '-') + (additional ? "_" + additional : "") + '.json';
 	},
@@ -92,6 +92,9 @@ export default {
 		}
 		if (ruleType === 'modifyReceiveHeader') {
 			return 'receiveHeader';
+		}
+		if (ruleType === 'modifyReceiveBody') {
+			return 'receiveBody';
 		}
 	},
 	upgradeRuleFormat(s) {

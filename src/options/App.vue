@@ -41,7 +41,7 @@
 								<md-table-head class="cell-type">{{t('ruleType')}}</md-table-head>
 								<md-table-head class="cell-action">{{t('action')}}</md-table-head>
 							</md-table-row>
-							<md-table-row v-for="r of g.rule" :key="r._v_key">
+							<md-table-row v-for="r of g.rule" :key="r._v_key" :class="{unsupported: !isSupportedStreamFilter && r.ruleType === 'modifyReceiveBody'}">
 								<md-table-cell class="cell-batch">
 									<md-checkbox v-model="batch" :value="r" class="md-primary"></md-checkbox>
 								</md-table-cell>
@@ -55,6 +55,7 @@
 										<p>{{t('matchRule')}}: {{r.pattern}}</p>
 										<p>{{t('exec_type')}}: {{t('exec_' + (r.isFunction ? 'function' : 'normal'))}}</p>
 										<p v-if="r.ruleType === 'redirect'">{{t('redirectTo')}}: {{r.to}}</p>
+										<p v-if="r.ruleType === 'modifyReceiveBody'">{{t('encoding')}}: {{r.encoding || encodingsList[0]}}</p>
 										<p v-if="(r.ruleType === 'modifySendHeader' || r.ruleType === 'modifyReceiveHeader') && !r.isFunction">{{t('headerName')}}: {{r.action.name}}</p>
 										<p v-if="(r.ruleType === 'modifySendHeader' || r.ruleType === 'modifyReceiveHeader') && !r.isFunction">{{t('headerValue')}}: {{r.action.value}}</p>
 									</md-tooltip>
@@ -62,7 +63,7 @@
 								<md-table-cell class="cell-type">{{t('rule_' + r.ruleType)}}</md-table-cell>
 								<md-table-cell class="cell-action">
 									<md-button class="with-icon group-button" @click="onChangeRuleGroup(r)"><md-icon class="iconfont icon-playlist-add"></md-icon><span>{{t('group')}}</span></md-button>
-									<md-button class="with-icon edit-button" @click="onEditRule(r)"><md-icon class="iconfont icon-edit"></md-icon><span>{{t('edit')}}</span></md-button>
+									<md-button class="with-icon edit-button" @click="onEditRule(r)" :disabled="!isSupportedStreamFilter && r.ruleType === 'modifyReceiveBody'"><md-icon class="iconfont icon-edit"></md-icon><span>{{t('edit')}}</span></md-button>
 									<md-button class="with-icon clone-button" @click="onCloneRule(r)"><md-icon class="iconfont icon-content-copy"></md-icon><span>{{t('clone')}}</span></md-button>
 									<md-button class="with-icon view-button" @click="onViewRule(r)"><md-icon class="iconfont icon-search"></md-icon><span>{{t('view')}}</span></md-button>
 									<md-button class="with-icon delete-button" @click="onRemoveRule(r)"><md-icon class="iconfont icon-delete"></md-icon><span>{{t('delete')}}</span></md-button>
@@ -188,6 +189,7 @@
 									<md-radio class="md-primary" v-model="edit.ruleType" value="redirect" :disabled="!edit.ruleTypeEditable">{{t('rule_redirect')}}</md-radio>
 									<md-radio class="md-primary" v-model="edit.ruleType" value="modifySendHeader"	:disabled="!edit.ruleTypeEditable">{{t('rule_modifySendHeader')}}</md-radio>
 									<md-radio class="md-primary" v-model="edit.ruleType" value="modifyReceiveHeader"	:disabled="!edit.ruleTypeEditable">{{t('rule_modifyReceiveHeader')}}</md-radio>
+									<md-radio v-if="isSupportedStreamFilter" class="md-primary" v-model="edit.ruleType" value="modifyReceiveBody"	:disabled="!edit.ruleTypeEditable">{{t('rule_modifyReceiveBody')}}</md-radio>
 								</div>
 							</div>
 							<div class="form-group">
@@ -210,12 +212,27 @@
 								<label for="rule-excludeRule">{{t('excludeRule')}}</label>
 								<md-input id="rule-excludeRule" v-model="edit.excludeRule" />
 							</md-field>
+							<!-- Response body encoding -->
+							<div class="form-group" v-if="isSupportedStreamFilter && edit.ruleType == 'modifyReceiveBody'">
+								<div class="left">{{t('encoding')}}</div>
+								<div class="right">
+									<md-field>
+										<md-select id="rule-encoding" v-model="edit.encoding">
+											<md-option v-for="option of encodingsList" :key="option" :value="option">{{option}}</md-option>
+										</md-select>
+									</md-field>
+								</div>
+							</div>
 							<!-- isFunction or not -->
 							<div class="form-group">
 								<div class="left">{{t('exec_type')}}</div>
 								<div class="right">
-									<md-radio class="md-primary" v-model="edit.execType" :value="0">{{t('exec_normal')}}</md-radio>
-									<md-radio class="md-primary" v-model="edit.execType" :value="1">{{t('exec_function')}}</md-radio>
+									<md-radio class="md-primary" v-model="edit.execType" :value="0"
+										:disabled="isSupportedStreamFilter && edit.ruleType == 'modifyReceiveBody'"
+									>{{t('exec_normal')}}</md-radio>
+									<md-radio class="md-primary" v-model="edit.execType" :value="1"
+										:disabled="isSupportedStreamFilter && edit.ruleType == 'modifyReceiveBody'"
+									>{{t('exec_function')}}</md-radio>
 								</div>
 							</div>
 							<!-- redirect to -->
@@ -233,7 +250,7 @@
 									<md-input id="rule-headerValue" v-model="edit.headerValue" />
 								</md-field>
 							</div>
-							<md-field v-show="edit.execType == 1">
+							<md-field v-show="edit.execType == 1 || (isSupportedStreamFilter && edit.ruleType == 'modifyReceiveBody')">
 								<label for="rule-code">{{t('code')}}</label>
 								<md-textarea id="rule-code" v-model="edit.code"></md-textarea>
 							</md-field>
@@ -313,7 +330,7 @@
 						<p v-if="r.ruleType === 'redirect'">{{t('redirectTo')}}: {{r.to}}</p>
 						<p v-if="(r.ruleType === 'modifySendHeader' || r.ruleType === 'modifyReceiveHeader') && !r.isFunction">{{t('headerName')}}: {{r.action.name}}</p>
 						<p v-if="(r.ruleType === 'modifySendHeader' || r.ruleType === 'modifyReceiveHeader') && !r.isFunction">{{t('headerValue')}}: {{r.action.value}}</p>
-						<pre v-if="r.isFunction">{{r.code}}</pre>
+						<pre v-if="r.isFunction || (isSupportedStreamFilter && r.ruleType === 'modifyReceiveBody')">{{r.code}}</pre>
 					</md-card-content>
 				</md-card-area>
 				<md-card-actions md-alignment="left">
@@ -379,12 +396,24 @@ const commonHeader = require('./headers.json');
 
 export default {
 	data() {
+		//https://github.com/inexorabletash/text-encoding/blob/3f330964c0e97e1ed344c2a3e963f4598610a7ad/lib/encoding.js#L342-L796
+		const encodingsList = [
+			"UTF-8", "GBK", "gb18030", "Big5", "EUC-JP", "ISO-2022-JP", "Shift_JIS", "EUC-KR",
+			"UTF-16BE", "UTF-16LE", "IBM866", "KOI8-R", "KOI8-U", "macintosh", "replacement",
+			"x-user-defined", "x-mac-cyrillic",
+			"ISO-8859-2", "ISO-8859-3", "ISO-8859-4", "ISO-8859-5", "ISO-8859-6", "ISO-8859-7", "ISO-8859-8",
+			"ISO-8859-8-I", "ISO-8859-10", "ISO-8859-13", "ISO-8859-14", "ISO-8859-15", "ISO-8859-16",
+			"windows-874", "windows-1250", "windows-1251", "windows-1252", "windows-1253", "windows-1254",
+			"windows-1255", "windows-1256", "windows-1257", "windows-1258"
+		];
 		return {
 			isLoadingRules: true,
 			isShowEdit: false,
 			isBatch: false,
 			isChooseGroup: false,
 			editTitle: utils.t('add'),
+			isSupportedStreamFilter: typeof browser.webRequest.filterResponseData === 'function',
+			encodingsList,
 			edit: {
 				id: -1,
 				name: "",
@@ -393,6 +422,7 @@ export default {
 				matchType: "all",
 				matchRule: "",
 				excludeRule: "",
+				encoding: encodingsList[0],
 				redirectTo: "",
 				headerName: "",
 				headerValue: "",
@@ -619,6 +649,7 @@ export default {
 			this.edit.matchType = "all";
 			this.edit.matchRule = "";
 			this.edit.excludeRule = "";
+			this.edit.encoding = this.encodingsList[0];
 			this.edit.redirectTo = "";
 			this.edit.headerName = "";
 			this.edit.headerValue = "";
@@ -629,6 +660,9 @@ export default {
 			this.edit.group = utils.t('ungrouped');
 		},
 		saveRule() {
+			if(!this.isSupportedStreamFilter && this.edit.ruleType === 'modifyReceiveBody'){
+				return;
+			}
 			const data = {
 				"enable": true,
 				"name": this.edit.name,
@@ -636,6 +670,7 @@ export default {
 				"matchType": this.edit.matchType,
 				"pattern": this.edit.matchRule,
 				"exclude": this.edit.excludeRule,
+				"encoding": this.encodingsList.indexOf(this.edit.encoding) === 0 ? undefined : this.edit.encoding,
 				"group": this.edit.group,
 				"isFunction": this.edit.execType == 1
 			};
@@ -714,6 +749,9 @@ export default {
 			});
 		},
 		onEditRule(rule) {
+			if(!this.isSupportedStreamFilter && rule.ruleType === 'modifyReceiveBody'){
+				return;
+			}
 			this.edit.id = rule.id;
 			this.edit.name = rule.name;
 			this.edit.ruleType = rule.ruleType;
@@ -721,6 +759,7 @@ export default {
 			this.edit.matchType = rule.matchType;
 			this.edit.matchRule = rule.pattern;
 			this.edit.excludeRule = rule.exclude;
+			this.edit.encoding = this.encodingsList.includes(rule.encoding) ? rule.encoding : this.encodingsList[0];
 			this.edit.redirectTo = rule.to || "";
 			this.edit.headerName = (rule.action && rule.action.name) ? rule.action.name : "";
 			this.edit.headerValue = (rule.action && rule.action.value) ? rule.action.value : "";
@@ -1244,6 +1283,13 @@ export default {
 				document.body.classList.add('batch-on');
 			} else {
 				document.body.classList.remove('batch-on');
+			}
+		},
+		'edit.ruleType' (newVal, oldVal){
+			if(newVal === 'modifyReceiveBody'){
+				this.edit.execType = 1;
+			}else if(!this.edit.code){
+				this.edit.execType = 0;
 			}
 		}
 	}

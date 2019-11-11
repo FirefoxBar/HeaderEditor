@@ -45,6 +45,10 @@ body {
 		}
 	}
 
+	.md-table-row.unsupported{
+		opacity: .5;
+	}
+
 	.md-table-cell {
 		font-size: 15px;
 		line-height: 30px;
@@ -87,6 +91,19 @@ body.batch-on .group-item .cell-batch {
 }
 
 .rule-drag-view {
+	display: flex;
+	flex-direction: column;
+	max-height: 100vh;
+	.md-card-content,
+	.md-card-area {
+		display: flex;
+		flex-direction: column;
+		overflow: hidden;
+		padding-block-end: 0;
+	}
+	p, pre {
+		margin-block-start: 0;
+	}
 	pre {
 		overflow: auto;
 	}

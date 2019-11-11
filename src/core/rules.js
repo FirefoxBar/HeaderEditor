@@ -214,8 +214,11 @@ function init() {
 		if (cache.receiveHeader === null) {
 			queue.push(updateCache('receiveHeader'));
 		}
+		if (cache.receiveBody === null) {
+			queue.push(updateCache('receiveBody'));
+		}
 		Promise.all(queue).then(() => {
-			if (cache.request === null || cache.sendHeader === null || cache.receiveHeader === null) {
+			if (cache.request === null || cache.sendHeader === null || cache.receiveHeader === null || cache.receiveBody === null) {
 				init();
 			}
 		});

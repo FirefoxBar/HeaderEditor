@@ -108,6 +108,10 @@
 		"message": "Exclude rule",
 		"description": "Label for exclude rule in modal"
 	},
+	"encoding": {
+		"message": "Response body Encoding",
+		"description": "Label for responseBody's character encoding"
+	},
 	"exec_function": {
 		"message": "Custom function",
 		"description": "Custom function in execute type"
@@ -267,6 +271,10 @@
 	"rule_modifyReceiveHeader": {
 		"message": "Modify response header",
 		"description": "Response header option in modal"
+	},
+	"rule_modifyReceiveBody": {
+		"message": "Modify response body",
+		"description": "Response body option in modal"
 	},
 	"rule_modifySendHeader": {
 		"message": "Modify request header",

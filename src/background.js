@@ -2,6 +2,7 @@ import browser from 'webextension-polyfill'
 import storage from './core/storage'
 import rules from './core/rules'
 import utils from './core/utils'
+import { TextEncoder, TextDecoder } from 'text-encoding'
 
 window.IS_BACKGROUND = true;
 
@@ -32,7 +33,8 @@ browser.runtime.onMessage.addListener(function(request, sender, sendResponse) {
 				return Promise.all([
 					rules.updateCache('request'),
 					rules.updateCache('sendHeader'),
-					rules.updateCache('receiveHeader')
+					rules.updateCache('receiveHeader'),
+					rules.updateCache('receiveBody')
 				]);
 			} else {
 				return rules.updateCache(request.type);
@@ -73,6 +75,8 @@ if (typeof(browser.contextMenus) !== 'undefined') {
 		}
 	});
 }
+
+const isSupportedStreamFilter = typeof browser.webRequest.filterResponseData === 'function';
 
 const REQUEST_TYPE = {
 	REQUEST: 0,
@@ -210,10 +214,80 @@ class RequestHandler {
 		return { requestHeaders: e.requestHeaders };
 	}
 
+	modifiedReceivedBody(e){
+		if(!isSupportedStreamFilter){
+			return;
+		}
+
+		let rule = rules.get('receiveBody', { url: e.url, enable: true });
+		if (rule === null) {
+			return;
+		}
+		rule = rule.filter(item => item.isFunction);
+		if (rule.length === 0) {
+			return;
+		}
+
+		const detail = this._makeDetails(e);
+
+		const filter = browser.webRequest.filterResponseData(e.requestId);
+		let buffers = null;
+		filter.ondata = event => {
+			let data = event.data;
+			if ( buffers === null ) {
+				buffers = new Uint8Array(data);
+				return;
+			}
+			const buffer = new Uint8Array(
+					buffers.byteLength +
+					data.byteLength
+			);
+			//将响应分段数据收集拼接起来，在完成加载后整体替换。
+			//这可能会改变浏览器接收数据分段渲染的行为。
+			buffer.set(buffers);
+			buffer.set(new Uint8Array(data), buffers.buffer.byteLength);
+			buffers = buffer;
+		}
+	
+		filter.onstop = (event) => {
+			if(buffers === null) {
+					filter.close();
+					return;
+			}
+
+			for(const item of rule){
+				const encoding = !item.encoding || item.encoding === 'UTF-8' ? undefined : item.encoding;
+				try {
+					const textDecoder = new TextDecoder(encoding);
+					const _text = textDecoder.decode(buffers.buffer);
+					const text = item._func(_text, detail);
+					if(typeof text === 'string' && text !== _text){
+						const textEncoder = new TextEncoder(
+							encoding, encoding && ({ NONSTANDARD_allowLegacyEncoding: true })
+						);
+						buffers = textEncoder.encode(text);
+					}
+				} catch (e) {
+					console.error(e);
+				}
+			}
+
+			filter.write(buffers.buffer);
+			buffers = null;
+			filter.close();
+		}
+
+		filter.onerror = (event) => {
+			buffers = null;
+		}
+	}
+
 	handleReceived(e) {
 		if (!this.beforeAll(e)) {
 			return;
 		}
+		//修改响应体
+		this.modifiedReceivedBody(e);
 		//修改请求头
 		if (!e.responseHeaders) {
 			return;
@@ -228,7 +302,7 @@ class RequestHandler {
 	}
 
 	_makeDetails(request) {
-		return {
+		const details = {
 			id: request.requestId,
 			url: request.url,
 			tab: request.tabId,
@@ -238,9 +312,19 @@ class RequestHandler {
 			proxy: request.proxyInfo || null,
 			type: request.type,
 			time: request.timeStamp,
-			originUrl: request.originUrl || '',
-			requestHeaders: null
 		};
+
+		[	'originUrl',
+			'documentUrl',
+			'statusCode',
+			'statusLine',
+			'requestHeaders',
+			'responseHeaders'
+		].forEach(p => {
+			if(p in request)
+				details[p] = request[p];
+		});
+		return details;
 	}
 
 	_modifyHeaders(request, type, rule) {
