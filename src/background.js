@@ -230,16 +230,15 @@ class RequestHandler {
 		if (this.modifyBody) {
 			this._modifyReceivedBody(e);
 		}
-		// 修改请求头
-		if (!e.responseHeaders) {
+		// 修改响应头
+		if (e.responseHeaders) {
 			return;
 		}
 		const rule = rules.get('receiveHeader', { "url": e.url, "enable": true });
 		// Browser is starting up, pass all requests
-		if (rule === null) {
-			return;
+		if (rule) {
+			this._modifyHeaders(e, REQUEST_TYPE.RESPONSE, rule);
 		}
-		this._modifyHeaders(e, REQUEST_TYPE.RESPONSE, rule);
 		// 删除暂存的headers
 		if (this.includeHeaders) {
 			this.savedRequestHeader.delete(e.requestId);
