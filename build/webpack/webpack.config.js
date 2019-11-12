@@ -93,6 +93,8 @@ if (config.mode === 'production') {
 	]);
 }
 
+config.devtool = config.mode === 'production' ? 'none' : 'cheap-module-eval-source-map';
+
 if (process.env.HMR === 'true') {
 	config.plugins = (config.plugins || []).concat([
 		new ChromeExtensionReloader(),
