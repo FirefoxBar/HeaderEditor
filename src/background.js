@@ -226,9 +226,16 @@ class RequestHandler {
 		if (!this.beforeAll(e)) {
 			return;
 		}
+		const detail = this._makeDetails(e);
+		// 删除暂存的headers
+		if (this.includeHeaders) {
+			detail.requestHeaders = this.savedRequestHeader.get(request.requestId) || null;
+			this.savedRequestHeader.delete(e.requestId);
+			this._deleteHeaderQueue.delete(e.requestId);
+		}
 		// 修改响应体
 		if (this.modifyBody) {
-			this._modifyReceivedBody(e);
+			this._modifyReceivedBody(e, detail);
 		}
 		// 修改响应头
 		if (e.responseHeaders) {
@@ -237,12 +244,7 @@ class RequestHandler {
 		const rule = rules.get('receiveHeader', { "url": e.url, "enable": true });
 		// Browser is starting up, pass all requests
 		if (rule) {
-			this._modifyHeaders(e, REQUEST_TYPE.RESPONSE, rule);
-		}
-		// 删除暂存的headers
-		if (this.includeHeaders) {
-			this.savedRequestHeader.delete(e.requestId);
-			this._deleteHeaderQueue.delete(e.requestId);
+			this._modifyHeaders(e, REQUEST_TYPE.RESPONSE, rule, detail);
 		}
 		return { responseHeaders: e.responseHeaders };
 	}
@@ -258,13 +260,18 @@ class RequestHandler {
 			proxy: request.proxyInfo || null,
 			type: request.type,
 			time: request.timeStamp,
+			originUrl: request.originUrl || '',
+			documentUrl: request.documentUrl || '',
+			requestHeaders: null,
+			responseHeaders: null
 		};
 
-		['originUrl', 'documentUrl', 'statusCode', 'statusLine', 'requestHeaders', 'responseHeaders'].forEach(p => {
+		['statusCode', 'statusLine', 'requestHeaders', 'responseHeaders'].forEach(p => {
 			if (p in request) {
 				details[p] = request[p];
 			}
 		});
+
 		return details;
 	}
 
@@ -312,7 +319,7 @@ class RequestHandler {
 		}
 	}
 
-	_modifyReceivedBody(e) {
+	_modifyReceivedBody(e, detail) {
 		if (!utils.IS_SUPPORT_STREAM_FILTER){
 			return;
 		}
@@ -325,8 +332,6 @@ class RequestHandler {
 		if (rule.length === 0) {
 			return;
 		}
-
-		const detail = this._makeDetails(e);
 
 		const filter = browser.webRequest.filterResponseData(e.requestId);
 		let buffers = null;
@@ -374,7 +379,7 @@ class RequestHandler {
 		}
 	}
 
-	_modifyHeaders(request, type, rule) {
+	_modifyHeaders(request, type, rule, presetDetail) {
 		const headers = request[type === REQUEST_TYPE.REQUEST ? "requestHeaders" : "responseHeaders"];
 		if (!headers) {
 			return;
@@ -418,11 +423,7 @@ class RequestHandler {
 			});
 		}
 		if (hasFunction) {
-			const detail = this._makeDetails(request);
-			if (this.includeHeaders && type === REQUEST_TYPE.RESPONSE) {
-				// 取出headers
-				detail.requestHeaders = this.savedRequestHeader.get(request.requestId) || null;
-			}
+			const detail = presetDetail ? presetDetail : this._makeDetails(request);
 			rule.forEach(item => {
 				try {
 					item._func(headers, detail);
