@@ -279,7 +279,13 @@ class RequestHandler {
 			}
 			this._textEncoder.set(encoding, encoder);
 		}
-		return encoder.encode(text);
+		// 防止解码失败导致整体错误
+		try {
+			return encoder.encode(text);
+		} catch (e) {
+			console.log(e);
+			return new Uint8Array();
+		}
 	}
 
 	_textDecode(encoding, buffer) {
@@ -297,7 +303,13 @@ class RequestHandler {
 			}
 			this._textDecoder.set(encoding, encoder);
 		}
-		return encoder.decode(buffer);
+		// 防止解码失败导致整体错误
+		try {
+			return encoder.decode(buffer);
+		} catch (e) {
+			console.log(e);
+			return "";
+		}
 	}
 
 	_modifyReceivedBody(e) {
