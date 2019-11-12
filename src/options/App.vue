@@ -640,7 +640,7 @@ export default {
 			this.edit.matchType = "all";
 			this.edit.matchRule = "";
 			this.edit.excludeRule = "";
-			this.edit.encoding = this.encodingsList[0];
+			this.edit.encoding = encodingsList[0];
 			this.edit.redirectTo = "";
 			this.edit.headerName = "";
 			this.edit.headerValue = "";
@@ -661,7 +661,6 @@ export default {
 				"matchType": this.edit.matchType,
 				"pattern": this.edit.matchRule,
 				"exclude": this.edit.excludeRule,
-				"encoding": this.encodingsList.indexOf(this.edit.encoding) === 0 ? undefined : this.edit.encoding,
 				"group": this.edit.group,
 				"isFunction": this.edit.execType == 1
 			};
@@ -676,6 +675,9 @@ export default {
 			if (data.matchType !== 'all' && data.matchRule === '') {
 				this.showAlert(utils.t('match_rule_empty'));
 				return;
+			}
+			if (data.ruleType === 'modifyReceiveBody') {
+				data.encoding = this.edit.encoding;
 			}
 			if (data.isFunction) {
 				data.code = this.edit.code;
@@ -750,7 +752,7 @@ export default {
 			this.edit.matchType = rule.matchType;
 			this.edit.matchRule = rule.pattern;
 			this.edit.excludeRule = rule.exclude;
-			this.edit.encoding = this.encodingsList.includes(rule.encoding) ? rule.encoding : this.encodingsList[0];
+			this.edit.encoding = rule.encoding || "UTF-8";
 			this.edit.redirectTo = rule.to || "";
 			this.edit.headerName = (rule.action && rule.action.name) ? rule.action.name : "";
 			this.edit.headerValue = (rule.action && rule.action.value) ? rule.action.value : "";

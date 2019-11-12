@@ -351,8 +351,8 @@ class RequestHandler {
 			}
 
 			// 缓存实例，减少开销
-			for(const item of rule){
-				const encoding = !item.encoding || item.encoding === 'UTF-8' ? undefined : item.encoding;
+			for (const item of rule) {
+				const encoding = item.encoding || "UTF-8";
 				try {
 					const _text = this._textDecode(encoding, buffers.buffer);
 					const text = item._func(_text, detail);
