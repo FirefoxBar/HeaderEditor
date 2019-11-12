@@ -85,11 +85,11 @@ class RequestHandler {
 	excludeHe = true;
 	includeHeaders = false;
 	modifyBody = false;
-	savedRequestHeader = new WeakMap();
+	savedRequestHeader = new Map();
 	_deleteHeaderTimer = null;
 	_deleteHeaderQueue = new Map();
-	_textDecoder = new WeakMap();
-	_textEncoder = new WeakMap();
+	_textDecoder = new Map();
+	_textEncoder = new Map();
 
 	constructor() {
 		this.initHook();
