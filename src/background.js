@@ -277,7 +277,6 @@ class RequestHandler {
 			} else {
 				encoder = new TextEncoder(encoding, { NONSTANDARD_allowLegacyEncoding: true });
 			}
-			encoder = new TextEncoder(encoding, { NONSTANDARD_allowLegacyEncoding: true });
 			this._textEncoder.set(encoding, encoder);
 		}
 		return encoder.encode(text);
@@ -286,9 +285,13 @@ class RequestHandler {
 	_textDecode(encoding, buffer) {
 		let encoder = this._textDecoder.get(encoding);
 		if (!encoder) {
-			// UTF-8使用原生API，性能更好
-			if (encoding === "UTF-8" && window.TextDecoder) {
-				encoder = new window.TextDecoder();
+			// 如果原生支持的话，优先使用原生
+			if (window.TextDecoder) {
+				try {
+					encoder = new window.TextDecoder(encoding);
+				} catch (e) {
+					encoder = new TextDecoder(encoding);
+				}
 			} else {
 				encoder = new TextDecoder(encoding);
 			}
