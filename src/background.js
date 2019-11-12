@@ -76,8 +76,6 @@ if (typeof(browser.contextMenus) !== 'undefined') {
 	});
 }
 
-const isSupportedStreamFilter = typeof browser.webRequest.filterResponseData === 'function';
-
 const REQUEST_TYPE = {
 	REQUEST: 0,
 	RESPONSE: 1
@@ -86,9 +84,13 @@ class RequestHandler {
 	_disableAll = false;
 	excludeHe = true;
 	includeHeaders = false;
+	modifyBody = false;
 	savedRequestHeader = new Map();
 	_deleteHeaderTimer = null;
 	_deleteHeaderQueue = new Map();
+	_textDecoder = new Map();
+	_textEncoder = new Map();
+
 	constructor() {
 		this.initHook();
 		this.loadPrefs();
@@ -125,11 +127,16 @@ class RequestHandler {
 			this.includeHeaders = val;
 		});
 
+		storage.prefs.watch('modify-body', val => {
+			this.modifyBody = val;
+		});
+
 		storage.prefs.onReady()
 			.then(prefs => {
 				this.excludeHe = prefs.get('exclude-he');
 				this.disableAll = prefs.get('disable-all');
 				this.includeHeaders = prefs.get('include-headers');
+				this.modifyBody = prefs.get('modify-body');
 			})
 	}
 
@@ -214,8 +221,99 @@ class RequestHandler {
 		return { requestHeaders: e.requestHeaders };
 	}
 
-	modifiedReceivedBody(e){
-		if(!isSupportedStreamFilter){
+
+	handleReceived(e) {
+		if (!this.beforeAll(e)) {
+			return;
+		}
+		// 修改响应体
+		if (this.modifyBody) {
+			this._modifyReceivedBody(e);
+		}
+		// 修改响应头
+		if (e.responseHeaders) {
+			return;
+		}
+		const rule = rules.get('receiveHeader', { "url": e.url, "enable": true });
+		// Browser is starting up, pass all requests
+		if (rule) {
+			this._modifyHeaders(e, REQUEST_TYPE.RESPONSE, rule);
+		}
+		// 删除暂存的headers
+		if (this.includeHeaders) {
+			this.savedRequestHeader.delete(e.requestId);
+			this._deleteHeaderQueue.delete(e.requestId);
+		}
+		return { responseHeaders: e.responseHeaders };
+	}
+
+	_makeDetails(request) {
+		const details = {
+			id: request.requestId,
+			url: request.url,
+			tab: request.tabId,
+			method: request.method,
+			frame: request.frameId,
+			parentFrame: request.parentFrameId,
+			proxy: request.proxyInfo || null,
+			type: request.type,
+			time: request.timeStamp,
+		};
+
+		['originUrl', 'documentUrl', 'statusCode', 'statusLine', 'requestHeaders', 'responseHeaders'].forEach(p => {
+			if (p in request) {
+				details[p] = request[p];
+			}
+		});
+		return details;
+	}
+
+	_textEncode(encoding, text) {
+		let encoder = this._textEncoder.get(encoding);
+		if (!encoder) {
+			// UTF-8使用原生API，性能更好
+			if (encoding === "UTF-8" && window.TextEncoder) {
+				encoder = new window.TextEncoder();
+			} else {
+				encoder = new TextEncoder(encoding, { NONSTANDARD_allowLegacyEncoding: true });
+			}
+			this._textEncoder.set(encoding, encoder);
+		}
+		// 防止解码失败导致整体错误
+		try {
+			return encoder.encode(text);
+		} catch (e) {
+			console.log(e);
+			return new Uint8Array();
+		}
+	}
+
+	_textDecode(encoding, buffer) {
+		let encoder = this._textDecoder.get(encoding);
+		if (!encoder) {
+			// 如果原生支持的话，优先使用原生
+			if (window.TextDecoder) {
+				try {
+					encoder = new window.TextDecoder(encoding);
+				} catch (e) {
+					encoder = new TextDecoder(encoding);
+				}
+			} else {
+				encoder = new TextDecoder(encoding);
+			}
+			this._textDecoder.set(encoding, encoder);
+		}
+		// 防止解码失败导致整体错误
+		try {
+			return encoder.decode(buffer);
+		} catch (e) {
+			console.log(e);
+			return "";
+		}
+	}
+
+	_modifyReceivedBody(e) {
+		if (!utils.IS_SUPPORT_STREAM_FILTER){
 			return;
 		}
 
@@ -234,49 +332,36 @@ class RequestHandler {
 		let buffers = null;
 		filter.ondata = (event) => {
 			const data = event.data;
-			if ( buffers === null ) {
+			if (buffers === null) {
 				buffers = new Uint8Array(data);
 				return;
 			}
-			const buffer = new Uint8Array(
-					buffers.byteLength +
-					data.byteLength
-			);
-			//将响应分段数据收集拼接起来，在完成加载后整体替换。
-			//这可能会改变浏览器接收数据分段渲染的行为。
+			const buffer = new Uint8Array(buffers.byteLength + data.byteLength);
+			// 将响应分段数据收集拼接起来，在完成加载后整体替换。
+			// 这可能会改变浏览器接收数据分段渲染的行为。
 			buffer.set(buffers);
 			buffer.set(new Uint8Array(data), buffers.buffer.byteLength);
 			buffers = buffer;
 		}
 	
-		filter.onstop = (event) => {
-			if(buffers === null) {
-					filter.close();
-					return;
+		filter.onstop = () => {
+			if (buffers === null) {
+				filter.close();
+				return;
 			}
 
-			//缓存实例，减少开销
-			let _encoding, _textDecoder, _textEncoder;
-			for(const item of rule){
-				const encoding = !item.encoding || item.encoding === 'UTF-8' ? undefined : item.encoding;
+			// 缓存实例，减少开销
+			for (const item of rule) {
+				const encoding = item.encoding || "UTF-8";
 				try {
-					if(!_textDecoder || _encoding !== encoding){
-						_textDecoder = new TextDecoder(encoding);
-					}
-					const _text = _textDecoder.decode(buffers.buffer);
+					const _text = this._textDecode(encoding, buffers.buffer);
 					const text = item._func(_text, detail);
-					if(typeof text === 'string' && text !== _text){
-						if(!_textEncoder || _encoding !== encoding){
-							_textEncoder = new TextEncoder(
-								encoding, encoding && ({ NONSTANDARD_allowLegacyEncoding: true })
-							);
-						}
-						buffers = _textEncoder.encode(text);
+					if (typeof text === 'string' && text !== _text){
+						buffers = this._textEncode(encoding, text);
 					}
 				} catch (e) {
 					console.error(e);
 				}
-				_encoding = encoding;
 			}
 
 			filter.write(buffers.buffer);
@@ -284,54 +369,9 @@ class RequestHandler {
 			filter.close();
 		}
 
-		filter.onerror = (event) => {
+		filter.onerror = () => {
 			buffers = null;
 		}
-	}
-
-	handleReceived(e) {
-		if (!this.beforeAll(e)) {
-			return;
-		}
-		//修改响应体
-		this.modifiedReceivedBody(e);
-		//修改请求头
-		if (!e.responseHeaders) {
-			return;
-		}
-		const rule = rules.get('receiveHeader', { "url": e.url, "enable": true });
-		// Browser is starting up, pass all requests
-		if (rule === null) {
-			return;
-		}
-		this._modifyHeaders(e, REQUEST_TYPE.RESPONSE, rule);
-		return { responseHeaders: e.responseHeaders };
-	}
-
-	_makeDetails(request) {
-		const details = {
-			id: request.requestId,
-			url: request.url,
-			tab: request.tabId,
-			method: request.method,
-			frame: request.frameId,
-			parentFrame: request.parentFrameId,
-			proxy: request.proxyInfo || null,
-			type: request.type,
-			time: request.timeStamp,
-		};
-
-		[	'originUrl',
-			'documentUrl',
-			'statusCode',
-			'statusLine',
-			'requestHeaders',
-			'responseHeaders'
-		].forEach(p => {
-			if(p in request)
-				details[p] = request[p];
-		});
-		return details;
 	}
 
 	_modifyHeaders(request, type, rule) {
@@ -380,10 +420,8 @@ class RequestHandler {
 		if (hasFunction) {
 			const detail = this._makeDetails(request);
 			if (this.includeHeaders && type === REQUEST_TYPE.RESPONSE) {
-				// 取出headers并删除
+				// 取出headers
 				detail.requestHeaders = this.savedRequestHeader.get(request.requestId) || null;
-				this.savedRequestHeader.delete(request.requestId);
-				this._deleteHeaderQueue.delete(request.requestId);
 			}
 			rule.forEach(item => {
 				try {

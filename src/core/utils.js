@@ -20,6 +20,7 @@ export default {
 	IS_CHROME: IS_CHROME,
 	CHROME_VERSION: CHROME_VERSION,
 	FIREFOX_VERSION: FIREFOX_VERSION,
+	IS_SUPPORT_STREAM_FILTER: typeof browser.webRequest.filterResponseData === 'function',
 	TABLE_NAMES: ['request', 'sendHeader', 'receiveHeader', 'receiveBody'],
 	getExportName(additional) {
 		return 'HE_' + dateFormat(new Date(), 'isoUtcDateTime').replace(/\:/g, '-') + (additional ? "_" + additional : "") + '.json';

@@ -41,7 +41,7 @@
 								<md-table-head class="cell-type">{{t('ruleType')}}</md-table-head>
 								<md-table-head class="cell-action">{{t('action')}}</md-table-head>
 							</md-table-row>
-							<md-table-row v-for="r of g.rule" :key="r._v_key" :class="{unsupported: !isSupportedStreamFilter && r.ruleType === 'modifyReceiveBody'}">
+							<md-table-row v-for="r of g.rule" :key="r._v_key">
 								<md-table-cell class="cell-batch">
 									<md-checkbox v-model="batch" :value="r" class="md-primary"></md-checkbox>
 								</md-table-cell>
@@ -63,7 +63,7 @@
 								<md-table-cell class="cell-type">{{t('rule_' + r.ruleType)}}</md-table-cell>
 								<md-table-cell class="cell-action">
 									<md-button class="with-icon group-button" @click="onChangeRuleGroup(r)"><md-icon class="iconfont icon-playlist-add"></md-icon><span>{{t('group')}}</span></md-button>
-									<md-button class="with-icon edit-button" @click="onEditRule(r)" :disabled="!isSupportedStreamFilter && r.ruleType === 'modifyReceiveBody'"><md-icon class="iconfont icon-edit"></md-icon><span>{{t('edit')}}</span></md-button>
+									<md-button class="with-icon edit-button" @click="onEditRule(r)" :disabled="!isSuppoerStreamFilter && r.ruleType === 'modifyReceiveBody'"><md-icon class="iconfont icon-edit"></md-icon><span>{{t('edit')}}</span></md-button>
 									<md-button class="with-icon clone-button" @click="onCloneRule(r)"><md-icon class="iconfont icon-content-copy"></md-icon><span>{{t('clone')}}</span></md-button>
 									<md-button class="with-icon view-button" @click="onViewRule(r)"><md-icon class="iconfont icon-search"></md-icon><span>{{t('view')}}</span></md-button>
 									<md-button class="with-icon delete-button" @click="onRemoveRule(r)"><md-icon class="iconfont icon-delete"></md-icon><span>{{t('delete')}}</span></md-button>
@@ -80,11 +80,12 @@
 					</md-card-header>
 					<md-card-content>
 						<div class="md-layout md-gutter">
-							<div class="md-layout-item md-size-50 md-small-size-100"><md-checkbox v-model="options.collapseGroup">{{t('manage_collapse_group')}}</md-checkbox></div>
-							<div class="md-layout-item md-size-50 md-small-size-100"><md-checkbox v-model="options.rulesNoEffectForHe">{{t('rules_no_effect_for_he')}}</md-checkbox></div>
-							<div class="md-layout-item md-size-50 md-small-size-100"><md-checkbox v-model="options.addHotLink">{{t('add_anti_hot_link_to_menu')}}</md-checkbox></div>
-							<div class="md-layout-item md-size-50 md-small-size-100"><md-checkbox v-model="options.showCommonHeader">{{t('display_common_header')}}</md-checkbox></div>
-							<div class="md-layout-item md-size-50 md-small-size-100"><md-checkbox v-model="options.includeHeaders">{{t('include_header_in_custom_function')}}</md-checkbox></div>
+							<div class="md-layout-item md-size-50 md-small-size-100"><md-checkbox v-model="options['manage-collapse-group']">{{t('manage_collapse_group')}}</md-checkbox></div>
+							<div class="md-layout-item md-size-50 md-small-size-100"><md-checkbox v-model="options['exclude-he']">{{t('rules_no_effect_for_he')}}</md-checkbox></div>
+							<div class="md-layout-item md-size-50 md-small-size-100"><md-checkbox v-model="options['add-hot-link']">{{t('add_anti_hot_link_to_menu')}}</md-checkbox></div>
+							<div class="md-layout-item md-size-50 md-small-size-100"><md-checkbox v-model="options['show-common-header']">{{t('display_common_header')}}</md-checkbox></div>
+							<div class="md-layout-item md-size-50 md-small-size-100"><md-checkbox v-model="options['include-headers']">{{t('include_header_in_custom_function')}}</md-checkbox></div>
+							<div class="md-layout-item md-size-50 md-small-size-100"><md-checkbox v-model="options['modify-body']">Modify body</md-checkbox></div>
 						</div>
 					</md-card-content>
 				</md-card>
@@ -189,7 +190,7 @@
 									<md-radio class="md-primary" v-model="edit.ruleType" value="redirect" :disabled="!edit.ruleTypeEditable">{{t('rule_redirect')}}</md-radio>
 									<md-radio class="md-primary" v-model="edit.ruleType" value="modifySendHeader"	:disabled="!edit.ruleTypeEditable">{{t('rule_modifySendHeader')}}</md-radio>
 									<md-radio class="md-primary" v-model="edit.ruleType" value="modifyReceiveHeader"	:disabled="!edit.ruleTypeEditable">{{t('rule_modifyReceiveHeader')}}</md-radio>
-									<md-radio v-if="isSupportedStreamFilter" class="md-primary" v-model="edit.ruleType" value="modifyReceiveBody"	:disabled="!edit.ruleTypeEditable">{{t('rule_modifyReceiveBody')}}</md-radio>
+									<md-radio class="md-primary" v-model="edit.ruleType" value="modifyReceiveBody"	:disabled="!edit.ruleTypeEditable || !isSuppoerStreamFilter">{{t('rule_modifyReceiveBody')}}</md-radio>
 								</div>
 							</div>
 							<div class="form-group">
@@ -213,7 +214,7 @@
 								<md-input id="rule-excludeRule" v-model="edit.excludeRule" />
 							</md-field>
 							<!-- Response body encoding -->
-							<div class="form-group" v-if="isSupportedStreamFilter && edit.ruleType == 'modifyReceiveBody'">
+							<div class="form-group" v-if="edit.ruleType === 'modifyReceiveBody'">
 								<div class="left">{{t('encoding')}}</div>
 								<div class="right">
 									<md-field>
@@ -228,10 +229,10 @@
 								<div class="left">{{t('exec_type')}}</div>
 								<div class="right">
 									<md-radio class="md-primary" v-model="edit.execType" :value="0"
-										:disabled="isSupportedStreamFilter && edit.ruleType == 'modifyReceiveBody'"
+										:disabled="edit.ruleType === 'modifyReceiveBody'"
 									>{{t('exec_normal')}}</md-radio>
 									<md-radio class="md-primary" v-model="edit.execType" :value="1"
-										:disabled="isSupportedStreamFilter && edit.ruleType == 'modifyReceiveBody'"
+										:disabled="edit.ruleType === 'modifyReceiveBody'"
 									>{{t('exec_function')}}</md-radio>
 								</div>
 							</div>
@@ -250,7 +251,7 @@
 									<md-input id="rule-headerValue" v-model="edit.headerValue" />
 								</md-field>
 							</div>
-							<md-field v-show="edit.execType == 1 || (isSupportedStreamFilter && edit.ruleType == 'modifyReceiveBody')">
+							<md-field v-show="edit.execType == 1">
 								<label for="rule-code">{{t('code')}}</label>
 								<md-textarea id="rule-code" v-model="edit.code"></md-textarea>
 							</md-field>
@@ -330,7 +331,7 @@
 						<p v-if="r.ruleType === 'redirect'">{{t('redirectTo')}}: {{r.to}}</p>
 						<p v-if="(r.ruleType === 'modifySendHeader' || r.ruleType === 'modifyReceiveHeader') && !r.isFunction">{{t('headerName')}}: {{r.action.name}}</p>
 						<p v-if="(r.ruleType === 'modifySendHeader' || r.ruleType === 'modifyReceiveHeader') && !r.isFunction">{{t('headerValue')}}: {{r.action.value}}</p>
-						<pre v-if="r.isFunction || (isSupportedStreamFilter && r.ruleType === 'modifyReceiveBody')">{{r.code}}</pre>
+						<pre v-if="r.isFunction">{{r.code}}</pre>
 					</md-card-content>
 				</md-card-area>
 				<md-card-actions md-alignment="left">
@@ -393,26 +394,21 @@ import storage from '../core/storage';
 import browserSync from '../core/browserSync';
 
 const commonHeader = require('./headers.json');
+//https://github.com/inexorabletash/text-encoding/blob/3f330964c0e97e1ed344c2a3e963f4598610a7ad/lib/encoding.js#L342-L796
+const encodingsList = require('./encodings.json');
+const displayOptions = ['add-hot-link', 'manage-collapse-group', 'exclude-he', 'show-common-header', 'include-headers', 'modify-body'];
+const initOptions = {};
+displayOptions.forEach(it => initOptions[it] = false);
 
 export default {
 	data() {
-		//https://github.com/inexorabletash/text-encoding/blob/3f330964c0e97e1ed344c2a3e963f4598610a7ad/lib/encoding.js#L342-L796
-		const encodingsList = [
-			"UTF-8", "GBK", "gb18030", "Big5", "EUC-JP", "ISO-2022-JP", "Shift_JIS", "EUC-KR",
-			"UTF-16BE", "UTF-16LE", "IBM866", "KOI8-R", "KOI8-U", "macintosh", "replacement",
-			"x-user-defined", "x-mac-cyrillic",
-			"ISO-8859-2", "ISO-8859-3", "ISO-8859-4", "ISO-8859-5", "ISO-8859-6", "ISO-8859-7", "ISO-8859-8",
-			"ISO-8859-8-I", "ISO-8859-10", "ISO-8859-13", "ISO-8859-14", "ISO-8859-15", "ISO-8859-16",
-			"windows-874", "windows-1250", "windows-1251", "windows-1252", "windows-1253", "windows-1254",
-			"windows-1255", "windows-1256", "windows-1257", "windows-1258"
-		];
 		return {
+			isSuppoerStreamFilter: utils.IS_SUPPORT_STREAM_FILTER,
 			isLoadingRules: true,
 			isShowEdit: false,
 			isBatch: false,
 			isChooseGroup: false,
 			editTitle: utils.t('add'),
-			isSupportedStreamFilter: typeof browser.webRequest.filterResponseData === 'function',
 			encodingsList,
 			edit: {
 				id: -1,
@@ -432,11 +428,7 @@ export default {
 				oldGroup: "",
 				group: utils.t('ungrouped')
 			},
-			options: {
-				collapseGroup: true,
-				rulesNoEffectForHe: true,
-				includeHeaders: false
-			},
+			options: initOptions,
 			download: {
 				url: "",
 				log: []
@@ -649,7 +641,7 @@ export default {
 			this.edit.matchType = "all";
 			this.edit.matchRule = "";
 			this.edit.excludeRule = "";
-			this.edit.encoding = this.encodingsList[0];
+			this.edit.encoding = encodingsList[0];
 			this.edit.redirectTo = "";
 			this.edit.headerName = "";
 			this.edit.headerValue = "";
@@ -660,7 +652,7 @@ export default {
 			this.edit.group = utils.t('ungrouped');
 		},
 		saveRule() {
-			if(!this.isSupportedStreamFilter && this.edit.ruleType === 'modifyReceiveBody'){
+			if (!utils.IS_SUPPORT_STREAM_FILTER && this.edit.ruleType === 'modifyReceiveBody'){
 				return;
 			}
 			const data = {
@@ -670,7 +662,6 @@ export default {
 				"matchType": this.edit.matchType,
 				"pattern": this.edit.matchRule,
 				"exclude": this.edit.excludeRule,
-				"encoding": this.encodingsList.indexOf(this.edit.encoding) === 0 ? undefined : this.edit.encoding,
 				"group": this.edit.group,
 				"isFunction": this.edit.execType == 1
 			};
@@ -685,6 +676,9 @@ export default {
 			if (data.matchType !== 'all' && data.matchRule === '') {
 				this.showAlert(utils.t('match_rule_empty'));
 				return;
+			}
+			if (data.ruleType === 'modifyReceiveBody') {
+				data.encoding = this.edit.encoding;
 			}
 			if (data.isFunction) {
 				data.code = this.edit.code;
@@ -749,7 +743,7 @@ export default {
 			});
 		},
 		onEditRule(rule) {
-			if(!this.isSupportedStreamFilter && rule.ruleType === 'modifyReceiveBody'){
+			if (!utils.IS_SUPPORT_STREAM_FILTER && rule.ruleType === 'modifyReceiveBody'){
 				return;
 			}
 			this.edit.id = rule.id;
@@ -759,7 +753,7 @@ export default {
 			this.edit.matchType = rule.matchType;
 			this.edit.matchRule = rule.pattern;
 			this.edit.excludeRule = rule.exclude;
-			this.edit.encoding = this.encodingsList.includes(rule.encoding) ? rule.encoding : this.encodingsList[0];
+			this.edit.encoding = rule.encoding || "UTF-8";
 			this.edit.redirectTo = rule.to || "";
 			this.edit.headerName = (rule.action && rule.action.name) ? rule.action.name : "";
 			this.edit.headerValue = (rule.action && rule.action.value) ? rule.action.value : "";
@@ -1228,18 +1222,14 @@ export default {
 			}
 		});
 		storage.prefs.onReady().then(prefs => {
-			this.$set(this.options, 'addHotLink', prefs.get('add-hot-link'));
-			this.$set(this.options, 'collapseGroup', prefs.get('manage-collapse-group'));
-			this.$set(this.options, 'rulesNoEffectForHe', prefs.get('exclude-he'));
-			this.$set(this.options, 'showCommonHeader', prefs.get('show-common-header'));
-			this.$set(this.options, 'includeHeaders', prefs.get('include-headers'));
+			displayOptions.forEach(it => {
+				this.$set(this.options, it, prefs.get(it));
+			});
 			this.loadRules();
 			this.$watch('options', newOpt => {
-				storage.prefs.set('manage-collapse-group', newOpt.collapseGroup);
-				storage.prefs.set('exclude-he', newOpt.rulesNoEffectForHe);
-				storage.prefs.set('add-hot-link', newOpt.addHotLink);
-				storage.prefs.set('show-common-header', newOpt.showCommonHeader);
-				storage.prefs.set('include-headers', newOpt.includeHeaders);
+				displayOptions.forEach(it => {
+					storage.prefs.set(it, newOpt[it]);
+				});
 			}, { deep: true });
 		});
 		// init anti-hot-link
