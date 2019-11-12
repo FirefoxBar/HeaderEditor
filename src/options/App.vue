@@ -41,7 +41,7 @@
 								<md-table-head class="cell-type">{{t('ruleType')}}</md-table-head>
 								<md-table-head class="cell-action">{{t('action')}}</md-table-head>
 							</md-table-row>
-							<md-table-row v-for="r of g.rule" :key="r._v_key" :class="{unsupported: !isSuppoerStreamFilter && r.ruleType === 'modifyReceiveBody'}">
+							<md-table-row v-for="r of g.rule" :key="r._v_key">
 								<md-table-cell class="cell-batch">
 									<md-checkbox v-model="batch" :value="r" class="md-primary"></md-checkbox>
 								</md-table-cell>

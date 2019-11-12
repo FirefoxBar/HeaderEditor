@@ -100,6 +100,10 @@
 		"message": "Enable Header Editor",
 		"description": "If not checked, all rules will take no effects"
 	},
+	"encoding": {
+		"message": "Encoding",
+		"description": "Label for responseBody's character encoding"
+	},
 	"enter_group_name": {
 		"message": "Please enter a group name",
 		"description": "Prompt the user when the user click add group button"
@@ -107,10 +111,6 @@
 	"excludeRule": {
 		"message": "Exclude rule",
 		"description": "Label for exclude rule in modal"
-	},
-	"encoding": {
-		"message": "Response body Encoding",
-		"description": "Label for responseBody's character encoding"
 	},
 	"exec_function": {
 		"message": "Custom function",
@@ -268,13 +268,13 @@
 		"message": "Rules list",
 		"description": "Title of the rules list"
 	},
-	"rule_modifyReceiveHeader": {
-		"message": "Modify response header",
-		"description": "Response header option in modal"
-	},
 	"rule_modifyReceiveBody": {
 		"message": "Modify response body",
 		"description": "Response body option in modal"
+	},
+	"rule_modifyReceiveHeader": {
+		"message": "Modify response header",
+		"description": "Response header option in modal"
 	},
 	"rule_modifySendHeader": {
 		"message": "Modify request header",

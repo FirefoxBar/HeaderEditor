@@ -41,6 +41,7 @@ Contribute codes: [Submiting a pull request](https://github.com/FirefoxBar/Heade
 Thanks to the following personnel for their contribution:
 
 * [YFdyh000](https://github.com/yfdyh000)
+* [iNaru](https://github.com/Inaru)
 
 ### Translation
 
