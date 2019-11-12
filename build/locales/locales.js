@@ -3,6 +3,10 @@ const path = require('path');
 const request = require('request');
 const merge = require('merge');
 
+if (typeof(process.env["TRANSIFEX_TOKEN"]) === "undefined") {
+	return;
+}
+
 const project = {
 	name: "header-editor",
 	user: "api",
