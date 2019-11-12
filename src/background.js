@@ -260,7 +260,7 @@ class RequestHandler {
 			time: request.timeStamp,
 		};
 
-		['originUrl', 'documentUrl', 'statusCode', 'statusLine', 'requestHeaders', 'responseHeaders'].forEach(p => {
+		['originUrl', 'documentUrl', 'statusCode', 'statusLine'].forEach(p => {
 			if (p in request) {
 				details[p] = request[p];
 			}
@@ -327,6 +327,10 @@ class RequestHandler {
 		}
 
 		const detail = this._makeDetails(e);
+		if(this.includeHeaders){
+			detail.responseHeaders = e.responseHeaders;
+			detail.requestHeaders = e.requestHeaders;
+		}
 
 		const filter = browser.webRequest.filterResponseData(e.requestId);
 		let buffers = null;
