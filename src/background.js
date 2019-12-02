@@ -229,7 +229,7 @@ class RequestHandler {
 		const detail = this._makeDetails(e);
 		// 删除暂存的headers
 		if (this.includeHeaders) {
-			detail.requestHeaders = this.savedRequestHeader.get(request.requestId) || null;
+			detail.requestHeaders = this.savedRequestHeader.get(e.requestId) || null;
 			this.savedRequestHeader.delete(e.requestId);
 			this._deleteHeaderQueue.delete(e.requestId);
 		}
@@ -448,9 +448,9 @@ class RequestHandler {
 			// check time
 			const curTime = new Date().getTime() / 100;
 			// k: id, v: time
-			const it = this._deleteHeaderQueue.entries();
-			for (const k in it) {
-				if (curTime - this._deleteHeaderQueue.get(k) >= 90) {
+			const iter = this._deleteHeaderQueue.entries();
+			for (const [k, v] of iter) {
+				if (curTime - v >= 90) {
 					this.savedRequestHeader.delete(k)
 					this._deleteHeaderQueue.delete(k);
 				}
