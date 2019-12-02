@@ -83,19 +83,32 @@ val.push({"name": "test", "value": value.toString()}); //合法
 ```javascript
 {
 	// 请求ID，自4.0.3可用
-	"id": 123456,
-	//请求地址，如果有跳转，此地址是跳转后的地址
-	"url": "http://example.com/example_redirected.js",
-	//请求方式，如GET、POST
-	"method": "GET",
-	//是否为iframe的请求
-	"isFrame": 0,
-	//资源类型
-	"type": "script",
-	//请求发起的时间戳
-	"time": 1505613357577.7522,
-	//触发此请求的URL，可能为空
-	"originUrl": "http://example.com/"
+	id: 1234,
+	// 请求地址，如果有跳转，此地址是跳转后的地址
+	url: "http://example.com/example_redirected.png",
+	// 标签页ID，注意如果用户打开了多个浏览器窗口，这个ID可能会重复，自4.1.0可用
+	tab: 2,
+	// 请求方式，如GET、POST
+	method: "GET",
+	// 请求所属的frame ID，自4.1.0可用
+	frame: 123,
+	// 请求所属的frame的父级ID，自4.1.0可用
+	parentFrame: -1,
+	// 请求当前的代理信息，可能为null，自4.1.0可用
+	proxy: {
+		host: "localhost",
+		port: 8080
+	},
+	// 资源类型
+	type: "image",
+	// 请求发起的时间戳
+	time: 1505613357577.7522,
+	// 触发此请求的URL，例如在页面A上点击了链接B，则B中可以通过此参数获取到A的地址。可能为空
+	originUrl: '',
+	// 资源将会被加载到的地址，仅Firefox可用，可能为空
+	documentUrl: '',
+	// 如果开启了“在自定义函数中包含请求头”且此次触发是在响应时，则此处是请求时的头信息，可能为null，自4.1.0可用
+	requestHeaders: null
 }
 ```
 

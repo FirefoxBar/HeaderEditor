@@ -82,20 +82,35 @@ This parameter is Object and is a read-only parameter. The structure is as follo
 
 ```javascript
 {
-	// request id, since 4.0.3
-	"id": 123456,
-	// request address, if there is a redirect, this value is the address after the redirect
-	"url": "http://example.com/example_redirected.js",
-	// request methods such as GET, POST
-	"method": "GET",
-	// whether it is an iframe request
-	"isFrame": 0,
-	// resource type, available type see 
-	"type": "script",
-	// request timestamp initiated
-	"time": 1505613357577.7522,
-	// URL of the resource which triggered the request, may be empty
-	"originUrl": "http://example.com/"
+	// Request id. Since 4.0.3
+	id: 1234,
+	// Request url. If this request has been redirected, this url is redirected url
+	url: "http://example.com/example_redirected.png",
+	// Tab ID. Note that this ID may be duplicated if user open multiple browser windows. Since 4.1.0
+	tab: 2,
+	// Request method, such as "GET", "POST", etc.
+	method: "GET",
+	// Request frame ID. Since 4.1.0
+	frame: 123,
+	// Request's parent frame ID. Since 4.1.0
+	parentFrame: -1,
+	// Request's proxy info. Since 4.1.0
+	proxy: {
+		host: "localhost",
+		port: 8080
+	},
+	// Resource type
+	type: "image",
+	// Request time
+	time: 1505613357577.7522,
+	// URL of the resource which triggered the request. For example, if "https://example.com" contains a link, and the user clicks the link, then the originUrl for the resulting request is "https://example.com".
+	// Since 4.1.0
+	originUrl: '',
+	// URL of the document in which the resource will be loaded. Only avaliable in Firefox. Since 4.1.0
+	documentUrl: '',
+	// Contains request header if enable "Include request headers in custom function" and this time is response
+	// May be null. Since 4.1.0
+	requestHeaders: null
 }
 ```
 
