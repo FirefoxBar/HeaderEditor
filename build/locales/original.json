@@ -224,6 +224,10 @@
 		"message": "URL",
 		"description": "URL option in modal"
 	},
+	"modify_body": {
+		"message": "Modify response body (only supports Firefox)",
+		"description": "Option to enable/disable modify body"
+	},
 	"name": {
 		"message": "Name",
 		"description": "Label for name in modal"

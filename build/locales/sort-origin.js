@@ -1,4 +1,5 @@
 const fs = require('fs');
+const path = require('path');
 
 function ksort(obj) {
 	let objKeys = Object.keys(obj);
@@ -18,9 +19,9 @@ function ksort(obj) {
 	return result;
 }
 
-let lang = require('./original.json');
+let lang = require(path.resolve(__dirname, 'original.json'));
 lang = ksort(lang);
-fs.writeFileSync("./original.json", JSON.stringify(lang, null, "\t"), {
+fs.writeFileSync(path.resolve(__dirname, 'original.json'), JSON.stringify(lang, null, "\t"), {
 	encoding: "utf8"
 });
 console.log("Sort success");

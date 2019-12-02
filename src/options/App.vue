@@ -85,7 +85,7 @@
 							<div class="md-layout-item md-size-50 md-small-size-100"><md-checkbox v-model="options['add-hot-link']">{{t('add_anti_hot_link_to_menu')}}</md-checkbox></div>
 							<div class="md-layout-item md-size-50 md-small-size-100"><md-checkbox v-model="options['show-common-header']">{{t('display_common_header')}}</md-checkbox></div>
 							<div class="md-layout-item md-size-50 md-small-size-100"><md-checkbox v-model="options['include-headers']">{{t('include_header_in_custom_function')}}</md-checkbox></div>
-							<div class="md-layout-item md-size-50 md-small-size-100"><md-checkbox v-model="options['modify-body']">Modify body</md-checkbox></div>
+							<div class="md-layout-item md-size-50 md-small-size-100"><md-checkbox v-model="options['modify-body']">{{t('modify_body')}}</md-checkbox></div>
 						</div>
 					</md-card-content>
 				</md-card>
