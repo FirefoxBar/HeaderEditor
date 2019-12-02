@@ -1193,13 +1193,13 @@ export default {
 		onOpenCloudHelp() {
 			browser.runtime.sendMessage({
 				method: "openURL",
-				url: t('url_cloud_backup')
+				url: utils.t('url_cloud_backup')
 			});
 		},
 		onOpenThirdParty() {
 			browser.runtime.sendMessage({
 				method: "openURL",
-				url: t('url_third_party_rules')
+				url: utils.t('url_third_party_rules')
 			});
 		}
 	},
