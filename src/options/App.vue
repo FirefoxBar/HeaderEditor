@@ -242,7 +242,7 @@
 								<md-input id="rule-redirectTo" v-model="edit.redirectTo" />
 							</md-field>
 							<!-- header mondify -->
-							<div v-show="(edit.ruleType == 'modifySendHeader' || edit.ruleType == 'modifyReceiveHeader') && edit.execType == 0">
+							<div v-if="(edit.ruleType == 'modifySendHeader' || edit.ruleType == 'modifyReceiveHeader') && edit.execType == 0">
 								<md-autocomplete v-model="edit.headerName" :md-options="edit.ruleType == 'modifySendHeader' ? commonHeader.request : commonHeader.response" :md-open-on-focus="false">
 									<label for="rule-headerName">{{t('headerName')}}</label>
 								</md-autocomplete>
@@ -462,7 +462,7 @@ export default {
 	},
 	computed: {
 		commonHeader() {
-			return this.options.enableHeaderPrompt ? commonHeader : {
+			return this.options['show-common-header'] ? commonHeader : {
 				request: [],
 				response: []
 			};
@@ -549,7 +549,7 @@ export default {
 			this.group = {};
 			this.$set(this.group, utils.t('ungrouped'), {
 				name: utils.t('ungrouped'),
-				collapse: this.options.collapseGroup,
+				collapse: this.options['manage-collapse-group'],
 				rule: {}
 			});
 			function appendRule(table, response) {
@@ -557,7 +557,7 @@ export default {
 					if (typeof(_this.group[item.group]) === "undefined") {
 						_this.$set(_this.group, item.group, {
 							name: item.group,
-							collapse: _this.options.collapseGroup,
+							collapse: _this.options['manage-collapse-group'],
 							rule: {}
 						});
 					}
@@ -1063,7 +1063,7 @@ export default {
 		onOpenHelp() {
 			browser.runtime.sendMessage({
 				method: "openURL",
-				url: t('url_help')
+				url: utils.t('url_help')
 			});
 		},
 		onBatchEnter() {
