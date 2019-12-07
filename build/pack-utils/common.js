@@ -12,7 +12,7 @@ module.exports = {
 	root,
 	pack,
 	packFile: (file) => path.resolve(pack, file),
-	manifest: path.resolve(pack, 'manifest.json'),
+	manifest: path.resolve(dist, 'manifest.json'),
 	dist,
 	encrypt: (file) => path.resolve(encrypt, file)
 }
