@@ -19,8 +19,8 @@
 	"webextension": {
 		"dist": "HeaderEditor-{VER}",
 		"autobuild": {
-			"xpi": true,
-			"amo": true,
+			"xpi": false,
+			"amo": false,
 			"cwx": true,
 			"crx": false
 		},
