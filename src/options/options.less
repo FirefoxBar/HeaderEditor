@@ -95,13 +95,14 @@ body.batch-on .group-item .cell-batch {
 		display: flex;
 		flex-direction: column;
 		overflow: hidden;
-		padding-block-end: 0;
 	}
-	p, pre {
+	.md-card-content > * {
 		margin-block-start: 0;
-	}
-	pre {
-		overflow: auto;
+		&:last-child {
+			margin-block-end: 0;
+			overflow: hidden;
+			flex: 1;
+		}
 	}
 }
 
@@ -294,6 +295,21 @@ body.batch-on .group-item .cell-batch {
 	z-index: 11;
 }
 
+.CodeMirror{
+	box-shadow: inset 7px 0 12px -6px #000;
+	border: 1px solid #ddd;
+	height: auto;
+	max-height: 100%;
+	.CodeMirror-scroll {
+		max-height: 50vh;
+		min-height: 20vh;
+		overflow-y: auto !important;
+	}
+}
+
+#rule-code.vue-codemirror{
+	display: block;
+}
 
 @media (max-width: 960px) {
 	.group-item {

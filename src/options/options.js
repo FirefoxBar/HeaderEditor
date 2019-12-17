@@ -4,11 +4,14 @@ import browser from 'webextension-polyfill';
 import VueMaterial from 'vue-material';
 import 'vue-material/dist/vue-material.min.css';
 import 'vue-material/dist/theme/default.css';
+import VueCodemirror from 'vue-codemirror';
+import 'codemirror/lib/codemirror.css';
 import './options.less';
 import storage from '../core/storage';
 import utils from '../core/utils';
 
 Vue.use(VueMaterial);
+Vue.use(VueCodemirror);
 
 const wait = [];
 // Upgrade

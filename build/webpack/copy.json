@@ -8,6 +8,18 @@
 		"to": "external/vue-material.min.js"
 	},
 	{
+		"from": "../node_modules/codemirror/lib/codemirror.js",
+		"to": "external/codemirror.js"
+	},
+	{
+		"from": "../node_modules/codemirror/mode/javascript/javascript.js",
+		"to": "external/codemirror-mode-javascript.js"
+	},
+	{
+		"from": "../node_modules/vue-codemirror/dist/vue-codemirror.js",
+		"to": "external/vue-codemirror.js"
+	},
+	{
 		"from": "public",
 		"to": "assets"
 	},

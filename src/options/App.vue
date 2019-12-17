@@ -251,10 +251,10 @@
 									<md-input id="rule-headerValue" v-model="edit.headerValue" />
 								</md-field>
 							</div>
-							<md-field v-show="edit.execType == 1">
-								<label for="rule-code">{{t('code')}}</label>
-								<md-textarea id="rule-code" v-model="edit.code"></md-textarea>
-							</md-field>
+							<div v-if="edit.execType == 1" class="form-group">
+								<div>{{t('code')}}</div>
+								<codemirror id="rule-code" @ready="onCmReady" v-model="edit.code" :options="cmOption"></codemirror>
+							</div>
 						</md-card-content>
 					</md-card>
 				</div>
@@ -331,7 +331,7 @@
 						<p v-if="r.ruleType === 'redirect'">{{t('redirectTo')}}: {{r.to}}</p>
 						<p v-if="(r.ruleType === 'modifySendHeader' || r.ruleType === 'modifyReceiveHeader') && !r.isFunction">{{t('headerName')}}: {{r.action.name}}</p>
 						<p v-if="(r.ruleType === 'modifySendHeader' || r.ruleType === 'modifyReceiveHeader') && !r.isFunction">{{t('headerValue')}}: {{r.action.value}}</p>
-						<pre v-if="r.isFunction">{{r.code}}</pre>
+						<codemirror v-if="r.isFunction" :value="r.code" :options="Object.assign({readOnly: true}, cmOption)"></codemirror>
 					</md-card-content>
 				</md-card-area>
 				<md-card-actions md-alignment="left">
@@ -410,6 +410,13 @@ export default {
 			isChooseGroup: false,
 			editTitle: utils.t('add'),
 			encodingsList,
+			cmOption: {
+				tabSize: 2,
+				lineNumbers: true,
+				line: true,
+				mode: 'text/javascript',
+				lineWrapping: true
+			},
 			edit: {
 				id: -1,
 				name: "",
@@ -1201,6 +1208,9 @@ export default {
 				method: "openURL",
 				url: utils.t('url_third_party_rules')
 			});
+		},
+		onCmReady(cm) {
+			cm.clearHistory();
 		}
 	},
 	created() {
