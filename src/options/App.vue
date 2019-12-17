@@ -374,10 +374,28 @@
 				</md-list>
 			</md-dialog-content>
 			<md-dialog-actions>
-				<md-button class="md-primary" @click="onChooseCancel">Close</md-button>
-				<md-button class="md-primary" @click="onChooseOK">OK</md-button>
+				<md-button class="md-primary" @click="onChooseCancel">{{t('cancel')}}</md-button>
+				<md-button class="md-primary" @click="onChooseOK">{{t('ok')}}</md-button>
 			</md-dialog-actions>
 		</md-dialog>
+		<md-dialog-prompt
+			:md-active.sync="dialogPrompt.show"
+			v-model="dialogPrompt.value"
+			:md-title="dialogPrompt.title"
+			:md-cancel-text="t('cancel')"
+			:md-confirm-text="t('ok')"
+			@md-confirm="onDialogPromptConfirm"
+			@md-cancel="onDialogPromptCancel"
+		/>
+		<md-dialog-confirm
+			:md-active.sync="dialogConfirm.show"
+			:md-title="dialogConfirm.title"
+			:md-cancel-text="t('cancel')"
+			:md-confirm-text="t('ok')"
+			:md-content="dialogConfirm.content"
+			@md-confirm="onDialogConfirmConfirm"
+			@md-cancel="onDialogConfirmCancel"
+		/>
 		<md-dialog-alert :md-active.sync="alert.show" :md-content="alert.text" md-confirm-text="OK" />
 		<md-snackbar md-position="center" :md-duration="4000" :md-active.sync="toast.show" md-persistent>{{toast.text}}</md-snackbar>
 	</div>
@@ -464,6 +482,20 @@ export default {
 				show: false,
 				has: false,
 				time: null
+			},
+			dialogConfirm: {
+				show: false,
+				title: '',
+				content: null,
+				onConfirm: null,
+				onCancel: null
+			},
+			dialogPrompt: {
+				show: false,
+				value: '',
+				title: '',
+				onConfirm: null,
+				onCancel: null
 			}
 		};
 	},
@@ -772,18 +804,19 @@ export default {
 			this.isShowEdit = true;
 		},
 		onCloneRule(r) {
-			const newName = window.prompt(utils.t('name'), r.name + "_clone");
-			if (newName) {
-				const newRule = merge(true, r);
-				const tableName = utils.getTableName(r.ruleType);
-				newRule.name = newName;
-				delete newRule["id"];
-				rules.save(tableName, newRule)
-				.then(res => {
-					browser.runtime.sendMessage({"method": "updateCache", "type": tableName});
-					this.$set(this.group[res.group].rule, tableName + '-' + res.id, res);
-				})
-			}
+			this.showDialogPrompt(utils.t('name'), r.name + "_clone").then(newName => {
+				if (newName) {
+					const newRule = merge(true, r);
+					const tableName = utils.getTableName(r.ruleType);
+					newRule.name = newName;
+					delete newRule["id"];
+					rules.save(tableName, newRule)
+					.then(res => {
+						browser.runtime.sendMessage({"method": "updateCache", "type": tableName});
+						this.$set(this.group[res.group].rule, tableName + '-' + res.id, res);
+					})
+				}
+			}, () => {});
 		},
 		onViewRule(r) {
 			if (!this.dragable_rule.includes(r)) {
@@ -799,23 +832,29 @@ export default {
 			});
 		},
 		onRemoveRule(r, fromBatch) {
-			const table = utils.getTableName(r.ruleType);
-			const key = table + '-' + r.id;
-			// remove from other
-			if (this.batch.includes(r) && !fromBatch) {
-				this.batch.splice(this.batch.indexOf(r), 1);
-			}
-			if (this.dragable_rule.includes(r)) {
-				this.dragable_rule.splice(this.dragable_rule.indexOf(r), 1);
-			}
-			rules.remove(table, r.id).then(response => {
-				browser.runtime.sendMessage({"method": "updateCache", "type": table});
-				Object.keys(this.group).forEach(e => {
-					if (typeof(this.group[e].rule[key]) !== "undefined") {
-						this.$delete(this.group[e].rule, key);
-					}
+			const _onRemoveRule = () => {
+				const table = utils.getTableName(r.ruleType);
+				const key = table + '-' + r.id;
+				// remove from other
+				if (this.batch.includes(r) && !fromBatch) {
+					this.batch.splice(this.batch.indexOf(r), 1);
+				}
+				if (this.dragable_rule.includes(r)) {
+					this.dragable_rule.splice(this.dragable_rule.indexOf(r), 1);
+				}
+				rules.remove(table, r.id).then(response => {
+					browser.runtime.sendMessage({"method": "updateCache", "type": table});
+					Object.keys(this.group).forEach(e => {
+						if (typeof(this.group[e].rule[key]) !== "undefined") {
+							this.$delete(this.group[e].rule, key);
+						}
+					});
 				});
-			});
+			}
+			if(fromBatch){
+				return _onRemoveRule();
+			}
+			this.showDialogConfirm(utils.t('delete_rule_confirm')).then(_onRemoveRule, () => {});
 		},
 		// Enable or disable a rule
 		onRuleEnable(rule, newValue) {
@@ -846,17 +885,18 @@ export default {
 			});
 		},
 		onGroupRename(g) {
-			const name = window.prompt(utils.t('enter_group_name'), g.name);
-			if (name) {
-				const queue = [];
-				Object.values(g.rule).forEach(r => {
-					r.group = name;
-					queue.push(rules.save(utils.getTableName(r.ruleType), r));
-				});
-				Promise.all(queue).then(() => {
-					g.name = name;
-				});
-			}
+			this.showDialogPrompt(utils.t('enter_group_name'), g.name).then(name => {
+				if (name) {
+					const queue = [];
+					Object.values(g.rule).forEach(r => {
+						r.group = name;
+						queue.push(rules.save(utils.getTableName(r.ruleType), r));
+					});
+					Promise.all(queue).then(() => {
+						g.name = name;
+					});
+				}
+			}, () => {});
 		},
 		onGroupShare(name) {
 			const result = {};
@@ -872,15 +912,19 @@ export default {
 			);
 		},
 		onGroupDelete(name) {
-			// Delete group, but not delete rules, put all rules to "ungrouped"
-			const ungrouped = utils.t('ungrouped');
-			if (name === ungrouped) {
-				return;
-			}
-			Object.values(this.group[name].rule).forEach(e => {
-				this.changeRuleGroup(e, ungrouped);
-			});
-			this.$delete(this.group, name);
+			this.showDialogConfirm(
+				utils.t('delete_group_confirm'), utils.t('delete_group_confirm_content')
+			).then(() => {
+				// Delete group, but not delete rules, put all rules to "ungrouped"
+				const ungrouped = utils.t('ungrouped');
+				if (name === ungrouped) {
+					return;
+				}
+				Object.values(this.group[name].rule).forEach(e => {
+					this.changeRuleGroup(e, ungrouped);
+				});
+				this.$delete(this.group, name);
+			}, () => {});
 		},
 		onExportAll() {
 			const result = {};
@@ -1161,11 +1205,10 @@ export default {
 			);
 		},
 		onBatchDelete() {
-			if (!confirm(utils.t('delete_confirm'))) {
-				return;
-			}
-			this.batch.forEach(e => this.onRemoveRule(e, true));
-			this.batch = [];
+			this.showDialogConfirm(utils.t('delete_confirm')).then(() => {
+				this.batch.forEach(e => this.onRemoveRule(e, true));
+				this.batch = [];
+			}, () => {});
 		},
 		cloudUpload() {
 			const result = {};
@@ -1211,6 +1254,63 @@ export default {
 		},
 		onCmReady(cm) {
 			cm.clearHistory();
+		},
+		showDialogConfirm(title, content) {
+			if(this.dialogConfirm.onConfirm !== null)
+				return;
+			title = title || '';
+			content = content || null;
+			return new Promise((confirm, cancel) => {
+				this.dialogConfirm.title = title;
+				this.dialogConfirm.content = content;
+				this.dialogConfirm.onCancel = cancel;
+				this.dialogConfirm.onConfirm = confirm;
+				this.dialogConfirm.show = true;
+			});
+		},
+		onDialogConfirmCancel() {
+				this.dialogConfirm.value = false;
+				if(typeof this.dialogConfirm.onCancel == 'function'){
+					this.dialogConfirm.onCancel();
+				}
+				this.dialogConfirm.onCancel = null;
+				this.dialogConfirm.onConfirm = null;
+				this.dialogConfirm.title = '';
+				this.dialogConfirm.content = null;
+		},
+		onDialogConfirmConfirm() {
+			if(typeof this.dialogConfirm.onConfirm == 'function'){
+				this.dialogConfirm.onConfirm();
+			}
+			this.onDialogConfirmCancel();
+		},
+		showDialogPrompt(title, value) {
+			if(this.dialogPrompt.onConfirm !== null)
+				return;
+			value = value || '';
+			title = title || '';
+			return new Promise((confirm, cancel) => {
+				this.dialogPrompt.value = value;
+				this.dialogPrompt.title = title;
+				this.dialogPrompt.onCancel = cancel;
+				this.dialogPrompt.onConfirm = confirm;
+				this.dialogPrompt.show = true;
+			});
+		},
+		onDialogPromptCancel() {
+				if(typeof this.dialogPrompt.onCancel == 'function'){
+					this.dialogPrompt.onCancel(null);
+				}
+				this.dialogPrompt.onCancel = null;
+				this.dialogPrompt.onConfirm = null;
+				this.dialogPrompt.value = '';
+				this.dialogPrompt.title = '';
+		},
+		onDialogPromptConfirm() {
+			if(typeof this.dialogPrompt.onConfirm == 'function'){
+				this.dialogPrompt.onConfirm(this.dialogPrompt.value);
+			}
+			this.onDialogPromptCancel();
 		}
 	},
 	created() {

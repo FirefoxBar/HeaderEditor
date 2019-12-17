@@ -25,7 +25,7 @@
 	},
 	"cancel": {
 		"message": "Cancel",
-		"description": "Button to close modal without save"
+		"description": "Cancel Button"
 	},
 	"choose": {
 		"message": "Choose",
@@ -71,6 +71,18 @@
 	"delete_confirm": {
 		"message": "Do you want to delete these rules?",
 		"description": "A confirmation box shows when user want to delete rules"
+	},
+	"delete_rule_confirm": {
+		"message": "Do you want to delete the rule?",
+		"description": "A confirmation box shows when user want to delete rule"
+	},
+	"delete_group_confirm": {
+		"message": "Do you want to delete the group?",
+		"description": "A confirmation box shows when user want to delete group"
+	},
+	"delete_group_confirm_content": {
+		"message": "Delete group, but not delete rules, put all rules to \"ungrouped\".",
+		"description": "A confirmation box's content shows when user want to delete group"
 	},
 	"description": {
 		"message": "Manage browser's requests, include modify the request headers and response headers, redirect requests, cancel requests",
