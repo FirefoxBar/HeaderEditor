@@ -20,12 +20,13 @@ module.exports = function() {
 			} else {
 				const distStream = fs.createReadStream(zipPath);
 				client.fetchToken().then(token => {
-					client.uploadExisting(distStream, token).then(res => {
-						client.publish("default", token).then(res => {
+					client.uploadExisting(distStream, token)
+						.then(() => client.publish("default", token))
+						.then(() => {
 							fs.unlinkSync(zipPath);
 							resolve();
-						});
-					});
+						})
+						.catch(console.log);
 				});
 			}
 		});
