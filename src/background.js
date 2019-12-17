@@ -238,7 +238,7 @@ class RequestHandler {
 			this._modifyReceivedBody(e, detail);
 		}
 		// 修改响应头
-		if (e.responseHeaders) {
+		if (!e.responseHeaders) {
 			return;
 		}
 		const rule = rules.get('receiveHeader', { "url": e.url, "enable": true });
