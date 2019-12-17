@@ -1,0 +1,22 @@
+{
+  "compilerOptions": {
+    "baseUrl": ".",
+    "allowSyntheticDefaultImports": true,
+    "jsx": "react",
+    "lib": [
+      "dom",
+      "es2017"
+    ],
+    "module": "commonjs",
+    "moduleResolution": "node",
+    "noEmit": false,
+    "preserveConstEnums": true,
+    "removeComments": false,
+    "skipLibCheck": true,
+    "sourceMap": true,
+    "strict": true,
+    "target": "es6"
+  },
+  "exclude": ["./build", "./dist"],
+  "include": ["./src"]
+}

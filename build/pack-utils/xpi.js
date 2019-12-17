@@ -23,7 +23,7 @@ module.exports = function(manifest, outputDir) {
 				console.info('Error : ' + stderr);
 				resolve();
 			} else {
-				signAddon({
+				/*signAddon({
 					xpiPath: zipPath,
 					version: common.version,
 					apiKey: AMOUser.key,
@@ -46,7 +46,7 @@ module.exports = function(manifest, outputDir) {
 					} else {
 						console.log("Sign failed");
 					}
-				})
+				})*/
 			}
 		});
 	})
