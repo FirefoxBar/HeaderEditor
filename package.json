@@ -9,12 +9,12 @@
     "url": "https://github.com/FirefoxBar/HeaderEditor.git"
   },
   "scripts": {
-    "lint": "eslint --cache --ext .js,.ts,.jsx,.tsx src",
     "build": "nowa2 build prod",
     "build:dev": "nowa2 build dev",
     "start": "nowa2 build dev -w",
     "release": "node ./build/release.js",
-    "pack": "node ./build/pack.js"
+    "pack": "node ./build/pack.js",
+    "precommit": "lint-staged"
   },
   "webextension": {
     "dist": "HeaderEditor-{VER}",
@@ -72,9 +72,13 @@
     "husky": "^3.1.0",
     "lint-staged": "^9.5.0",
     "node-rsa": "^1.0.1",
+    "prettier": "^1.19.1",
     "publish-release": "^1.6.0",
     "sign-addon": "^0.3.1",
     "tslint": "^5.20.1",
+    "tslint-config-prettier": "^1.18.0",
+    "tslint-plugin-prettier": "^2.0.1",
+    "tslint-react": "^4.1.0",
     "typescript": "^3.7.3",
     "webpack-chrome-extension-reloader": "^0.8.3",
     "webpack-shell-plugin": "^0.5.0"
