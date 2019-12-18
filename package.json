@@ -1,77 +1,88 @@
 {
-	"name": "header-editor",
-	"version": "4.1.1",
-	"description": "Header Editor",
-	"author": "ShuangYa",
-	"license": "GPL-2.0",
-	"repository": {
-		"type": "git",
-		"url": "https://github.com/FirefoxBar/HeaderEditor.git"
-	},
-	"scripts": {
-		"lint": "eslint --ext .js,.vue src",
-		"build": "nowa2 build prod",
-		"build:dev": "nowa2 build dev",
-		"start": "nowa2 build dev -w",
-		"release": "node ./build/release.js",
-		"pack": "node ./build/pack.js"
-	},
-	"webextension": {
-		"dist": "HeaderEditor-{VER}",
-		"autobuild": {
-			"xpi": false,
-			"amo": false,
-			"cwx": true,
-			"crx": false
-		},
-		"firefox": {
-			"version": "52.0",
-			"xpi": "headereditor@addon.firefoxcn.net",
-			"amo": "headereditor-amo@addon.firefoxcn.net",
-			"update": "https://ext.firefoxcn.net/headereditor/install/update.json"
-		},
-		"chrome": {
-			"id": "eningockdidmgiojffjmkdblpjocbhgh",
-			"update": "https://ext.firefoxcn.net/headereditor/install/update.xml"
-		},
-		"github": {
-			"enable": true,
-			"tag": "{VER}"
-		}
-	},
-	"dependencies": {
-		"@alifd/next": "^1.18.17",
-		"@alifd/theme-1": "^0.2.1",
-		"dateformat": "^3.0.3",
-		"fast-deep-equal": "^2.0.1",
-		"merge": "^1.2.0",
-		"react": "^16.12.0",
-		"react-dom": "^16.12.0",
-		"text-encoding": "^0.7.0",
-		"webextension-polyfill-ts": "^0.11.0"
-	},
-	"devDependencies": {
-		"@nowa/solution-react-typescript": "^0.11.7",
-		"@types/chrome": "^0.0.72",
-		"@types/dateformat": "^3.0.1",
-		"@types/react": "^16.9.16",
-		"@types/react-dom": "^16.9.4",
-		"arg": "^2.0.0",
-		"babel-plugin-import": "^1.13.0",
-		"chrome-webstore-upload": "^0.2.2",
-		"copy-webpack-plugin": "^4.5.2",
-		"core-js": "3",
-		"cross-env": "^5.2.0",
-		"eslint": "^5.6.0",
-		"eslint-plugin-import": "^2.14.0",
-		"eslint-plugin-node": "^7.0.1",
-		"eslint-plugin-promise": "^4.0.1",
-		"eslint-plugin-standard": "^4.0.0",
-		"node-rsa": "^1.0.1",
-		"publish-release": "^1.6.0",
-		"sign-addon": "^0.3.1",
-		"typescript": "^3.7.3",
-		"webpack-chrome-extension-reloader": "^0.8.3",
-		"webpack-shell-plugin": "^0.5.0"
-	}
+  "name": "header-editor",
+  "version": "4.1.1",
+  "description": "Header Editor",
+  "author": "ShuangYa",
+  "license": "GPL-2.0",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/FirefoxBar/HeaderEditor.git"
+  },
+  "scripts": {
+    "lint": "eslint --cache --ext .js,.ts,.jsx,.tsx src",
+    "build": "nowa2 build prod",
+    "build:dev": "nowa2 build dev",
+    "start": "nowa2 build dev -w",
+    "release": "node ./build/release.js",
+    "pack": "node ./build/pack.js"
+  },
+  "webextension": {
+    "dist": "HeaderEditor-{VER}",
+    "autobuild": {
+      "xpi": false,
+      "amo": false,
+      "cwx": true,
+      "crx": false
+    },
+    "firefox": {
+      "version": "52.0",
+      "xpi": "headereditor@addon.firefoxcn.net",
+      "amo": "headereditor-amo@addon.firefoxcn.net",
+      "update": "https://ext.firefoxcn.net/headereditor/install/update.json"
+    },
+    "chrome": {
+      "id": "eningockdidmgiojffjmkdblpjocbhgh",
+      "update": "https://ext.firefoxcn.net/headereditor/install/update.xml"
+    },
+    "github": {
+      "enable": true,
+      "tag": "{VER}"
+    }
+  },
+  "dependencies": {
+    "@alifd/next": "^1.18.17",
+    "@alifd/theme-1": "^0.2.1",
+    "dateformat": "^3.0.3",
+    "fast-deep-equal": "^2.0.1",
+    "merge": "^1.2.0",
+    "moment": "^2.24.0",
+    "react": "^16.12.0",
+    "react-dom": "^16.12.0",
+    "text-encoding": "^0.7.0",
+    "webextension-polyfill-ts": "^0.11.0"
+  },
+  "devDependencies": {
+    "@nowa/solution-react-typescript": "^0.11.7",
+    "@types/chrome": "^0.0.72",
+    "@types/dateformat": "^3.0.1",
+    "@types/react": "^16.9.16",
+    "@types/react-dom": "^16.9.4",
+    "arg": "^2.0.0",
+    "babel-plugin-import": "^1.13.0",
+    "chrome-webstore-upload": "^0.2.2",
+    "copy-webpack-plugin": "^4.5.2",
+    "core-js": "3",
+    "cross-env": "^5.2.0",
+    "eslint": "^5.6.0",
+    "eslint-config-airbnb": "^18.0.1",
+    "eslint-plugin-import": "^2.14.0",
+    "eslint-plugin-jsx-a11y": "^6.2.3",
+    "eslint-plugin-react": "^7.17.0",
+    "eslint-plugin-standard": "^4.0.0",
+    "husky": "^3.1.0",
+    "lint-staged": "^9.5.0",
+    "node-rsa": "^1.0.1",
+    "publish-release": "^1.6.0",
+    "sign-addon": "^0.3.1",
+    "tslint": "^5.20.1",
+    "typescript": "^3.7.3",
+    "webpack-chrome-extension-reloader": "^0.8.3",
+    "webpack-shell-plugin": "^0.5.0"
+  },
+  "lint-staged": {
+    "./src/**/*.{ts,tsx}": [
+      "tslint --fix",
+      "git add"
+    ]
+  }
 }
