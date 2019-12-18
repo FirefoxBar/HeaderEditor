@@ -53,6 +53,7 @@
 	"devDependencies": {
 		"@nowa/solution-react-typescript": "^0.11.7",
 		"@types/chrome": "^0.0.72",
+		"@types/dateformat": "^3.0.1",
 		"@types/react": "^16.9.16",
 		"@types/react-dom": "^16.9.4",
 		"arg": "^2.0.0",

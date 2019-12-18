@@ -1,25 +1,27 @@
-import utils from './utils';
-import storage from './storage';
-import merge from 'merge';
+import { getDatabase } from './storage';
+import { getDomain, TABLE_NAMES, TABLE_NAMES_TYPE, upgradeRuleFormat } from './utils';
+import { InitedRule, Rule } from './var';
 
-const cache = {};
-utils.TABLE_NAMES.forEach(t => cache[t] = null);
+const cache: { [key: string]: null | InitedRule[] } = {};
+TABLE_NAMES.forEach(t => cache[t] = null);
 
-function updateCache(type) {
+function updateCache(type: string) {
 	return new Promise((resolve, reject) => {
-		storage.getDatabase().then((db) => {
+		getDatabase().then(db => {
 			const tx = db.transaction([type], "readonly");
 			const os = tx.objectStore(type);
-			const all = [];
+			const all: InitedRule[] = [];
 			os.openCursor().onsuccess = function(event) {
+				// @ts-ignore
 				const cursor = event.target.result;
 				if (cursor) {
-					const s = cursor.value;
+					const s: InitedRule = cursor.value;
 					let isValidRule = true;
 					s.id = cursor.key;
 					// Init function here
 					if (s.isFunction) {
 						try {
+							// @ts-ignore
 							s._func = new Function('val', 'detail', s.code);
 						} catch (e) {
 							isValidRule = false;
@@ -53,7 +55,13 @@ function updateCache(type) {
 	});
 }
 
-function filter(rules, options) {
+interface FilterOptions {
+	enable?: boolean;
+	url?: string;
+	id?: number;
+	name?: string;
+}
+function filter(rules: InitedRule[], options: FilterOptions) {
 	if (options === null || typeof(options) !== 'object') {
 		return rules;
 	}
@@ -93,7 +101,7 @@ function filter(rules, options) {
 					result = url.indexOf(rule.pattern) === 0;
 					break;
 				case 'domain':
-					result = utils.getDomain(url) === rule.pattern;
+					result = getDomain(url) === rule.pattern;
 					break;
 				case 'url':
 					result = url === rule.pattern;
@@ -111,16 +119,16 @@ function filter(rules, options) {
 	return rules;
 }
 
-function save(tableName, o) {
-	delete o["_v_key"];
+function save(tableName: TABLE_NAMES_TYPE, o: InitedRule) {
+	// delete o["_v_key"];
 	delete o["_func"];
 	delete o["_reg"];
 	return new Promise(resolve => {
-		storage.getDatabase().then((db) => {
+		getDatabase().then((db) => {
 			const tx = db.transaction([tableName], "readwrite");
 			const os = tx.objectStore(tableName);
 			// Check base informations
-			utils.upgradeRuleFormat(o);
+			upgradeRuleFormat(o);
 			// Update
 			if (o.id) {
 				const request = os.get(Number(o.id));
@@ -147,6 +155,7 @@ function save(tableName, o) {
 			request.onsuccess = function(event) {
 				updateCache(tableName);
 				// Give it the ID that was generated
+				// @ts-ignore
 				o.id = event.target.result;
 				resolve(o);
 			};
@@ -154,9 +163,9 @@ function save(tableName, o) {
 	});
 }
 
-function remove(tableName, id) {
+function remove(tableName: TABLE_NAMES_TYPE, id: number) {
 	return new Promise((resolve) => {
-		storage.getDatabase().then((db) => {
+		getDatabase().then(db => {
 			const tx = db.transaction([tableName], "readwrite");
 			const os = tx.objectStore(tableName);
 			const request = os.delete(Number(id));
@@ -168,17 +177,21 @@ function remove(tableName, id) {
 	});
 }
 
-function get(type, options) {
+function get(type: TABLE_NAMES_TYPE, options: FilterOptions) {
 	// When browser is starting up, pass all requests
-	return cache[type] ? (options ? filter(cache[type], options) : cache[type]) : null;
+	const all = cache[type];
+	if (!all) {
+		return null;
+	}
+	return options ? filter(all, options) : all;
 }
 
-function createExport(arr) {
-	const result = {};
+function createExport(arr: { [key: string]: InitedRule[] }) {
+	const result: { [key: string]: Rule[] } = {};
 	for (const k in arr) {
 		result[k] = [];
 		arr[k].forEach(e => {
-			const copy = merge(true, e);
+			const copy = Object.assign({}, e);
 			delete copy["id"];
 			delete copy["_reg"];
 			delete copy["_func"];
@@ -189,13 +202,13 @@ function createExport(arr) {
 	return result;
 }
 
-function fromJson(str) {
-	const list = JSON.parse(str);
-	utils.TABLE_NAMES.forEach(e => {
+function fromJson(str: string) {
+	const list: { [key: string]: Rule[] } = JSON.parse(str);
+	TABLE_NAMES.forEach(e => {
 		if (list[e]) {
 			list[e].map(ee => {
 				delete ee.id;
-				return utils.upgradeRuleFormat(ee);
+				return upgradeRuleFormat(ee);
 			});
 		}
 	});

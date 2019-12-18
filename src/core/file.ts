@@ -1,44 +1,46 @@
-import utils from './utils';
-import browser from 'webextension-polyfill';
+import { browser, Downloads } from 'webextension-polyfill-ts';
+import { FIREFOX_VERSION, IS_ANDROID, IS_CHROME } from './utils';
 
-export default {
-	save(text, fileName) {
+class File {
+	save(text: string, fileName: string) {
 		return new Promise(function(resolve){
 			const blob = new Blob([text]);
 			const fileUrl = URL.createObjectURL(blob);
-			const option = {filename: fileName, url: fileUrl};
+			const option: Downloads.DownloadOptionsType = { filename: fileName, url: fileUrl };
 			// Firefox supported saveAs since version 52
-			if (utils.IS_CHROME || (!utils.IS_ANDROID && utils.FIREFOX_VERSION >= 52)) {
+			if (IS_CHROME || (!IS_ANDROID && FIREFOX_VERSION >= 52)) {
 				option.saveAs = true;
 			}
 			browser.downloads.download(option).then(resolve);
 		});
-	},
-	load(formatToFilter) {
+	}
+	load(formatToFilter: string) {
 		return new Promise(function(resolve){
 			const fileInput = document.createElement('input');
-			fileInput.style = "display: none;";
+			fileInput.style.display = "none";
 			fileInput.type = "file";
 			fileInput.accept = formatToFilter || '.json';
+			// @ts-ignore
 			fileInput.acceptCharset = "utf8";
 
 			document.body.appendChild(fileInput);
 
 			function changeHandler(){
-				if (fileInput.value != fileInput.initialValue){
+				if (fileInput.files && fileInput.files.length > 0){
 					const fReader = new FileReader();
 					fReader.readAsText(fileInput.files[0]);
 					fReader.onloadend = function(event){
 						fileInput.removeEventListener('change', changeHandler);
 						fileInput.remove();
-						resolve(event.target.result);
+						resolve(event.target!.result);
 					}
 				}
 			}
 
-			fileInput.initialValue = fileInput.value;
 			fileInput.addEventListener('change', changeHandler);
 			fileInput.click();
 		});
 	}
 }
+
+export default new File();

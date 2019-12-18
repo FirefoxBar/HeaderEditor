@@ -1,13 +1,12 @@
-import browser from 'webextension-polyfill';
-import utils from './utils';
-import merge from 'merge';
 import equal from 'fast-deep-equal';
-import notify from './notify';
+import { browser } from 'webextension-polyfill-ts';
+import { TABLE_NAMES, upgradeRuleFormat } from './utils';
 
-function getDatabase() {
+export function getDatabase(): Promise<IDBDatabase> {
 	return new Promise((resolve, reject) => {
 		const dbOpenRequest = window.indexedDB.open("headereditor", 4);
 		dbOpenRequest.onsuccess = function(e) {
+			// @ts-ignore
 			resolve(e.target.result);
 		};
 		dbOpenRequest.onerror = function(event) {
@@ -17,24 +16,27 @@ function getDatabase() {
 		dbOpenRequest.onupgradeneeded = function(event) {
 			if (event.oldVersion == 0) {
 				// Installed
-				utils.TABLE_NAMES.forEach(t => {
+				TABLE_NAMES.forEach(t => {
+					// @ts-ignore
 					event.target.result.createObjectStore(t, {keyPath: 'id', autoIncrement: true});
 				});
 			} else {
-				utils.TABLE_NAMES.forEach(k => {
+				TABLE_NAMES.forEach(k => {
+					// @ts-ignore
 					const tx = event.target.transaction;
 					if(!tx.objectStoreNames.contains(k)){
+						// @ts-ignore
 						event.target.result.createObjectStore(k, {keyPath: 'id', autoIncrement: true});
 						return;
 					}
 					const os = tx.objectStore(k);
-					os.openCursor().onsuccess = function(e) {
+					os.openCursor().onsuccess = (e: any) => {
 						const cursor = e.target.result;
 						if (cursor) {
 							const s = cursor.value;
 							s.id = cursor.key;
 							// upgrade rule format
-							os.put(utils.upgradeRuleFormat(s));
+							os.put(upgradeRuleFormat(s));
 							cursor.continue();
 						}
 					};
@@ -44,33 +46,45 @@ function getDatabase() {
 	});
 };
 
-const prefs = browser.extension.getBackgroundPage().prefs || new class {
-	constructor() {
-		this.boundMethods = {};
-		this.boundWrappers = {};
-		const defaults = {
-			"disable-all": false,
-			"add-hot-link": true,
-			"manage-collapse-group": true, // Collapse groups
-			"exclude-he": true, // rules take no effect on HE or not
-			"show-common-header": true,
-			"include-headers": false, // Include headers in custom function
-			"modify-body": false // Enable modify received body feature
-		};
-		this.watchQueue = {};
-		// when browser is strarting up, the setting is default
-		this.isDefault = true;
-		this.waitQueue = [];
-	
-		this.values = merge(true, defaults);
+interface PrefValue {
+	[key: string]: any;
+	"disable-all": boolean;
+	"add-hot-link": boolean;
+	"manage-collapse-group": boolean; // Collapse groups
+	"exclude-he": boolean; // rules take no effect on HE or not
+	"show-common-header": boolean;
+	"include-headers": boolean; // Include headers in custom function
+	"modify-body": boolean; // Enable modify received body feature
+}
+const defaultPrefValue: PrefValue = {
+	"disable-all": false,
+	"add-hot-link": true,
+	"manage-collapse-group": true,
+	"exclude-he": true,
+	"show-common-header": true,
+	"include-headers": false,
+	"modify-body": false
+};
+class Prefs {
+	private boundMethods: { [key: string]: (value: any) => any } = {};
+	private boundWrappers: { [key: string]: any } = {};
+	private watchQueue: { [key: string]: ((value: any, key: string) => void)[] } = {};
+	// when browser is strarting up, the setting is default
+	private isDefault = true;
+	private waitQueue: ((value: any) => any)[] = [];
+	private values: PrefValue;
 
-		Object.keys(defaults).forEach(key => {
-			this.set(key, defaults[key], true);
+	constructor() {
+		this.waitQueue = [];
+		this.values = Object.assign({}, defaultPrefValue);
+
+		Object.entries(defaultPrefValue).forEach(it => {
+			this.set(it[0], it[1], true);
 		});
 	
 		getSync().get("settings").then(result => {
 			const synced = result.settings;
-			for (const key in defaults) {
+			for (const key in defaultPrefValue) {
 				if (synced && (key in synced)) {
 					this.set(key, synced[key], true);
 				} else {
@@ -88,7 +102,7 @@ const prefs = browser.extension.getBackgroundPage().prefs || new class {
 			if (area == "sync" && "settings" in changes) {
 				const synced = changes.settings.newValue;
 				if (synced) {
-					for (const key in defaults) {
+					for (const key in defaultPrefValue) {
 						if (key in synced) {
 							this.set(key, synced[key], true);
 							if (this.watchQueue[key]) {
@@ -103,14 +117,14 @@ const prefs = browser.extension.getBackgroundPage().prefs || new class {
 			}
 		});
 	
-		function tryMigrating(key) {
+		function tryMigrating(key: string) {
 			if (!(key in localStorage)) {
 				return undefined;
 			}
 			const value = localStorage[key];
 			delete localStorage[key];
 			localStorage["DEPRECATED: " + key] = value;
-			switch (typeof defaults[key]) {
+			switch (typeof defaultPrefValue[key]) {
 				case "boolean":
 					return value.toLowerCase() === "true";
 				case "number":
@@ -126,7 +140,7 @@ const prefs = browser.extension.getBackgroundPage().prefs || new class {
 			return value;
 		}
 	}
-	get(key, defaultValue) {
+	get(key: string, defaultValue: any) {
 		if (key in this.boundMethods) {
 			if (key in this.boundWrappers) {
 				return this.boundWrappers[key];
@@ -143,16 +157,16 @@ const prefs = browser.extension.getBackgroundPage().prefs || new class {
 		if (defaultValue !== undefined) {
 			return defaultValue;
 		}
-		if (key in defaults) {
-			return defaults[key];
+		if (key in defaultPrefValue) {
+			return defaultPrefValue[key];
 		}
 		console.warn('No default preference for ' + key);
 	}
 	getAll() {
-		return merge(true, this.values);
+		return Object.assign({}, this.values);
 	}
-	set(key, value, noSync) {
-		const oldValue = merge(true, this.values[key]);
+	set(key: string, value: any, noSync: boolean = false) {
+		const oldValue = this.values[key];
 		if (!equal(value, oldValue)) {
 			this.values[key] = value;
 			if (!noSync) {
@@ -160,13 +174,13 @@ const prefs = browser.extension.getBackgroundPage().prefs || new class {
 			}
 		}
 	}
-	bindAPI(apiName, apiMethod) {
+	bindAPI(apiName: string, apiMethod: (value: any) => any) {
 		this.boundMethods[apiName] = apiMethod;
 	}
-	remove(key) {
+	remove(key: string) {
 		this.set(key, undefined)
 	}
-	watch(key, callback) {
+	watch(key: string, callback: (value: any, key: string) => void) {
 		if (typeof(this.watchQueue[key]) === "undefined") {
 			this.watchQueue[key] = [];
 		}
@@ -184,7 +198,10 @@ const prefs = browser.extension.getBackgroundPage().prefs || new class {
 	}
 }
 
-function getSync() {
+// @ts-ignore
+export const prefs = browser.extension.getBackgroundPage().prefs || new Prefs();
+
+export function getSync() {
 	// For development mode
 	if (typeof(process) !== "undefined" && process.env.NODE_ENV === "development") {
 		return browser.storage.local;
@@ -197,8 +214,7 @@ function getSync() {
 	}
 	return browser.storage.local;
 }
-function getLocal() {
+
+export function getLocal() {
 	return browser.storage.local;
 }
-
-export default { getSync, getDatabase, getLocal, prefs };
