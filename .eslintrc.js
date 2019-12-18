@@ -1,32 +1,33 @@
-// https://eslint.org/docs/user-guide/configuring
-// File taken from https://github.com/vuejs-templates/webpack/blob/1.3.1/template/.eslintrc.js, thanks.
-
-module.exports = {
-	root: true,
-	parserOptions: {
-		parser: 'babel-eslint'
-	},
-	env: {
-		browser: true,
-		webextensions: true,
-	},
-	extends: [
-		// https://github.com/vuejs/eslint-plugin-vue#priority-a-essential-error-prevention
-		// consider switching to `plugin:vue/strongly-recommended` or `plugin:vue/recommended` for stricter rules.
-		'plugin:vue/essential',
-		// https://github.com/standard/standard/blob/master/docs/RULES-en.md
-		'standard'	],
-	// required to lint *.vue files
-	plugins: [
-		'vue'
-	],
-	// add your custom rules here
-	rules: {
-		// allow async-await
-		'generator-star-spacing': 'off',
-		// allow debugger during development
-		'no-debugger': process.env.NODE_ENV === 'production' ? 'error' : 'off',
-		'indent': [4, 'tab'],
-		'no-tabs': 0
-	}
+{
+  "parser": "babel-eslint",
+  "extends": "airbnb",
+  "env": {
+    "browser": true,
+    "jest": true
+  },
+  "rules": {
+    "jsx-a11y/href-no-hash": [0],
+    "jsx-a11y/click-events-have-key-events": [0],
+    "jsx-a11y/anchor-is-valid": [ "error", {
+      "components": [ "Link" ],
+      "specialLink": [ "to" ]
+    }],
+    "jsx-a11y/no-static-element-interactions": [0],
+    "react/react-in-jsx-scope": [0],
+    "react/forbid-prop-types": [0],
+    "react/jsx-filename-extension": [1, { "extensions": [".js"] }],
+    "import/extensions": [0],
+    "import/no-unresolved": [0],
+    "arrow-body-style": ["error", "as-needed", { "requireReturnForObjectLiteral": true }],
+    "arrow-parens": ["error", "always"],
+    "space-before-function-paren": ["error", {"anonymous": "always", "named": "never", "asyncArrow": "always"}],
+    "object-curly-newline": ["error", { "consistent": true }],
+    "function-paren-newline": ["error", "consistent"],
+    "class-methods-use-this": [0]
+  },
+  "parserOptions": {
+    "ecmaFeatures": {
+      "experimentalObjectRestSpread": true
+    }
+  }
 }
