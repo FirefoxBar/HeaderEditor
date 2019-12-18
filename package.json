@@ -43,6 +43,7 @@
   "dependencies": {
     "@alifd/next": "^1.18.17",
     "dateformat": "^3.0.3",
+    "eventemitter3": "^4.0.0",
     "fast-deep-equal": "^2.0.1",
     "merge": "^1.2.0",
     "moment": "^2.24.0",

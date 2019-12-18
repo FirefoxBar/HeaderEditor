@@ -1,8 +1,9 @@
-import { Button, Card, Input } from '@alifd/next';
+import { Button, Card, Input, Dialog, Table } from '@alifd/next';
 import * as React from 'react';
 import Icon from 'share/components/icon';
 import { t } from 'share/core/utils';
 import './index.less';
+import EventEmitter from 'share/core/emit';
 
 interface IEProps {
   visible: boolean;
@@ -10,6 +11,8 @@ interface IEProps {
 
 interface IEState {
   downloadUrl: string;
+  showConfirm: boolean;
+  import: any;
 }
 
 export default class ImportAndExport extends React.Component<IEProps, IEState> {
@@ -17,10 +20,20 @@ export default class ImportAndExport extends React.Component<IEProps, IEState> {
     super(props);
     this.state = {
       downloadUrl: '',
+      showConfirm: false,
+      import: [],
     };
   }
 
   componentDidMount() {}
+
+  handleImportConfirm() {
+    //
+  }
+
+  handleImportCancel() {
+    //
+  }
 
   render() {
     return (
@@ -57,6 +70,19 @@ export default class ImportAndExport extends React.Component<IEProps, IEState> {
             <Input value={this.state.downloadUrl} style={{ width: '100%' }} />
           </Input.Group>
         </Card>
+        <Dialog
+          title={t('import')}
+          visible={this.state.showConfirm}
+          onOk={this.handleImportConfirm}
+          onCancel={this.handleImportCancel}
+          onClose={this.handleImportCancel}
+        >
+          <Table dataSource={this.state.import}>
+            <Table.Column title={t('name')} dataIndex="name" />
+            <Table.Column title={t('ruleType')} dataIndex="ruleType" cell={(value: string) => t(`rule_${value}`)} />
+            <Table.Column title={t('suggested_group')} dataIndex="group" cell={(value: string) => <span />} />
+          </Table>
+        </Dialog>
       </section>
     );
   }

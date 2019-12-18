@@ -2,8 +2,10 @@ import { Nav } from '@alifd/next';
 import * as React from 'react';
 import { t } from 'share/core/utils';
 import { browser } from 'webextension-polyfill-ts';
-import ImportAndExport from './components/importAndExport';
+import GroupSelect from './components/groupSelect';
+import ImportAndExportSection from './components/importAndExport';
 import OptionsSection from './components/options';
+import RulesSection from './components/rules';
 import './index.less';
 
 interface OptionsState {
@@ -53,9 +55,11 @@ export default class Options extends React.Component<any, OptionsState> {
           <Nav.Item key="help">{t('help')}</Nav.Item>
         </Nav>
         <main className="main-content">
+          <RulesSection visible={this.state.active === 'rules'} />
           <OptionsSection visible={this.state.active === 'options'} />
-          <ImportAndExport visible={this.state.active === 'export_and_import'} />
+          <ImportAndExportSection visible={this.state.active === 'export_and_import'} />
         </main>
+        <GroupSelect />
       </div>
     );
   }

@@ -73,23 +73,6 @@
 					</md-card-content>
 				</md-card>
 			</md-tab>
-			<md-tab id="tab-options" :md-label="t('options')">
-				<md-card>
-					<md-card-header>
-						<div class="md-title">{{t('options')}}</div>
-					</md-card-header>
-					<md-card-content>
-						<div class="md-layout md-gutter">
-							<div class="md-layout-item md-size-50 md-small-size-100"><md-checkbox v-model="options['manage-collapse-group']">{{t('manage_collapse_group')}}</md-checkbox></div>
-							<div class="md-layout-item md-size-50 md-small-size-100"><md-checkbox v-model="options['exclude-he']">{{t('rules_no_effect_for_he')}}</md-checkbox></div>
-							<div class="md-layout-item md-size-50 md-small-size-100"><md-checkbox v-model="options['add-hot-link']">{{t('add_anti_hot_link_to_menu')}}</md-checkbox></div>
-							<div class="md-layout-item md-size-50 md-small-size-100"><md-checkbox v-model="options['show-common-header']">{{t('display_common_header')}}</md-checkbox></div>
-							<div class="md-layout-item md-size-50 md-small-size-100"><md-checkbox v-model="options['include-headers']">{{t('include_header_in_custom_function')}}</md-checkbox></div>
-							<div class="md-layout-item md-size-50 md-small-size-100"><md-checkbox v-model="options['modify-body']">{{t('modify_body')}}</md-checkbox></div>
-						</div>
-					</md-card-content>
-				</md-card>
-			</md-tab>
 			<md-tab id="tab-export-import" :md-label="t('export_and_import')">
 				<md-button class="with-icon" @click="onExportAll"><md-icon class="iconfont icon-save"></md-icon>{{t('export')}}</md-button>
 				<md-button class="with-icon" @click="onImport"><md-icon class="iconfont icon-folder-open"></md-icon>{{t('import')}}</md-button>
