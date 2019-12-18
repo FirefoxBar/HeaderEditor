@@ -1,9 +1,25 @@
 const ChromeExtensionReloader = require('webpack-chrome-extension-reloader');
 
-module.exports = function(root, config) {
-	// 调试模式下，开启自动重载
-	if (config.mode === 'development' && config.plugins && Array.isArray(config.plugins)) {
-		config.plugins.push(new ChromeExtensionReloader());
+function hasArgument(name) {
+	for (const it of process.argv) {
+		if (it === `-${name}`) {
+			return true;
+		}
+	}
+	return false;
+}
+
+module.exports = function (root, config) {
+	// 调试模式下，开启自动重载和自动编译
+	if (config.mode === 'development' && hasArgument('w')) {
+		if (config.plugins && Array.isArray(config.plugins)) {
+			config.plugins.push(new ChromeExtensionReloader());
+		}
+		config.watch = true;
+		config.watchOptions = {
+			aggregateTimeout: 500,
+          	ignored: ['node_modules', 'bower_components', 'components']
+		};
 	}
 	// 不要自动打开浏览器
 	if (config.mode === 'development' && config.devServer) {

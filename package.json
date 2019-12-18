@@ -12,7 +12,7 @@
 		"lint": "eslint --ext .js,.vue src",
 		"build": "nowa2 build prod",
 		"build:dev": "nowa2 build dev",
-		"start": "npm run build:dev -- --watch",
+		"start": "nowa2 build dev -w",
 		"release": "node ./build/release.js",
 		"pack": "node ./build/pack.js"
 	},
