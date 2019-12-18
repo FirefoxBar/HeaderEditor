@@ -3,7 +3,7 @@ export interface Rule {
   enable: boolean;
   id: number;
   name: string;
-  matchType: "all" | "regexp" | "prefix" | "domain" | "url";
+  matchType: 'all' | 'regexp' | 'prefix' | 'domain' | 'url';
   pattern: string;
   isFunction: boolean;
   code: string;
@@ -16,8 +16,23 @@ export interface InitedRule extends Rule {
   _func: (val: any, detail: any) => any;
 }
 
-// export interface RegexRule extends Rule {
-// }
-// export function isRegexRule(obj: any) : obj is RegexRule {
-// 	return obj && obj.matchType === "regexp";
-// }
+export interface PrefValue {
+  [key: string]: any;
+  'disable-all': boolean;
+  'add-hot-link': boolean;
+  'manage-collapse-group': boolean; // Collapse groups
+  'exclude-he': boolean; // rules take no effect on HE or not
+  'show-common-header': boolean;
+  'include-headers': boolean; // Include headers in custom function
+  'modify-body': boolean; // Enable modify received body feature
+}
+
+export const defaultPrefValue: PrefValue = {
+  'disable-all': false,
+  'add-hot-link': true,
+  'manage-collapse-group': true,
+  'exclude-he': true,
+  'show-common-header': true,
+  'include-headers': false,
+  'modify-body': false,
+};
