@@ -16,7 +16,7 @@ const copy = [
     "to": "external/moment.min.js"
   },
   {
-    "from": "./node_modules/@alifd/next/dist/next.min.css",
+    "from": "./node_modules/@alifd/theme-1/dist/next.min.css",
     "to": "external/next.min.css"
   },
   {

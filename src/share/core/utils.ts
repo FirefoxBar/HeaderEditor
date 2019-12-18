@@ -170,16 +170,3 @@ export function getDomain(url: string) {
   const d = /.*?:\/*([^\/:]+)/.exec(url);
   return d ? d[1] : null;
 }
-
-export function createHeaderListener(type: string) {
-  const result = ['blocking'];
-  result.push(type);
-  if (
-    IS_CHROME &&
-    // @ts-ignore
-    chrome.webRequest.OnBeforeSendHeadersOptions.hasOwnProperty('EXTRA_HEADERS')
-  ) {
-    result.push('extraHeaders');
-  }
-  return result;
-}
