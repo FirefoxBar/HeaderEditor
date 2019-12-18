@@ -10,7 +10,7 @@
     "@alifd/validate" "^1.1.3"
     prop-types "^15.5.8"
 
-"@alifd/next@^1.18.17", "@alifd/next@~1.18.16":
+"@alifd/next@^1.18.17":
   version "1.18.17"
   resolved "https://registry.yarnpkg.com/@alifd/next/-/next-1.18.17.tgz#96f02f19a893d60b9d9140278aadb6ac46b0d253"
   integrity sha512-i8V4CWY0IoeRPMjGb8rFEyilbDXYUvIOG06nkdx8LvHBTq9MbkC/lnG9dDVjsxb+l5a17UEihnJ0F9ZJ7+1oHw==
@@ -24,13 +24,6 @@
     react-lifecycles-compat "^3.0.4"
     react-transition-group "^2.2.1"
     shallow-element-equals "^1.0.1"
-
-"@alifd/theme-1@^0.2.1":
-  version "0.2.1"
-  resolved "https://registry.yarnpkg.com/@alifd/theme-1/-/theme-1-0.2.1.tgz#ace76ddc512332a48ca4fd9c6b46b6a5f7052ac6"
-  integrity sha512-VPN1uAuVnPaTXSo1gi+OLnj/J+CnwVg9CKn8cWbmFZeGgaBK6I/iQ8YIBYU4XmR1nl8OWdr7IKU1DThYUSBs7A==
-  dependencies:
-    "@alifd/next" "~1.18.16"
 
 "@alifd/validate@^1.1.3", "@alifd/validate@~1.1.4":
   version "1.1.5"

@@ -25,6 +25,12 @@ module.exports = function(root, config) {
 				'node build/remove-evals.js'
 			],
 		}));
-	}
+  }
+  // 关闭大小警告
+  if (!config.performance) {
+    config.performance = {};
+  }
+  config.performance.maxEntrypointSize = 512000;
+  config.performance.maxAssetSize = 512000;
 	return config;
 }
