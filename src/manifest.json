@@ -27,11 +27,11 @@
 			"128": "assets/images/128.png"
 		},
 		"default_title": "__MSG_extButtonTitle__",
-		"default_popup": "popup/popup.html"
+		"default_popup": "popup.html"
 	},
 	"default_locale": "en",
 	"options_ui": {
-		"page": "options/options.html",
+		"page": "options.html",
 		"open_in_tab": true
 	}
 }

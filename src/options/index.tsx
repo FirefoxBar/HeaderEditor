@@ -1,6 +1,6 @@
 import * as React from 'react';
 import { Nav } from '@alifd/next';
-import { t } from 'src/core/utils';
+import { t } from 'core/utils';
 
 export default () => {
   return (
