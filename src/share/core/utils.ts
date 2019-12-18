@@ -174,10 +174,9 @@ export function getDomain(url: string) {
 export function createHeaderListener(type: string) {
   const result = ['blocking'];
   result.push(type);
-  // @ts-ignore
   if (
     IS_CHROME &&
-    chrome.webRequest.OnBeforeSendHeadersOptions &&
+    // @ts-ignore
     chrome.webRequest.OnBeforeSendHeadersOptions.hasOwnProperty('EXTRA_HEADERS')
   ) {
     result.push('extraHeaders');
