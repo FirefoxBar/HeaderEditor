@@ -1,7 +1,7 @@
 import { Card, Checkbox, Form, Grid } from '@alifd/next';
-import { prefs } from 'core/storage';
-import { t } from 'core/utils';
-import { defaultPrefValue, PrefValue } from 'core/var';
+import { prefs } from 'share/core/storage';
+import { t } from 'share/core/utils';
+import { defaultPrefValue, PrefValue } from 'share/core/var';
 import * as React from 'react';
 import './index.less';
 

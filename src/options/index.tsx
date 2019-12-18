@@ -1,7 +1,8 @@
 import { Nav } from '@alifd/next';
-import { t } from 'core/utils';
 import * as React from 'react';
+import { t } from 'share/core/utils';
 import { browser } from 'webextension-polyfill-ts';
+import ImportAndExport from './components/importAndExport';
 import OptionsSection from './components/options';
 import './index.less';
 
@@ -53,6 +54,7 @@ export default class Options extends React.Component<any, OptionsState> {
         </Nav>
         <main className="main-content">
           <OptionsSection visible={this.state.active === 'options'} />
+          <ImportAndExport visible={this.state.active === 'export_and_import'} />
         </main>
       </div>
     );

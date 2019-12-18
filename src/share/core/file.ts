@@ -3,7 +3,7 @@ import { FIREFOX_VERSION, IS_ANDROID, IS_CHROME } from './utils';
 
 class File {
   save(text: string, fileName: string) {
-    return new Promise(function(resolve){
+    return new Promise(resolve => {
       const blob = new Blob([text]);
       const fileUrl = URL.createObjectURL(blob);
       const option: Downloads.DownloadOptionsType = { filename: fileName, url: fileUrl };
@@ -15,25 +15,25 @@ class File {
     });
   }
   load(formatToFilter: string) {
-    return new Promise(function(resolve){
+    return new Promise(resolve => {
       const fileInput = document.createElement('input');
-      fileInput.style.display = "none";
-      fileInput.type = "file";
+      fileInput.style.display = 'none';
+      fileInput.type = 'file';
       fileInput.accept = formatToFilter || '.json';
       // @ts-ignore
-      fileInput.acceptCharset = "utf8";
+      fileInput.acceptCharset = 'utf8';
 
       document.body.appendChild(fileInput);
 
-      function changeHandler(){
-        if (fileInput.files && fileInput.files.length > 0){
+      function changeHandler() {
+        if (fileInput.files && fileInput.files.length > 0) {
           const fReader = new FileReader();
           fReader.readAsText(fileInput.files[0]);
-          fReader.onloadend = function(event){
+          fReader.onloadend = event => {
             fileInput.removeEventListener('change', changeHandler);
             fileInput.remove();
             resolve(event.target!.result);
-          }
+          };
         }
       }
 

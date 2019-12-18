@@ -1,7 +1,7 @@
 import browser from 'webextension-polyfill'
-import storage from './core/storage'
-import rules from './core/rules'
-import utils from './core/utils'
+import storage from './share/core/storage'
+import rules from './share/core/rules'
+import utils from './share/core/utils'
 import { TextEncoder, TextDecoder } from 'text-encoding'
 
 window.IS_BACKGROUND = true;

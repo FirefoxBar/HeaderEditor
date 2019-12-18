@@ -5,8 +5,8 @@ import VueMaterial from 'vue-material';
 import 'vue-material/dist/vue-material.min.css';
 import 'vue-material/dist/theme/default.css';
 import './options.less';
-import storage from '../core/storage';
-import utils from '../core/utils';
+import storage from '../share/core/storage';
+import utils from '../share/core/utils';
 
 Vue.use(VueMaterial);
 

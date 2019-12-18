@@ -8,11 +8,22 @@
     top: 0;
     left: 0;
     width: 100%;
+    z-index: 2;
   }
   
   .main-content {
     padding: 60px 16px 16px 16px;
     background-color: #eee;
     min-height: 100vh;
+
+    > section {
+      > .next-card {
+        margin-bottom: 16px;
+      }
+    }
+  }
+
+  .buttons > .next-btn {
+    margin-right: 8px;
   }
 }

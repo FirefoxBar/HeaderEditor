@@ -15,7 +15,7 @@ class Notify {
         });
       } else {
         // notify other tabs
-        browser.windows.getAll({populate: true}).then(windows => {
+        browser.windows.getAll({ populate: true }).then(windows => {
           windows.forEach(win => {
             if (!win.tabs) {
               return;
@@ -32,10 +32,7 @@ class Notify {
     });
   }
   background(request: any) {
-    return browser.runtime.sendMessage(Object.assign({}, request, {
-      method: "notifyBackground",
-      reason: request.method
-    }));
+    return browser.runtime.sendMessage({ ...request, method: 'notifyBackground', reason: request.method });
   }
 }
 
