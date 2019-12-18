@@ -1,13 +1,5 @@
 const ChromeExtensionReloader = require('webpack-chrome-extension-reloader');
-
-function hasArgument(name) {
-	for (const it of process.argv) {
-		if (it === `-${name}`) {
-			return true;
-		}
-	}
-	return false;
-}
+const hasArgument = require('./utils').hasArgument;
 
 module.exports = function (root, config) {
 	// 调试模式下，开启自动重载和自动编译

@@ -10,6 +10,7 @@
   },
   "scripts": {
     "build": "nowa2 build prod",
+    "build:analyzer": "nowa2 build prod -a",
     "build:dev": "nowa2 build dev",
     "start": "nowa2 build dev -w",
     "release": "node ./build/release.js",
