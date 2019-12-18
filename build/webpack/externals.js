@@ -1,3 +1,4 @@
+const fs = require('fs');
 const path = require('path');
 const CopyWebpackPlugin = require('copy-webpack-plugin');
 
@@ -34,22 +35,26 @@ module.exports = function(root, config) {
   config.externals['moment'] = 'window.moment';
   // 复制externals和静态文件
   if (config.plugins && Array.isArray(config.plugins)) {
-    config.plugins.push(new CopyWebpackPlugin([
-      ...copy,
-      {
-        from: './src/manifest.json',
-        to: 'manifest.json',
-        transform: (content) => {
-          const jsonContent = JSON.parse(content);
-          jsonContent.version = version;
+    copy.push({
+      from: './src/manifest.json',
+      to: 'manifest.json',
+      transform: (content) => {
+        const jsonContent = JSON.parse(content);
+        jsonContent.version = version;
 
-          if (config.mode === 'development') {
-            jsonContent['content_security_policy'] = "script-src 'self' 'unsafe-eval'; object-src 'self'";
-          }
+        if (config.mode === 'development') {
+          jsonContent['content_security_policy'] = "script-src 'self' 'unsafe-eval'; object-src 'self'";
+        }
 
-          return JSON.stringify(jsonContent);
-        },
+        return JSON.stringify(jsonContent);
       },
-    ]));
+    });
+    if (fs.existsSync(path.resolve(root, 'dist-merge'))) {
+      copy.push({
+        from: path.resolve(root, 'dist-merge'),
+        to: "."
+      });
+    }
+    config.plugins.push(new CopyWebpackPlugin(copy));
   }
 }

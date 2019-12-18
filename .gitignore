@@ -2,7 +2,7 @@ node_modules/
 coverage/
 dist/
 .idea/
-.vscode/
+dist-merge/
 .theia/
 .recore/
 ~*
