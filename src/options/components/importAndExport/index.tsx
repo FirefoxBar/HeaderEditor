@@ -1,9 +1,7 @@
-import { Button, Card, Drawer, Input, Select, Table } from '@alifd/next';
+import { Button, Card, Input } from '@alifd/next';
 import * as React from 'react';
 import Icon from 'share/components/icon';
-import rules from 'share/core/rules';
-import { isTableName, t, TABLE_NAMES } from 'share/core/utils';
-import { ImportRule, TinyRule } from 'share/core/var';
+import { t } from 'share/core/utils';
 import ImportDrawer from './importDrawer';
 import './index.less';
 

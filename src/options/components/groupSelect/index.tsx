@@ -1,4 +1,4 @@
-import { Dialog, Input, Select, Message } from '@alifd/next';
+import { Dialog, Input, Select } from '@alifd/next';
 import * as React from 'react';
 import emit from 'share/core/emit';
 import { t } from 'share/core/utils';
