@@ -73,6 +73,7 @@
     "eslint-plugin-standard": "^4.0.0",
     "husky": "^3.1.0",
     "lint-staged": "^9.5.0",
+    "node-fetch": "^2.6.0",
     "node-rsa": "^1.0.1",
     "prettier": "^1.19.1",
     "publish-release": "^1.6.0",
@@ -82,8 +83,7 @@
     "tslint-plugin-prettier": "^2.0.1",
     "tslint-react": "^4.1.0",
     "typescript": "^3.7.3",
-    "webpack-chrome-extension-reloader": "^0.8.3",
-    "webpack-shell-plugin": "^0.5.0"
+    "webpack-chrome-extension-reloader": "^0.8.3"
   },
   "lint-staged": {
     "./src/**/*.{ts,tsx}": [

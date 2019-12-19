@@ -8,6 +8,7 @@ const entry = [
 ]
 
 module.exports = function(root, config) {
+  // entry相关的html
   if (config.plugins && Array.isArray(config.plugins)) {
     let hasHtml = false;
     for (const k in config.plugins) {
@@ -31,6 +32,7 @@ module.exports = function(root, config) {
       });
     }
   }
+  // entry
   if (config.entry) {
     config.entry = {};
     entry.forEach(it => config.entry[it.name] = path.resolve(root, 'src', it.name, 'entry.ts'));
