@@ -53,7 +53,8 @@ module.exports = function(root, config) {
           if (!fs.existsSync(localPath)) {
             if (typeof(fontDownloadCache[fullUrl]) === "undefined") {
               fetch(fullUrl)
-                .then(res => res.text())
+                .then(res => res.arrayBuffer())
+                .then(res => Buffer.from(res))
                 .then(res => {
                   fontDownloadCache[fullUrl] = res;
                   fs.writeFileSync(localPath, res);
