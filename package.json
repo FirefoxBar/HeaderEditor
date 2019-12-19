@@ -47,8 +47,10 @@
     "fast-deep-equal": "^2.0.1",
     "merge": "^1.2.0",
     "moment": "^2.24.0",
+    "prismjs": "^1.17.1",
     "react": "^16.12.0",
     "react-dom": "^16.12.0",
+    "react-simple-code-editor": "^0.10.0",
     "text-encoding": "^0.7.0",
     "webextension-polyfill-ts": "^0.11.0"
   },
@@ -56,6 +58,7 @@
     "@nowa/solution-react-typescript": "^0.11.7",
     "@types/chrome": "^0.0.72",
     "@types/dateformat": "^3.0.1",
+    "@types/prismjs": "^1.16.0",
     "@types/react": "^16.9.16",
     "@types/react-dom": "^16.9.4",
     "@types/text-encoding": "^0.0.35",

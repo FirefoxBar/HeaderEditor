@@ -6,6 +6,7 @@ import GroupSelect from './components/groupSelect';
 import ImportAndExportSection from './components/importAndExport';
 import OptionsSection from './components/options';
 import RulesSection from './components/rules';
+import Edit from './components/rules/edit';
 import './index.less';
 
 interface OptionsState {
@@ -20,6 +21,39 @@ export default class Options extends React.Component<any, OptionsState> {
     this.state = {
       active: 'rules',
     };
+  }
+
+  componentDidMount() {
+    /*
+		// init anti-hot-link
+		const query = (() => {
+			const params = {};
+			const urlParts = location.href.split("?", 2);
+			if (urlParts.length == 1) {
+				return params;
+			}
+			urlParts[1].split("&").forEach(keyValue => {
+				const splitKeyValue = keyValue.split("=", 2);
+				params[decodeURIComponent(splitKeyValue[0])] = decodeURIComponent(splitKeyValue[1]);
+			});
+			return params;
+    })();
+    
+		if (query.action && query.action === "add-anti-hot-link") {
+			this.edit.id = -1;
+			this.edit.name = "";
+			this.edit.ruleType = 'modifySendHeader';
+			this.edit.ruleTypeEditable = true;
+			this.edit.matchType = 'domain';
+			this.edit.matchRule = utils.getDomain(query.url);
+			this.edit.headerName = "referer";
+			this.edit.headerValue = "";
+			this.edit.execType = 0;
+			this.edit.group = utils.t('ungrouped');
+			this.editTitle = utils.t('add');
+			this.isShowEdit = true;
+		}
+    */
   }
 
   handleSwitch(selectedKeys: string[]) {
@@ -60,6 +94,7 @@ export default class Options extends React.Component<any, OptionsState> {
           <ImportAndExportSection visible={this.state.active === 'export_and_import'} />
         </main>
         <GroupSelect />
+        <Edit visible={true} onClose={() => {}} />
       </div>
     );
   }

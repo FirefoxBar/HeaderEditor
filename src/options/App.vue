@@ -155,91 +155,6 @@
 			</md-toolbar>
 			<div class="md-layout md-gutter">
 				<div class="md-layout-item md-size-70 md-small-size-100">
-					<md-card>
-						<md-card-header>
-							<md-card-header-text>
-								<div class="md-title">{{editTitle}}</div>
-							</md-card-header-text>
-						</md-card-header>
-						<md-card-content>
-							<md-field>
-								<label for="rule-name">{{t('name')}}</label>
-								<md-input id="rule-name" v-model="edit.name" />
-							</md-field>
-							<div class="form-group">
-								<div class="left">{{t('ruleType')}}</div>
-								<div class="right">
-									<md-radio class="md-primary" v-model="edit.ruleType" value="cancel" :disabled="!edit.ruleTypeEditable">{{t('rule_cancel')}}</md-radio>
-									<md-radio class="md-primary" v-model="edit.ruleType" value="redirect" :disabled="!edit.ruleTypeEditable">{{t('rule_redirect')}}</md-radio>
-									<md-radio class="md-primary" v-model="edit.ruleType" value="modifySendHeader"	:disabled="!edit.ruleTypeEditable">{{t('rule_modifySendHeader')}}</md-radio>
-									<md-radio class="md-primary" v-model="edit.ruleType" value="modifyReceiveHeader"	:disabled="!edit.ruleTypeEditable">{{t('rule_modifyReceiveHeader')}}</md-radio>
-									<md-radio class="md-primary" v-model="edit.ruleType" value="modifyReceiveBody"	:disabled="!edit.ruleTypeEditable || !isSupportStreamFilter">{{t('rule_modifyReceiveBody')}}</md-radio>
-								</div>
-							</div>
-							<div class="form-group">
-								<div class="left">{{t('matchType')}}</div>
-								<div class="right">
-									<md-radio class="md-primary" v-model="edit.matchType" value="all">{{t('match_all')}}</md-radio>
-									<md-radio class="md-primary" v-model="edit.matchType" value="regexp">{{t('match_regexp')}}</md-radio>
-									<md-radio class="md-primary" v-model="edit.matchType" value="prefix">{{t('match_prefix')}}</md-radio>
-									<md-radio class="md-primary" v-model="edit.matchType" value="domain">{{t('match_domain')}}</md-radio>
-									<md-radio class="md-primary" v-model="edit.matchType" value="url">{{t('match_url')}}</md-radio>
-								</div>
-							</div>
-							<!-- Rule match rule -->
-							<md-field v-show="edit.matchType != 'all'">
-								<label for="rule-matchRule">{{t('matchRule')}}</label>
-								<md-input id="rule-matchRule" v-model="edit.matchRule" />
-							</md-field>
-							<!-- Rule exclude rule -->
-							<md-field v-show="edit.matchType != 'all'">
-								<label for="rule-excludeRule">{{t('excludeRule')}}</label>
-								<md-input id="rule-excludeRule" v-model="edit.excludeRule" />
-							</md-field>
-							<!-- Response body encoding -->
-							<div class="form-group" v-if="edit.ruleType === 'modifyReceiveBody'">
-								<div class="left">{{t('encoding')}}</div>
-								<div class="right">
-									<md-field>
-										<md-select id="rule-encoding" v-model="edit.encoding">
-											<md-option v-for="option of encodingsList" :key="option" :value="option">{{option}}</md-option>
-										</md-select>
-									</md-field>
-								</div>
-							</div>
-							<!-- isFunction or not -->
-							<div class="form-group">
-								<div class="left">{{t('exec_type')}}</div>
-								<div class="right">
-									<md-radio class="md-primary" v-model="edit.execType" :value="0"
-										:disabled="edit.ruleType === 'modifyReceiveBody'"
-									>{{t('exec_normal')}}</md-radio>
-									<md-radio class="md-primary" v-model="edit.execType" :value="1"
-										:disabled="edit.ruleType === 'modifyReceiveBody'"
-									>{{t('exec_function')}}</md-radio>
-								</div>
-							</div>
-							<!-- redirect to -->
-							<md-field v-show="edit.ruleType == 'redirect' && edit.execType == 0">
-								<label for="rule-redirectTo">{{t('redirectTo')}}</label>
-								<md-input id="rule-redirectTo" v-model="edit.redirectTo" />
-							</md-field>
-							<!-- header mondify -->
-							<div v-if="(edit.ruleType == 'modifySendHeader' || edit.ruleType == 'modifyReceiveHeader') && edit.execType == 0">
-								<md-autocomplete v-model="edit.headerName" :md-options="edit.ruleType == 'modifySendHeader' ? commonHeader.request : commonHeader.response" :md-open-on-focus="false">
-									<label for="rule-headerName">{{t('headerName')}}</label>
-								</md-autocomplete>
-								<md-field>
-									<label for="rule-headerValue">{{t('headerValue')}}</label>
-									<md-input id="rule-headerValue" v-model="edit.headerValue" />
-								</md-field>
-							</div>
-							<md-field v-show="edit.execType == 1">
-								<label for="rule-code">{{t('code')}}</label>
-								<md-textarea id="rule-code" v-model="edit.code"></md-textarea>
-							</md-field>
-						</md-card-content>
-					</md-card>
 				</div>
 				<div class="md-layout-item md-size-30 md-small-size-100 edit-right">
 					<md-card>
@@ -550,29 +465,6 @@ export default {
 			utils.TABLE_NAMES.forEach(t => requestRules(t));
 		},
 		// Show add page
-		showAddPage() {
-			this.editTitle = utils.t('add');
-			this.isShowEdit = true;
-		},
-		closeEditPage() {
-			this.isShowEdit = false;
-			this.edit.id = -1;
-			this.edit.name = "";
-			this.edit.ruleType = "cancel";
-			this.edit.ruleTypeEditable = true;
-			this.edit.matchType = "all";
-			this.edit.matchRule = "";
-			this.edit.excludeRule = "";
-			this.edit.encoding = encodingsList[0];
-			this.edit.redirectTo = "";
-			this.edit.headerName = "";
-			this.edit.headerValue = "";
-			this.edit.execType = 0;
-			this.edit.code = "";
-			this.edit.test = "";
-			this.edit.oldGroup = "";
-			this.edit.group = utils.t('ungrouped');
-		},
 		saveRule() {
 			if (!utils.IS_SUPPORT_STREAM_FILTER && this.edit.ruleType === 'modifyReceiveBody'){
 				return;
@@ -663,28 +555,6 @@ export default {
 				this.showToast(utils.t('saved'));
 				this.closeEditPage();
 			});
-		},
-		onEditRule(rule) {
-			if (!utils.IS_SUPPORT_STREAM_FILTER && rule.ruleType === 'modifyReceiveBody'){
-				return;
-			}
-			this.edit.id = rule.id;
-			this.edit.name = rule.name;
-			this.edit.ruleType = rule.ruleType;
-			this.edit.ruleTypeEditable = false;
-			this.edit.matchType = rule.matchType;
-			this.edit.matchRule = rule.pattern;
-			this.edit.excludeRule = rule.exclude;
-			this.edit.encoding = rule.encoding || "UTF-8";
-			this.edit.redirectTo = rule.to || "";
-			this.edit.headerName = (rule.action && rule.action.name) ? rule.action.name : "";
-			this.edit.headerValue = (rule.action && rule.action.value) ? rule.action.value : "";
-			this.edit.execType = rule.isFunction ? 1 : 0;
-			this.edit.code = rule.code || "";
-			this.edit.oldGroup = rule.group;
-			this.edit.group = rule.group;
-			this.editTitle = utils.t('edit');
-			this.isShowEdit = true;
 		},
 		onCloneRule(r) {
 			const newName = window.prompt(utils.t('name'), r.name + "_clone");
@@ -963,17 +833,6 @@ export default {
 		},
 	},
 	created() {
-		// Load download history
-		storage.getLocal().get('dl_history').then(r => {
-			if (r.dl_history !== undefined) {
-				this.$set(this.download, 'log', r.dl_history);
-			}
-			this.$watch('download.log', newDl => {
-				storage.getLocal().set({
-					dl_history: newDl
-				});
-			});
-		});
 		storage.prefs.onReady().then(prefs => {
 			displayOptions.forEach(it => {
 				this.$set(this.options, it, prefs.get(it));
@@ -985,56 +844,6 @@ export default {
 				});
 			}, { deep: true });
 		});
-		// init anti-hot-link
-		const query = (() => {
-			const params = {};
-			const urlParts = location.href.split("?", 2);
-			if (urlParts.length == 1) {
-				return params;
-			}
-			urlParts[1].split("&").forEach(keyValue => {
-				const splitKeyValue = keyValue.split("=", 2);
-				params[decodeURIComponent(splitKeyValue[0])] = decodeURIComponent(splitKeyValue[1]);
-			});
-			return params;
-		})();
-		if (query.action && query.action === "add-anti-hot-link") {
-			this.edit.id = -1;
-			this.edit.name = "";
-			this.edit.ruleType = 'modifySendHeader';
-			this.edit.ruleTypeEditable = true;
-			this.edit.matchType = 'domain';
-			this.edit.matchRule = utils.getDomain(query.url);
-			this.edit.headerName = "referer";
-			this.edit.headerValue = "";
-			this.edit.execType = 0;
-			this.edit.group = utils.t('ungrouped');
-			this.editTitle = utils.t('add');
-			this.isShowEdit = true;
-		}
-	},
-	watch: {
-		isShowEdit(newVal, oldVal) {
-			if (newVal) {
-				document.body.style.overflow = "hidden";
-			} else {
-				document.body.style.overflow = "auto";
-			}
-		},
-		isBatch(newVal, oldVal) {
-			if (newVal) {
-				document.body.classList.add('batch-on');
-			} else {
-				document.body.classList.remove('batch-on');
-			}
-		},
-		'edit.ruleType' (newVal, oldVal){
-			if(newVal === 'modifyReceiveBody'){
-				this.edit.execType = 1;
-			}else if(!this.edit.code){
-				this.edit.execType = 0;
-			}
-		}
 	}
 }
 </script>

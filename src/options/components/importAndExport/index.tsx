@@ -33,7 +33,21 @@ export default class ImportAndExport extends React.Component<IEProps, IEState> {
     };
   }
 
-  componentDidMount() {}
+  componentDidMount() {
+    /*
+		// Load download history
+		storage.getLocal().get('dl_history').then(r => {
+			if (r.dl_history !== undefined) {
+				this.$set(this.download, 'log', r.dl_history);
+			}
+			this.$watch('download.log', newDl => {
+				storage.getLocal().set({
+					dl_history: newDl
+				});
+			});
+    });
+    */
+  }
 
   handleImportConfirm() {
     //
