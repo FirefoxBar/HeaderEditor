@@ -14,7 +14,7 @@ class File {
       browser.downloads.download(option).then(resolve);
     });
   }
-  load(formatToFilter: string) {
+  load(formatToFilter: string): Promise<string> {
     return new Promise(resolve => {
       const fileInput = document.createElement('input');
       fileInput.style.display = 'none';
@@ -32,7 +32,8 @@ class File {
           fReader.onloadend = event => {
             fileInput.removeEventListener('change', changeHandler);
             fileInput.remove();
-            resolve(event.target!.result);
+            const result = event.target!.result as string;
+            resolve(result || '');
           };
         }
       }

@@ -565,51 +565,6 @@ export default {
 			}
 			utils.TABLE_NAMES.forEach(t => requestRules(t));
 		},
-		showAlert(text) {
-			this.alert.text = text;
-			this.alert.show = true;
-		},
-		showToast(text) {
-			this.toast.text = text;
-			this.toast.show = true;
-		},
-		onChooseCancel() {
-			this.choosenNewGroup = "";
-			this.choosenGroup = "";
-			this.isChooseGroup = false;
-		},
-		onChooseOK() {
-			this.isChooseGroup = false;
-		},
-		chooseGroup(name) {
-			const _this = this;
-			return new Promise(resolve => {
-				_this.choosenNewGroup = "";
-				_this.choosenGroup = name ? name : utils.t('ungrouped');
-				_this.isChooseGroup = true;
-				let _t = setInterval(() => {
-					if (_this.isChooseGroup === false) {
-						clearInterval(_t);
-						_t = null;
-						if (_this.choosenGroup === '_new') {
-							if (_this.choosenNewGroup === "") {
-								resolve(null);
-							}
-							if (typeof(_this.group[_this.choosenNewGroup]) === "undefined") {
-								_this.$set(_this.group, _this.choosenNewGroup, {
-									name: _this.choosenNewGroup,
-									collapse: storage.prefs.get('manage-collapse-group'),
-									rule: {}
-								});
-							}
-							resolve(_this.choosenNewGroup);
-						} else {
-							resolve(_this.choosenGroup === "" ? null : _this.choosenGroup);
-						}
-					}
-				}, 100);
-			});
-		},
 		// Show add page
 		showAddPage() {
 			this.editTitle = utils.t('add');
@@ -869,25 +824,6 @@ export default {
 			);
 		},
 		onImport() {
-			file.load('.json').then(content => {
-				this.showImportConfirm(content);
-			});
-		},
-		onImportRuleChooseGroup(rule) {
-			this.chooseGroup(rule.group)
-			.then(r => {
-				if (r !== null) {
-					rule.group = r;
-				}
-			});
-		},
-		onImportChooseGroup() {
-			this.chooseGroup(this.imports.group_name)
-			.then(r => {
-				if (r !== null) {
-					this.imports.group_name = r;
-				}
-			});
 		},
 		onImportSave() {
 			this.imports.status = 1;

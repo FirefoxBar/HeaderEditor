@@ -45,9 +45,9 @@ export function trimNewLines(s: string) {
 
 interface FetchUrlParam {
   post?: any;
-  query: any;
+  query?: any;
   url: string;
-  header: { [key: string]: string };
+  header?: { [key: string]: string };
 }
 export function fetchUrl(param: FetchUrlParam): Promise<string> {
   return new Promise((resolve, reject) => {
