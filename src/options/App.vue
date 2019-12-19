@@ -323,22 +323,6 @@
 				</md-card-actions>
 			</md-card>
 		</div>
-		<md-dialog :md-active.sync="cloud.show" class="cloud-dialog" :md-fullscreen="false">
-			<md-dialog-title>{{t('cloud_backup')}}</md-dialog-title>
-			<md-dialog-content>
-				<p v-if="cloud.has">{{t("cloud_backup_at", cloudDate)}}</p>
-				<p v-else>{{t("cloud_no_backup")}}</p>
-				<p>
-					<md-button class="with-icon" @click="cloudUpload"><md-icon class="iconfont icon-cloud-upload"></md-icon>{{t("upload")}}</md-button>
-					<md-button class="with-icon" @click="cloudDownload"><md-icon class="iconfont icon-cloud-download" :disabled="!cloud.has"></md-icon>{{t("download")}}</md-button>
-					<md-button class="with-icon" @click="cloudRemove"><md-icon class="iconfont icon-delete" :disabled="!cloud.has"></md-icon>{{t('delete')}}</md-button>
-				</p>
-			</md-dialog-content>
-			<md-dialog-actions>
-				<md-button @click="onOpenCloudHelp" class="md-primary with-icon"><md-icon class="iconfont icon-open-in-new"></md-icon>{{t('help')}}</md-button>
-				<md-button class="md-primary" @click="cloud.show = false">Close</md-button>
-			</md-dialog-actions>
-		</md-dialog>
 		<md-dialog :md-active.sync="isChooseGroup" class="group-dialog" :md-fullscreen="false">
 			<md-dialog-title>{{t('group')}}</md-dialog-title>
 			<md-dialog-content>
@@ -823,102 +807,6 @@ export default {
 				utils.getExportName(name)
 			);
 		},
-		onImport() {
-		},
-		onImportSave() {
-			this.imports.status = 1;
-			const queue = [];
-			this.imports.list.forEach(e => {
-				//不导入
-				if (e.import_action == 3) {
-					return;
-				}
-				if (e.import_action == 2) {
-					e.id = e.import_old_id;
-				} else {
-					delete e["id"];
-				}
-				delete e["import_action"];
-				delete e["import_old_id"];
-				const tableName = utils.getTableName(e.ruleType);
-				e.group = this.imports.group_type === 0 ? this.imports.group_name : e.group;
-				if (typeof(e.enable) === "undefined") {
-					e.enable = true;
-				}
-				queue.push(rules.save(tableName, e));
-			});
-			Promise.all(queue)
-			.then(() => browser.runtime.sendMessage({"method": "updateCache", "type": 'all'}))
-			.then(() => {
-				this.imports.status = 0;
-				this.showToast(utils.t('import_success'));
-				const t = setTimeout(() => {
-					this.loadRules();
-					clearTimeout(t);
-				}, 300);
-			});
-		},
-		showImportConfirm(content) {
-			this.imports.status = 1;
-			this.imports.group_name = utils.t('ungrouped');
-			try {
-				this.imports.list = [];
-				const list = typeof content === "string" ? rules.fromJson(content) : content;
-				utils.TABLE_NAMES.forEach(tableName => {
-					if (!list[tableName]) {
-						return;
-					}
-					list[tableName].forEach(e => {
-						if (!e.group) {
-							e.group = utils.t('ungrouped');
-						}
-						e.id = Math.random();
-						const rule = rules.get(tableName, { "name": e.name });
-						e.import_action = 1;
-						if (rule.length) {
-							e.import_action = 2;
-							e.import_old_id = rule[0].id;
-						}
-						this.imports.list.push(e);
-					});
-				});
-			} catch (e) {
-				console.log(e);
-				this.imports.status = 0;
-				return;
-			}
-			this.imports.status = 2;
-		},
-		onDownloadClick() {
-			this.imports.status = 1;
-			if (!this.download.log.includes(this.download.url)) {
-				this.download.log.push(this.download.url);
-			}
-			utils.fetchUrl({
-				url: this.download.url
-			})
-			.then(r => {
-				this.showImportConfirm(r);
-				this.download.url = "";
-			})
-			.catch(e => {
-				this.showToast(e.message);
-				this.imports.status = 0;
-			});
-		},
-		onDownloadLogClick(url) {
-			this.imports.status = 1;
-			utils.fetchUrl({
-				url: url
-			})
-			.then(r => {
-				this.showImportConfirm(r);
-			})
-			.catch(e => {
-				this.showToast(e.message);
-				this.imports.status = 0;
-			});
-		},
 		onDragStart(e, r) {
 			const isTouch = typeof(TouchEvent) !== "undefined" && e instanceof TouchEvent;
 			const box = (el => {
@@ -978,12 +866,6 @@ export default {
 				if (!end) requestAnimationFrame(setNewOffset);
 			}
 			setNewOffset();
-		},
-		onOpenHelp() {
-			browser.runtime.sendMessage({
-				method: "openURL",
-				url: utils.t('url_help')
-			});
 		},
 		onBatchEnter() {
 			this.isBatch = !this.isBatch;
@@ -1079,48 +961,6 @@ export default {
 			this.batch.forEach(e => this.onRemoveRule(e, true));
 			this.batch = [];
 		},
-		cloudUpload() {
-			const result = {};
-			utils.TABLE_NAMES.forEach(k => {
-				result[k] = rules.get(k);
-			});
-			browserSync.save(rules.createExport(result)).then(e => {
-				browserSync.getMeta().then(r => {
-					if (r && r.time) {
-						this.cloud.time = r.time;
-						this.cloud.has = true;
-					}
-				});
-			})
-			.catch(e => {
-				alert(utils.t("cloud_over_limit"));
-			})
-		},
-		cloudDownload() {
-			this.imports.status = 1;
-			this.cloud.show = false;
-			browserSync.getContent().then(r => {
-				this.showImportConfirm(r)
-			});
-		},
-		cloudRemove() {
-			browserSync.clear().then(() => {
-				this.cloud.has = false;
-				this.cloud.time = null;
-			})
-		},
-		onOpenCloudHelp() {
-			browser.runtime.sendMessage({
-				method: "openURL",
-				url: utils.t('url_cloud_backup')
-			});
-		},
-		onOpenThirdParty() {
-			browser.runtime.sendMessage({
-				method: "openURL",
-				url: utils.t('url_third_party_rules')
-			});
-		}
 	},
 	created() {
 		// Load download history
@@ -1133,12 +973,6 @@ export default {
 					dl_history: newDl
 				});
 			});
-		});
-		browserSync.getMeta().then(r => {
-			if (r && r.time) {
-				this.cloud.time = r.time;
-				this.cloud.has = true;
-			}
 		});
 		storage.prefs.onReady().then(prefs => {
 			displayOptions.forEach(it => {

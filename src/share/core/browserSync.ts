@@ -8,6 +8,11 @@ function getTotalCount(rules: { [key: string]: Rule[] }) {
   return count;
 }
 
+interface SyncMeta {
+  time: number;
+  index: number;
+}
+
 class BrowserSync {
   save(rules: { [key: string]: Rule[] }) {
     return new Promise((resolve, reject) => {
@@ -62,7 +67,7 @@ class BrowserSync {
       }
     });
   }
-  getMeta() {
+  getMeta(): Promise<SyncMeta> {
     return new Promise((resolve, reject) => {
       getSync()
         .get('backup')
@@ -72,7 +77,7 @@ class BrowserSync {
         .catch(reject);
     });
   }
-  getContent() {
+  getContent(): Promise<{ [key: string]: Rule[] }> {
     return new Promise((resolve, reject) => {
       getSync()
         .get('backup')
@@ -94,7 +99,6 @@ class BrowserSync {
                   result[it] = result[it].concat(res[name][it]);
                 });
               });
-              console.log(result);
               resolve(result);
             });
         })

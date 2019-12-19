@@ -180,7 +180,7 @@ function remove(tableName: TABLE_NAMES_TYPE, id: number) {
   });
 }
 
-function get(type: TABLE_NAMES_TYPE, options: FilterOptions) {
+function get(type: TABLE_NAMES_TYPE, options?: FilterOptions) {
   // When browser is starting up, pass all requests
   const all = cache[type];
   if (!all) {

@@ -2,7 +2,10 @@ import { Button, Card, Input, Message } from '@alifd/next';
 import * as React from 'react';
 import Icon from 'share/components/icon';
 import file from 'share/core/file';
-import { fetchUrl, t } from 'share/core/utils';
+import rules from 'share/core/rules';
+import { fetchUrl, getExportName, isTableName, t, TABLE_NAMES } from 'share/core/utils';
+import { Rule } from 'share/core/var';
+import Cloud from './cloud';
 import ImportDrawer from './importDrawer';
 import './index.less';
 
@@ -12,6 +15,7 @@ interface IEProps {
 
 interface IEState {
   downloadUrl: string;
+  showCloud: boolean;
 }
 
 export default class ImportAndExport extends React.Component<IEProps, IEState> {
@@ -21,9 +25,11 @@ export default class ImportAndExport extends React.Component<IEProps, IEState> {
 
     this.handleImport = this.handleImport.bind(this);
     this.handleDownload = this.handleDownload.bind(this);
+    this.handleCloudImport = this.handleCloudImport.bind(this);
 
     this.state = {
       downloadUrl: '',
+      showCloud: false,
     };
   }
 
@@ -61,12 +67,26 @@ export default class ImportAndExport extends React.Component<IEProps, IEState> {
     });
   }
 
+  handleCloudImport(res: { [key: string]: Rule[] }) {
+    try {
+      this.importRef.current!.show(res);
+    } catch (e) {
+      Message.error(e.message);
+    }
+  }
+
+  handleExport() {
+    const result: any = {};
+    TABLE_NAMES.forEach(k => isTableName(k) && (result[k] = rules.get(k)));
+    file.save(JSON.stringify(rules.createExport(result), null, '\t'), getExportName(name));
+  }
+
   render() {
     return (
       <section className={`section-ie ${this.props.visible ? 'visible' : 'in-visible'}`}>
         <Card showTitleBullet={false} contentHeight="auto" title={t('export_and_import')}>
           <div className="buttons">
-            <Button type="secondary">
+            <Button type="secondary" onClick={this.handleExport}>
               <Icon type="save" />
               {t('export')}
             </Button>
@@ -74,7 +94,7 @@ export default class ImportAndExport extends React.Component<IEProps, IEState> {
               <Icon type="folder-open" />
               {t('import')}
             </Button>
-            <Button type="secondary">
+            <Button type="secondary" onClick={() => this.setState({ showCloud: true })}>
               <Icon type="cloud" />
               {t('cloud_backup')}
             </Button>
@@ -101,6 +121,11 @@ export default class ImportAndExport extends React.Component<IEProps, IEState> {
           </Input.Group>
         </Card>
         <ImportDrawer ref={this.importRef} />
+        <Cloud
+          visible={this.state.showCloud}
+          onClose={() => this.setState({ showCloud: false })}
+          onImport={this.handleCloudImport}
+        />
       </section>
     );
   }
