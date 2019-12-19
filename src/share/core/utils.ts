@@ -21,6 +21,9 @@ export const IS_SUPPORT_STREAM_FILTER = typeof browser.webRequest.filterResponse
 
 export const TABLE_NAMES = ['request', 'sendHeader', 'receiveHeader', 'receiveBody'];
 export type TABLE_NAMES_TYPE = 'request' | 'sendHeader' | 'receiveHeader' | 'receiveBody';
+export function isTableName(obj: any): obj is TABLE_NAMES_TYPE {
+  return obj && TABLE_NAMES.includes(obj);
+}
 export type RULE_TYPE = 'cancel' | 'redirect' | 'modifySendHeader' | 'modifyReceiveHeader' | 'modifyReceiveBody';
 
 export function getExportName(additional?: string) {
@@ -94,7 +97,7 @@ export function fetchUrl(param: FetchUrlParam): Promise<string> {
   });
 }
 
-export function getTableName(ruleType: RULE_TYPE) {
+export function getTableName(ruleType: RULE_TYPE): TABLE_NAMES_TYPE | null {
   if (ruleType === 'cancel' || ruleType === 'redirect') {
     return 'request';
   }
@@ -107,7 +110,7 @@ export function getTableName(ruleType: RULE_TYPE) {
   if (ruleType === 'modifyReceiveBody') {
     return 'receiveBody';
   }
-  return '';
+  return null;
 }
 
 export function upgradeRuleFormat(s: any) {

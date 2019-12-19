@@ -1,13 +1,22 @@
-export interface Rule {
+export interface TinyRule {
   [key: string]: any;
   enable: boolean;
-  id: number;
   name: string;
   matchType: 'all' | 'regexp' | 'prefix' | 'domain' | 'url';
   pattern: string;
   isFunction: boolean;
   code: string;
   exclude: string;
+  group: string;
+}
+
+export interface Rule extends TinyRule {
+  id: number;
+}
+
+export interface ImportRule extends Rule {
+  importAction: number;
+  importOldId: number;
 }
 
 export interface InitedRule extends Rule {

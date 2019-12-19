@@ -1,9 +1,11 @@
-import { Button, Card, Input, Dialog, Table } from '@alifd/next';
+import { Button, Card, Drawer, Input, Select, Table } from '@alifd/next';
 import * as React from 'react';
 import Icon from 'share/components/icon';
-import { t } from 'share/core/utils';
+import rules from 'share/core/rules';
+import { isTableName, t, TABLE_NAMES } from 'share/core/utils';
+import { ImportRule, TinyRule } from 'share/core/var';
+import ImportDrawer from './importDrawer';
 import './index.less';
-import EventEmitter from 'share/core/emit';
 
 interface IEProps {
   visible: boolean;
@@ -11,21 +13,22 @@ interface IEProps {
 
 interface IEState {
   downloadUrl: string;
-  showConfirm: boolean;
-  import: any;
 }
 
 export default class ImportAndExport extends React.Component<IEProps, IEState> {
+  private importRef: React.RefObject<ImportDrawer> = React.createRef();
   constructor(props: any) {
     super(props);
     this.state = {
       downloadUrl: '',
-      showConfirm: false,
-      import: [],
     };
   }
 
-  componentDidMount() {}
+  componentDidMount() {
+    // if (this.importRef.current) {
+    //   this.importRef.current.show()
+    // }
+  }
 
   handleImportConfirm() {
     //
@@ -70,19 +73,7 @@ export default class ImportAndExport extends React.Component<IEProps, IEState> {
             <Input value={this.state.downloadUrl} style={{ width: '100%' }} />
           </Input.Group>
         </Card>
-        <Dialog
-          title={t('import')}
-          visible={this.state.showConfirm}
-          onOk={this.handleImportConfirm}
-          onCancel={this.handleImportCancel}
-          onClose={this.handleImportCancel}
-        >
-          <Table dataSource={this.state.import}>
-            <Table.Column title={t('name')} dataIndex="name" />
-            <Table.Column title={t('ruleType')} dataIndex="ruleType" cell={(value: string) => t(`rule_${value}`)} />
-            <Table.Column title={t('suggested_group')} dataIndex="group" cell={(value: string) => <span />} />
-          </Table>
-        </Dialog>
+        <ImportDrawer ref={this.importRef} />
       </section>
     );
   }

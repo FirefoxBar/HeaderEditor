@@ -33,7 +33,10 @@ export default class Popup extends React.Component<any, PopupState> {
   }
 
   handleOpen() {
-    browser.runtime.sendMessage({ method: 'openURL', url: browser.extension.getURL('options/options.html') });
+    browser.runtime.sendMessage({
+      method: 'openURL',
+      url: browser.extension.getURL('options.html'),
+    });
     window.close();
   }
 

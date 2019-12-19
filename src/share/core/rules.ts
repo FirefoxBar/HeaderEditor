@@ -123,8 +123,7 @@ function filter(fromRules: InitedRule[], options: FilterOptions) {
   return rules;
 }
 
-function save(tableName: TABLE_NAMES_TYPE, o: InitedRule) {
-  // delete o["_v_key"];
+function save(tableName: TABLE_NAMES_TYPE, o: Rule) {
   delete o._func;
   delete o._reg;
   return new Promise(resolve => {

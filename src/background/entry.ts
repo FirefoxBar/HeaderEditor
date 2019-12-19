@@ -72,9 +72,9 @@ function openURL(options: OpenURLOptions) {
               url.indexOf('about:home') === 0 ||
               url.indexOf('chrome://newtab/') === 0;
             if (isNewTab) {
-              browser.tabs.create(options).then(resolve);
-            } else {
               browser.tabs.update(tab.id, options).then(resolve);
+            } else {
+              browser.tabs.create(options).then(resolve);
             }
           });
         }

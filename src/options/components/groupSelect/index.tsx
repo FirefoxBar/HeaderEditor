@@ -1,4 +1,4 @@
-import { Dialog, Input, Select } from '@alifd/next';
+import { Dialog, Input, Select, Message } from '@alifd/next';
 import * as React from 'react';
 import emit from 'share/core/emit';
 import { t } from 'share/core/utils';
@@ -70,6 +70,11 @@ export default class GroupSelect extends React.Component<any, GroupSelectState> 
 
   handleSubmit() {
     if (this.state.selected === this.newValue) {
+      // 新建不能是空的，如果是的话，就视为取消了
+      if (this.state.newName === '') {
+        this.handleCancel();
+        return;
+      }
       const groups = Array.from(this.state.group);
       if (!groups.includes(this.state.newName)) {
         groups.push(this.state.newName);
@@ -91,11 +96,10 @@ export default class GroupSelect extends React.Component<any, GroupSelectState> 
   }
 
   render() {
-    console.log(this.state.group);
     return (
       <Dialog
         className="group-select-dialog"
-        title={t('import')}
+        title={t('group')}
         visible={this.state.show}
         onOk={this.handleSubmit}
         onCancel={this.handleCancel}
