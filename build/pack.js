@@ -1,4 +1,4 @@
-const package = require('../package.json');
+const config = require('./extension-config').config;
 const arg = require('arg');
 const path = require('path');
 const check = require('./pack-utils/pack-check');
@@ -20,7 +20,7 @@ const isAuto = args["--platform"] ? false : true;
 
 if (isAuto) {
 	function XPI() {
-		if (package.webextension.autobuild.xpi) {
+		if (config.autobuild.xpi) {
 			console.log("Building XPI");
 			return buildXpi(manifest, output);
 		} else {
@@ -28,7 +28,7 @@ if (isAuto) {
 		}
 	}
 	function AMO() {
-		if (package.webextension.autobuild.amo) {
+		if (config.autobuild.amo) {
 			console.log("Building AMO");
 			return buildAmo(manifest);
 		} else {
@@ -36,7 +36,7 @@ if (isAuto) {
 		}
 	}
 	function CWS() {
-		if (package.webextension.autobuild.cwx) {
+		if (config.autobuild.cwx) {
 			console.log("Building Chrome Web Store");
 			return buildCws();
 		} else {
@@ -44,7 +44,7 @@ if (isAuto) {
 		}
 	}
 	function CRX() {
-		if (package.webextension.autobuild.crx) {
+		if (config.autobuild.crx) {
 			console.log("Building CRX");
 			return buildCrx(manifest, output);
 		} else {

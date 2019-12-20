@@ -1,6 +1,6 @@
 const fs = require('fs');
 const merge = require('merge');
-const common = require('./common');
+const common = require('../extension-config');
 const signAddon = require('sign-addon').default;
 const exec = require('child_process').exec;
 

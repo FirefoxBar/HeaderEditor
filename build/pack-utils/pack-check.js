@@ -1,5 +1,5 @@
 const fs = require('fs');
-const common = require('./common');
+const common = require('../extension-config');
 const dist = common.resolve(common.root, 'dist');
 
 function rmdir(path, include_self) {
