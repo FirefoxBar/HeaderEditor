@@ -1,5 +1,5 @@
 const path = require('path');
-const root = path.resolve(__dirname, '..', '..');
+const root = path.resolve(__dirname, '..');
 const pack = path.resolve(root, 'dist-pack');
 const dist = path.resolve(pack, 'copy-dist');
 const encrypt = path.resolve(root, 'encrypt');
