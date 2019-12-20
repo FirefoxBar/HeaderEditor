@@ -1,81 +1,106 @@
-const config = require('./extension-config').config;
-const arg = require('arg');
+/**
+ * 进行多渠道打包
+ * 
+ * dist：原本的输出文件夹
+ * dist-pack：用于打包的文件夹
+ * dist-pack/{platform}：各个平台的文件夹
+ * dist-pack/{platform}.zip：各个平台的打包文件
+ * dist-pack/*：其他平台打包输出结果
+ * 在这里，打包文件夹统一命名为pack
+ */
+const fs = reqiore('fs');
 const path = require('path');
-const check = require('./pack-utils/pack-check');
-const buildXpi = require('./pack-utils/xpi');
-const buildAmo = require('./pack-utils/amo');
-const buildCws = require('./pack-utils/cws');
-const buildCrx = require('./pack-utils/crx');
-
-const args = arg({
-    '--platform': String
-});
-
-check();
-const dist = path.resolve(__dirname, "..", 'dist');
-const manifest = require(path.resolve(dist, 'manifest.json'));
-const output = path.resolve(__dirname, '..', 'dist-pack');
-
-const isAuto = args["--platform"] ? false : true;
-
-if (isAuto) {
-	function XPI() {
-		if (config.autobuild.xpi) {
-			console.log("Building XPI");
-			return buildXpi(manifest, output);
-		} else {
-			return Promise.resolve();
-		}
-	}
-	function AMO() {
-		if (config.autobuild.amo) {
-			console.log("Building AMO");
-			return buildAmo(manifest);
-		} else {
-			return Promise.resolve();
-		}
-	}
-	function CWS() {
-		if (config.autobuild.cwx) {
-			console.log("Building Chrome Web Store");
-			return buildCws();
-		} else {
-			return Promise.resolve();
-		}
-	}
-	function CRX() {
-		if (config.autobuild.crx) {
-			console.log("Building CRX");
-			return buildCrx(manifest, output);
-		} else {
-			return Promise.resolve();
-		}
-	}
-	XPI()
-	.then(console.log).catch(console.log)
-	.then(() => AMO())
-	.then(console.log).catch(console.log)
-	.then(() => CWS())
-	.then(console.log).catch(console.log)
-	.then(() => CRX())
-	.then(console.log).catch(console.log);
-} else {
-	switch (args["--platform"]) {
-		case 'xpi':
-			console.log("Building XPI");
-			buildXpi(manifest, output).then(r => console.log(r));
-			break;
-		case 'amo':
-			console.log("Building AMO");
-			buildAmo(manifest).then(r => console.log(r));
-			break;
-		case 'cws':
-			console.log("Building CWS");
-			buildCws().then(r => console.log(r));
-			break;
-		case 'crx':
-			console.log("Building CRX");
-			buildCrx(manifest, output).then(r => console.log(r));
-			break;
-	}
+const config = require('./extension-config').config;
+const processExec = require('child_process').exec;
+const packUtils = {
+  xpi: require('./pack-utils/xpi'),
+  amo: require('./pack-utils/amo'),
+  cws: require('./pack-utils/cws'),
+  crx: require('./pack-utils/crx')
 }
+
+const root = path.resolve(__dirname, "..");
+const dist = path.resolve(root, 'dist');
+const pack = path.resolve(root, 'dist-pack');
+let platform = null;
+for (const it of process.argv) {
+  if (it.startsWith('--platform=')) {
+    platform = it.substr(11);
+    break;
+  }
+}
+
+function exec(commands) {
+  return new Promise((resolve, reject) => {
+    processExec(commands, (error, stdout, stderr) => {
+      if (error) {
+        reject(error);
+      } else {
+        resolve(stdout);
+      }
+    });
+  });
+}
+
+// 检查打包目录是否存在
+const checkPermission = fs.existsSync(pack) ? exec(`cd ${root} && rm -rf ./dist-pack`) : Promise.resolve();
+
+function removeManifestKeys(manifest, name) {
+  const wantKey = '__' + name + '__';
+  try {
+    const content = JSON.parse(fs.readFileSync(manifest, { encoding: "UTF-8" }));
+    Object.keys(content).forEach(it => {
+      if (it.startsWith('__')) {
+        if (it.startsWith(wantKey)) {
+          content[it.substr(wantKey.length)] = content[it];
+        }
+        delete content[it];
+      } else if (typeof (content[it]) === "object" && !Array.isArray(content[it])) {
+        removeManifestKeys(content[it]);
+      }
+    });
+    fs.writeFileSync(manifest, JSON.stringify(content));
+  } catch (e) {
+    console.log(e);
+  }
+}
+
+function packOnePlatform(name) {
+  if (typeof (packUtils[name]) === "undefined") {
+    console.error(name.toUpperCase() + ' not found');
+    return;
+  }
+  const thisPack = path.resolve(pack, name);
+  const zipPath = path.resolve(pack, name + '.zip');
+  // 复制一份到dist下面
+  return exec(`cp -r ${dist} ${thisPack}`)
+    // 移除掉manifest中的非本平台key
+    .then(() => removeManifestKeys(path.resolve(thisPack, 'manifest.json')))
+    // 打包成zip
+    .then(() => exec(`cd ${thisPack} && zip -r ${zipPath} ./*`))
+    // 执行上传等操作
+    .then(() => packUtils[it](zipPath, pack))
+    .then(res => console.log(`${name}: ${res}`))
+    .then(() => fs.unlinkSync(zipPath))
+    .catch(console.error);
+}
+
+checkPermission()
+  .then(() => {
+    if (!platform) {
+      const queue = [];
+      Object.keys(config.autobuild).forEach(it => {
+        if (config.autobuild[it]) {
+          queue.push(packOnePlatform(it));
+        } else {
+          console.log('Skip ' + it.toUpperCase());
+        }
+      });
+    } else {
+      if (typeof (packUtils[platform]) !== "undefined") {
+        packOnePlatform(it);
+      } else {
+        console.log(platform + ' not found');
+      }
+    }
+  })

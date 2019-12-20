@@ -10,11 +10,7 @@
 		"mozilla": {
 			"key": "user:12835504:478",
 			"secret": "AMO_SECRET"
-		},
-		"version": "52.0",
-		"xpi": "headereditor@addon.firefoxcn.net",
-		"amo": "headereditor-amo@addon.firefoxcn.net",
-		"update": "https://ext.firefoxcn.net/headereditor/install/update.json"
+		}
 	},
 	"chrome": {
 		"store": {
@@ -22,8 +18,7 @@
 			"token": "CWS_TOKEN",
 			"secret": "CWS_SECRET"
 		},
-		"id": "eningockdidmgiojffjmkdblpjocbhgh",
-		"update": "https://ext.firefoxcn.net/headereditor/install/update.xml"
+		"id": "eningockdidmgiojffjmkdblpjocbhgh"
 	},
 	"github": {
 		"enable": true,

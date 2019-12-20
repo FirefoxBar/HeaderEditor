@@ -33,5 +33,18 @@
 	"options_ui": {
 		"page": "options.html",
 		"open_in_tab": true
-	}
+  },
+  "__amo__applications": {
+    "gecko": {
+      "id": "headereditor-amo@addon.firefoxcn.net",
+      "strict_min_version": "52.0"
+    }
+  },
+  "__xpi__applications": {
+    "gecko": {
+      "id": "headereditor@addon.firefoxcn.net",
+      "strict_min_version": "52.0",
+      "update": "https://ext.firefoxcn.net/headereditor/install/update.json"
+    }
+  }
 }
