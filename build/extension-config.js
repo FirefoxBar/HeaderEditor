@@ -8,6 +8,7 @@ const package = require(path.resolve(root, 'package.json'));
 
 module.exports = {
 	version: package.version,
+	repository: package.repository ? package.repository.url : "",
 	config,
 	resolve: path.resolve,
 	root,

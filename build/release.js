@@ -8,7 +8,7 @@ const output = path.resolve(rootDir, 'dist-pack');
 
 const { config } = common;
 
-if (!config.github.enable) {
+if (!config.github.enable || !config.repository) {
 	console.log("GitHub not enabled");
 	process.exit(0);
 }
@@ -31,7 +31,7 @@ const assetName = config.dist.replace('{VER}', common.version);
 });
 
 // Get git names
-const gitName = package.repository.url.match(/(\w+)\/(\w+)\.git/);
+const gitName = config.repository.match(/(\w+)\/(\w+)\.git/);
 const tagName = config.github.tag.replace('{VER}', common.version);
 
 publishRelease({
