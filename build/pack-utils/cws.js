@@ -1,14 +1,65 @@
 const fs = require('fs');
+const fetch = require('node-fetch');
 const exec = require('child_process').exec;
-const webStore = require('chrome-webstore-upload');
-const common = require('./common');
-const CWSUser = require(common.encrypt('cws.json'));
-const client = webStore({
-	extensionId: common.config.chrome.id,
-	clientId: CWSUser.id,
-	clientSecret: CWSUser.secret,
-	refreshToken: CWSUser.token
-});
+const common = require('../extension-config');
+const webStoreId = common.config.chrome.store.id;
+const webStoreToken = process.env[common.config.chrome.store.token];
+const webStoreSecret = process.env[common.config.chrome.store.secret];
+
+let _webStoreToken = null;
+function getToken() {
+	if (_webStoreToken) {
+		return Promise.resolve(_webStoreToken);
+	}
+	return new Promise((resolve, reject) => {
+		fetch('https://www.googleapis.com/oauth2/v4/token', {
+			method: "POST",
+			headers: {
+				"Content-Type": 'application/x-www-form-urlencoded'
+			},
+			body: new URLSearchParams({
+					client_id: webStoreId,
+					client_secret: webStoreSecret,
+					refresh_token: webStoreToken,
+					grant_type: 'refresh_token'
+				}).toString()
+		})
+			.then(res => res.json())
+			.then(res => {
+				if (res.access_token) {
+					_webStoreToken = res.access_token;
+					resolve(_webStoreToken);
+				} else {
+					reject(res.error);
+				}
+			})
+			.catch(reject);
+	});
+}
+
+function upload(readStream, token) {
+	return fetch('https://www.googleapis.com/upload/chromewebstore/v1.1/items/' + common.config.chrome.id, {
+		method: "PUT",
+		headers: {
+			Authorization: `Bearer ${token}`,
+			'x-goog-api-version': '2'
+		},
+		body: readStream
+	})
+	.then(res => res.json());
+}
+
+function publish(target = 'default', token) {
+	const url = 'https://www.googleapis.com/chromewebstore/v1.1/items/' + common.config.chrome.id + '/publish?publishTarget=' + target;
+	return fetch(url, {
+		method: "POST",
+		headers: {
+			Authorization: `Bearer ${token}`,
+			'x-goog-api-version': '2'
+		}
+	})
+	.then(res => res.json());
+}
 
 module.exports = function() {
 	return new Promise(resolve => {
@@ -19,15 +70,16 @@ module.exports = function() {
 				resolve();
 			} else {
 				const distStream = fs.createReadStream(zipPath);
-				client.fetchToken().then(token => {
-					client.uploadExisting(distStream, token)
-						.then(() => client.publish("default", token))
+				getToken().then(token => {
+					upload(distStream, token)
+						.then(() => publish("default", token))
 						.then(() => {
 							fs.unlinkSync(zipPath);
 							resolve();
 						})
 						.catch(console.log);
-				});
+				})
+				.catch(console.log);
 			}
 		});
 	})

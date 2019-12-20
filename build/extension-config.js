@@ -3,11 +3,12 @@ const root = path.resolve(__dirname, '..', '..');
 const pack = path.resolve(root, 'dist-pack');
 const dist = path.resolve(pack, 'copy-dist');
 const encrypt = path.resolve(root, 'encrypt');
+const config = require(path.resolve(root, 'extension.json'));
 const package = require(path.resolve(root, 'package.json'));
 
 module.exports = {
 	version: package.version,
-	config: package.webextension,
+	config,
 	resolve: path.resolve,
 	root,
 	pack,

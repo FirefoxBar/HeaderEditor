@@ -17,29 +17,6 @@
     "pack": "node ./build/pack.js",
     "precommit": "lint-staged"
   },
-  "webextension": {
-    "dist": "HeaderEditor-{VER}",
-    "autobuild": {
-      "xpi": false,
-      "amo": false,
-      "cwx": true,
-      "crx": false
-    },
-    "firefox": {
-      "version": "52.0",
-      "xpi": "headereditor@addon.firefoxcn.net",
-      "amo": "headereditor-amo@addon.firefoxcn.net",
-      "update": "https://ext.firefoxcn.net/headereditor/install/update.json"
-    },
-    "chrome": {
-      "id": "eningockdidmgiojffjmkdblpjocbhgh",
-      "update": "https://ext.firefoxcn.net/headereditor/install/update.xml"
-    },
-    "github": {
-      "enable": true,
-      "tag": "{VER}"
-    }
-  },
   "dependencies": {
     "@alifd/next": "^1.18.17",
     "eventemitter3": "^4.0.0",
