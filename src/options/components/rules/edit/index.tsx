@@ -55,7 +55,7 @@ export default class Edit extends React.Component<EditProps, EditState> {
     return !!this.props.rule;
   }
 
-  handleChange(data: any, item: any) {
+  handleChange(_: any, item: any) {
     const rule = {
       ...this.state.rule,
       [item.name]: item.value,
@@ -66,6 +66,14 @@ export default class Edit extends React.Component<EditProps, EditState> {
     this.setState({
       rule,
     });
+  }
+
+  componentDidUpdate(prevProps: EditProps) {
+    if (this.props.rule !== prevProps.rule) {
+      this.setState({
+        rule: { ...(this.props.rule ? this.props.rule : EMPTY_RULE) },
+      });
+    }
   }
 
   render() {
