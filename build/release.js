@@ -3,11 +3,12 @@ const path = require('path');
 const crypto = require('crypto');
 const publishRelease = require('publish-release');
 const rootDir = path.resolve(__dirname, '..');
-const package = require('../package.json');
+const common = require('./extension-config');
 const output = path.resolve(rootDir, 'dist-pack');
-const config = require('./extension-config').config;
 
-if (!package.webextension.github.enable) {
+const { config } = common;
+
+if (!config.github.enable) {
 	console.log("GitHub not enabled");
 	process.exit(0);
 }
@@ -15,7 +16,7 @@ if (!package.webextension.github.enable) {
 const assets = [];
 let content = "";
 
-const assetName = package.webextension.dist.replace('{VER}', package.version);
+const assetName = config.dist.replace('{VER}', common.version);
 
 ['crx', 'xpi'].forEach(extName => {
 	const outputPath = path.resolve(output, assetName + '.' + extName);
@@ -31,14 +32,14 @@ const assetName = package.webextension.dist.replace('{VER}', package.version);
 
 // Get git names
 const gitName = package.repository.url.match(/(\w+)\/(\w+)\.git/);
-const tagName = package.webextension.github.tag.replace('{VER}', package.version);
+const tagName = config.github.tag.replace('{VER}', common.version);
 
 publishRelease({
 	token: process.env[config.github.token],
 	owner: gitName[1],
 	repo: gitName[2],
 	tag: tagName,
-	name: package.version,
+	name: common.version,
 	notes: content,
 	draft: false,
 	prerelease: false,
