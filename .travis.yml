@@ -36,10 +36,6 @@ after_success:
   - echo $res
   - bash ./build/deploy-www.sh
 
-before_deploy:
-  - openssl aes-256-cbc -K $encrypted_1fc90f464345_key -iv $encrypted_1fc90f464345_iv -in ./build/encrypt.zip.enc -out ./encrypt.zip -d
-  - unzip encrypt.zip
-
 deploy:
   provider: script
   skip_cleanup: true
