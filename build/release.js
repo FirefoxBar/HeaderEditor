@@ -5,7 +5,7 @@ const publishRelease = require('publish-release');
 const rootDir = path.resolve(__dirname, '..');
 const package = require('../package.json');
 const output = path.resolve(rootDir, 'dist-pack');
-const GitHubUser = require(path.resolve(rootDir, 'encrypt', 'github.json'));
+const config = require('./extension-config').config;
 
 if (!package.webextension.github.enable) {
 	console.log("GitHub not enabled");
@@ -34,7 +34,7 @@ const gitName = package.repository.url.match(/(\w+)\/(\w+)\.git/);
 const tagName = package.webextension.github.tag.replace('{VER}', package.version);
 
 publishRelease({
-	token: GitHubUser.token,
+	token: process.env[config.github.token],
 	owner: gitName[1],
 	repo: gitName[2],
 	tag: tagName,

@@ -3,7 +3,6 @@ const merge = require('merge');
 const common = require('./common');
 const signAddon = require('sign-addon').default;
 const exec = require('child_process').exec;
-const AMOUser = require(common.encrypt('amo.json'));
 
 module.exports = function(manifest) {
 	return new Promise(resolve => {
@@ -25,8 +24,8 @@ module.exports = function(manifest) {
 				signAddon({
 					xpiPath: zipPath,
 					version: common.version,
-					apiKey: AMOUser.key,
-					apiSecret: AMOUser.secret,
+					apiKey: common.config.firefox.mozilla.key,
+					apiSecret: process.env[common.config.firefox.mozilla.secret],
 					id: common.config.firefox.amo
 				})
 				.then(() => {
