@@ -13,7 +13,7 @@ const copy = [
     to: "external/react-dom.min.js"
   },
   {
-    from: "./node_modules/moment/min/moment.min.js",
+    from: "./node_modules/moment/min/moment-with-locales.min.js",
     to: "external/moment.min.js"
   },
   {

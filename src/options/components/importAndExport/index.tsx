@@ -1,9 +1,10 @@
 import { Button, Card, Input, Message } from '@alifd/next';
+import { getExportName } from 'options/utils';
 import * as React from 'react';
 import Icon from 'share/components/icon';
 import file from 'share/core/file';
 import rules from 'share/core/rules';
-import { fetchUrl, getExportName, isTableName, t, TABLE_NAMES } from 'share/core/utils';
+import { fetchUrl, isTableName, t, TABLE_NAMES } from 'share/core/utils';
 import { Rule } from 'share/core/var';
 import Cloud from './cloud';
 import ImportDrawer from './importDrawer';

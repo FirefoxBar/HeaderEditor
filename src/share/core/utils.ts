@@ -1,4 +1,3 @@
-import dateFormat from 'dateformat';
 import { browser, Tabs } from 'webextension-polyfill-ts';
 
 export const IS_ANDROID = navigator.userAgent.includes('Android');
@@ -26,10 +25,6 @@ export function isTableName(obj: any): obj is TABLE_NAMES_TYPE {
 }
 export type RULE_TYPE = 'cancel' | 'redirect' | 'modifySendHeader' | 'modifyReceiveHeader' | 'modifyReceiveBody';
 
-export function getExportName(additional?: string) {
-  const date = dateFormat(new Date(), 'isoUtcDateTime').replace(/\:/g, '-');
-  return `HE_${date}${additional ? '_' + additional : ''}.json`;
-}
 // Get Active Tab
 export function getActiveTab(): Promise<Tabs.Tab> {
   return new Promise(resolve => {

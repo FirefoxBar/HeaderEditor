@@ -1,5 +1,5 @@
 import { Button, Dialog, Message, Tag } from '@alifd/next';
-import dateFormat from 'dateformat';
+import moment from 'moment';
 import * as React from 'react';
 import Icon from 'share/components/icon';
 import browserSync from 'share/core/browserSync';
@@ -109,7 +109,7 @@ export default class Cloud extends React.Component<CloudProps, CloudState> {
       >
         {this.state.has && (
           <Tag.Closeable onClose={this.handleDetele}>
-            {t('cloud_backup_at', dateFormat(new Date(this.state.time), 'yyyy-mm-dd HH:MM:ss'))}
+            {t('cloud_backup_at', moment(this.state.time).format('lll'))}
           </Tag.Closeable>
         )}
         {!this.state.has && t('cloud_no_backup')}
