@@ -1,9 +1,8 @@
 const crypto = require('crypto');
 const RSA = require("node-rsa");
 const fs = require('fs');
-const common = require('../extension-config');
-const merge = require('merge');
-const privKey = common.encrypt('crx.pem');
+const config = require('../config');
+const privKey = config.encrypt('crx.pem');
 
 function generatePublicKey(privateKey) {
   const key = new RSA(privateKey);
@@ -40,7 +39,7 @@ module.exports = function (zipPath, outputDir) {
   return new Promise((resolve, reject) => {
     createCrx(fs.readFileSync(zipPath))
       .then(content => {
-        const out = common.resolve(outputDir, common.config.dist.replace('{VER}', common.version) + '.crx');
+        const out = config.resolve(outputDir, config.extension.dist.replace('{VER}', config.version) + '.crx');
         fs.writeFileSync(out, content);
         resolve(out);
       });

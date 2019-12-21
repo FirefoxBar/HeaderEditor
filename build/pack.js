@@ -5,12 +5,12 @@
  * dist-pack：用于打包的文件夹
  * dist-pack/{platform}：各个平台的文件夹
  * dist-pack/{platform}.zip：各个平台的打包文件
- * dist-pack/*：其他平台打包输出结果
+ * dist-pack/release：其他平台打包输出结果
  * 在这里，打包文件夹统一命名为pack
  */
 const fs = reqiore('fs');
 const path = require('path');
-const config = require('./extension-config').config;
+const config = require('./config');
 const processExec = require('child_process').exec;
 const packUtils = {
   xpi: require('./pack-utils/xpi'),
@@ -19,9 +19,7 @@ const packUtils = {
   crx: require('./pack-utils/crx')
 }
 
-const root = path.resolve(__dirname, "..");
-const dist = path.resolve(root, 'dist');
-const pack = path.resolve(root, 'dist-pack');
+const { extension } = config;
 let platform = null;
 for (const it of process.argv) {
   if (it.startsWith('--platform=')) {
@@ -43,7 +41,7 @@ function exec(commands) {
 }
 
 // 检查打包目录是否存在
-const checkPermission = fs.existsSync(pack) ? exec(`cd ${root} && rm -rf ./dist-pack`) : Promise.resolve();
+const checkPermission = fs.existsSync(config.path.pack) ? exec(`cd ${config.path.root} && rm -rf ./dist-pack`) : Promise.resolve();
 
 function removeManifestKeys(manifest, name) {
   const wantKey = '__' + name + '__';
@@ -70,27 +68,29 @@ function packOnePlatform(name) {
     console.error(name.toUpperCase() + ' not found');
     return;
   }
-  const thisPack = path.resolve(pack, name);
-  const zipPath = path.resolve(pack, name + '.zip');
+  const thisPack = config.resolve(config.path.pack, name);
+  const zipPath = config.resolve(config.path.pack, name + '.zip');
   // 复制一份到dist下面
-  return exec(`cp -r ${dist} ${thisPack}`)
+  return exec(`cp -r ${config.path.dist} ${thisPack}`)
     // 移除掉manifest中的非本平台key
     .then(() => removeManifestKeys(path.resolve(thisPack, 'manifest.json')))
     // 打包成zip
     .then(() => exec(`cd ${thisPack} && zip -r ${zipPath} ./*`))
     // 执行上传等操作
-    .then(() => packUtils[it](zipPath, pack))
+    .then(() => packUtils[it](zipPath, config.path.release))
     .then(res => console.log(`${name}: ${res}`))
     .then(() => fs.unlinkSync(zipPath))
     .catch(console.error);
 }
 
 checkPermission()
+  .then(() => fs.mkdirSync(config.path.pack))
+  .then(() => fs.mkdirSync(config.path.release))
   .then(() => {
     if (!platform) {
       const queue = [];
-      Object.keys(config.autobuild).forEach(it => {
-        if (config.autobuild[it]) {
+      Object.keys(extension.autobuild).forEach(it => {
+        if (extension.autobuild[it]) {
           queue.push(packOnePlatform(it));
         } else {
           console.log('Skip ' + it.toUpperCase());

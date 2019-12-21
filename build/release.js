@@ -3,12 +3,12 @@ const path = require('path');
 const crypto = require('crypto');
 const publishRelease = require('publish-release');
 const rootDir = path.resolve(__dirname, '..');
-const common = require('./extension-config');
+const config = require('./config');
 const output = path.resolve(rootDir, 'dist-pack');
 
-const { config } = common;
+const { extension } = config;
 
-if (!config.github.enable || !config.repository) {
+if (!extension.github.enable || !config.repository) {
 	console.log("GitHub not enabled");
 	process.exit(0);
 }
@@ -16,30 +16,31 @@ if (!config.github.enable || !config.repository) {
 const assets = [];
 let content = "";
 
-const assetName = config.dist.replace('{VER}', common.version);
+function hash(filePath) {
+  const buffer = fs.readFileSync(filePath);
+  const fsHash = crypto.createHash('sha256');
+  fsHash.update(buffer);
+  return fsHash.digest('hex');
+}
 
-['crx', 'xpi'].forEach(extName => {
-	const outputPath = path.resolve(output, assetName + '.' + extName);
-	if (fs.existsSync(outputPath)) {
-		assets.push(outputPath);
-		content += assetName + '.' + extName + ' sha256:';
-		const buffer = fs.readFileSync(outputPath);
-		const fsHash = crypto.createHash('sha256');
-		fsHash.update(buffer);
-		content += fsHash.digest('hex') + "\n";
-	}
+fs.readdirSync(config.path.release).forEach(it => {
+  const fullPath = path.resolve(config.path.release, it);
+  if (fs.statSync(fullPath).isFile()) {
+		assets.push(fullPath);
+		content += `> ${it} SHA256: ${hash(fullPath)} \n`;
+  }
 });
 
 // Get git names
 const gitName = config.repository.match(/(\w+)\/(\w+)\.git/);
-const tagName = config.github.tag.replace('{VER}', common.version);
+const tagName = extension.github.tag.replace('{VER}', config.version);
 
 publishRelease({
-	token: process.env[config.github.token],
+	token: process.env[extension.github.token],
 	owner: gitName[1],
 	repo: gitName[2],
 	tag: tagName,
-	name: common.version,
+	name: config.version,
 	notes: content,
 	draft: false,
 	prerelease: false,

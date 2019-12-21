@@ -1,10 +1,9 @@
 const fs = require('fs');
 const fetch = require('node-fetch');
-const exec = require('child_process').exec;
-const common = require('../extension-config');
-const webStoreId = common.config.chrome.store.id;
-const webStoreToken = process.env[common.config.chrome.store.token];
-const webStoreSecret = process.env[common.config.chrome.store.secret];
+const config = require('../config');
+const webStoreId = config.extension.chrome.store.id;
+const webStoreToken = process.env[config.extension.chrome.store.token];
+const webStoreSecret = process.env[config.extension.chrome.store.secret];
 
 let _webStoreToken = null;
 function getToken() {
@@ -38,7 +37,7 @@ function getToken() {
 }
 
 function upload(readStream, token) {
-  return fetch('https://www.googleapis.com/upload/chromewebstore/v1.1/items/' + common.config.chrome.id, {
+  return fetch('https://www.googleapis.com/upload/chromewebstore/v1.1/items/' + config.extension.chrome.id, {
     method: "PUT",
     headers: {
       Authorization: `Bearer ${token}`,
@@ -50,7 +49,7 @@ function upload(readStream, token) {
 }
 
 function publish(target = 'default', token) {
-  const url = 'https://www.googleapis.com/chromewebstore/v1.1/items/' + common.config.chrome.id + '/publish?publishTarget=' + target;
+  const url = 'https://www.googleapis.com/chromewebstore/v1.1/items/' + config.extension.chrome.id + '/publish?publishTarget=' + target;
   return fetch(url, {
     method: "POST",
     headers: {
