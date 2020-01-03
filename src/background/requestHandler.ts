@@ -1,3 +1,4 @@
+import emit from 'share/core/emit';
 import rules from 'share/core/rules';
 import { prefs } from 'share/core/storage';
 import { IS_CHROME, IS_SUPPORT_STREAM_FILTER } from 'share/core/utils';
@@ -88,23 +89,24 @@ class RequestHandler {
   }
 
   private loadPrefs() {
-    prefs.watch('exclude-he', val => {
-      this.excludeHe = val;
+    emit.on(emit.EVENT_PREFS_UPDATE, (key: string, val: any) => {
+      switch (key) {
+        case 'exclude-he':
+          this.excludeHe = val;
+          break;
+        case 'disable-all':
+          this.disableAll = val;
+          break;
+        case 'include-headers':
+          this.includeHeaders = val;
+          break;
+        case 'modify-body':
+          this.modifyBody = val;
+          break;
+      }
     });
 
-    prefs.watch('disable-all', val => {
-      this.disableAll = val;
-    });
-
-    prefs.watch('include-headers', val => {
-      this.includeHeaders = val;
-    });
-
-    prefs.watch('modify-body', val => {
-      this.modifyBody = val;
-    });
-
-    prefs.onReady().then(() => {
+    prefs.ready(() => {
       this.excludeHe = prefs.get('exclude-he');
       this.disableAll = prefs.get('disable-all');
       this.includeHeaders = prefs.get('include-headers');

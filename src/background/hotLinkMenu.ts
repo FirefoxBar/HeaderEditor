@@ -1,3 +1,4 @@
+import emit from 'share/core/emit';
 import { prefs } from 'share/core/storage';
 import { IS_ANDROID, t } from 'share/core/utils';
 import { browser } from 'webextension-polyfill-ts';
@@ -33,11 +34,13 @@ export default function initHotLinkMenu(openURL: (options: any) => any) {
     });
   }
 
-  prefs.watch('add-hot-link', val => {
-    toggleAntiHotLinkMenu(val);
+  emit.on(emit.EVENT_PREFS_UPDATE, (key: string, val: any) => {
+    if (key === 'add-hot-link') {
+      toggleAntiHotLinkMenu(val);
+    }
   });
 
-  prefs.onReady().then(() => {
+  prefs.ready(() => {
     toggleAntiHotLinkMenu(prefs.get('add-hot-link'));
   });
 }

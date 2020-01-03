@@ -1,5 +1,6 @@
 import equal from 'fast-deep-equal';
 import { browser } from 'webextension-polyfill-ts';
+import emit from './emit';
 import { TABLE_NAMES, upgradeRuleFormat } from './utils';
 import { defaultPrefValue, PrefValue } from './var';
 
@@ -50,14 +51,11 @@ export function getDatabase(): Promise<IDBDatabase> {
 class Prefs {
   private boundMethods: { [key: string]: (value: any) => any } = {};
   private boundWrappers: { [key: string]: any } = {};
-  private watchQueue: { [key: string]: Array<(value: any, key: string) => void> } = {};
   // when browser is strarting up, the setting is default
   private isDefault = true;
-  private waitQueue: Array<(value: any) => any> = [];
   private values: PrefValue;
 
   constructor() {
-    this.waitQueue = [];
     this.values = { ...defaultPrefValue };
 
     Object.entries(defaultPrefValue).forEach(it => {
@@ -79,7 +77,7 @@ class Prefs {
           }
         }
         this.isDefault = false;
-        this.waitQueue.forEach(resolve => resolve(this));
+        emit.emit(emit.EVENT_PREFS_READY);
       });
 
     browser.storage.onChanged.addListener((changes, area) => {
@@ -89,9 +87,6 @@ class Prefs {
           for (const key in defaultPrefValue) {
             if (key in synced) {
               this.set(key, synced[key], true);
-              if (this.watchQueue[key]) {
-                this.watchQueue[key].forEach(cb => cb(synced[key], key));
-              }
             }
           }
         } else {
@@ -153,8 +148,11 @@ class Prefs {
     const oldValue = this.values[key];
     if (!equal(value, oldValue)) {
       this.values[key] = value;
+      emit.emit(emit.EVENT_PREFS_UPDATE, key, value);
       if (!noSync) {
-        getSync().set({ settings: this.values });
+        getSync().set({
+          settings: this.values,
+        });
       }
     }
   }
@@ -164,20 +162,12 @@ class Prefs {
   remove(key: string) {
     this.set(key, undefined);
   }
-  watch(key: string, callback: (value: any, key: string) => void) {
-    if (typeof this.watchQueue[key] === 'undefined') {
-      this.watchQueue[key] = [];
+  ready(cb: () => void) {
+    if (!this.isDefault) {
+      cb();
+    } else {
+      emit.once(emit.EVENT_PREFS_READY, cb);
     }
-    this.watchQueue[key].push(callback);
-  }
-  onReady() {
-    return new Promise(resolve => {
-      if (!this.isDefault) {
-        resolve(this);
-      } else {
-        this.waitQueue.push(resolve);
-      }
-    });
   }
 }
 

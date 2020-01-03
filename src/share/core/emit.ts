@@ -6,6 +6,8 @@ class Emit extends EventEmitter {
   INNER_GROUP_SELECTED = 'a3';
 
   EVENT_RULE_UPDATE = 'b1';
+  EVENT_PREFS_UPDATE = 'b2';
+  EVENT_PREFS_READY = 'b3';
 }
 const emit = new Emit();
 

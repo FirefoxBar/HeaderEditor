@@ -18,7 +18,7 @@ export default class Popup extends React.Component<any, PopupState> {
   }
 
   componentDidMount() {
-    prefs.onReady().then(() => {
+    prefs.ready(() => {
       this.setState({
         enable: !prefs.get('disable-all'),
       });

@@ -36,7 +36,7 @@ export default class Options extends React.Component<OptionsProps, OptionsState>
   }
 
   componentDidMount() {
-    prefs.onReady().then(() => {
+    prefs.ready(() => {
       const newPrefs = { ...this.state.prefs };
       Object.keys(newPrefs).forEach(it => {
         newPrefs[it] = prefs.get(it);

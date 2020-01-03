@@ -21,7 +21,7 @@ module.exports = function (root, config) {
   if (!config.performance) {
     config.performance = {};
   }
-  config.performance.maxEntrypointSize = 512000;
-  config.performance.maxAssetSize = 512000;
+  config.performance.maxEntrypointSize = 1024000;
+  config.performance.maxAssetSize = 1024000;
   return config;
 }

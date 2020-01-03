@@ -100,50 +100,6 @@
 						</md-list>
 					</md-card-content>
 				</md-card>
-				<!-- import list -->
-				<md-card class="import-confirm">
-					<md-card-area>
-						<md-card-header>
-							<div class="md-title">{{t('import')}}</div>
-						</md-card-header>
-						<md-card-content>
-							<md-progress-bar md-mode="indeterminate" v-show="imports.status == 1"></md-progress-bar>
-							<md-table v-show="imports.status == 2" class="import-table">
-								<md-table-row>
-									<md-table-head class="cell-name">{{t('name')}}</md-table-head>
-									<md-table-head class="cell-type">{{t('ruleType')}}</md-table-head>
-									<md-table-head class="cell-group">{{t('suggested_group')}}</md-table-head>
-									<md-table-head class="cell-action">{{t('action')}}</md-table-head>
-								</md-table-row>
-								<md-table-row v-for="r of imports.list" :key="r.id">
-									<md-table-cell class="cell-name">{{r.name}}</md-table-cell>
-									<md-table-cell class="cell-type">{{t('rule_' + r.ruleType)}}</md-table-cell>
-									<md-table-cell class="cell-group">
-										<span>{{r.group}}</span>
-										<md-button class="md-primary" @click="onImportRuleChooseGroup(r)">{{t('choose')}}</md-button>
-									</md-table-cell>
-									<md-table-cell class="cell-action">
-										<md-radio class="md-primary" v-model="r.import_action" :value="1">{{t('import_new')}}</md-radio>
-										<md-radio class="md-primary" v-model="r.import_action" :value="2" v-show="r.import_old_id">{{t('import_override')}}</md-radio>
-										<md-radio class="md-primary" v-model="r.import_action" :value="3">{{t('import_drop')}}</md-radio>
-									</md-table-cell>
-								</md-table-row>
-							</md-table>
-						</md-card-content>
-					</md-card-area>
-					<md-card-actions md-alignment="left" v-show="imports.status == 2">
-						<div class="save-to">
-							<span>{{t('save_to')}}</span>
-							<md-radio class="md-primary" v-model="imports.group_type" :value="0">{{imports.group_name}}<md-button class="md-primary" @click="onImportChooseGroup">{{t('choose')}}</md-button></md-radio>
-							<md-radio class="md-primary" v-model="imports.group_type" :value="1">{{t('suggested_group')}}</md-radio>
-						</div>
-						<md-button @click="onImportSave">{{t('save')}}</md-button>
-						<md-button @click="imports.status = 0">{{t('cancel')}}</md-button>
-					</md-card-actions>
-				</md-card>
-			</md-tab>
-			<md-tab id="tab-help" :md-label="t('help')">
-				<md-button @click="onOpenHelp" class="with-icon"><md-icon class="iconfont icon-open-in-new"></md-icon>{{t('view')}}</md-button>
 			</md-tab>
 		</md-tabs>
 		<div id="edit-page" v-show="isShowEdit">
