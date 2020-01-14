@@ -3,8 +3,8 @@ import { selectGroup } from 'options/lib/utils';
 import * as React from 'react';
 import emit from 'share/core/emit';
 import rules from 'share/core/rules';
-import { getTableName, isTableName, t, TABLE_NAMES } from 'share/core/utils';
-import { ImportRule, TinyRule } from 'share/core/var';
+import { getTableName, t } from 'share/core/utils';
+import { ImportRule, TABLE_NAMES, TinyRule } from 'share/core/var';
 import { browser } from 'webextension-polyfill-ts';
 import './index.less';
 
@@ -48,7 +48,7 @@ export default class ImportDrawer extends React.Component<ImportDrawerProps, Imp
       const importList: ImportRule[] = [];
       const list = typeof content === 'string' ? rules.fromJson(content) : content;
       TABLE_NAMES.forEach(tableName => {
-        if (!list[tableName] || !isTableName(tableName)) {
+        if (!list[tableName]) {
           return;
         }
         list[tableName].forEach(e => {
@@ -69,7 +69,7 @@ export default class ImportDrawer extends React.Component<ImportDrawerProps, Imp
         list: importList,
       });
     } catch (e) {
-      console.log(e);
+      console.error(e);
       return;
     }
   }
@@ -152,7 +152,13 @@ export default class ImportDrawer extends React.Component<ImportDrawerProps, Imp
 
   render() {
     return (
-      <Drawer className="import-drawer" title={t('import')} visible={this.state.visible} onClose={this.handleCancel}>
+      <Drawer
+        className="import-drawer"
+        placement="left"
+        title={t('import')}
+        visible={this.state.visible}
+        onClose={this.handleCancel}
+      >
         <Table dataSource={this.state.list}>
           <Table.Column title={t('name')} dataIndex="name" />
           <Table.Column title={t('ruleType')} dataIndex="ruleType" cell={(value: string) => t(`rule_${value}`)} />

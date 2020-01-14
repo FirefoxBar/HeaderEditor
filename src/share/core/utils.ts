@@ -1,4 +1,5 @@
 import { browser, Tabs } from 'webextension-polyfill-ts';
+import { RULE_TYPE, TABLE_NAMES_TYPE } from './var';
 
 export const IS_ANDROID = navigator.userAgent.includes('Android');
 export const IS_CHROME = /Chrome\/(\d+)\.(\d+)/.test(navigator.userAgent);
@@ -17,13 +18,6 @@ export const FIREFOX_VERSION = IS_FIREFOX
   : 0;
 
 export const IS_SUPPORT_STREAM_FILTER = typeof browser.webRequest.filterResponseData === 'function';
-
-export const TABLE_NAMES = ['request', 'sendHeader', 'receiveHeader', 'receiveBody'];
-export type TABLE_NAMES_TYPE = 'request' | 'sendHeader' | 'receiveHeader' | 'receiveBody';
-export function isTableName(obj: any): obj is TABLE_NAMES_TYPE {
-  return obj && TABLE_NAMES.includes(obj);
-}
-export type RULE_TYPE = 'cancel' | 'redirect' | 'modifySendHeader' | 'modifyReceiveHeader' | 'modifyReceiveBody';
 
 // Get Active Tab
 export function getActiveTab(): Promise<Tabs.Tab> {

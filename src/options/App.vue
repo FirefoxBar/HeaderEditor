@@ -380,46 +380,6 @@ export default {
 	},
 	methods: {
 		t: utils.t,
-		loadRules() {
-			const _this = this;
-			let finish_count = 0;
-			this.isLoadingRules = true;
-			this.group = {};
-			this.$set(this.group, utils.t('ungrouped'), {
-				name: utils.t('ungrouped'),
-				collapse: this.options['manage-collapse-group'],
-				rule: {}
-			});
-			function appendRule(table, response) {
-				response.forEach(item => {
-					if (typeof(_this.group[item.group]) === "undefined") {
-						_this.$set(_this.group, item.group, {
-							name: item.group,
-							collapse: _this.options['manage-collapse-group'],
-							rule: {}
-						});
-					}
-					item["_v_key"] = table + '-' + item.id;
-					_this.$set(_this.group[item.group].rule, item["_v_key"], item);
-				});
-				if (++finish_count >= 3) {
-					_this.isLoadingRules = false;
-				}
-			}
-			function checkResult(table, response) {
-				if (!response) { // Browser is starting up
-					requestRules(table);
-					return;
-				}
-				appendRule(table, response);
-			}
-			function requestRules(table) {
-				setTimeout(() => {
-					checkResult(table, rules.get(table));
-				}, 20);
-			}
-			utils.TABLE_NAMES.forEach(t => requestRules(t));
-		},
 		// Show add page
 		saveRule() {
 			if (!utils.IS_SUPPORT_STREAM_FILTER && this.edit.ruleType === 'modifyReceiveBody'){

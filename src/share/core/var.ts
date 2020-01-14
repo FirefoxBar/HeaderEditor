@@ -1,13 +1,29 @@
+export const TABLE_NAMES: TABLE_NAMES_TYPE[] = ['request', 'sendHeader', 'receiveHeader', 'receiveBody'];
+export type TABLE_NAMES_TYPE = 'request' | 'sendHeader' | 'receiveHeader' | 'receiveBody';
+export function isTableName(obj: any): obj is TABLE_NAMES_TYPE {
+  return obj && TABLE_NAMES.includes(obj);
+}
+export type RULE_TYPE = 'cancel' | 'redirect' | 'modifySendHeader' | 'modifyReceiveHeader' | 'modifyReceiveBody';
+
+type RuleAction =
+  | 'cancel'
+  | {
+      name: string;
+      value: string;
+    };
+
 export interface TinyRule {
   [key: string]: any;
   enable: boolean;
   name: string;
+  ruleType: RULE_TYPE;
   matchType: 'all' | 'regexp' | 'prefix' | 'domain' | 'url';
   pattern: string;
   isFunction: boolean;
   code: string;
   exclude: string;
   group: string;
+  action: RuleAction;
 }
 
 export interface Rule extends TinyRule {

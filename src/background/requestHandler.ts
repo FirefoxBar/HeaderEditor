@@ -6,6 +6,9 @@ import { Rule } from 'share/core/var';
 import { TextDecoder, TextEncoder } from 'text-encoding';
 import { browser, WebRequest } from 'webextension-polyfill-ts';
 
+// 最大修改8MB的Body
+const MAX_BODY_SIZE = 8 * 1024 * 1024;
+
 enum REQUEST_TYPE {
   REQUEST,
   RESPONSE,
@@ -155,7 +158,7 @@ class RequestHandler {
               return { cancel: true };
             }
           } catch (e) {
-            console.log(e);
+            console.error(e);
           }
         } else {
           if (item.matchType === 'regexp') {
@@ -208,7 +211,21 @@ class RequestHandler {
     }
     // 修改响应体
     if (this.modifyBody) {
-      this.modifyReceivedBody(e, detail);
+      let canModifyBody = true;
+      // 检查有没有Content-Length头，如有，则不能超过MAX_BODY_SIZE，否则不进行修改
+      if (e.responseHeaders) {
+        for (const it of e.responseHeaders) {
+          if (it.name.toLowerCase() === 'content-length') {
+            if (it.value && parseInt(it.value, 10) >= MAX_BODY_SIZE) {
+              canModifyBody = false;
+            }
+            break;
+          }
+        }
+      }
+      if (canModifyBody) {
+        this.modifyReceivedBody(e, detail);
+      }
     }
     // 修改响应头
     if (!e.responseHeaders) {
@@ -265,7 +282,7 @@ class RequestHandler {
     try {
       return encoder.encode(text);
     } catch (e) {
-      console.log(e);
+      console.error(e);
       return new Uint8Array();
     }
   }
@@ -289,7 +306,7 @@ class RequestHandler {
     try {
       return encoder.decode(buffer);
     } catch (e) {
-      console.log(e);
+      console.error(e);
       return '';
     }
   }
@@ -317,6 +334,7 @@ class RequestHandler {
     let hasFunction = false;
     for (let i = 0; i < rule.length; i++) {
       if (!rule[i].isFunction) {
+        // @ts-ignore
         newHeaders[rule[i].action.name] = rule[i].action.value;
         rule.splice(i, 1);
         i--;
@@ -352,7 +370,7 @@ class RequestHandler {
         try {
           item._func(headers, detail);
         } catch (e) {
-          console.log(e);
+          console.error(e);
         }
       });
     }
@@ -416,6 +434,11 @@ class RequestHandler {
       buffer.set(buffers);
       buffer.set(new Uint8Array(data), buffers.buffer.byteLength);
       buffers = buffer;
+      // 如果长度已经超长了，那就不要尝试修改了
+      if (buffers.length > MAX_BODY_SIZE) {
+        buffers = null;
+        filter.close();
+      }
     };
 
     // @ts-ignore

@@ -4,8 +4,8 @@ import * as React from 'react';
 import Icon from 'share/components/icon';
 import browserSync from 'share/core/browserSync';
 import rules from 'share/core/rules';
-import { isTableName, t, TABLE_NAMES } from 'share/core/utils';
-import { Rule } from 'share/core/var';
+import { t } from 'share/core/utils';
+import { Rule, TABLE_NAMES } from 'share/core/var';
 import { browser } from 'webextension-polyfill-ts';
 import './index.less';
 
@@ -51,7 +51,7 @@ export default class Cloud extends React.Component<CloudProps, CloudState> {
 
   handleUpload() {
     const result: any = {};
-    TABLE_NAMES.forEach(k => isTableName(k) && (result[k] = rules.get(k)));
+    TABLE_NAMES.forEach(k => (result[k] = rules.get(k)));
     browserSync
       .save(rules.createExport(result))
       .then(() => browserSync.getMeta())

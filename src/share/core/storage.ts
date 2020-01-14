@@ -1,8 +1,8 @@
 import equal from 'fast-deep-equal';
 import { browser } from 'webextension-polyfill-ts';
 import emit from './emit';
-import { TABLE_NAMES, upgradeRuleFormat } from './utils';
-import { defaultPrefValue, PrefValue } from './var';
+import { upgradeRuleFormat } from './utils';
+import { defaultPrefValue, PrefValue, TABLE_NAMES } from './var';
 
 export function getDatabase(): Promise<IDBDatabase> {
   return new Promise((resolve, reject) => {
@@ -12,7 +12,7 @@ export function getDatabase(): Promise<IDBDatabase> {
       resolve(e.target.result);
     };
     dbOpenRequest.onerror = e => {
-      console.log(e);
+      console.error(e);
       reject(e);
     };
     dbOpenRequest.onupgradeneeded = event => {
@@ -112,7 +112,7 @@ class Prefs {
           try {
             return JSON.parse(value);
           } catch (e) {
-            console.log("Cannot migrate from localStorage %s = '%s': %o", key, value, e);
+            console.error("Cannot migrate from localStorage %s = '%s': %o", key, value, e);
             return undefined;
           }
       }

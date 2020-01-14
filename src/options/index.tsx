@@ -94,7 +94,7 @@ export default class Options extends React.Component<any, OptionsState> {
           <ImportAndExportSection visible={this.state.active === 'export_and_import'} />
         </main>
         <GroupSelect />
-        <Edit visible={true} onClose={() => {}} />
+        <Edit visible={false} onClose={() => {}} />
       </div>
     );
   }

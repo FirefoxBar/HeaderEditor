@@ -1,6 +1,6 @@
 import { getDatabase } from './storage';
-import { getDomain, TABLE_NAMES, TABLE_NAMES_TYPE, upgradeRuleFormat } from './utils';
-import { InitedRule, Rule } from './var';
+import { getDomain, upgradeRuleFormat } from './utils';
+import { InitedRule, Rule, TABLE_NAMES, TABLE_NAMES_TYPE } from './var';
 
 const cache: { [key: string]: null | InitedRule[] } = {};
 TABLE_NAMES.forEach(t => (cache[t] = null));
@@ -244,8 +244,9 @@ function init() {
         init();
       }
     });
-  }, 100);
+  });
 }
+
 init();
 
 export default {

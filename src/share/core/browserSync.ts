@@ -1,6 +1,6 @@
 import { getSync } from './storage';
-import { IS_CHROME, TABLE_NAMES } from './utils';
-import { Rule } from './var';
+import { IS_CHROME } from './utils';
+import { Rule, TABLE_NAMES } from './var';
 
 function getTotalCount(rules: { [key: string]: Rule[] }) {
   let count = 0;

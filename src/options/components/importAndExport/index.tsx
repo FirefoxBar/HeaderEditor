@@ -4,8 +4,8 @@ import * as React from 'react';
 import Icon from 'share/components/icon';
 import file from 'share/core/file';
 import rules from 'share/core/rules';
-import { fetchUrl, isTableName, t, TABLE_NAMES } from 'share/core/utils';
-import { Rule } from 'share/core/var';
+import { fetchUrl, t } from 'share/core/utils';
+import { Rule, TABLE_NAMES } from 'share/core/var';
 import Cloud from './cloud';
 import ImportDrawer from './importDrawer';
 import './index.less';
@@ -92,7 +92,7 @@ export default class ImportAndExport extends React.Component<IEProps, IEState> {
 
   handleExport() {
     const result: any = {};
-    TABLE_NAMES.forEach(k => isTableName(k) && (result[k] = rules.get(k)));
+    TABLE_NAMES.forEach(k => (result[k] = rules.get(k)));
     file.save(JSON.stringify(rules.createExport(result), null, '\t'), getExportName(name));
   }
 

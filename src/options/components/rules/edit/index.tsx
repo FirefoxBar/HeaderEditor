@@ -33,11 +33,13 @@ const EMPTY_RULE: Rule = {
   enable: true,
   group: t('ungrouped'),
   name: '',
+  ruleType: 'cancel',
   matchType: 'all',
   pattern: '',
   exclude: '',
   isFunction: false,
   code: '',
+  action: 'cancel',
 };
 
 export default class Edit extends React.Component<EditProps, EditState> {
@@ -83,6 +85,7 @@ export default class Edit extends React.Component<EditProps, EditState> {
     return (
       <Drawer
         className="edit-drawer"
+        placement="left"
         visible={this.props.visible}
         onClose={this.props.onClose}
         title={this.isEdit ? t('edit') : t('add')}
