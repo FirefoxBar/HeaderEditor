@@ -68,7 +68,6 @@ export default class Edit extends React.Component<EditProps, EditState> {
   }
 
   handleChange(_: any, item: any) {
-    console.log(arguments);
     const rule = {
       ...this.state.rule,
       [item.name]: item.value,
@@ -159,6 +158,12 @@ export default class Edit extends React.Component<EditProps, EditState> {
         rule: { ...(this.props.rule ? this.props.rule : EMPTY_RULE) },
       });
     }
+    if (this.props.visible !== prevProps.visible) {
+      this.setState({
+        testUrl: '',
+        testResult: '',
+      });
+    }
   }
 
   handleSubmit() {
@@ -166,6 +171,7 @@ export default class Edit extends React.Component<EditProps, EditState> {
       .then(res => emitter.emit(emitter.EVENT_RULE_UPDATE, res))
       .then(() => this.props.onClose());
   }
+
   render() {
     const isHeaderSend = this.state.rule.ruleType === 'modifySendHeader';
     const isHeaderReceive = this.state.rule.ruleType === 'modifyReceiveHeader';
