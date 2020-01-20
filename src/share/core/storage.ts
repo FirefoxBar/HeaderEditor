@@ -1,7 +1,7 @@
 import equal from 'fast-deep-equal';
 import { browser } from 'webextension-polyfill-ts';
-import emit from './emit';
-import { upgradeRuleFormat } from './utils';
+import emitter from './emitter';
+import { upgradeRuleFormat } from './ruleUtils';
 import { defaultPrefValue, PrefValue, TABLE_NAMES } from './var';
 
 export function getDatabase(): Promise<IDBDatabase> {
@@ -77,7 +77,7 @@ class Prefs {
           }
         }
         this.isDefault = false;
-        emit.emit(emit.EVENT_PREFS_READY);
+        emitter.emit(emitter.EVENT_PREFS_READY);
       });
 
     browser.storage.onChanged.addListener((changes, area) => {
@@ -148,7 +148,7 @@ class Prefs {
     const oldValue = this.values[key];
     if (!equal(value, oldValue)) {
       this.values[key] = value;
-      emit.emit(emit.EVENT_PREFS_UPDATE, key, value);
+      emitter.emit(emitter.EVENT_PREFS_UPDATE, key, value);
       if (!noSync) {
         getSync().set({
           settings: this.values,
@@ -166,7 +166,7 @@ class Prefs {
     if (!this.isDefault) {
       cb();
     } else {
-      emit.once(emit.EVENT_PREFS_READY, cb);
+      emitter.once(emitter.EVENT_PREFS_READY, cb);
     }
   }
 }

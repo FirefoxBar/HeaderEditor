@@ -1,24 +1,32 @@
 import { Nav } from '@alifd/next';
 import * as React from 'react';
+import Api from 'share/core/api';
+import { convertToRule } from 'share/core/ruleUtils';
 import { t } from 'share/core/utils';
-import { browser } from 'webextension-polyfill-ts';
+import { Rule, APIs, TABLE_NAMES } from 'share/core/var';
 import GroupSelect from './components/groupSelect';
 import ImportAndExportSection from './components/importAndExport';
 import OptionsSection from './components/options';
 import RulesSection from './components/rules';
 import Edit from './components/rules/edit';
 import './index.less';
+import { browser } from 'webextension-polyfill-ts';
 
 interface OptionsState {
   active: string;
+  editShow: boolean;
+  editRule?: Rule;
 }
 export default class Options extends React.Component<any, OptionsState> {
   constructor(props: any) {
     super(props);
 
     this.handleSwitch = this.handleSwitch.bind(this);
+    this.handleEdit = this.handleEdit.bind(this);
+    this.handleEditClose = this.handleEditClose.bind(this);
 
     this.state = {
+      editShow: false,
       active: 'rules',
     };
   }
@@ -61,16 +69,27 @@ export default class Options extends React.Component<any, OptionsState> {
     if (active && active !== this.state.active) {
       // 如果是帮助，不进行切换，打开新标签页
       if (active === 'help') {
-        browser.runtime.sendMessage({
-          method: 'openURL',
-          url: t('url_help'),
-        });
+        Api.openURL(t('url_help'));
       } else {
         this.setState({
           active,
         });
       }
     }
+  }
+
+  handleEditClose() {
+    this.setState({
+      editShow: false,
+      editRule: undefined,
+    });
+  }
+
+  handleEdit(rule: Rule) {
+    this.setState({
+      editShow: true,
+      editRule: convertToRule(rule),
+    });
   }
 
   render() {
@@ -89,12 +108,12 @@ export default class Options extends React.Component<any, OptionsState> {
           <Nav.Item key="help">{t('help')}</Nav.Item>
         </Nav>
         <main className="main-content">
-          <RulesSection visible={this.state.active === 'rules'} />
+          <RulesSection visible={this.state.active === 'rules'} onEdit={this.handleEdit} />
           <OptionsSection visible={this.state.active === 'options'} />
           <ImportAndExportSection visible={this.state.active === 'export_and_import'} />
         </main>
         <GroupSelect />
-        <Edit visible={false} onClose={() => {}} />
+        <Edit visible={this.state.editShow} rule={this.state.editRule} onClose={this.handleEditClose} />
       </div>
     );
   }

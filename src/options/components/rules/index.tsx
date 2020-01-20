@@ -1,15 +1,19 @@
-import { Balloon, Card, Loading, Switch, Table, Button } from '@alifd/next';
+import { Balloon, Button, Card, Dialog, Loading, Switch, Table } from '@alifd/next';
+import { selectGroup } from 'options/lib/utils';
 import * as React from 'react';
-import emit from 'share/core/emit';
-import rules from 'share/core/rules';
+import Icon from 'share/components/icon';
+import Api from 'share/core/api';
+import emitter from 'share/core/emitter';
 import { prefs } from 'share/core/storage';
-import { t } from 'share/core/utils';
+import { t, getTableName } from 'share/core/utils';
 import { InitedRule, Rule, TABLE_NAMES, TABLE_NAMES_TYPE } from 'share/core/var';
 import './index.less';
-import Icon from 'share/components/icon';
+import { remove, toggleRule } from './utils';
+import { convertToRule, convertToTinyRule } from 'share/core/ruleUtils';
 
 interface RulesProps {
   visible: boolean;
+  onEdit: (rule: Rule) => void;
 }
 
 interface GroupItem {
@@ -29,12 +33,16 @@ export default class Rules extends React.Component<RulesProps, RulesState> {
     super(props);
 
     this.handlePrefsUpdate = this.handlePrefsUpdate.bind(this);
+    this.handleRuleUpdate = this.handleRuleUpdate.bind(this);
+    this.handleHasRuleUpdate = this.handleHasRuleUpdate.bind(this);
 
     prefs.ready(() => {
       this.isCollapse = prefs.get('manage-collapse-group');
       this.load();
     });
-    emit.on(emit.EVENT_PREFS_UPDATE, this.handlePrefsUpdate);
+    emitter.on(emitter.EVENT_PREFS_UPDATE, this.handlePrefsUpdate);
+    emitter.on(emitter.EVENT_RULE_UPDATE, this.handleRuleUpdate);
+    emitter.on(emitter.EVENT_HAS_RULE_UPDATE, this.handleHasRuleUpdate);
 
     this.state = {
       loading: false,
@@ -66,14 +74,112 @@ export default class Rules extends React.Component<RulesProps, RulesState> {
   }
 
   componentWillUnmount() {
-    emit.off(emit.EVENT_PREFS_UPDATE, this.handlePrefsUpdate);
+    emitter.off(emitter.EVENT_PREFS_UPDATE, this.handlePrefsUpdate);
+    emitter.off(emitter.EVENT_HAS_RULE_UPDATE, this.handleHasRuleUpdate);
+    emitter.off(emitter.EVENT_RULE_UPDATE, this.handleRuleUpdate);
+  }
+
+  // 事件响应
+  handleRuleUpdate(rule: Rule) {
+    const tableName = getTableName(rule.ruleType);
+    if (!tableName) {
+      return;
+    }
+    // 寻找ID相同的
+    let sameItem: Rule | null = null;
+    let fromGroup: Rule[] | null = null;
+    let toGroup: Rule[] | null = null;
+    const groups = Object.values(this.state.group);
+    for (const group of groups) {
+      for (const currentRule of group.rules) {
+        if (currentRule.id === rule.id) {
+          sameItem = currentRule;
+          fromGroup = group.rules;
+          break;
+        }
+      }
+      // 另外找一下同名的group
+      if (group.name === rule.group) {
+        toGroup = group.rules;
+      }
+      if (sameItem && toGroup) {
+        break;
+      }
+    }
+    // 如果有找到，就替换掉，否则插入新的
+    const displayRule = { ...rule, _v_key: `${tableName}-${rule.id}` };
+    if (sameItem && fromGroup) {
+      if (fromGroup === toGroup) {
+        // 在同一个Group里面，直接替换掉就行了
+        fromGroup.splice(fromGroup.indexOf(sameItem), 1, displayRule);
+      } else {
+        fromGroup.splice(fromGroup.indexOf(sameItem), 1);
+        if (toGroup) {
+          toGroup.push(displayRule);
+        } else {
+          // 插入一个新的Group
+          this.state.group[rule.group] = {
+            name: rule.group,
+            rules: [displayRule],
+          };
+        }
+      }
+    } else {
+      if (toGroup) {
+        toGroup.push(displayRule);
+      } else {
+        // 插入一个新的Group
+        this.state.group[rule.group] = {
+          name: rule.group,
+          rules: [displayRule],
+        };
+      }
+    }
+    this.forceUpdate();
+  }
+  handleHasRuleUpdate() {
+    this.load();
+  }
+
+  // 切换规则开关
+  handleToggleEnable(item: InitedRule, checked: boolean) {
+    toggleRule(item, checked).then(() => this.forceUpdate());
+  }
+  // 更换分组
+  handleChangeGroup(item: InitedRule) {
+    selectGroup(item.group).then(newGroup => {
+      item.group = newGroup;
+      Api.saveRule(item).then(() => this.forceUpdate());
+    });
+  }
+  // 删除
+  handleDelete(item: InitedRule) {
+    Dialog.confirm({
+      content: t('delete_confirm'),
+      onOk: () => {
+        remove(item).then(() => {
+          const group = this.state.group[item.group];
+          group.rules.splice(group.rules.indexOf(item), 1);
+          this.forceUpdate();
+        });
+      },
+    });
+  }
+  // Clone
+  handleClone(item: InitedRule) {
+    const newItem = convertToTinyRule(item);
+    newItem.name += '_clone';
+    Api.saveRule(newItem).then(res => {
+      console.log(res);
+      this.state.group[item.group].rules.push(res);
+      this.forceUpdate();
+    });
   }
 
   load() {
     if (this.state.loading) {
       return;
     }
-    console.log('start loading');
     this.setState({
       group: {},
       loading: true,
@@ -103,17 +209,17 @@ export default class Rules extends React.Component<RulesProps, RulesState> {
         result[item.group].rules.push(item);
       });
       // 加载完成啦
-      console.log('finish loading one');
       if (++finishCount >= TABLE_NAMES.length) {
         this.setState({
           group: result,
           loading: false,
         });
+        emitter.emit(emitter.EVENT_GROUP_UPDATE, Object.keys(result));
       }
     };
     const requestRules = (table: TABLE_NAMES_TYPE) => {
       setTimeout(() => {
-        checkResult(table, rules.get(table));
+        Api.getRules(table).then(res => checkResult(table, res));
       });
     };
     TABLE_NAMES.forEach(table => requestRules(table));
@@ -129,7 +235,7 @@ export default class Rules extends React.Component<RulesProps, RulesState> {
                 key={group.name}
                 showTitleBullet={false}
                 title={group.name}
-                contentHeight={this.isCollapse ? 0 : 'auto'}
+                contentHeight="auto"
                 className="group-item"
               >
                 <Table dataSource={group.rules}>
@@ -138,7 +244,9 @@ export default class Rules extends React.Component<RulesProps, RulesState> {
                     title={t('enable')}
                     dataIndex="enable"
                     cell={(value: boolean, index: number, item: InitedRule) => {
-                      return <Switch size="small" checked={value} />;
+                      return (
+                        <Switch size="small" checked={value} onChange={this.handleToggleEnable.bind(this, item)} />
+                      );
                     }}
                   />
                   <Table.Column
@@ -198,15 +306,15 @@ export default class Rules extends React.Component<RulesProps, RulesState> {
                     cell={(value: string, index: number, item: InitedRule) => {
                       return (
                         <div className="buttons">
-                          <Button type="secondary">
+                          <Button type="secondary" onClick={this.handleChangeGroup.bind(this, item)}>
                             <Icon type="playlist-add" />
                             {t('group')}
                           </Button>
-                          <Button type="secondary">
+                          <Button type="secondary" onClick={() => this.props.onEdit(item)}>
                             <Icon type="edit" />
                             {t('edit')}
                           </Button>
-                          <Button type="secondary">
+                          <Button type="secondary" onClick={this.handleClone.bind(this, item)}>
                             <Icon type="content-copy" />
                             {t('clone')}
                           </Button>
@@ -214,7 +322,7 @@ export default class Rules extends React.Component<RulesProps, RulesState> {
                             <Icon type="search" />
                             {t('view')}
                           </Button>
-                          <Button type="secondary">
+                          <Button type="secondary" onClick={this.handleDelete.bind(this, item)}>
                             <Icon type="delete" />
                             {t('delete')}
                           </Button>

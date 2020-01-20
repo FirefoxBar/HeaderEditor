@@ -26,6 +26,10 @@ export interface TinyRule {
   action: RuleAction;
 }
 
+export function isTinyRule(obj: any): obj is TinyRule {
+  return !obj.id && !!obj.ruleType;
+}
+
 export interface Rule extends TinyRule {
   id: number;
 }
@@ -61,3 +65,12 @@ export const defaultPrefValue: PrefValue = {
   'include-headers': false,
   'modify-body': false,
 };
+
+export enum APIs {
+  HEALTH_CHECK,
+  OPEN_URL,
+  GET_RULES,
+  SAVE_RULE,
+  DELETE_RULE,
+  UPDATE_CACHE,
+}

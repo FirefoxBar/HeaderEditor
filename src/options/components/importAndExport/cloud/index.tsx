@@ -2,17 +2,17 @@ import { Button, Dialog, Message, Tag } from '@alifd/next';
 import moment from 'moment';
 import * as React from 'react';
 import Icon from 'share/components/icon';
+import Api from 'share/core/api';
 import browserSync from 'share/core/browserSync';
-import rules from 'share/core/rules';
+import { createExport } from 'share/core/ruleUtils';
 import { t } from 'share/core/utils';
-import { Rule, TABLE_NAMES } from 'share/core/var';
-import { browser } from 'webextension-polyfill-ts';
+import { TinyRule } from 'share/core/var';
 import './index.less';
 
 interface CloudProps {
   visible: boolean;
   onClose: () => void;
-  onImport: (rules: { [key: string]: Rule[] }) => void;
+  onImport: (rules: { [key: string]: TinyRule[] }) => void;
 }
 
 interface CloudState {
@@ -50,10 +50,8 @@ export default class Cloud extends React.Component<CloudProps, CloudState> {
   }
 
   handleUpload() {
-    const result: any = {};
-    TABLE_NAMES.forEach(k => (result[k] = rules.get(k)));
-    browserSync
-      .save(rules.createExport(result))
+    Api.getAllRules()
+      .then(result => browserSync.save(createExport(result)))
       .then(() => browserSync.getMeta())
       .then(() => this.refresh())
       .catch(() => Message.error('cloud_over_limit'));
@@ -77,10 +75,7 @@ export default class Cloud extends React.Component<CloudProps, CloudState> {
   }
 
   handleHelp() {
-    browser.runtime.sendMessage({
-      method: 'openURL',
-      url: t('url_cloud_backup'),
-    });
+    Api.openURL(t('url_cloud_backup'));
   }
 
   render() {

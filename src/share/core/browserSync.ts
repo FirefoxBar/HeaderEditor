@@ -1,8 +1,8 @@
 import { getSync } from './storage';
 import { IS_CHROME } from './utils';
-import { Rule, TABLE_NAMES } from './var';
+import { TABLE_NAMES, TinyRule } from './var';
 
-function getTotalCount(rules: { [key: string]: Rule[] }) {
+function getTotalCount(rules: { [key: string]: TinyRule[] }) {
   let count = 0;
   TABLE_NAMES.forEach(e => (count += rules[e].length));
   return count;
@@ -14,7 +14,7 @@ interface SyncMeta {
 }
 
 class BrowserSync {
-  save(rules: { [key: string]: Rule[] }) {
+  save(rules: { [key: string]: TinyRule[] }) {
     return new Promise((resolve, reject) => {
       if (IS_CHROME) {
         const toSave: { [key: string]: any } = {};
@@ -22,12 +22,12 @@ class BrowserSync {
         const limit = chrome.storage.sync.QUOTA_BYTES_PER_ITEM - 500;
         let index = 0;
         while (getTotalCount(rules) > 0) {
-          const one: { [key: string]: Rule[] } = {};
+          const one: { [key: string]: TinyRule[] } = {};
           TABLE_NAMES.forEach(e => {
             one[e] = [];
           });
           let t = 0;
-          let toPut: Rule | null = null;
+          let toPut: TinyRule | null = null;
           while (JSON.stringify(one).length < limit) {
             // find avaliable
             while (TABLE_NAMES[t] && rules[TABLE_NAMES[t]].length === 0) {
@@ -77,13 +77,13 @@ class BrowserSync {
         .catch(reject);
     });
   }
-  getContent(): Promise<{ [key: string]: Rule[] }> {
+  getContent(): Promise<{ [key: string]: TinyRule[] }> {
     return new Promise((resolve, reject) => {
       getSync()
         .get('backup')
         .then(e => {
           const index = e.backup.index;
-          const result: { [key: string]: Rule[] } = {};
+          const result: { [key: string]: TinyRule[] } = {};
           TABLE_NAMES.forEach(it => {
             result[it] = [];
           });
@@ -113,7 +113,7 @@ class BrowserSync {
         .then(e => {
           if (e.backup) {
             const index = e.backup.index;
-            const result: { [key: string]: Rule[] } = {};
+            const result: { [key: string]: TinyRule[] } = {};
             TABLE_NAMES.forEach(it => {
               result[it] = [];
             });

@@ -1,12 +1,21 @@
+import { convertToRule, convertToTinyRule, upgradeRuleFormat } from './ruleUtils';
 import { getDatabase } from './storage';
-import { getDomain, upgradeRuleFormat } from './utils';
+import { getDomain, getTableName } from './utils';
 import { InitedRule, Rule, TABLE_NAMES, TABLE_NAMES_TYPE } from './var';
 
 const cache: { [key: string]: null | InitedRule[] } = {};
 TABLE_NAMES.forEach(t => (cache[t] = null));
 
+const updateCacheQueue: { [x: string]: Array<{ resolve: () => void; reject: (error: any) => void }> } = {};
 function updateCache(type: string) {
   return new Promise((resolve, reject) => {
+    // 如果正在Update，则放到回调组里面
+    if (typeof updateCacheQueue[type] !== 'undefined') {
+      updateCacheQueue[type].push({ resolve, reject });
+      return;
+    } else {
+      updateCacheQueue[type] = [{ resolve, reject }];
+    }
     getDatabase()
       .then(db => {
         const tx = db.transaction([type], 'readonly');
@@ -50,11 +59,19 @@ function updateCache(type: string) {
             cursor.continue();
           } else {
             cache[type] = all;
-            resolve();
+            updateCacheQueue[type].forEach(it => {
+              it.resolve();
+            });
+            delete updateCacheQueue[type];
           }
         };
       })
-      .catch(reject);
+      .catch(e => {
+        updateCacheQueue[type].forEach(it => {
+          it.reject(e);
+        });
+        delete updateCacheQueue[type];
+      });
   });
 }
 
@@ -123,27 +140,30 @@ function filter(fromRules: InitedRule[], options: FilterOptions) {
   return rules;
 }
 
-function save(tableName: TABLE_NAMES_TYPE, o: Rule) {
-  delete o._func;
-  delete o._reg;
+function save(o: Rule) {
+  const tableName = getTableName(o.ruleType);
+  if (!tableName) {
+    return Promise.reject(`Unknown type ${o.ruleType}`);
+  }
+  const rule = convertToRule(o);
   return new Promise(resolve => {
     getDatabase().then(db => {
       const tx = db.transaction([tableName], 'readwrite');
       const os = tx.objectStore(tableName);
       // Check base informations
-      upgradeRuleFormat(o);
+      upgradeRuleFormat(rule);
       // Update
-      if (o.id) {
-        const request = os.get(Number(o.id));
+      if (rule.id) {
+        const request = os.get(Number(rule.id));
         request.onsuccess = () => {
-          const rule = request.result || {};
-          for (const prop in o) {
+          const existsRule = request.result || {};
+          for (const prop in rule) {
             if (prop === 'id') {
               continue;
             }
-            rule[prop] = o[prop];
+            existsRule[prop] = rule[prop];
           }
-          const req = os.put(rule);
+          const req = os.put(existsRule);
           req.onsuccess = () => {
             updateCache(tableName);
             resolve(rule);
@@ -152,14 +172,14 @@ function save(tableName: TABLE_NAMES_TYPE, o: Rule) {
       } else {
         // Create
         // Make sure it's not null - that makes indexeddb sad
-        delete o.id;
-        const request = os.add(o);
+        delete rule.id;
+        const request = os.add(rule);
         request.onsuccess = event => {
           updateCache(tableName);
           // Give it the ID that was generated
           // @ts-ignore
-          o.id = event.target.result;
-          resolve(o);
+          rule.id = event.target.result;
+          resolve(rule);
         };
       }
     });
@@ -187,36 +207,6 @@ function get(type: TABLE_NAMES_TYPE, options?: FilterOptions) {
     return null;
   }
   return options ? filter(all, options) : all;
-}
-
-function createExport(arr: { [key: string]: InitedRule[] }) {
-  const result: { [key: string]: Rule[] } = {};
-  // tslint:disable-next-line
-  for (const k in arr) {
-    result[k] = [];
-    arr[k].forEach(e => {
-      const copy = { ...e };
-      delete copy.id;
-      delete copy._reg;
-      delete copy._func;
-      delete copy._v_key;
-      result[k].push(copy);
-    });
-  }
-  return result;
-}
-
-function fromJson(str: string) {
-  const list: { [key: string]: Rule[] } = JSON.parse(str);
-  TABLE_NAMES.forEach(e => {
-    if (list[e]) {
-      list[e].map(ee => {
-        delete ee.id;
-        return upgradeRuleFormat(ee);
-      });
-    }
-  });
-  return list;
 }
 
 function init() {
@@ -255,6 +245,5 @@ export default {
   save,
   remove,
   updateCache,
-  createExport,
-  fromJson,
+  convertToTinyRule,
 };

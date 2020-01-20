@@ -4,6 +4,7 @@ import { prefs } from 'share/core/storage';
 import { t } from 'share/core/utils';
 import { browser } from 'webextension-polyfill-ts';
 import './index.less';
+import Api from 'share/core/api';
 
 interface PopupState {
   enable: boolean;
@@ -33,10 +34,7 @@ export default class Popup extends React.Component<any, PopupState> {
   }
 
   handleOpen() {
-    browser.runtime.sendMessage({
-      method: 'openURL',
-      url: browser.extension.getURL('options.html'),
-    });
+    Api.openURL(browser.extension.getURL('options.html'));
     window.close();
   }
 

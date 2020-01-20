@@ -1,11 +1,11 @@
 import { Button, Drawer, Message, Radio, Select, Table } from '@alifd/next';
 import { selectGroup } from 'options/lib/utils';
 import * as React from 'react';
-import emit from 'share/core/emit';
-import rules from 'share/core/rules';
-import { getTableName, t } from 'share/core/utils';
+import Api from 'share/core/api';
+import emitter from 'share/core/emitter';
+import { fromJson } from 'share/core/ruleUtils';
+import { t } from 'share/core/utils';
 import { ImportRule, TABLE_NAMES, TinyRule } from 'share/core/var';
-import { browser } from 'webextension-polyfill-ts';
 import './index.less';
 
 interface ImportDrawerProps {
@@ -45,28 +45,34 @@ export default class ImportDrawer extends React.Component<ImportDrawerProps, Imp
       useRecommend: true,
     });
     try {
+      let totalCount = 0;
       const importList: ImportRule[] = [];
-      const list = typeof content === 'string' ? rules.fromJson(content) : content;
+      const list = typeof content === 'string' ? fromJson(content) : content;
       TABLE_NAMES.forEach(tableName => {
         if (!list[tableName]) {
           return;
         }
         list[tableName].forEach(e => {
-          const rule = rules.get(tableName, { name: e.name });
-          const it: ImportRule = {
-            ...e,
-            group: e.group || t('ungrouped'),
-            id: Math.random(),
-            importAction: rule && rule.length ? 2 : 1,
-            importOldId: rule && rule.length ? rule[0].id : -1,
-          };
-          importList.push(it);
+          totalCount++;
+          Api.getRules(tableName, { name: e.name }).then(rule => {
+            const it: ImportRule = {
+              ...e,
+              group: e.group || t('ungrouped'),
+              id: Math.random(),
+              importAction: rule && rule.length ? 2 : 1,
+              importOldId: rule && rule.length ? rule[0].id : -1,
+            };
+            importList.push(it);
+            // 检查是否已经全部完成了
+            if (totalCount === importList.length) {
+              this.setState({
+                ...this.state,
+                visible: true,
+                list: importList,
+              });
+            }
+          });
         });
-      });
-      this.setState({
-        ...this.state,
-        visible: true,
-        list: importList,
       });
     } catch (e) {
       console.error(e);
@@ -89,29 +95,19 @@ export default class ImportDrawer extends React.Component<ImportDrawerProps, Imp
       }
       delete e.importAction;
       delete e.importOldId;
-      const tableName = getTableName(e.ruleType);
       if (!this.state.useRecommend) {
         e.group = this.state.group;
       }
       if (typeof e.enable === 'undefined') {
         e.enable = true;
       }
-      if (tableName) {
-        queue.push(rules.save(tableName, e));
-      }
+      queue.push(Api.saveRule(e));
     });
-    Promise.all(queue)
-      .then(() =>
-        browser.runtime.sendMessage({
-          method: 'updateCache',
-          type: 'all',
-        }),
-      )
-      .then(() => {
-        // this.imports.status = 0;
-        Message.success(t('import_success'));
-        setTimeout(() => emit.emit(emit.EVENT_RULE_UPDATE), 300);
-      });
+    Promise.all(queue).then(() => {
+      // this.imports.status = 0;
+      Message.success(t('import_success'));
+      setTimeout(() => emitter.emit(emitter.EVENT_HAS_RULE_UPDATE), 300);
+    });
     this.setState({
       list: [],
       visible: false,

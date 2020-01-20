@@ -1,4 +1,4 @@
-import emit from 'share/core/emit';
+import emitter from 'share/core/emitter';
 import rules from 'share/core/rules';
 import { prefs } from 'share/core/storage';
 import { IS_CHROME, IS_SUPPORT_STREAM_FILTER } from 'share/core/utils';
@@ -92,7 +92,7 @@ class RequestHandler {
   }
 
   private loadPrefs() {
-    emit.on(emit.EVENT_PREFS_UPDATE, (key: string, val: any) => {
+    emitter.on(emitter.EVENT_PREFS_UPDATE, (key: string, val: any) => {
       switch (key) {
         case 'exclude-he':
           this.excludeHe = val;

@@ -2,6 +2,8 @@ import { Drawer, Form, Input, Radio, Select } from '@alifd/next';
 import { highlight, languages } from 'prismjs';
 import * as React from 'react';
 import Editor from 'react-simple-code-editor';
+import Api from 'share/core/api';
+import emitter from 'share/core/emitter';
 import { IS_SUPPORT_STREAM_FILTER, t } from 'share/core/utils';
 import { Rule } from 'share/core/var';
 import ENCODING_LIST from './encoding';
@@ -47,6 +49,7 @@ export default class Edit extends React.Component<EditProps, EditState> {
     super(props);
 
     this.handleChange = this.handleChange.bind(this);
+    this.handleSubmit = this.handleSubmit.bind(this);
 
     this.state = {
       rule: { ...EMPTY_RULE },
@@ -76,6 +79,12 @@ export default class Edit extends React.Component<EditProps, EditState> {
         rule: { ...(this.props.rule ? this.props.rule : EMPTY_RULE) },
       });
     }
+  }
+
+  handleSubmit() {
+    Api.saveRule(this.state.rule)
+      .then(res => emitter.emit(emitter.EVENT_RULE_UPDATE, res))
+      .then(() => this.props.onClose());
   }
 
   render() {
@@ -116,7 +125,7 @@ export default class Edit extends React.Component<EditProps, EditState> {
           </Form.Item>
           {this.state.rule.matchType !== 'all' && (
             <Form.Item label={t('matchRule')}>
-              <Input name="matchRule" />
+              <Input name="pattern" />
             </Form.Item>
           )}
           <Form.Item label={t('excludeRule')}>
@@ -171,7 +180,7 @@ export default class Edit extends React.Component<EditProps, EditState> {
             </Form.Item>
           )}
           <Form.Item label=" ">
-            <Form.Submit>Confirm</Form.Submit>
+            <Form.Submit onClick={this.handleSubmit}>{t('save')}</Form.Submit>
           </Form.Item>
         </Form>
       </Drawer>

@@ -1,6 +1,6 @@
 import { Dialog, Input, Select } from '@alifd/next';
 import * as React from 'react';
-import emit from 'share/core/emit';
+import emitter from 'share/core/emitter';
 import { t } from 'share/core/utils';
 import './index.less';
 
@@ -33,8 +33,8 @@ export default class GroupSelect extends React.Component<any, GroupSelectState> 
   }
 
   componentDidMount() {
-    emit.on(emit.EVENT_GROUP_UPDATE, this.handleEventUpdate);
-    emit.on(emit.ACTION_SELECT_GROUP, this.handleEventShow);
+    emitter.on(emitter.EVENT_GROUP_UPDATE, this.handleEventUpdate);
+    emitter.on(emitter.ACTION_SELECT_GROUP, this.handleEventShow);
   }
 
   // 分组更新事件
@@ -52,8 +52,8 @@ export default class GroupSelect extends React.Component<any, GroupSelectState> 
   }
 
   componentWillUnmount() {
-    emit.off(emit.EVENT_GROUP_UPDATE, this.handleEventUpdate);
-    emit.off(emit.ACTION_SELECT_GROUP, this.handleEventShow);
+    emitter.off(emitter.EVENT_GROUP_UPDATE, this.handleEventUpdate);
+    emitter.off(emitter.ACTION_SELECT_GROUP, this.handleEventShow);
   }
 
   handleNew(value: string) {
@@ -78,11 +78,11 @@ export default class GroupSelect extends React.Component<any, GroupSelectState> 
       const groups = Array.from(this.state.group);
       if (!groups.includes(this.state.newName)) {
         groups.push(this.state.newName);
-        emit.emit(emit.EVENT_GROUP_UPDATE, groups);
+        emitter.emit(emitter.EVENT_GROUP_UPDATE, groups);
       }
-      emit.emit(emit.INNER_GROUP_SELECTED, this.state.newName);
+      emitter.emit(emitter.INNER_GROUP_SELECTED, this.state.newName);
     } else {
-      emit.emit(emit.INNER_GROUP_SELECTED, this.state.selected);
+      emitter.emit(emitter.INNER_GROUP_SELECTED, this.state.selected);
     }
     this.handleCancel();
   }
@@ -93,6 +93,8 @@ export default class GroupSelect extends React.Component<any, GroupSelectState> 
       selected: '',
       newName: '',
     });
+    // 触发一个失败事件，让emitter去掉监听
+    emitter.emit(emitter.INNER_GROUP_CANCEL);
   }
 
   render() {
