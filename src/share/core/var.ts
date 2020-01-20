@@ -74,3 +74,9 @@ export enum APIs {
   DELETE_RULE,
   UPDATE_CACHE,
 }
+
+export enum IS_MATCH {
+  MATCH,
+  MATCH_BUT_EXCLUDE,
+  NOT_MATCH,
+}

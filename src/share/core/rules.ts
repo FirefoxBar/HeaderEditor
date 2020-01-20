@@ -1,7 +1,7 @@
-import { convertToRule, convertToTinyRule, upgradeRuleFormat } from './ruleUtils';
+import { convertToRule, convertToTinyRule, isMatchUrl, upgradeRuleFormat, initRule } from './ruleUtils';
 import { getDatabase } from './storage';
-import { getDomain, getTableName } from './utils';
-import { InitedRule, Rule, TABLE_NAMES, TABLE_NAMES_TYPE } from './var';
+import { getTableName } from './utils';
+import { InitedRule, IS_MATCH, Rule, TABLE_NAMES, TABLE_NAMES_TYPE } from './var';
 
 const cache: { [key: string]: null | InitedRule[] } = {};
 TABLE_NAMES.forEach(t => (cache[t] = null));
@@ -26,35 +26,13 @@ function updateCache(type: string) {
           const cursor = event.target.result;
           if (cursor) {
             const s: InitedRule = cursor.value;
-            let isValidRule = true;
+            const isValidRule = true;
             s.id = cursor.key;
             // Init function here
-            if (s.isFunction) {
-              try {
-                // @ts-ignore
-                // tslint:disable-next-line
-                s._func = new Function('val', 'detail', s.code);
-              } catch (e) {
-                isValidRule = false;
-              }
-            }
-            // Init regexp
-            if (s.matchType === 'regexp') {
-              try {
-                s._reg = new RegExp(s.pattern, 'g');
-              } catch (e) {
-                isValidRule = false;
-              }
-            }
-            if (typeof s.exclude === 'string' && s.exclude.length > 0) {
-              try {
-                s._exclude = new RegExp(s.exclude);
-              } catch (e) {
-                isValidRule = false;
-              }
-            }
-            if (isValidRule) {
-              all.push(s);
+            try {
+              all.push(initRule(s));
+            } catch (e) {
+              console.error('Cannot init rule', s, e);
             }
             cursor.continue();
           } else {
@@ -108,34 +86,7 @@ function filter(fromRules: InitedRule[], options: FilterOptions) {
   }
 
   if (url != null) {
-    rules = rules.filter(rule => {
-      let result = false;
-      switch (rule.matchType) {
-        case 'all':
-          result = true;
-          break;
-        case 'regexp':
-          rule._reg.lastIndex = 0;
-          result = rule._reg.test(url);
-          break;
-        case 'prefix':
-          result = url.indexOf(rule.pattern) === 0;
-          break;
-        case 'domain':
-          result = getDomain(url) === rule.pattern;
-          break;
-        case 'url':
-          result = url === rule.pattern;
-          break;
-        default:
-          break;
-      }
-      if (result && rule._exclude) {
-        return !rule._exclude.test(url);
-      } else {
-        return result;
-      }
-    });
+    rules = rules.filter(rule => isMatchUrl(rule, url) === IS_MATCH.MATCH);
   }
   return rules;
 }

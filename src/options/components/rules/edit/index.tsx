@@ -4,8 +4,9 @@ import * as React from 'react';
 import Editor from 'react-simple-code-editor';
 import Api from 'share/core/api';
 import emitter from 'share/core/emitter';
+import { initRule, isMatchUrl } from 'share/core/ruleUtils';
 import { IS_SUPPORT_STREAM_FILTER, t } from 'share/core/utils';
-import { Rule } from 'share/core/var';
+import { InitedRule, IS_MATCH, Rule } from 'share/core/var';
 import ENCODING_LIST from './encoding';
 import COMMON_HEADERS from './headers';
 import './index.less';
@@ -22,6 +23,8 @@ interface EditProps {
 
 interface EditState {
   rule: Rule;
+  testUrl: string;
+  testResult: string;
 }
 
 const formItemLayout = {
@@ -45,14 +48,18 @@ const EMPTY_RULE: Rule = {
 };
 
 export default class Edit extends React.Component<EditProps, EditState> {
+  private initedRule?: InitedRule;
   constructor(props: any) {
     super(props);
 
     this.handleChange = this.handleChange.bind(this);
     this.handleSubmit = this.handleSubmit.bind(this);
+    this.handleTestChange = this.handleTestChange.bind(this);
 
     this.state = {
       rule: { ...EMPTY_RULE },
+      testUrl: '',
+      testResult: '',
     };
   }
 
@@ -61,6 +68,7 @@ export default class Edit extends React.Component<EditProps, EditState> {
   }
 
   handleChange(_: any, item: any) {
+    console.log(arguments);
     const rule = {
       ...this.state.rule,
       [item.name]: item.value,
@@ -68,9 +76,81 @@ export default class Edit extends React.Component<EditProps, EditState> {
     if (item.name === 'ruleType' && item.value === 'modifyReceiveBody') {
       rule.isFunction = true;
     }
-    this.setState({
-      rule,
-    });
+    this.setState(
+      {
+        rule,
+      },
+      () => {
+        this.getTestResult(true);
+      },
+    );
+  }
+
+  handleTestChange(value: string) {
+    this.setState(
+      {
+        testUrl: value,
+      },
+      () => {
+        this.getTestResult();
+      },
+    );
+  }
+
+  getTestResult(reInit = false) {
+    if (this.state.testUrl !== '') {
+      // 初始化
+      if (reInit || !this.initedRule) {
+        try {
+          this.initedRule = initRule(this.state.rule);
+        } catch (e) {
+          // 出错
+          this.setState({
+            testUrl: e.message,
+          });
+        }
+      }
+      // 运行
+      if (this.initedRule) {
+        const match = isMatchUrl(this.initedRule, this.state.testUrl);
+        const resultText: { [x: number]: string } = {
+          [IS_MATCH.NOT_MATCH]: t('test_mismatch'),
+          [IS_MATCH.MATCH_BUT_EXCLUDE]: t('test_exclude'),
+        };
+        if (typeof resultText[match] !== 'undefined') {
+          this.setState({
+            testResult: resultText[match],
+          });
+          return;
+        }
+        // 匹配通过，实际运行
+        if (this.initedRule.isFunction) {
+          this.setState({
+            testResult: t('test_custom_code'),
+          });
+          return;
+        }
+        // 只有重定向支持测试详细功能，其他只返回匹配
+        if (this.initedRule.ruleType === 'redirect') {
+          let redirect = '';
+          if (this.initedRule.matchType === 'regexp') {
+            redirect = this.state.testUrl.replace(this.initedRule._reg, this.initedRule.redirectTo);
+          } else {
+            redirect = this.initedRule.redirectTo;
+          }
+          if (/^(http|https|ftp|file)%3A/.test(redirect)) {
+            redirect = decodeURIComponent(redirect);
+          }
+          this.setState({
+            testResult: redirect,
+          });
+        } else {
+          this.setState({
+            testResult: 'Matched',
+          });
+        }
+      }
+    }
   }
 
   componentDidUpdate(prevProps: EditProps) {
@@ -86,7 +166,6 @@ export default class Edit extends React.Component<EditProps, EditState> {
       .then(res => emitter.emit(emitter.EVENT_RULE_UPDATE, res))
       .then(() => this.props.onClose());
   }
-
   render() {
     const isHeaderSend = this.state.rule.ruleType === 'modifySendHeader';
     const isHeaderReceive = this.state.rule.ruleType === 'modifyReceiveHeader';
@@ -179,6 +258,12 @@ export default class Edit extends React.Component<EditProps, EditState> {
               />
             </Form.Item>
           )}
+          <Form.Item label={t('test_url')}>
+            <Input value={this.state.testUrl} onChange={this.handleTestChange} />
+          </Form.Item>
+          <Form.Item label=" ">
+            <pre>{this.state.testResult}</pre>
+          </Form.Item>
           <Form.Item label=" ">
             <Form.Submit onClick={this.handleSubmit}>{t('save')}</Form.Submit>
           </Form.Item>
