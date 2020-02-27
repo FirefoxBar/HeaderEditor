@@ -7,7 +7,7 @@ lang: zh-TW
 
 [RFC 2616](https://tools.ietf.org/html/rfc2616.html#section-4.2)中写到:
 
-> Each header field consists of a name followed by a colon (":") and the field value. Field names are case-insensitive.
+> Each header field consists of a name followed by a colon `(":")` and the field value. Field names are case-insensitive.
 
 因此，从4.0.0开始，Header Editor会将“头名称”变为小写。但自定义函数除外：除了已被其他规则修改的头外，自定义函数获取到的仍然是原始头
 
