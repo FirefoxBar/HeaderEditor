@@ -41,7 +41,7 @@ lang: zh-TW
 
 ### 规则在Firefox中自动删除
 
-感谢[Thorin-Oakenpants]（https://github.com/Thorin-Oakenpants）和[henshin]（https://github.com/henshin）
+感谢[Thorin-Oakenpants](https://github.com/Thorin-Oakenpants)和[henshin](https://github.com/henshin)
 
 * 打开`about:config`，确保`dom.indexedDB.enabled`为`true`
 * 尝试将`extensions.webextensions.keepUuidOnUninstall`更改为true，您的问题是否解决？
