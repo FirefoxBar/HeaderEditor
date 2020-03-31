@@ -13,6 +13,7 @@ module.exports = {
 	sidebar: [
 		'/zh-CN/guide',
 		'/zh-CN/rule',
+		'/zh-CN/modify-body',
 		'/zh-CN/custom-function',
 		'/zh-CN/cloud-backup',
 		'/zh-CN/third-party-rules',
