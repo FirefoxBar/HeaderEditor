@@ -7,7 +7,7 @@ lang: en
 
 [RFC 2616](https://tools.ietf.org/html/rfc2616.html#section-4.2) says:
 
-> Each header field consists of a name followed by a colon (":") and the field value. Field names are case-insensitive.
+> Each header field consists of a name followed by a colon `(":")` and the field value. Field names are case-insensitive.
 
 So, since 4.0.0, Header Editor will reduce "header name" to lowercase. Except for custom functions: the custom function will still get the original header (except that it has been modified by other rules)
 
