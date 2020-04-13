@@ -23,6 +23,8 @@ export interface TinyRule {
   code: string;
   exclude: string;
   group: string;
+  encoding?: string;
+  to?: string;
   action: RuleAction;
 }
 

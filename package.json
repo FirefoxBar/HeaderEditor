@@ -61,6 +61,11 @@
     "typescript": "^3.7.3",
     "webpack-chrome-extension-reloader": "^0.8.3"
   },
+  "husky": {
+    "hooks": {
+      "pre-commit": "npm run precommit"
+    }
+  },
   "lint-staged": {
     "./src/**/*.{ts,tsx}": [
       "tslint --fix",

@@ -1,4 +1,4 @@
-import { Drawer, Form, Input, Radio, Select } from '@alifd/next';
+import { Drawer, Form, Input, Radio, Select, Message } from '@alifd/next';
 import { highlight, languages } from 'prismjs';
 import * as React from 'react';
 import Editor from 'react-simple-code-editor';
@@ -47,6 +47,31 @@ const EMPTY_RULE: Rule = {
   action: 'cancel',
 };
 
+function getInput(rule: Rule) {
+  const res = { ...rule };
+  if (
+    typeof res.action === 'object' &&
+    (res.ruleType === 'modifySendHeader' || res.ruleType === 'modifyReceiveHeader')
+  ) {
+    res.headerName = res.action.name;
+    res.headerValue = res.action.value;
+  }
+  return res;
+}
+
+function getRuleFromInput(input: Rule): Rule {
+  const res = { ...input };
+  if (res.ruleType === 'modifySendHeader' || res.ruleType === 'modifyReceiveHeader') {
+    res.action = {
+      name: res.headerName,
+      value: res.headerValue,
+    };
+    delete res.headerName;
+    delete res.headerValue;
+  }
+  return res;
+}
+
 export default class Edit extends React.Component<EditProps, EditState> {
   private initedRule?: InitedRule;
   constructor(props: any) {
@@ -57,7 +82,7 @@ export default class Edit extends React.Component<EditProps, EditState> {
     this.handleTestChange = this.handleTestChange.bind(this);
 
     this.state = {
-      rule: { ...EMPTY_RULE },
+      rule: getInput(EMPTY_RULE),
       testUrl: '',
       testResult: '',
     };
@@ -155,7 +180,7 @@ export default class Edit extends React.Component<EditProps, EditState> {
   componentDidUpdate(prevProps: EditProps) {
     if (this.props.rule !== prevProps.rule) {
       this.setState({
-        rule: { ...(this.props.rule ? this.props.rule : EMPTY_RULE) },
+        rule: getInput(this.props.rule ? this.props.rule : EMPTY_RULE),
       });
     }
     if (this.props.visible !== prevProps.visible) {
@@ -167,7 +192,40 @@ export default class Edit extends React.Component<EditProps, EditState> {
   }
 
   handleSubmit() {
-    Api.saveRule(this.state.rule)
+    const rule = getRuleFromInput(this.state.rule);
+    // 常规检查
+    if (rule.name === '') {
+      Message.error(t('name_empty'));
+      return;
+    }
+    if (rule.matchType !== 'all' && rule.matchRule === '') {
+      Message.error(t('match_rule_empty'));
+      return;
+    }
+    if (rule.ruleType !== 'modifyReceiveBody' && !rule.encoding) {
+      rule.encoding = 'UTF-8';
+    }
+
+    if (rule.isFunction && rule.code === '') {
+      Message.error(t('code_empty'));
+      return;
+    }
+    if (rule.ruleType === 'redirect' && (!rule.to || rule.to === '')) {
+      Message.error(t('redirect_empty'));
+      return;
+    }
+    if (rule.ruleType === 'modifySendHeader' || rule.ruleType === 'modifyReceiveHeader') {
+      if (rule.headerName === '') {
+        Message.error(t('header_empty'));
+        return;
+      }
+      rule.action = {
+        name: rule.headerName,
+        value: rule.headerValue,
+      };
+    }
+    // 尝试初始化规则，用于检查规则是否有效
+    Api.saveRule(rule)
       .then(res => emitter.emit(emitter.EVENT_RULE_UPDATE, res))
       .then(() => this.props.onClose());
   }
@@ -232,7 +290,7 @@ export default class Edit extends React.Component<EditProps, EditState> {
           {/* Redirect */}
           {this.state.rule.ruleType === 'redirect' && !this.state.rule.isFunction && (
             <Form.Item label={t('redirectTo')}>
-              <Input name="redirectTo" />
+              <Input name="to" />
             </Form.Item>
           )}
           {/* Header mondify */}

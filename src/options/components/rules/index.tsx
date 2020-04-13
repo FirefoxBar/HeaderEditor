@@ -4,12 +4,14 @@ import * as React from 'react';
 import Icon from 'share/components/icon';
 import Api from 'share/core/api';
 import emitter from 'share/core/emitter';
+import { convertToTinyRule } from 'share/core/ruleUtils';
 import { prefs } from 'share/core/storage';
-import { t, getTableName } from 'share/core/utils';
+import { getTableName, t } from 'share/core/utils';
 import { InitedRule, Rule, TABLE_NAMES, TABLE_NAMES_TYPE } from 'share/core/var';
 import './index.less';
 import { remove, toggleRule } from './utils';
-import { convertToRule, convertToTinyRule } from 'share/core/ruleUtils';
+
+const V_KEY = '_v_key';
 
 interface RulesProps {
   visible: boolean;
@@ -107,7 +109,7 @@ export default class Rules extends React.Component<RulesProps, RulesState> {
       }
     }
     // 如果有找到，就替换掉，否则插入新的
-    const displayRule = { ...rule, _v_key: `${tableName}-${rule.id}` };
+    const displayRule = { ...rule, [V_KEY]: `${tableName}-${rule.id}` };
     if (sameItem && fromGroup) {
       if (fromGroup === toGroup) {
         // 在同一个Group里面，直接替换掉就行了
@@ -205,7 +207,7 @@ export default class Rules extends React.Component<RulesProps, RulesState> {
             rules: [],
           };
         }
-        item._v_key = `${table}-${item.id}`;
+        item[V_KEY] = `${table}-${item.id}`;
         result[item.group].rules.push(item);
       });
       // 加载完成啦
@@ -228,6 +230,14 @@ export default class Rules extends React.Component<RulesProps, RulesState> {
   render() {
     return (
       <section className={`section-rules ${this.props.visible ? 'visible' : 'in-visible'}`}>
+        <div className="helper-button">
+          <Button className="button" size="large">
+            <Icon type="playlist-add-check" />
+          </Button>
+          <Button className="button" size="large">
+            <Icon type="add" />
+          </Button>
+        </div>
         <Loading size="large" visible={this.state.loading} inline={false}>
           {Object.values(this.state.group).map(group => {
             return (
@@ -238,7 +248,18 @@ export default class Rules extends React.Component<RulesProps, RulesState> {
                 contentHeight="auto"
                 className="group-item"
               >
-                <Table dataSource={group.rules}>
+                <Table
+                  dataSource={group.rules}
+                  primaryKey={V_KEY}
+                  rowSelection={{
+                    onChange: (selectedRowKeys: any[], records: any[]) => {
+                      console.log(selectedRowKeys, records);
+                    },
+                    onSelectAll: (selected: boolean, records: any[]) => {
+                      console.log(selected, records);
+                    },
+                  }}
+                >
                   <Table.Column
                     className="cell-enable"
                     title={t('enable')}

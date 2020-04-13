@@ -18,4 +18,44 @@
       width: 450px;
     }
   }
+
+  .helper-button {
+    position: fixed;
+    z-index: 10;
+    right: 0;
+    bottom: 20px;
+    padding-right: 20px;
+    transform: translateX(40px);
+    transition: all .2s ease-in-out;
+    display: flex;
+    flex-direction: column;
+
+    &:hover {
+      transform: translateX(0);
+    }
+
+    .button {
+      border-bottom-style: none;
+      border-radius: 0;
+      padding: 0;
+      height: 50px;
+      width: 50px;
+      text-align: center;
+
+      .iconfont {
+        font-size: 20px;
+        margin-right: 0;
+      }
+
+      &:first-child {
+        border-top-left-radius: 3px;
+        border-top-right-radius: 3px;
+      }
+      &:last-child {
+        border-bottom-style: solid;
+        border-bottom-left-radius: 3px;
+        border-bottom-right-radius: 3px;
+      }
+    }
+  }
 }

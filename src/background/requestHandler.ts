@@ -147,25 +147,23 @@ class RequestHandler {
     for (const item of rule) {
       if (item.action === 'cancel' && !item.isFunction) {
         return { cancel: true };
-      } else {
-        if (item.isFunction) {
-          try {
-            const r = item._func(redirectTo, detail);
-            if (typeof r === 'string') {
-              redirectTo = r;
-            }
-            if (r === '_header_editor_cancel_' || (item.action === 'cancel' && r === true)) {
-              return { cancel: true };
-            }
-          } catch (e) {
-            console.error(e);
+      } else if (item.isFunction) {
+        try {
+          const r = item._func(redirectTo, detail);
+          if (typeof r === 'string') {
+            redirectTo = r;
           }
+          if (r === '_header_editor_cancel_' || (item.action === 'cancel' && r === true)) {
+            return { cancel: true };
+          }
+        } catch (e) {
+          console.error(e);
+        }
+      } else if (item.to) {
+        if (item.matchType === 'regexp') {
+          redirectTo = redirectTo.replace(item._reg, item.to);
         } else {
-          if (item.matchType === 'regexp') {
-            redirectTo = redirectTo.replace(item._reg, item.to);
-          } else {
-            redirectTo = item.to;
-          }
+          redirectTo = item.to;
         }
       }
     }
