@@ -4,9 +4,12 @@ on:
   push:
     branches:
     - master
+    - dev
+    - feat/react
   pull_request:
     branches:
     - master
+    - dev
 
 jobs:
   build:
