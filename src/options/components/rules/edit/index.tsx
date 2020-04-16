@@ -214,17 +214,13 @@ export default class Edit extends React.Component<EditProps, EditState> {
       Message.error(t('redirect_empty'));
       return;
     }
-    if (rule.ruleType === 'modifySendHeader' || rule.ruleType === 'modifyReceiveHeader') {
-      if (rule.headerName === '') {
-        Message.error(t('header_empty'));
-        return;
-      }
-      rule.action = {
-        name: rule.headerName,
-        value: rule.headerValue,
-      };
+    if (
+      (rule.ruleType === 'modifySendHeader' || rule.ruleType === 'modifyReceiveHeader') &&
+      (typeof rule.action !== 'object' || rule.action.name === '')
+    ) {
+      Message.error(t('header_empty'));
+      return;
     }
-    // 尝试初始化规则，用于检查规则是否有效
     Api.saveRule(rule)
       .then(res => emitter.emit(emitter.EVENT_RULE_UPDATE, res))
       .then(() => this.props.onClose());

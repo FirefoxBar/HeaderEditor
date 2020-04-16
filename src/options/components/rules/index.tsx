@@ -15,7 +15,7 @@ const V_KEY = '_v_key';
 
 interface RulesProps {
   visible: boolean;
-  onEdit: (rule: Rule) => void;
+  onEdit: (rule?: Rule) => void;
 }
 
 interface GroupItem {
@@ -234,7 +234,7 @@ export default class Rules extends React.Component<RulesProps, RulesState> {
           <Button className="button" size="large">
             <Icon type="playlist-add-check" />
           </Button>
-          <Button className="button" size="large">
+          <Button className="button" size="large" onClick={() => this.props.onEdit()}>
             <Icon type="add" />
           </Button>
         </div>

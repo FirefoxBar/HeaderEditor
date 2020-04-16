@@ -85,10 +85,10 @@ export default class Options extends React.Component<any, OptionsState> {
     });
   }
 
-  handleEdit(rule: Rule) {
+  handleEdit(rule?: Rule) {
     this.setState({
       editShow: true,
-      editRule: convertToRule(rule),
+      editRule: rule ? convertToRule(rule) : undefined,
     });
   }
 
