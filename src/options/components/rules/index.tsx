@@ -26,6 +26,7 @@ interface GroupItem {
 interface RulesState {
   loading: boolean;
   group: { [key: string]: GroupItem };
+  isEnableSelect: boolean;
 }
 
 export default class Rules extends React.Component<RulesProps, RulesState> {
@@ -34,6 +35,7 @@ export default class Rules extends React.Component<RulesProps, RulesState> {
   constructor(props: any) {
     super(props);
 
+    this.handleSelect = this.handleSelect.bind(this);
     this.handlePrefsUpdate = this.handlePrefsUpdate.bind(this);
     this.handleRuleUpdate = this.handleRuleUpdate.bind(this);
     this.handleHasRuleUpdate = this.handleHasRuleUpdate.bind(this);
@@ -49,23 +51,7 @@ export default class Rules extends React.Component<RulesProps, RulesState> {
     this.state = {
       loading: false,
       group: {},
-      /*
-      rowSelection: {
-        onChange: this.onChange.bind(this),
-        onSelect: function(selected, record, records) {
-            console.log('onSelect', selected, record, records);
-        },
-        onSelectAll: function(selected, records) {
-            console.log('onSelectAll', selected, records);
-        },
-        selectedRowKeys: [100306660940, 100306660941],
-        getProps: (record) => {
-            return {
-                disabled: record.id === 100306660941
-            };
-        }
-      },
-      */
+      isEnableSelect: false,
     };
   }
 
@@ -141,6 +127,11 @@ export default class Rules extends React.Component<RulesProps, RulesState> {
   }
   handleHasRuleUpdate() {
     this.load();
+  }
+
+  // 多选相关
+  handleSelect(selectedRowKeys: any[], records: any[]) {
+    console.log(selectedRowKeys, records);
   }
 
   // 切换规则开关
@@ -231,7 +222,11 @@ export default class Rules extends React.Component<RulesProps, RulesState> {
     return (
       <section className={`section-rules ${this.props.visible ? 'visible' : 'in-visible'}`}>
         <div className="helper-button">
-          <Button className="button" size="large">
+          <Button
+            className="button"
+            size="large"
+            onClick={() => this.setState({ isEnableSelect: !this.state.isEnableSelect })}
+          >
             <Icon type="playlist-add-check" />
           </Button>
           <Button className="button" size="large" onClick={() => this.props.onEdit()}>
@@ -251,14 +246,13 @@ export default class Rules extends React.Component<RulesProps, RulesState> {
                 <Table
                   dataSource={group.rules}
                   primaryKey={V_KEY}
-                  rowSelection={{
-                    onChange: (selectedRowKeys: any[], records: any[]) => {
-                      console.log(selectedRowKeys, records);
-                    },
-                    onSelectAll: (selected: boolean, records: any[]) => {
-                      console.log(selected, records);
-                    },
-                  }}
+                  rowSelection={
+                    this.state.isEnableSelect
+                      ? {
+                          onChange: this.handleSelect,
+                        }
+                      : undefined
+                  }
                 >
                   <Table.Column
                     className="cell-enable"
