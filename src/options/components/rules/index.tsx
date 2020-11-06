@@ -27,6 +27,7 @@ interface RulesState {
   loading: boolean;
   group: { [key: string]: GroupItem };
   isEnableSelect: boolean;
+  selectedKeys: string[];
 }
 
 export default class Rules extends React.Component<RulesProps, RulesState> {
@@ -39,6 +40,9 @@ export default class Rules extends React.Component<RulesProps, RulesState> {
     this.handlePrefsUpdate = this.handlePrefsUpdate.bind(this);
     this.handleRuleUpdate = this.handleRuleUpdate.bind(this);
     this.handleHasRuleUpdate = this.handleHasRuleUpdate.bind(this);
+    this.toggleSelect = this.toggleSelect.bind(this);
+    this.handleToggleSelectAll = this.handleToggleSelectAll.bind(this);
+    this.handleToggleMultiEnable = this.handleToggleMultiEnable.bind(this);
 
     prefs.ready(() => {
       this.isCollapse = prefs.get('manage-collapse-group');
@@ -52,6 +56,7 @@ export default class Rules extends React.Component<RulesProps, RulesState> {
       loading: false,
       group: {},
       isEnableSelect: false,
+      selectedKeys: [],
     };
   }
 
@@ -125,6 +130,7 @@ export default class Rules extends React.Component<RulesProps, RulesState> {
     }
     this.forceUpdate();
   }
+
   handleHasRuleUpdate() {
     this.load();
   }
@@ -132,6 +138,9 @@ export default class Rules extends React.Component<RulesProps, RulesState> {
   // 多选相关
   handleSelect(selectedRowKeys: any[], records: any[]) {
     console.log(selectedRowKeys, records);
+    this.setState({
+      selectedKeys: selectedRowKeys,
+    });
   }
 
   // 切换规则开关
@@ -187,6 +196,69 @@ export default class Rules extends React.Component<RulesProps, RulesState> {
     });
   }
 
+  // 切换多选状态
+  toggleSelect() {
+    this.setState({
+      isEnableSelect: !this.state.isEnableSelect,
+      selectedKeys: [],
+    });
+  }
+  getSelectedRules() {
+    const { selectedKeys, group } = this.state;
+    if (selectedKeys.length === 0) {
+      return [];
+    }
+    // 通过 V_KEY 筛选出所需要的
+    const batch = ([] as Rule[])
+      .concat(...Object.values(group).map(it => it.rules))
+      .filter(it => selectedKeys.includes(it[V_KEY]));
+    return batch;
+  }
+
+  // 切换全选/全不选
+  handleToggleSelectAll() {
+    if (this.state.selectedKeys.length > 0) {
+      this.setState({
+        selectedKeys: [],
+      });
+    } else {
+      const keys: string[] = [];
+      Object.values(this.state.group).forEach(g => {
+        g.rules.forEach(it => {
+          keys.push(it[V_KEY]);
+        });
+      });
+      this.setState({
+        selectedKeys: keys,
+      });
+    }
+  }
+
+  // 切换开启、关闭状态
+  async handleToggleMultiEnable() {
+    const batch = this.getSelectedRules();
+    if (batch.length === 0) {
+      return;
+    }
+    const queue: Array<Promise<any>> = [];
+    const table: TABLE_NAMES_TYPE[] = [];
+    const setTo = !batch[0].enable;
+    batch.forEach(rule => {
+      if (rule.enable === setTo) {
+        return;
+      }
+      rule.enable = setTo;
+      queue.push(Api.saveRule(rule));
+      const tableName = getTableName(rule.ruleType);
+      if (tableName && !table.includes(tableName)) {
+        table.push(tableName);
+      }
+    });
+    await Promise.all(queue);
+    await table.map(tb => Api.updateCache(tb));
+    this.forceUpdate();
+  }
+
   load() {
     if (this.state.loading) {
       return;
@@ -240,11 +312,26 @@ export default class Rules extends React.Component<RulesProps, RulesState> {
     return (
       <section className={`section-rules ${this.props.visible ? 'visible' : 'in-visible'}`}>
         <div className="helper-button">
-          <Button
-            className="button"
-            size="large"
-            onClick={() => this.setState({ isEnableSelect: !this.state.isEnableSelect })}
-          >
+          {this.state.isEnableSelect && (
+            <React.Fragment>
+              <Button className="button" size="large" title={t('select_all')} onClick={this.handleToggleSelectAll}>
+                <Icon type="done-all" />
+              </Button>
+              <Button className="button" size="large" title={t('enable')} onClick={this.handleToggleMultiEnable}>
+                <Icon type="touch-app" />
+              </Button>
+              <Button className="button" size="large" title={t('group')}>
+                <Icon type="playlist-add" />
+              </Button>
+              <Button className="button" size="large" title={t('share')}>
+                <Icon type="share" />
+              </Button>
+              <Button className="button" size="large" title={t('delete')}>
+                <Icon type="delete" />
+              </Button>
+            </React.Fragment>
+          )}
+          <Button className="button" size="large" onClick={this.toggleSelect}>
             <Icon type="playlist-add-check" />
           </Button>
           <Button className="button" size="large" onClick={() => this.props.onEdit()}>
@@ -268,6 +355,7 @@ export default class Rules extends React.Component<RulesProps, RulesState> {
                     this.state.isEnableSelect
                       ? {
                           onChange: this.handleSelect,
+                          selectedRowKeys: this.state.selectedKeys,
                         }
                       : undefined
                   }
