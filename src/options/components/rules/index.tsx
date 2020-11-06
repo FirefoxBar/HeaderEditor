@@ -138,13 +138,30 @@ export default class Rules extends React.Component<RulesProps, RulesState> {
   handleToggleEnable(item: InitedRule, checked: boolean) {
     toggleRule(item, checked).then(() => this.forceUpdate());
   }
+
   // 更换分组
   handleChangeGroup(item: InitedRule) {
     selectGroup(item.group).then(newGroup => {
+      const oldGroup = item.group;
+      if (oldGroup === newGroup) {
+        return;
+      }
       item.group = newGroup;
-      Api.saveRule(item).then(() => this.forceUpdate());
+      Api.saveRule(item).then(() => {
+        const oldGroupRules = this.state.group[oldGroup].rules;
+        oldGroupRules.splice(oldGroupRules.indexOf(item), 1);
+        if (typeof this.state.group[newGroup] === 'undefined') {
+          this.state.group[newGroup] = {
+            name: newGroup,
+            rules: [],
+          };
+        }
+        this.state.group[newGroup].rules.push(item);
+        this.forceUpdate();
+      });
     });
   }
+
   // 删除
   handleDelete(item: InitedRule) {
     Dialog.confirm({
@@ -158,6 +175,7 @@ export default class Rules extends React.Component<RulesProps, RulesState> {
       },
     });
   }
+
   // Clone
   handleClone(item: InitedRule) {
     const newItem = convertToTinyRule(item);
@@ -273,7 +291,7 @@ export default class Rules extends React.Component<RulesProps, RulesState> {
                         item.ruleType === 'modifySendHeader' ||
                         (item.ruleType === 'modifyReceiveHeader' && !item.isFunction);
                       return (
-                        <Balloon.Tooltip trigger={<div>{value}</div>}>
+                        <Balloon.Tooltip className="rule-tooltip" trigger={<div>{value}</div>}>
                           <p>
                             {t('matchType')}: {t(`match_${item.matchType}`)}
                           </p>
