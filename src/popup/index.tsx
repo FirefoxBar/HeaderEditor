@@ -1,10 +1,10 @@
 import { Button, Switch } from '@alifd/next';
 import * as React from 'react';
+import Api from 'share/core/api';
 import { prefs } from 'share/core/storage';
 import { t } from 'share/core/utils';
 import { browser } from 'webextension-polyfill-ts';
 import './index.less';
-import Api from 'share/core/api';
 
 interface PopupState {
   enable: boolean;
@@ -30,7 +30,7 @@ export default class Popup extends React.Component<any, PopupState> {
     this.setState({
       enable: checked,
     });
-    prefs.set('disable-all', !checked);
+    Api.setPrefs('disable-all', !checked);
   }
 
   handleOpen() {

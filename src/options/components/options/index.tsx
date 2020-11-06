@@ -4,6 +4,7 @@ import { t } from 'share/core/utils';
 import { defaultPrefValue, PrefValue } from 'share/core/var';
 import * as React from 'react';
 import './index.less';
+import Api from 'share/core/api';
 
 const { Row, Col } = Grid;
 
@@ -50,6 +51,7 @@ export default class Options extends React.Component<OptionsProps, OptionsState>
 
   handleChange(name: string, checked: boolean) {
     const newPrefs = { ...this.state.prefs, [name]: checked };
+    Api.setPrefs(name, checked);
     prefs.set(name, checked);
     this.setState({
       prefs: newPrefs,

@@ -192,7 +192,6 @@ export default class Rules extends React.Component<RulesProps, RulesState> {
     const newItem = convertToTinyRule(item);
     newItem.name += '_clone';
     Api.saveRule(newItem).then(res => {
-      console.log(res);
       this.state.group[item.group].rules.push(res);
       this.forceUpdate();
     });

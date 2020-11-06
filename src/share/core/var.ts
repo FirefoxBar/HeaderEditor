@@ -77,6 +77,7 @@ export enum APIs {
   SAVE_RULE,
   DELETE_RULE,
   UPDATE_CACHE,
+  SET_PREFS,
 }
 
 export enum IS_MATCH {

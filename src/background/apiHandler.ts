@@ -1,5 +1,5 @@
 import rules from 'share/core/rules';
-import { getDatabase } from 'share/core/storage';
+import { getDatabase, prefs } from 'share/core/storage';
 import { APIs } from 'share/core/var';
 import { browser } from 'webextension-polyfill-ts';
 import { openURL } from './utils';
@@ -24,6 +24,8 @@ export default function createApiHandler() {
         return rules.save(request.rule);
       case APIs.DELETE_RULE:
         return rules.remove(request.type, request.id);
+      case APIs.SET_PREFS:
+        return prefs.set(request.key, request.value);
       case APIs.UPDATE_CACHE:
         if (request.type === 'all') {
           return Promise.all([

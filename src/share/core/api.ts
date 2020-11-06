@@ -47,6 +47,13 @@ class BackgroundAPI {
       id,
     });
   }
+  setPrefs(key: string, value: any) {
+    return browser.runtime.sendMessage({
+      method: APIs.SET_PREFS,
+      key,
+      value,
+    });
+  }
 }
 
 const Api = new BackgroundAPI();
