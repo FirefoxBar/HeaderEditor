@@ -1,5 +1,5 @@
 import { Button, Dialog, Message, Tag } from '@alifd/next';
-import moment from 'moment';
+import dayjs from 'dayjs';
 import * as React from 'react';
 import Icon from 'share/components/icon';
 import Api from 'share/core/api';
@@ -104,7 +104,7 @@ export default class Cloud extends React.Component<CloudProps, CloudState> {
       >
         {this.state.has && (
           <Tag.Closeable onClose={this.handleDelete}>
-            {t('cloud_backup_at', moment(this.state.time).format('lll'))}
+            {t('cloud_backup_at', dayjs(this.state.time).format('lll'))}
           </Tag.Closeable>
         )}
         {!this.state.has && t('cloud_no_backup')}

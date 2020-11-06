@@ -3,14 +3,13 @@ import * as React from 'react';
 import Api from 'share/core/api';
 import { convertToRule } from 'share/core/ruleUtils';
 import { t } from 'share/core/utils';
-import { Rule, APIs, TABLE_NAMES } from 'share/core/var';
+import { Rule } from 'share/core/var';
 import GroupSelect from './components/groupSelect';
 import ImportAndExportSection from './components/importAndExport';
 import OptionsSection from './components/options';
 import RulesSection from './components/rules';
 import Edit from './components/rules/edit';
 import './index.less';
-import { browser } from 'webextension-polyfill-ts';
 
 interface OptionsState {
   active: string;

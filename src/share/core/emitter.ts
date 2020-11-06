@@ -5,6 +5,7 @@ class Emitter extends EventEmitter {
   ACTION_SELECT_GROUP = 'a2';
   INNER_GROUP_SELECTED = 'a3';
   INNER_GROUP_CANCEL = 'a4';
+  INNER_LOG = 'a5';
 
   EVENT_HAS_RULE_UPDATE = 'b1';
   EVENT_RULE_UPDATE = 'b2';

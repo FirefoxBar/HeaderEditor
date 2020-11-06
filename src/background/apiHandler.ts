@@ -9,7 +9,6 @@ export default function createApiHandler() {
     if (request.method === 'notifyBackground') {
       request.method = request.reason;
     }
-    console.log(request);
     switch (request.method) {
       case APIs.HEALTH_CHECK:
         return new Promise(resolve => {

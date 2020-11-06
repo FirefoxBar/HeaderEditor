@@ -13,10 +13,6 @@ const copy = [
     to: "external/react-dom.min.js"
   },
   {
-    from: "./node_modules/moment/min/moment-with-locales.min.js",
-    to: "external/moment.min.js"
-  },
-  {
     from: "./src/public",
     to: "assets"
   }
@@ -29,7 +25,6 @@ module.exports = function(root, config) {
   }
   config.externals['react'] = 'window.React';
   config.externals['react-dom'] = 'window.ReactDOM';
-  config.externals['moment'] = 'window.moment';
   // 复制externals和静态文件
   if (config.plugins && Array.isArray(config.plugins)) {
     const fontDownloadCache = {};

@@ -1,4 +1,5 @@
 import emitter from 'share/core/emitter';
+import logger from 'share/core/logger';
 import rules from 'share/core/rules';
 import { prefs } from 'share/core/storage';
 import { IS_CHROME, IS_SUPPORT_STREAM_FILTER } from 'share/core/utils';
@@ -136,6 +137,7 @@ class RequestHandler {
     if (!this.beforeAll(e)) {
       return;
     }
+    logger.d(`handle before request ${e.url}`, e);
     // 可用：重定向，阻止加载
     const rule = rules.get('request', { url: e.url, enable: true });
     // Browser is starting up, pass all requests
@@ -151,9 +153,11 @@ class RequestHandler {
         try {
           const r = item._func(redirectTo, detail);
           if (typeof r === 'string') {
+            logger.d(`[rule: ${item.id}] redirect ${redirectTo} to ${r}`);
             redirectTo = r;
           }
           if (r === '_header_editor_cancel_' || (item.action === 'cancel' && r === true)) {
+            logger.d(`[rule: ${item.id}] cancel`);
             return { cancel: true };
           }
         } catch (e) {
@@ -161,8 +165,11 @@ class RequestHandler {
         }
       } else if (item.to) {
         if (item.matchType === 'regexp') {
-          redirectTo = redirectTo.replace(item._reg, item.to);
+          const to = redirectTo.replace(item._reg, item.to);
+          logger.d(`[rule: ${item.id}] redirect ${redirectTo} to ${to}`);
+          redirectTo = to;
         } else {
+          logger.d(`[rule: ${item.id}] redirect ${redirectTo} to ${item.to}`);
           redirectTo = item.to;
         }
       }
@@ -187,12 +194,14 @@ class RequestHandler {
     if (!e.requestHeaders) {
       return;
     }
+    logger.d(`handle before send ${e.url}`, e.requestHeaders);
     const rule = rules.get('sendHeader', { url: e.url, enable: true });
     // Browser is starting up, pass all requests
     if (rule === null) {
       return;
     }
     this.modifyHeaders(e, REQUEST_TYPE.REQUEST, rule);
+    logger.d(`handle before send:finish ${e.url}`, e.requestHeaders);
     return { requestHeaders: e.requestHeaders };
   }
 
@@ -229,11 +238,13 @@ class RequestHandler {
     if (!e.responseHeaders) {
       return;
     }
+    logger.d(`handle received ${e.url}`, e.responseHeaders);
     const rule = rules.get('receiveHeader', { url: e.url, enable: true });
     // Browser is starting up, pass all requests
     if (rule) {
       this.modifyHeaders(e, REQUEST_TYPE.RESPONSE, rule, detail);
     }
+    logger.d(`handle received:finish ${e.url}`, e.responseHeaders);
     return { responseHeaders: e.responseHeaders };
   }
 
