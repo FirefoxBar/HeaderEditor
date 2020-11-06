@@ -43,6 +43,7 @@ export default class Rules extends React.Component<RulesProps, RulesState> {
     this.toggleSelect = this.toggleSelect.bind(this);
     this.handleToggleSelectAll = this.handleToggleSelectAll.bind(this);
     this.handleToggleMultiEnable = this.handleToggleMultiEnable.bind(this);
+    this.handleMultiSelectGroup = this.handleMultiSelectGroup.bind(this);
 
     prefs.ready(() => {
       this.isCollapse = prefs.get('manage-collapse-group');
@@ -258,6 +259,26 @@ export default class Rules extends React.Component<RulesProps, RulesState> {
     await table.map(tb => Api.updateCache(tb));
     this.forceUpdate();
   }
+  // 批量移动群组
+  handleMultiSelectGroup() {
+    selectGroup().then(newGroup => {
+      const batch = this.getSelectedRules().filter(it => it.group !== newGroup);
+      batch.forEach(it => {
+        const oldGroup = it.group;
+        it.group = newGroup;
+        const oldGroupRules = this.state.group[oldGroup].rules;
+        oldGroupRules.splice(oldGroupRules.indexOf(it), 1);
+        if (typeof this.state.group[newGroup] === 'undefined') {
+          this.state.group[newGroup] = {
+            name: newGroup,
+            rules: [],
+          };
+        }
+        this.state.group[newGroup].rules.push(it);
+      });
+      Promise.all(batch.map(item => Api.saveRule(item))).then(() => this.forceUpdate());
+    });
+  }
 
   load() {
     if (this.state.loading) {
@@ -320,7 +341,7 @@ export default class Rules extends React.Component<RulesProps, RulesState> {
               <Button className="button" size="large" title={t('enable')} onClick={this.handleToggleMultiEnable}>
                 <Icon type="touch-app" />
               </Button>
-              <Button className="button" size="large" title={t('group')}>
+              <Button className="button" size="large" title={t('group')} onClick={this.handleMultiSelectGroup}>
                 <Icon type="playlist-add" />
               </Button>
               <Button className="button" size="large" title={t('share')}>
