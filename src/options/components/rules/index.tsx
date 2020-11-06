@@ -1,18 +1,20 @@
 import { Balloon, Button, Card, Dialog, Loading, Switch, Table } from '@alifd/next';
+import classNames from 'classnames';
 import { selectGroup } from 'options/lib/utils';
+import { getExportName } from 'options/utils';
 import * as React from 'react';
 import Icon from 'share/components/icon';
 import Api from 'share/core/api';
 import emitter from 'share/core/emitter';
+import file from 'share/core/file';
 import { convertToTinyRule, createExport } from 'share/core/ruleUtils';
 import { prefs } from 'share/core/storage';
 import { getTableName, t } from 'share/core/utils';
 import { InitedRule, Rule, TABLE_NAMES, TABLE_NAMES_TYPE } from 'share/core/var';
+import Float from './float';
 import './index.less';
+import RuleDetail from './ruleDetail';
 import { remove, toggleRule } from './utils';
-import file from 'share/core/file';
-import { getExportName } from 'options/utils';
-import classNames from 'classnames';
 
 const V_KEY = '_v_key';
 
@@ -31,6 +33,7 @@ interface RulesState {
   group: { [key: string]: GroupItem };
   isEnableSelect: boolean;
   selectedKeys: string[];
+  float: Rule[];
 }
 
 export default class Rules extends React.Component<RulesProps, RulesState> {
@@ -63,6 +66,7 @@ export default class Rules extends React.Component<RulesProps, RulesState> {
       group: {},
       isEnableSelect: false,
       selectedKeys: [],
+      float: [],
     };
   }
 
@@ -194,6 +198,19 @@ export default class Rules extends React.Component<RulesProps, RulesState> {
     Api.saveRule(newItem).then(res => {
       this.state.group[item.group].rules.push(res);
       this.forceUpdate();
+    });
+  }
+
+  // 预览
+  handlePreview(item: Rule) {
+    const newFloat = [...this.state.float];
+    if (!this.state.float.includes(item)) {
+      newFloat.push(item);
+    } else {
+      newFloat.splice(newFloat.indexOf(item), 1);
+    }
+    this.setState({
+      float: newFloat,
     });
   }
 
@@ -430,42 +447,9 @@ export default class Rules extends React.Component<RulesProps, RulesState> {
                     title={t('name')}
                     dataIndex="name"
                     cell={(value: string, index: number, item: InitedRule) => {
-                      const isModifyHeader =
-                        item.ruleType === 'modifySendHeader' ||
-                        (item.ruleType === 'modifyReceiveHeader' && !item.isFunction);
                       return (
                         <Balloon.Tooltip className="rule-tooltip" trigger={<div>{value}</div>}>
-                          <p>
-                            {t('matchType')}: {t(`match_${item.matchType}`)}
-                          </p>
-                          {item.matchType !== 'all' && (
-                            <p>
-                              {t('matchRule')}: {item.pattern}
-                            </p>
-                          )}
-                          <p>
-                            {t('exec_type')}: {t('exec_' + (item.isFunction ? 'function' : 'normal'))}
-                          </p>
-                          {item.ruleType === 'redirect' && (
-                            <p>
-                              {t('redirectTo')}: {item.to}
-                            </p>
-                          )}
-                          {item.ruleType === 'modifyReceiveBody' && (
-                            <p>
-                              {t('encoding')}: {item.encoding}
-                            </p>
-                          )}
-                          {isModifyHeader && (
-                            <React.Fragment>
-                              <p>
-                                {t('headerName')}: {typeof item.action === 'object' && item.action.name}
-                              </p>
-                              <p>
-                                {t('headerValue')}: {typeof item.action === 'object' && item.action.value}
-                              </p>
-                            </React.Fragment>
-                          )}
+                          <RuleDetail rule={item} />
                         </Balloon.Tooltip>
                       );
                     }}
@@ -494,7 +478,7 @@ export default class Rules extends React.Component<RulesProps, RulesState> {
                             <Icon type="content-copy" />
                             {t('clone')}
                           </Button>
-                          <Button type="secondary">
+                          <Button type="secondary" onClick={this.handlePreview.bind(this, item)}>
                             <Icon type="search" />
                             {t('view')}
                           </Button>
@@ -511,6 +495,9 @@ export default class Rules extends React.Component<RulesProps, RulesState> {
             );
           })}
         </Loading>
+        {this.state.float.map(it => (
+          <Float key={it[V_KEY]} rule={it} onClose={() => this.handlePreview(it)} />
+        ))}
       </section>
     );
   }
