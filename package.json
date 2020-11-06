@@ -19,6 +19,7 @@
   },
   "dependencies": {
     "@alifd/next": "^1.18.17",
+    "classnames": "^2.2.6",
     "eventemitter3": "^4.0.0",
     "fast-deep-equal": "^2.0.1",
     "merge": "^1.2.0",
@@ -33,6 +34,7 @@
   "devDependencies": {
     "@nowa/solution-react-typescript": "^0.11.7",
     "@types/chrome": "^0.0.72",
+    "@types/classnames": "^2.2.11",
     "@types/prismjs": "^1.16.0",
     "@types/react": "^16.9.16",
     "@types/react-dom": "^16.9.4",

@@ -7,7 +7,7 @@ export function toggleRule(rule: InitedRule, enable: boolean) {
   return Api.saveRule(rule);
 }
 
-export function remove(rule: InitedRule) {
+export function remove(rule: Rule) {
   const table = getTableName(rule.ruleType);
   return table ? Api.removeRule(table, rule.id) : Promise.resolve();
 }

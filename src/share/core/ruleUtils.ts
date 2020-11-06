@@ -40,6 +40,7 @@ export function convertToTinyRule(rule: InitedRule | Rule | TinyRule): TinyRule 
     return rule;
   }
   const item = convertToRule(rule);
+  // @ts-ignore
   delete item.id;
   return item;
 }
@@ -49,6 +50,7 @@ export function fromJson(str: string) {
   TABLE_NAMES.forEach(e => {
     if (list[e]) {
       list[e].map(ee => {
+        // @ts-ignore
         delete ee.id;
         return upgradeRuleFormat(ee);
       });

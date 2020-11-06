@@ -86,20 +86,18 @@ export function fetchUrl(param: FetchUrlParam): Promise<string> {
   });
 }
 
-export function getTableName(ruleType: RULE_TYPE): TABLE_NAMES_TYPE | null {
-  if (ruleType === 'cancel' || ruleType === 'redirect') {
-    return 'request';
+export function getTableName(ruleType: RULE_TYPE): TABLE_NAMES_TYPE {
+  switch (ruleType) {
+    case 'cancel':
+    case 'redirect':
+      return 'request';
+    case 'modifySendHeader':
+      return 'sendHeader';
+    case 'modifyReceiveHeader':
+      return 'receiveHeader';
+    case 'modifyReceiveBody':
+      return 'receiveBody';
   }
-  if (ruleType === 'modifySendHeader') {
-    return 'sendHeader';
-  }
-  if (ruleType === 'modifyReceiveHeader') {
-    return 'receiveHeader';
-  }
-  if (ruleType === 'modifyReceiveBody') {
-    return 'receiveBody';
-  }
-  return null;
 }
 
 export function canAccess(url?: string) {

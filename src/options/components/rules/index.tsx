@@ -4,12 +4,15 @@ import * as React from 'react';
 import Icon from 'share/components/icon';
 import Api from 'share/core/api';
 import emitter from 'share/core/emitter';
-import { convertToTinyRule } from 'share/core/ruleUtils';
+import { convertToTinyRule, createExport } from 'share/core/ruleUtils';
 import { prefs } from 'share/core/storage';
 import { getTableName, t } from 'share/core/utils';
 import { InitedRule, Rule, TABLE_NAMES, TABLE_NAMES_TYPE } from 'share/core/var';
 import './index.less';
 import { remove, toggleRule } from './utils';
+import file from 'share/core/file';
+import { getExportName } from 'options/utils';
+import classNames from 'classnames';
 
 const V_KEY = '_v_key';
 
@@ -42,8 +45,10 @@ export default class Rules extends React.Component<RulesProps, RulesState> {
     this.handleHasRuleUpdate = this.handleHasRuleUpdate.bind(this);
     this.toggleSelect = this.toggleSelect.bind(this);
     this.handleToggleSelectAll = this.handleToggleSelectAll.bind(this);
-    this.handleToggleMultiEnable = this.handleToggleMultiEnable.bind(this);
-    this.handleMultiSelectGroup = this.handleMultiSelectGroup.bind(this);
+    this.handleBatchEnable = this.handleBatchEnable.bind(this);
+    this.handleBatchMove = this.handleBatchMove.bind(this);
+    this.handleBatchShare = this.handleBatchShare.bind(this);
+    this.handleBatchDelete = this.handleBatchDelete.bind(this);
 
     prefs.ready(() => {
       this.isCollapse = prefs.get('manage-collapse-group');
@@ -76,9 +81,6 @@ export default class Rules extends React.Component<RulesProps, RulesState> {
   // 事件响应
   handleRuleUpdate(rule: Rule) {
     const tableName = getTableName(rule.ruleType);
-    if (!tableName) {
-      return;
-    }
     // 寻找ID相同的
     let sameItem: Rule | null = null;
     let fromGroup: Rule[] | null = null;
@@ -137,8 +139,7 @@ export default class Rules extends React.Component<RulesProps, RulesState> {
   }
 
   // 多选相关
-  handleSelect(selectedRowKeys: any[], records: any[]) {
-    console.log(selectedRowKeys, records);
+  handleSelect(selectedRowKeys: any[]) {
     this.setState({
       selectedKeys: selectedRowKeys,
     });
@@ -236,7 +237,7 @@ export default class Rules extends React.Component<RulesProps, RulesState> {
   }
 
   // 切换开启、关闭状态
-  async handleToggleMultiEnable() {
+  async handleBatchEnable() {
     const batch = this.getSelectedRules();
     if (batch.length === 0) {
       return;
@@ -251,7 +252,7 @@ export default class Rules extends React.Component<RulesProps, RulesState> {
       rule.enable = setTo;
       queue.push(Api.saveRule(rule));
       const tableName = getTableName(rule.ruleType);
-      if (tableName && !table.includes(tableName)) {
+      if (!table.includes(tableName)) {
         table.push(tableName);
       }
     });
@@ -260,7 +261,7 @@ export default class Rules extends React.Component<RulesProps, RulesState> {
     this.forceUpdate();
   }
   // 批量移动群组
-  handleMultiSelectGroup() {
+  handleBatchMove() {
     selectGroup().then(newGroup => {
       const batch = this.getSelectedRules().filter(it => it.group !== newGroup);
       batch.forEach(it => {
@@ -277,6 +278,31 @@ export default class Rules extends React.Component<RulesProps, RulesState> {
         this.state.group[newGroup].rules.push(it);
       });
       Promise.all(batch.map(item => Api.saveRule(item))).then(() => this.forceUpdate());
+    });
+  }
+  // 批量分享
+  handleBatchShare() {
+    const batch = this.getSelectedRules();
+    const result: any = {};
+    TABLE_NAMES.forEach(tb => (result[tb] = []));
+    batch.forEach(e => result[getTableName(e.ruleType)].push(e));
+    file.save(JSON.stringify(createExport(result), null, '\t'), getExportName());
+  }
+  // 批量删除
+  handleBatchDelete() {
+    Dialog.confirm({
+      content: t('delete_confirm'),
+      onOk: async () => {
+        const batch = this.getSelectedRules();
+        await Promise.all(
+          batch.map(async item => {
+            await remove(item);
+            const group = this.state.group[item.group];
+            group.rules.splice(group.rules.indexOf(item), 1);
+          }),
+        );
+        this.forceUpdate();
+      },
     });
   }
 
@@ -331,23 +357,32 @@ export default class Rules extends React.Component<RulesProps, RulesState> {
 
   render() {
     return (
-      <section className={`section-rules ${this.props.visible ? 'visible' : 'in-visible'}`}>
-        <div className="helper-button">
+      <section
+        className={classNames('section-rules', {
+          visible: this.props.visible,
+          'in-visible': !this.props.visible,
+        })}
+      >
+        <div
+          className={classNames('helper-button', {
+            enable: this.state.isEnableSelect,
+          })}
+        >
           {this.state.isEnableSelect && (
             <React.Fragment>
               <Button className="button" size="large" title={t('select_all')} onClick={this.handleToggleSelectAll}>
                 <Icon type="done-all" />
               </Button>
-              <Button className="button" size="large" title={t('enable')} onClick={this.handleToggleMultiEnable}>
+              <Button className="button" size="large" title={t('enable')} onClick={this.handleBatchEnable}>
                 <Icon type="touch-app" />
               </Button>
-              <Button className="button" size="large" title={t('group')} onClick={this.handleMultiSelectGroup}>
+              <Button className="button" size="large" title={t('group')} onClick={this.handleBatchMove}>
                 <Icon type="playlist-add" />
               </Button>
-              <Button className="button" size="large" title={t('share')}>
+              <Button className="button" size="large" title={t('share')} onClick={this.handleBatchShare}>
                 <Icon type="share" />
               </Button>
-              <Button className="button" size="large" title={t('delete')}>
+              <Button className="button" size="large" title={t('delete')} onClick={this.handleBatchDelete}>
                 <Icon type="delete" />
               </Button>
             </React.Fragment>

@@ -24,7 +24,7 @@ export default class Cloud extends React.Component<CloudProps, CloudState> {
   constructor(props: any) {
     super(props);
 
-    this.handleDetele = this.handleDetele.bind(this);
+    this.handleDelete = this.handleDelete.bind(this);
     this.handleUpload = this.handleUpload.bind(this);
     this.handleDownload = this.handleDownload.bind(this);
 
@@ -64,7 +64,7 @@ export default class Cloud extends React.Component<CloudProps, CloudState> {
     });
   }
 
-  handleDetele(from: string) {
+  handleDelete(from: string) {
     browserSync.clear().then(() =>
       this.setState({
         has: false,
@@ -103,7 +103,7 @@ export default class Cloud extends React.Component<CloudProps, CloudState> {
         visible={this.props.visible}
       >
         {this.state.has && (
-          <Tag.Closeable onClose={this.handleDetele}>
+          <Tag.Closeable onClose={this.handleDelete}>
             {t('cloud_backup_at', moment(this.state.time).format('lll'))}
           </Tag.Closeable>
         )}
