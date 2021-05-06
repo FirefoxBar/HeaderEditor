@@ -1,38 +1,34 @@
 {
+  "compileOnSave": false,
+  "buildOnSave": false,
   "compilerOptions": {
-    "baseUrl": "./src",
-    "lib": ["es2017", "dom"],
-    // Target latest version of ECMAScript.
-    "target": "esnext",
-    // Specify module code generation: 'none', 'commonjs', 'amd', 'system', 'umd', 'es2015', or 'ESNext'.
+    "baseUrl": ".",
+    "outDir": "build",
     "module": "esnext",
-    // Search under node_modules for non-relative imports.
+    "target": "es6",
+    "jsx": "react",
     "moduleResolution": "node",
-    // Process & infer types from .js files.
-    "allowJs": true,
-    // Report errors in .js files.
-    "checkJs": false,
-    // Don't emit; allow Babel to transform files.
-    "noEmit": false,
-    // Enable strictest settings like strictNullChecks & noImplicitAny.
-    "strict": true,
-    // Allow default imports from modules with no default export. This does not affect code emit, just typechecking.
     "allowSyntheticDefaultImports": true,
-    // Enables emit interoperability between CommonJS and ES Modules via creation of namespace objects for all imports. Implies 'allowSyntheticDefaultImports'.
-    "esModuleInterop": true,
-    // Specify JSX code generation: 'preserve', 'react-native', or 'react'.
-    "jsx": "preserve",
-    // Import emit helpers (e.g. __extends, __rest, etc..) from tslib
-    "importHelpers": true,
-    // Enables experimental support for ES7 decorators.
-    "experimentalDecorators": true,
-    // Generates corresponding .map file.
+    "lib": ["es6", "dom"],
     "sourceMap": true,
-    // Disallow inconsistently-cased references to the same file.
+    "allowJs": true,
+    "rootDir": "./",
     "forceConsistentCasingInFileNames": true,
-    // Allow json import
-    "resolveJsonModule": true,
+    "noImplicitReturns": true,
+    "noImplicitThis": true,
+    "noImplicitAny": false,
+    "importHelpers": true,
+    "strictNullChecks": true,
+    "suppressImplicitAnyIndexErrors": true,
+    "noUnusedLocals": true,
+    "skipLibCheck": true,
+    "types": ["node"],
+    "paths": {
+      "@/*": ["./src/*"],
+      "ice": [".ice/index.ts"],
+      "ice/*": [".ice/pages/*"]
+    }
   },
-  "exclude": ["./build", "./dist"],
-  "include": ["./src"]
+  "include": ["src", ".ice"],
+  "exclude": ["node_modules", "build", "public"]
 }
