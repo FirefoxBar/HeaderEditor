@@ -3,6 +3,18 @@
     margin-top: 60px;
   }
 
+  .group-item-actions {
+    .next-btn-group {
+      margin-right: 8px;
+    }
+
+    .next-btn {
+      > .iconfont {
+        margin-right: 0;
+      }
+    }
+  }
+
   .group-item {
     margin-bottom: 20px;
 
@@ -16,6 +28,26 @@
 
     .cell-action {
       width: 450px;
+    }
+
+
+    .collapse-icon {
+      display: inline-block;
+      transition: all .2s ease;
+      transform: rotateZ(180deg);
+    }
+
+    &.is-hide {
+      .next-card-head-main {
+        border-bottom: none;
+        margin-bottom: 8px;
+      }
+      .next-card-body {
+        display: none;
+      }
+      .collapse-icon {
+        transform: rotateZ(0deg);
+      }
     }
   }
 

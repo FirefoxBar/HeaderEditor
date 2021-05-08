@@ -10,11 +10,11 @@ import file from '@/share/core/file';
 import { convertToTinyRule, createExport } from '@/share/core/ruleUtils';
 import { prefs } from '@/share/core/storage';
 import { getTableName, t } from '@/share/core/utils';
-import { InitedRule, Rule, TABLE_NAMES, TABLE_NAMES_TYPE } from '@/share/core/var';
+import { InitdRule, Rule, TABLE_NAMES, TABLE_NAMES_TYPE } from '@/share/core/var';
 import Float from './float';
 import './index.less';
 import RuleDetail from './ruleDetail';
-import { remove, toggleRule } from './utils';
+import { batchShare, remove, toggleRule } from './utils';
 
 const V_KEY = '_v_key';
 
@@ -34,6 +34,7 @@ interface RulesState {
   isEnableSelect: boolean;
   selectedKeys: string[];
   float: Rule[];
+  collapsed: string[];
 }
 
 export default class Rules extends React.Component<RulesProps, RulesState> {
@@ -68,6 +69,7 @@ export default class Rules extends React.Component<RulesProps, RulesState> {
       isEnableSelect: false,
       selectedKeys: [],
       float: [],
+      collapsed: [],
     };
   }
 
@@ -151,12 +153,12 @@ export default class Rules extends React.Component<RulesProps, RulesState> {
   }
 
   // 切换规则开关
-  handleToggleEnable(item: InitedRule, checked: boolean) {
+  handleToggleEnable(item: InitdRule, checked: boolean) {
     toggleRule(item, checked).then(() => this.forceUpdate());
   }
 
   // 更换分组
-  handleChangeGroup(item: InitedRule) {
+  handleChangeGroup(item: InitdRule) {
     selectGroup(item.group).then(newGroup => {
       const oldGroup = item.group;
       if (oldGroup === newGroup) {
@@ -179,7 +181,7 @@ export default class Rules extends React.Component<RulesProps, RulesState> {
   }
 
   // 删除
-  handleDelete(item: InitedRule) {
+  handleDelete(item: InitdRule) {
     Dialog.confirm({
       content: t('delete_confirm'),
       onOk: () => {
@@ -193,7 +195,7 @@ export default class Rules extends React.Component<RulesProps, RulesState> {
   }
 
   // Clone
-  handleClone(item: InitedRule) {
+  handleClone(item: InitdRule) {
     const newItem = convertToTinyRule(item);
     newItem.name += '_clone';
     Api.saveRule(newItem).then(res => {
@@ -286,6 +288,9 @@ export default class Rules extends React.Component<RulesProps, RulesState> {
         it.group = newGroup;
         const oldGroupRules = this.state.group[oldGroup].rules;
         oldGroupRules.splice(oldGroupRules.indexOf(it), 1);
+        if (oldGroupRules.length === 0) {
+          delete this.state.group[newGroup];
+        }
         if (typeof this.state.group[newGroup] === 'undefined') {
           this.state.group[newGroup] = {
             name: newGroup,
@@ -299,11 +304,7 @@ export default class Rules extends React.Component<RulesProps, RulesState> {
   }
   // 批量分享
   handleBatchShare() {
-    const batch = this.getSelectedRules();
-    const result: any = {};
-    TABLE_NAMES.forEach(tb => (result[tb] = []));
-    batch.forEach(e => result[getTableName(e.ruleType)].push(e));
-    file.save(JSON.stringify(createExport(result), null, '\t'), getExportName());
+    batchShare(this.getSelectedRules());
   }
   // 批量删除
   handleBatchDelete() {
@@ -323,6 +324,42 @@ export default class Rules extends React.Component<RulesProps, RulesState> {
     });
   }
 
+  handleGroupShare(name: string) {
+    const rules = this.state.group[name].rules;
+    const result: any = {};
+    TABLE_NAMES.forEach(tb => (result[tb] = []));
+    rules.forEach(e => result[getTableName(e.ruleType)].push(e));
+    file.save(JSON.stringify(createExport(result), null, '\t'), getExportName());
+  }
+  handleGroupRename(name: string) {
+    //
+  }
+  handleGroupDelete(name: string) {
+    Dialog.confirm({
+      content: t('delete_confirm'),
+      onOk: async () => {
+        const rules = this.state.group[name].rules;
+        await Promise.all(rules.map(item => remove(item)));
+        const newGroup = {
+          ...this.state.group,
+        };
+        delete newGroup[name];
+        this.setState({
+          group: newGroup,
+        });
+      },
+    });
+  }
+  handleCollapse(name: string) {
+    const collapsed = [...this.state.collapsed];
+    if (collapsed.includes(name)) {
+      collapsed.splice(collapsed.indexOf(name), 1);
+    } else {
+      collapsed.push(name);
+    }
+    this.setState({ collapsed });
+  }
+
   load() {
     if (this.state.loading) {
       return;
@@ -339,7 +376,7 @@ export default class Rules extends React.Component<RulesProps, RulesState> {
     };
     // 记录总数
     let finishCount = 0;
-    const checkResult = (table: TABLE_NAMES_TYPE, response: InitedRule[] | null) => {
+    const checkResult = (table: TABLE_NAMES_TYPE, response: InitdRule[] | null) => {
       if (!response) {
         // Browser is starting up
         requestRules(table);
@@ -357,8 +394,10 @@ export default class Rules extends React.Component<RulesProps, RulesState> {
       });
       // 加载完成啦
       if (++finishCount >= TABLE_NAMES.length) {
+        const collapsed = Object.keys(result);
         this.setState({
           group: result,
+          collapsed,
           loading: false,
         });
         emitter.emit(emitter.EVENT_GROUP_UPDATE, Object.keys(result));
@@ -373,6 +412,8 @@ export default class Rules extends React.Component<RulesProps, RulesState> {
   }
 
   render() {
+    const { collapsed } = this.state;
+
     return (
       <section
         className={classNames('section-rules', {
@@ -413,13 +454,55 @@ export default class Rules extends React.Component<RulesProps, RulesState> {
         </div>
         <Loading size="large" visible={this.state.loading} inline={false}>
           {Object.values(this.state.group).map(group => {
+            const { name } = group;
             return (
               <Card
-                key={group.name}
+                key={name}
                 showTitleBullet={false}
-                title={group.name}
+                title={name}
+                extra={
+                  <div className="group-item-actions">
+                    <Button.Group>
+                      <Balloon.Tooltip
+                        className="rule-tooltip"
+                        trigger={
+                          <Button type="normal" onClick={this.handleGroupRename.bind(this, name)}>
+                            <i className="iconfont icon-edit" />
+                          </Button>
+                        }
+                      >
+                        {t('rename')}
+                      </Balloon.Tooltip>
+                      <Balloon.Tooltip
+                        className="rule-tooltip"
+                        trigger={
+                          <Button type="normal" onClick={this.handleGroupShare.bind(this, name)}>
+                            <i className="iconfont icon-share" />
+                          </Button>
+                        }
+                      >
+                        {t('share')}
+                      </Balloon.Tooltip>
+                      <Balloon.Tooltip
+                        className="rule-tooltip"
+                        trigger={
+                          <Button type="normal" onClick={this.handleGroupDelete.bind(this, name)}>
+                            <i className="iconfont icon-delete" />
+                          </Button>
+                        }
+                      >
+                        {t('delete')}
+                      </Balloon.Tooltip>
+                    </Button.Group>
+                    <Button type="normal" onClick={this.handleCollapse.bind(this, name)}>
+                      <i className="iconfont icon-keyboard-arrow-down collapse-icon" />
+                    </Button>
+                  </div>
+                }
                 contentHeight="auto"
-                className="group-item"
+                className={classNames('group-item', {
+                  'is-hide': !collapsed.includes(name),
+                })}
               >
                 <Table
                   dataSource={group.rules}
@@ -437,7 +520,7 @@ export default class Rules extends React.Component<RulesProps, RulesState> {
                     className="cell-enable"
                     title={t('enable')}
                     dataIndex="enable"
-                    cell={(value: boolean, index: number, item: InitedRule) => {
+                    cell={(value: boolean, index: number, item: InitdRule) => {
                       return (
                         <Switch size="small" checked={value} onChange={this.handleToggleEnable.bind(this, item)} />
                       );
@@ -447,7 +530,7 @@ export default class Rules extends React.Component<RulesProps, RulesState> {
                     className="cell-name"
                     title={t('name')}
                     dataIndex="name"
-                    cell={(value: string, index: number, item: InitedRule) => {
+                    cell={(value: string, index: number, item: InitdRule) => {
                       return (
                         <Balloon.Tooltip className="rule-tooltip" trigger={<div>{value}</div>}>
                           <RuleDetail rule={item} />
@@ -464,7 +547,7 @@ export default class Rules extends React.Component<RulesProps, RulesState> {
                   <Table.Column
                     className="cell-action"
                     title={t('action')}
-                    cell={(value: string, index: number, item: InitedRule) => {
+                    cell={(value: string, index: number, item: InitdRule) => {
                       return (
                         <div className="buttons">
                           <Button type="secondary" onClick={this.handleChangeGroup.bind(this, item)}>

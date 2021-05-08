@@ -1,7 +1,7 @@
 import { getDomain } from './utils';
-import { InitedRule, isTinyRule, IS_MATCH, Rule, TABLE_NAMES, TinyRule } from './var';
+import { InitdRule, isTinyRule, IS_MATCH, Rule, TABLE_NAMES, TinyRule } from './var';
 
-export function initRule(rule: Rule): InitedRule {
+export function initRule(rule: Rule): InitdRule {
   const inited: any = { ...rule };
   if (inited.isFunction) {
     // @ts-ignore
@@ -18,7 +18,7 @@ export function initRule(rule: Rule): InitedRule {
   return inited;
 }
 
-export function createExport(arr: { [key: string]: Array<Rule | InitedRule> }) {
+export function createExport(arr: { [key: string]: Array<Rule | InitdRule> }) {
   const result: { [key: string]: TinyRule[] } = {};
   // tslint:disable-next-line
   for (const k in arr) {
@@ -27,7 +27,7 @@ export function createExport(arr: { [key: string]: Array<Rule | InitedRule> }) {
   return result;
 }
 
-export function convertToRule(rule: InitedRule | Rule): Rule {
+export function convertToRule(rule: InitdRule | Rule): Rule {
   const item = { ...rule };
   delete item._reg;
   delete item._func;
@@ -35,7 +35,7 @@ export function convertToRule(rule: InitedRule | Rule): Rule {
   return item;
 }
 
-export function convertToTinyRule(rule: InitedRule | Rule | TinyRule): TinyRule {
+export function convertToTinyRule(rule: InitdRule | Rule | TinyRule): TinyRule {
   if (isTinyRule(rule)) {
     return rule;
   }
@@ -80,7 +80,7 @@ export function upgradeRuleFormat(s: any) {
   return s;
 }
 
-export function isMatchUrl(rule: InitedRule, url: string): IS_MATCH {
+export function isMatchUrl(rule: InitdRule, url: string): IS_MATCH {
   let result = false;
   switch (rule.matchType) {
     case 'all':

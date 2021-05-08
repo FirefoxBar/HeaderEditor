@@ -28,6 +28,7 @@
     "lodash.clonedeep": "^4.5.0",
     "merge": "^1.2.0",
     "prismjs": "^1.17.1",
+    "querystring": "^0.2.1",
     "react": "^16.12.0",
     "react-dom": "^16.12.0",
     "react-simple-code-editor": "^0.10.0",

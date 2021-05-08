@@ -3,7 +3,22 @@ export type TABLE_NAMES_TYPE = 'request' | 'sendHeader' | 'receiveHeader' | 'rec
 export function isTableName(obj: any): obj is TABLE_NAMES_TYPE {
   return obj && TABLE_NAMES.includes(obj);
 }
-export type RULE_TYPE = 'cancel' | 'redirect' | 'modifySendHeader' | 'modifyReceiveHeader' | 'modifyReceiveBody';
+
+export enum RULE_TYPE {
+  CANCEL = 'cancel',
+  REDIRECT = 'redirect',
+  MODIFY_SEND_HEADER = 'modifySendHeader',
+  MODIFY_RECV_HEADER = 'modifyReceiveHeader',
+  MODIFY_RECV_BODY = 'modifyReceiveBody',
+}
+
+export enum RULE_MATCH_TYPE {
+  ALL = 'all',
+  REGEXP = 'regexp',
+  PREFIX = 'prefix',
+  DOMAIN = 'domain',
+  URL = 'url',
+}
 
 type RuleAction =
   | 'cancel'
@@ -17,7 +32,7 @@ export interface TinyRule {
   enable: boolean;
   name: string;
   ruleType: RULE_TYPE;
-  matchType: 'all' | 'regexp' | 'prefix' | 'domain' | 'url';
+  matchType: RULE_MATCH_TYPE;
   pattern: string;
   isFunction: boolean;
   code: string;
@@ -41,7 +56,7 @@ export interface ImportRule extends Rule {
   importOldId: number;
 }
 
-export interface InitedRule extends Rule {
+export interface InitdRule extends Rule {
   _reg: RegExp;
   _exclude?: RegExp;
   _func: (val: any, detail: any) => any;

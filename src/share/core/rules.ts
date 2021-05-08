@@ -1,9 +1,9 @@
 import { convertToRule, convertToTinyRule, isMatchUrl, upgradeRuleFormat, initRule } from './ruleUtils';
 import { getDatabase } from './storage';
 import { getTableName } from './utils';
-import { InitedRule, IS_MATCH, Rule, TABLE_NAMES, TABLE_NAMES_TYPE } from './var';
+import { InitdRule, IS_MATCH, Rule, TABLE_NAMES, TABLE_NAMES_TYPE } from './var';
 
-const cache: { [key: string]: null | InitedRule[] } = {};
+const cache: { [key: string]: null | InitdRule[] } = {};
 TABLE_NAMES.forEach(t => (cache[t] = null));
 
 const updateCacheQueue: { [x: string]: Array<{ resolve: () => void; reject: (error: any) => void }> } = {};
@@ -20,12 +20,12 @@ function updateCache(type: string) {
       .then(db => {
         const tx = db.transaction([type], 'readonly');
         const os = tx.objectStore(type);
-        const all: InitedRule[] = [];
+        const all: InitdRule[] = [];
         os.openCursor().onsuccess = event => {
           // @ts-ignore
           const cursor = event.target.result;
           if (cursor) {
-            const s: InitedRule = cursor.value;
+            const s: InitdRule = cursor.value;
             const isValidRule = true;
             s.id = cursor.key;
             // Init function here
@@ -59,7 +59,7 @@ interface FilterOptions {
   id?: number;
   name?: string;
 }
-function filter(fromRules: InitedRule[], options: FilterOptions) {
+function filter(fromRules: InitdRule[], options: FilterOptions) {
   let rules = Array.from(fromRules);
   if (options === null || typeof options !== 'object') {
     return rules;

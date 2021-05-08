@@ -1,7 +1,7 @@
 import Api from '@/share/core/api';
 import { convertToRule } from '@/share/core/ruleUtils';
-import { t } from '@/share/core/utils';
-import { Rule } from '@/share/core/var';
+import { getDomain, t } from '@/share/core/utils';
+import { Rule, RULE_MATCH_TYPE, RULE_TYPE } from '@/share/core/var';
 import '@/share/global.less';
 import { Nav } from '@alifd/next';
 import * as React from 'react';
@@ -10,6 +10,7 @@ import ImportAndExportSection from './components/importAndExport';
 import OptionsSection from './components/options';
 import RulesSection from './components/rules';
 import Edit from './components/rules/edit';
+import { parse } from 'querystring';
 import './index.less';
 
 interface OptionsState {
@@ -32,36 +33,30 @@ export default class Options extends React.Component<any, OptionsState> {
   }
 
   componentDidMount() {
-    /*
-		// init anti-hot-link
-		const query = (() => {
-			const params = {};
-			const urlParts = location.href.split("?", 2);
-			if (urlParts.length == 1) {
-				return params;
-			}
-			urlParts[1].split("&").forEach(keyValue => {
-				const splitKeyValue = keyValue.split("=", 2);
-				params[decodeURIComponent(splitKeyValue[0])] = decodeURIComponent(splitKeyValue[1]);
-			});
-			return params;
-    })();
-    
-		if (query.action && query.action === "add-anti-hot-link") {
-			this.edit.id = -1;
-			this.edit.name = "";
-			this.edit.ruleType = 'modifySendHeader';
-			this.edit.ruleTypeEditable = true;
-			this.edit.matchType = 'domain';
-			this.edit.matchRule = utils.getDomain(query.url);
-			this.edit.headerName = "referer";
-			this.edit.headerValue = "";
-			this.edit.execType = 0;
-			this.edit.group = utils.t('ungrouped');
-			this.editTitle = utils.t('add');
-			this.isShowEdit = true;
-		}
-    */
+    // init anti-hot-link
+    const query = parse(window.location.search.substr(1));
+
+    if (query.action && query.action === 'add-anti-hot-link') {
+      this.setState({
+        editShow: true,
+        editRule: {
+          id: -1,
+          enable: true,
+          name: '',
+          ruleType: RULE_TYPE.MODIFY_SEND_HEADER,
+          matchType: RULE_MATCH_TYPE.DOMAIN,
+          pattern: getDomain(query.url as string) || '',
+          isFunction: false,
+          code: '',
+          exclude: '',
+          group: t('ungrouped'),
+          action: {
+            name: 'referer',
+            value: '',
+          },
+        },
+      });
+    }
   }
 
   handleSwitch(selectedKeys: string[]) {

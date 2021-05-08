@@ -6,7 +6,7 @@ import Api from '@/share/core/api';
 import emitter from '@/share/core/emitter';
 import { initRule, isMatchUrl } from '@/share/core/ruleUtils';
 import { IS_SUPPORT_STREAM_FILTER, t } from '@/share/core/utils';
-import { InitedRule, IS_MATCH, Rule } from '@/share/core/var';
+import { InitdRule, IS_MATCH, Rule } from '@/share/core/var';
 import ENCODING_LIST from './encoding';
 import COMMON_HEADERS from './headers';
 import './index.less';
@@ -73,7 +73,7 @@ function getRuleFromInput(input: Rule): Rule {
 }
 
 export default class Edit extends React.Component<EditProps, EditState> {
-  private initedRule?: InitedRule;
+  private initedRule?: InitdRule;
   constructor(props: any) {
     super(props);
 
