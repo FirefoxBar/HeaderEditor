@@ -37,6 +37,7 @@ interface RulesState {
 }
 
 export default class Rules extends React.Component<RulesProps, RulesState> {
+  // TODO: 默认展开/收起
   private isCollapse = true;
 
   constructor(props: any) {
@@ -273,7 +274,7 @@ export default class Rules extends React.Component<RulesProps, RulesState> {
       }
     });
     await Promise.all(queue);
-    await table.map(tb => Api.updateCache(tb));
+    await Promise.all(table.map(tb => Api.updateCache(tb)));
     this.forceUpdate();
   }
   // 批量移动群组
