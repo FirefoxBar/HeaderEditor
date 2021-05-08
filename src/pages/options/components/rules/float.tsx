@@ -26,7 +26,6 @@ const Float = (props: FloatProps) => {
         p = p.parentElement;
       }
     })(e.target);
-    console.log(box);
     const offset = (el => {
       const rect = el.getBoundingClientRect();
       return {

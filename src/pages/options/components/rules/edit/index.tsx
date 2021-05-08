@@ -155,12 +155,12 @@ export default class Edit extends React.Component<EditProps, EditState> {
           return;
         }
         // 只有重定向支持测试详细功能，其他只返回匹配
-        if (this.initedRule.ruleType === 'redirect') {
+        if (this.initedRule.ruleType === 'redirect' && this.initedRule.to) {
           let redirect = '';
           if (this.initedRule.matchType === 'regexp') {
-            redirect = this.state.testUrl.replace(this.initedRule._reg, this.initedRule.redirectTo);
+            redirect = this.state.testUrl.replace(this.initedRule._reg, this.initedRule.to);
           } else {
-            redirect = this.initedRule.redirectTo;
+            redirect = this.initedRule.to;
           }
           if (/^(http|https|ftp|file)%3A/.test(redirect)) {
             redirect = decodeURIComponent(redirect);

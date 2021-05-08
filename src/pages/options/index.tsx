@@ -74,6 +74,7 @@ export default class Options extends React.Component<any, OptionsState> {
         this.setState({
           active,
         });
+        window.scrollTo(0, 0);
       }
     }
   }
