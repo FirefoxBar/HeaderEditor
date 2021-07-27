@@ -1,12 +1,13 @@
-import { Drawer, Form, Input, Radio, Select, Message } from '@alifd/next';
-import { highlight, languages } from 'prismjs';
-import * as React from 'react';
-import Editor from 'react-simple-code-editor';
 import Api from '@/share/core/api';
 import emitter from '@/share/core/emitter';
 import { initRule, isMatchUrl } from '@/share/core/ruleUtils';
+import { prefs } from '@/share/core/storage';
 import { IS_SUPPORT_STREAM_FILTER, t } from '@/share/core/utils';
-import { InitdRule, IS_MATCH, Rule } from '@/share/core/var';
+import { InitdRule, IS_MATCH, Rule, RULE_MATCH_TYPE, RULE_TYPE } from '@/share/core/var';
+import { Drawer, Form, Input, Message, Radio, Select } from '@alifd/next';
+import { highlight, languages } from 'prismjs';
+import * as React from 'react';
+import Editor from 'react-simple-code-editor';
 import ENCODING_LIST from './encoding';
 import COMMON_HEADERS from './headers';
 import './index.less';
@@ -38,8 +39,8 @@ const EMPTY_RULE: Rule = {
   enable: true,
   group: t('ungrouped'),
   name: '',
-  ruleType: 'cancel',
-  matchType: 'all',
+  ruleType: RULE_TYPE.CANCEL,
+  matchType: RULE_MATCH_TYPE.ALL,
   pattern: '',
   exclude: '',
   isFunction: false,
@@ -191,7 +192,7 @@ export default class Edit extends React.Component<EditProps, EditState> {
     }
   }
 
-  handleSubmit() {
+  async handleSubmit() {
     const rule = getRuleFromInput(this.state.rule);
     // 常规检查
     if (rule.name === '') {
@@ -221,9 +222,18 @@ export default class Edit extends React.Component<EditProps, EditState> {
       Message.error(t('header_empty'));
       return;
     }
-    Api.saveRule(rule)
-      .then(res => emitter.emit(emitter.EVENT_RULE_UPDATE, res))
-      .then(() => this.props.onClose());
+
+    // 检查是否有开启
+    if (rule.ruleType === RULE_TYPE.MODIFY_RECV_BODY) {
+      if (!prefs.get('modify-body')) {
+        prefs.set('modify-body', true);
+        Message.notice('已自动开启选项 - 修改响应体，若不需要请手动关闭');
+      }
+    }
+
+    const res = await Api.saveRule(rule);
+    emitter.emit(emitter.EVENT_RULE_UPDATE, res);
+    this.props.onClose();
   }
 
   render() {
@@ -289,7 +299,7 @@ export default class Edit extends React.Component<EditProps, EditState> {
               <Input name="to" />
             </Form.Item>
           )}
-          {/* Header mondify */}
+          {/* Header modify */}
           {isHeader && !this.state.rule.isFunction && (
             <Form.Item label={t('headerName')}>
               <Select

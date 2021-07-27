@@ -5,6 +5,7 @@ import { defaultPrefValue, PrefValue } from '@/share/core/var';
 import * as React from 'react';
 import './index.less';
 import Api from '@/share/core/api';
+import emitter from '@/share/core/emitter';
 
 const { Row, Col } = Grid;
 
@@ -31,6 +32,7 @@ export default class Options extends React.Component<OptionsProps, OptionsState>
     super(props);
 
     this.handleChange = this.handleChange.bind(this);
+    this.handleUpdate = this.handleUpdate.bind(this);
 
     this.state = {
       prefs: { ...defaultPrefValue },
@@ -46,6 +48,19 @@ export default class Options extends React.Component<OptionsProps, OptionsState>
       this.setState({
         prefs: newPrefs,
       });
+    });
+    emitter.on(emitter.EVENT_PREFS_UPDATE, this.handleUpdate);
+  }
+
+  componentWillUnmount() {
+    emitter.off(emitter.EVENT_PREFS_UPDATE, this.handleUpdate);
+  }
+
+  handleUpdate(key: string, val: any) {
+    const newPrefs = { ...this.state.prefs };
+    newPrefs[key] = val;
+    this.setState({
+      prefs: newPrefs,
     });
   }
 
