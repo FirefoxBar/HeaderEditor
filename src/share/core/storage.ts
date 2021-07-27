@@ -179,6 +179,9 @@ export const prefs = backgroundWindow && backgroundWindow.prefs ? backgroundWind
 
 export function getSync() {
   // For development mode
+  if (typeof localStorage !== 'undefined' && localStorage.getItem('storage') === 'local') {
+    return browser.storage.local;
+  }
   if (typeof process !== 'undefined' && process.env.NODE_ENV === 'development') {
     return browser.storage.local;
   }
