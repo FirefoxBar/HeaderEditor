@@ -38,14 +38,13 @@ interface RulesState {
 }
 
 export default class Rules extends React.Component<RulesProps, RulesState> {
-  // TODO: 默认展开/收起
+  // 默认展开/收起
   private isCollapse = true;
 
   constructor(props: any) {
     super(props);
 
     this.handleSelect = this.handleSelect.bind(this);
-    this.handlePrefsUpdate = this.handlePrefsUpdate.bind(this);
     this.handleRuleUpdate = this.handleRuleUpdate.bind(this);
     this.handleHasRuleUpdate = this.handleHasRuleUpdate.bind(this);
     this.toggleSelect = this.toggleSelect.bind(this);
@@ -59,7 +58,6 @@ export default class Rules extends React.Component<RulesProps, RulesState> {
       this.isCollapse = prefs.get('manage-collapse-group');
       this.load();
     });
-    emitter.on(emitter.EVENT_PREFS_UPDATE, this.handlePrefsUpdate);
     emitter.on(emitter.EVENT_RULE_UPDATE, this.handleRuleUpdate);
     emitter.on(emitter.EVENT_HAS_RULE_UPDATE, this.handleHasRuleUpdate);
 
@@ -73,14 +71,7 @@ export default class Rules extends React.Component<RulesProps, RulesState> {
     };
   }
 
-  handlePrefsUpdate(key: string, val: any) {
-    if (key === 'manage-collapse-group') {
-      this.isCollapse = val;
-    }
-  }
-
   componentWillUnmount() {
-    emitter.off(emitter.EVENT_PREFS_UPDATE, this.handlePrefsUpdate);
     emitter.off(emitter.EVENT_HAS_RULE_UPDATE, this.handleHasRuleUpdate);
     emitter.off(emitter.EVENT_RULE_UPDATE, this.handleRuleUpdate);
   }
@@ -332,7 +323,7 @@ export default class Rules extends React.Component<RulesProps, RulesState> {
     file.save(JSON.stringify(createExport(result), null, '\t'), getExportName());
   }
   handleGroupRename(name: string) {
-    //
+    // TODO: 批量移动
   }
   handleGroupDelete(name: string) {
     Dialog.confirm({
@@ -394,7 +385,8 @@ export default class Rules extends React.Component<RulesProps, RulesState> {
       });
       // 加载完成啦
       if (++finishCount >= TABLE_NAMES.length) {
-        const collapsed = Object.keys(result);
+        // 默认是否展开
+        const collapsed = this.isCollapse ? [] : Object.keys(result);
         this.setState({
           group: result,
           collapsed,
