@@ -323,7 +323,36 @@ export default class Rules extends React.Component<RulesProps, RulesState> {
     file.save(JSON.stringify(createExport(result), null, '\t'), getExportName());
   }
   handleGroupRename(name: string) {
-    // TODO: 批量移动
+    selectGroup(name).then(async newGroup => {
+      if (name === newGroup) {
+        return;
+      }
+      // 更新规则
+      const rules = this.state.group[name].rules;
+      for (const item of rules) {
+        item.group = newGroup;
+        await Api.saveRule(item);
+      }
+      const newStateGroup = { ...this.state.group };
+      if (typeof newStateGroup[newGroup] === 'undefined') {
+        newStateGroup[newGroup] = {
+          name: newGroup,
+          rules: this.state.group[name].rules,
+        };
+      } else {
+        for (const item of rules) {
+          newStateGroup[newGroup].rules.push(item);
+        }
+      }
+      if (this.state.collapsed.includes(name)) {
+        const newCollapsed = [...this.state.collapsed];
+        newCollapsed.splice(newCollapsed.indexOf(name), 1);
+        newCollapsed.push(newGroup);
+        this.setState({ collapsed: newCollapsed });
+      }
+      delete newStateGroup[name];
+      this.setState({ group: newStateGroup });
+    });
   }
   handleGroupDelete(name: string) {
     Dialog.confirm({
@@ -334,10 +363,13 @@ export default class Rules extends React.Component<RulesProps, RulesState> {
         const newGroup = {
           ...this.state.group,
         };
+        if (this.state.collapsed.includes(name)) {
+          const newCollapsed = [...this.state.collapsed];
+          newCollapsed.splice(newCollapsed.indexOf(name), 1);
+          this.setState({ collapsed: newCollapsed });
+        }
         delete newGroup[name];
-        this.setState({
-          group: newGroup,
-        });
+        this.setState({ group: newGroup });
       },
     });
   }
@@ -455,16 +487,18 @@ export default class Rules extends React.Component<RulesProps, RulesState> {
                 extra={
                   <div className="group-item-actions">
                     <Button.Group>
-                      <Balloon.Tooltip
-                        className="rule-tooltip"
-                        trigger={
-                          <Button type="normal" onClick={this.handleGroupRename.bind(this, name)}>
-                            <i className="iconfont icon-edit" />
-                          </Button>
-                        }
-                      >
-                        {t('rename')}
-                      </Balloon.Tooltip>
+                      {name !== t('ungrouped') && (
+                        <Balloon.Tooltip
+                          className="rule-tooltip"
+                          trigger={
+                            <Button type="normal" onClick={this.handleGroupRename.bind(this, name)}>
+                              <i className="iconfont icon-edit" />
+                            </Button>
+                          }
+                        >
+                          {t('rename')}
+                        </Balloon.Tooltip>
+                      )}
                       <Balloon.Tooltip
                         className="rule-tooltip"
                         trigger={
@@ -475,16 +509,18 @@ export default class Rules extends React.Component<RulesProps, RulesState> {
                       >
                         {t('share')}
                       </Balloon.Tooltip>
-                      <Balloon.Tooltip
-                        className="rule-tooltip"
-                        trigger={
-                          <Button type="normal" onClick={this.handleGroupDelete.bind(this, name)}>
-                            <i className="iconfont icon-delete" />
-                          </Button>
-                        }
-                      >
-                        {t('delete')}
-                      </Balloon.Tooltip>
+                      {name !== t('ungrouped') && (
+                        <Balloon.Tooltip
+                          className="rule-tooltip"
+                          trigger={
+                            <Button type="normal" onClick={this.handleGroupDelete.bind(this, name)}>
+                              <i className="iconfont icon-delete" />
+                            </Button>
+                          }
+                        >
+                          {t('delete')}
+                        </Balloon.Tooltip>
+                      )}
                     </Button.Group>
                     <Button type="normal" onClick={this.handleCollapse.bind(this, name)}>
                       <i className="iconfont icon-keyboard-arrow-down collapse-icon" />
