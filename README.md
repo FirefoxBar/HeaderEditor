@@ -16,6 +16,8 @@ For more documentations, Please visit [documentions](https://he.firefoxcn.net)
 
 ![Chrome Logo](https://cdnjs.cloudflare.com/ajax/libs/browser-logos/42.8.0/chrome/chrome_16x16.png) [Chrome Web Store](https://chrome.google.com/webstore/detail/header-editor/eningockdidmgiojffjmkdblpjocbhgh).
 
+![Edge Logo](https://cdnjs.cloudflare.com/ajax/libs/browser-logos/67.0.2/edge/edge_16x16.png) [Edge Add-ons](https://microsoftedge.microsoft.com/addons/detail/header-editor/afopnekiinpekooejpchnkgfffaeceko).
+
 ![Firefox Logo](https://cdnjs.cloudflare.com/ajax/libs/browser-logos/42.8.0/firefox/firefox_16x16.png) Install our [self-distributed version](https://github.com/FirefoxBar/HeaderEditor/releases).
 
 ## About Permissions
