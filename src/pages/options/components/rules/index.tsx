@@ -547,6 +547,8 @@ export default class Rules extends React.Component<RulesProps, RulesState> {
                   <Table.Column
                     className="cell-enable"
                     title={t('enable')}
+                    alignHeader="left"
+                    align="center"
                     dataIndex="enable"
                     cell={(value: boolean, index: number, item: InitdRule) => {
                       return (

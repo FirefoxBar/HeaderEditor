@@ -283,7 +283,7 @@ export default class Edit extends React.Component<EditProps, EditState> {
           {/* Response body encoding */}
           {this.state.rule.ruleType === 'modifyReceiveBody' && (
             <Form.Item label={t('encoding')}>
-              <Select name="encoding" showSearch filterLocal dataSource={ENCODING_LIST} />
+              <Select.AutoComplete name="encoding" filterLocal dataSource={ENCODING_LIST} />
             </Form.Item>
           )}
           {/* isFunction or not */}
@@ -302,9 +302,8 @@ export default class Edit extends React.Component<EditProps, EditState> {
           {/* Header modify */}
           {isHeader && !this.state.rule.isFunction && (
             <Form.Item label={t('headerName')}>
-              <Select
+              <Select.AutoComplete
                 name="headerName"
-                showSearch
                 filterLocal
                 dataSource={isHeaderSend ? COMMON_HEADERS.request : COMMON_HEADERS.response}
               />
