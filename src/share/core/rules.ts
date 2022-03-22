@@ -104,7 +104,7 @@ function save(o: Rule) {
       // Check base informations
       upgradeRuleFormat(rule);
       // Update
-      if (rule.id) {
+      if (rule.id && rule.id !== -1) {
         const request = os.get(Number(rule.id));
         request.onsuccess = () => {
           const existsRule = request.result || {};

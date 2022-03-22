@@ -1,3 +1,4 @@
+import logger from '@/share/core/logger';
 import rules from '@/share/core/rules';
 import { getDatabase, prefs } from '@/share/core/storage';
 import { APIs } from '@/share/core/var';
@@ -9,6 +10,7 @@ export default function createApiHandler() {
     if (request.method === 'notifyBackground') {
       request.method = request.reason;
     }
+    logger.d('Background Receive Message', request);
     switch (request.method) {
       case APIs.HEALTH_CHECK:
         return new Promise(resolve => {
