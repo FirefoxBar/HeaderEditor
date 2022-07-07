@@ -19,7 +19,7 @@ export default {
 	methods: {
 		t: utils.t,
 		openManage() {
-			browser.runtime.sendMessage({"method": "openURL", "url": browser.extension.getURL('options/options.html')});
+			browser.runtime.sendMessage({"method": "openURL", "url": browser.runtime.getURL('options/options.html')});
 			window.close();
 		}
 	},

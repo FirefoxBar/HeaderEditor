@@ -71,7 +71,7 @@ function openURL(options) {
 if (typeof(browser.contextMenus) !== 'undefined') {
 	browser.contextMenus.onClicked.addListener((info, tab) => {
 		if (info.menuItemId === 'add-anti-hot-link') {
-			openURL({ url: browser.extension.getURL("options/options.html") + '?action=add-anti-hot-link&url=' + info.srcUrl });
+			openURL({ url: browser.runtime.getURL("options/options.html") + '?action=add-anti-hot-link&url=' + info.srcUrl });
 		}
 	});
 }
@@ -145,7 +145,7 @@ class RequestHandler {
 			return false;
 		}
 		//判断是否是HE自身
-		if (this.excludeHe && e.url.indexOf(browser.extension.getURL('')) === 0) {
+		if (this.excludeHe && e.url.indexOf(browser.runtime.getURL('')) === 0) {
 			return false;
 		}
 		return true;

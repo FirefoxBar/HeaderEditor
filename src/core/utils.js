@@ -124,7 +124,7 @@ export default {
 			return false;
 		}
 		// other extensions can't be styled
-		if ((url.indexOf("moz-extension") === 0 || url.indexOf("chrome-extension") === 0) && url.indexOf(browser.extension.getURL("")) !== 0) {
+		if ((url.indexOf("moz-extension") === 0 || url.indexOf("chrome-extension") === 0) && url.indexOf(browser.runtime.getURL("")) !== 0) {
 			return false;
 		}
 		if (IS_CHROME && url.indexOf('https://chrome.google.com/webstore') === 0) {
