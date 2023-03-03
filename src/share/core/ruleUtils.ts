@@ -4,8 +4,7 @@ import { InitdRule, isTinyRule, IS_MATCH, Rule, TABLE_NAMES, TinyRule } from './
 export function initRule(rule: Rule): InitdRule {
   const inited: any = { ...rule };
   if (inited.isFunction) {
-    // @ts-ignore
-    // tslint:disable-next-line
+    // eslint-disable-next-line no-new-func
     inited._func = new Function('val', 'detail', inited.code);
   }
   // Init regexp
@@ -20,10 +19,9 @@ export function initRule(rule: Rule): InitdRule {
 
 export function createExport(arr: { [key: string]: Array<Rule | InitdRule> }) {
   const result: { [key: string]: TinyRule[] } = {};
-  // tslint:disable-next-line
-  for (const k in arr) {
-    result[k] = arr[k].map(e => convertToTinyRule(e));
-  }
+  Object.keys(arr).forEach((k) => {
+    result[k] = arr[k].map((e) => convertToTinyRule(e));
+  });
   return result;
 }
 
@@ -40,6 +38,7 @@ export function convertToTinyRule(rule: InitdRule | Rule | TinyRule): TinyRule {
     return rule;
   }
   const item = convertToRule(rule);
+  // eslint-disable-next-line @typescript-eslint/ban-ts-comment
   // @ts-ignore
   delete item.id;
   return item;
@@ -47,9 +46,10 @@ export function convertToTinyRule(rule: InitdRule | Rule | TinyRule): TinyRule {
 
 export function fromJson(str: string) {
   const list: { [key: string]: Rule[] } = JSON.parse(str);
-  TABLE_NAMES.forEach(e => {
+  TABLE_NAMES.forEach((e) => {
     if (list[e]) {
-      list[e].map(ee => {
+      list[e].map((ee) => {
+        // eslint-disable-next-line @typescript-eslint/ban-ts-comment
         // @ts-ignore
         delete ee.id;
         return upgradeRuleFormat(ee);
@@ -67,12 +67,12 @@ export function upgradeRuleFormat(s: any) {
   if (typeof s.isFunction === 'undefined') {
     s.isFunction = false;
   } else {
-    s.isFunction = s.isFunction ? true : false;
+    s.isFunction = !!s.isFunction;
   }
   if (typeof s.enable === 'undefined') {
     s.enable = true;
   } else {
-    s.enable = s.enable ? true : false;
+    s.enable = !!s.enable;
   }
   if ((s.ruleType === 'modifySendHeader' || s.ruleType === 'modifyReceiveHeader') && !s.isFunction) {
     s.action.name = s.action.name.toLowerCase();
@@ -102,9 +102,13 @@ export function isMatchUrl(rule: InitdRule, url: string): IS_MATCH {
     default:
       break;
   }
-  if (result) {
-    return rule._exclude ? (rule._exclude.test(url) ? IS_MATCH.MATCH_BUT_EXCLUDE : IS_MATCH.MATCH) : IS_MATCH.MATCH;
-  } else {
+  if (!result) {
     return IS_MATCH.NOT_MATCH;
   }
+
+  if (rule._exclude) {
+    return rule._exclude.test(url) ? IS_MATCH.MATCH_BUT_EXCLUDE : IS_MATCH.MATCH;
+  }
+
+  return IS_MATCH.MATCH;
 }

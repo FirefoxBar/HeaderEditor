@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/member-ordering */
 import emitter from '@/share/core/emitter';
 import logger from '@/share/core/logger';
 import rules from '@/share/core/rules';
@@ -5,7 +6,7 @@ import { prefs } from '@/share/core/storage';
 import { IS_CHROME, IS_SUPPORT_STREAM_FILTER } from '@/share/core/utils';
 import { Rule } from '@/share/core/var';
 import { TextDecoder, TextEncoder } from 'text-encoding';
-import { browser, WebRequest } from 'webextension-polyfill-ts';
+import browser, { WebRequest } from 'webextension-polyfill';
 
 // 最大修改8MB的Body
 const MAX_BODY_SIZE = 8 * 1024 * 1024;
@@ -107,6 +108,8 @@ class RequestHandler {
         case 'modify-body':
           this.modifyBody = val;
           break;
+        default:
+          break;
       }
     });
 
@@ -123,7 +126,7 @@ class RequestHandler {
       return false;
     }
     // 判断是否是HE自身
-    if (this.excludeHe && e.url.indexOf(browser.extension.getURL('')) === 0) {
+    if (this.excludeHe && e.url.indexOf(browser.runtime.getURL('')) === 0) {
       return false;
     }
     return true;
@@ -160,8 +163,8 @@ class RequestHandler {
             logger.d(`[rule: ${item.id}] cancel`);
             return { cancel: true };
           }
-        } catch (e) {
-          console.error(e);
+        } catch (err) {
+          console.error(err);
         }
       } else if (item.to) {
         if (item.matchType === 'regexp') {
@@ -266,7 +269,7 @@ class RequestHandler {
       responseHeaders: null,
     };
 
-    ['statusCode', 'statusLine', 'requestHeaders', 'responseHeaders'].forEach(p => {
+    ['statusCode', 'statusLine', 'requestHeaders', 'responseHeaders'].forEach((p) => {
       if (p in request) {
         // @ts-ignore
         details[p] = request[p];
@@ -292,7 +295,7 @@ class RequestHandler {
       return encoder.encode(text);
     } catch (e) {
       console.error(e);
-      return new Uint8Array();
+      return new Uint8Array(0);
     }
   }
 
@@ -374,8 +377,8 @@ class RequestHandler {
       });
     }
     if (hasFunction) {
-      const detail = presetDetail ? presetDetail : this.makeDetails(request);
-      rule.forEach(item => {
+      const detail = presetDetail || this.makeDetails(request);
+      rule.forEach((item) => {
         try {
           item._func(headers, detail);
         } catch (e) {
@@ -423,7 +426,7 @@ class RequestHandler {
     if (rule === null) {
       return;
     }
-    rule = rule.filter(item => item.isFunction);
+    rule = rule.filter((item) => item.isFunction);
     if (rule.length === 0) {
       return;
     }
@@ -432,7 +435,7 @@ class RequestHandler {
     let buffers: Uint8Array | null = null;
     // @ts-ignore
     filter.ondata = (event: WebRequest.StreamFilterEventData) => {
-      const data = event.data;
+      const { data } = event;
       if (buffers === null) {
         buffers = new Uint8Array(data);
         return;
@@ -466,8 +469,8 @@ class RequestHandler {
           if (typeof text === 'string' && text !== _text) {
             buffers = this.textEncode(encoding, text);
           }
-        } catch (e) {
-          console.error(e);
+        } catch (err) {
+          console.error(err);
         }
       }
 

@@ -4,10 +4,13 @@ import { getTableName } from './utils';
 import { InitdRule, IS_MATCH, Rule, TABLE_NAMES, TABLE_NAMES_TYPE } from './var';
 
 const cache: { [key: string]: null | InitdRule[] } = {};
-TABLE_NAMES.forEach(t => (cache[t] = null));
+TABLE_NAMES.forEach((t) => {
+  cache[t] = null;
+});
 
 const updateCacheQueue: { [x: string]: Array<{ resolve: () => void; reject: (error: any) => void }> } = {};
-function updateCache(type: string) {
+
+async function updateCache(type: string): Promise<void> {
   return new Promise((resolve, reject) => {
     // 如果正在Update，则放到回调组里面
     if (typeof updateCacheQueue[type] !== 'undefined') {
@@ -17,16 +20,15 @@ function updateCache(type: string) {
       updateCacheQueue[type] = [{ resolve, reject }];
     }
     getDatabase()
-      .then(db => {
+      .then((db) => {
         const tx = db.transaction([type], 'readonly');
         const os = tx.objectStore(type);
         const all: InitdRule[] = [];
-        os.openCursor().onsuccess = event => {
+        os.openCursor().onsuccess = (event) => {
           // @ts-ignore
           const cursor = event.target.result;
           if (cursor) {
             const s: InitdRule = cursor.value;
-            const isValidRule = true;
             s.id = cursor.key;
             // Init function here
             try {
@@ -37,15 +39,15 @@ function updateCache(type: string) {
             cursor.continue();
           } else {
             cache[type] = all;
-            updateCacheQueue[type].forEach(it => {
+            updateCacheQueue[type].forEach((it) => {
               it.resolve();
             });
             delete updateCacheQueue[type];
           }
         };
       })
-      .catch(e => {
-        updateCacheQueue[type].forEach(it => {
+      .catch((e) => {
+        updateCacheQueue[type].forEach((it) => {
           it.reject(e);
         });
         delete updateCacheQueue[type];
@@ -68,37 +70,37 @@ function filter(fromRules: InitdRule[], options: FilterOptions) {
   const id = typeof options.id !== 'undefined' ? Number(options.id) : null;
 
   if (id !== null) {
-    rules = rules.filter(rule => {
+    rules = rules.filter((rule) => {
       return rule.id === id;
     });
   }
 
   if (options.name) {
-    rules = rules.filter(rule => {
+    rules = rules.filter((rule) => {
       return rule.name === options.name;
     });
   }
 
   if (typeof options.enable !== 'undefined') {
-    rules = rules.filter(rule => {
+    rules = rules.filter((rule) => {
       return rule.enable === options.enable;
     });
   }
 
   if (url != null) {
-    rules = rules.filter(rule => isMatchUrl(rule, url) === IS_MATCH.MATCH);
+    rules = rules.filter((rule) => isMatchUrl(rule, url) === IS_MATCH.MATCH);
   }
   return rules;
 }
 
-function save(o: Rule) {
+async function save(o: Rule) {
   const tableName = getTableName(o.ruleType);
   if (!tableName) {
-    return Promise.reject(`Unknown type ${o.ruleType}`);
+    throw new Error(`Unknown type ${o.ruleType}`);
   }
   const rule = convertToRule(o);
-  return new Promise(resolve => {
-    getDatabase().then(db => {
+  return new Promise((resolve) => {
+    getDatabase().then((db) => {
       const tx = db.transaction([tableName], 'readwrite');
       const os = tx.objectStore(tableName);
       // Check base informations
@@ -123,9 +125,10 @@ function save(o: Rule) {
       } else {
         // Create
         // Make sure it's not null - that makes indexeddb sad
+        // @ts-ignore
         delete rule.id;
         const request = os.add(rule);
-        request.onsuccess = event => {
+        request.onsuccess = (event) => {
           updateCache(tableName);
           // Give it the ID that was generated
           // @ts-ignore
@@ -137,9 +140,9 @@ function save(o: Rule) {
   });
 }
 
-function remove(tableName: TABLE_NAMES_TYPE, id: number) {
-  return new Promise(resolve => {
-    getDatabase().then(db => {
+function remove(tableName: TABLE_NAMES_TYPE, id: number): Promise<void> {
+  return new Promise((resolve) => {
+    getDatabase().then((db) => {
       const tx = db.transaction([tableName], 'readwrite');
       const os = tx.objectStore(tableName);
       const request = os.delete(Number(id));
@@ -162,7 +165,7 @@ function get(type: TABLE_NAMES_TYPE, options?: FilterOptions) {
 
 function init() {
   setTimeout(() => {
-    const queue = [];
+    const queue: Array<Promise<void>> = [];
     if (cache.request === null) {
       queue.push(updateCache('request'));
     }

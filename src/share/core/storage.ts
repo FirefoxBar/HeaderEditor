@@ -1,5 +1,5 @@
 import equal from 'fast-deep-equal';
-import { browser } from 'webextension-polyfill-ts';
+import browser from 'webextension-polyfill';
 import emitter from './emitter';
 import { upgradeRuleFormat } from './ruleUtils';
 import { defaultPrefValue, PrefValue, TABLE_NAMES } from './var';
@@ -7,23 +7,23 @@ import { defaultPrefValue, PrefValue, TABLE_NAMES } from './var';
 export function getDatabase(): Promise<IDBDatabase> {
   return new Promise((resolve, reject) => {
     const dbOpenRequest = window.indexedDB.open('headereditor', 4);
-    dbOpenRequest.onsuccess = e => {
+    dbOpenRequest.onsuccess = (e) => {
       // @ts-ignore
       resolve(e.target.result);
     };
-    dbOpenRequest.onerror = e => {
+    dbOpenRequest.onerror = (e) => {
       console.error(e);
       reject(e);
     };
-    dbOpenRequest.onupgradeneeded = event => {
+    dbOpenRequest.onupgradeneeded = (event) => {
       if (event.oldVersion === 0) {
         // Installed
-        TABLE_NAMES.forEach(t => {
+        TABLE_NAMES.forEach((t) => {
           // @ts-ignore
           event.target.result.createObjectStore(t, { keyPath: 'id', autoIncrement: true });
         });
       } else {
-        TABLE_NAMES.forEach(k => {
+        TABLE_NAMES.forEach((k) => {
           // @ts-ignore
           const tx = event.target.transaction;
           if (!tx.objectStoreNames.contains(k)) {
@@ -58,13 +58,13 @@ class Prefs {
   constructor() {
     this.values = { ...defaultPrefValue };
 
-    Object.entries(defaultPrefValue).forEach(it => {
+    Object.entries(defaultPrefValue).forEach((it) => {
       this.set(it[0], it[1], true);
     });
 
     getSync()
       .get('settings')
-      .then(result => {
+      .then((result) => {
         const synced = result.settings;
         for (const key in defaultPrefValue) {
           if (synced && key in synced) {
@@ -102,7 +102,7 @@ class Prefs {
       }
       const value = localStorage[key];
       delete localStorage[key];
-      localStorage['DEPRECATED: ' + key] = value;
+      localStorage[`DEPRECATED: ${key}`] = value;
       switch (typeof defaultPrefValue[key]) {
         case 'boolean':
           return value.toLowerCase() === 'true';
@@ -123,11 +123,9 @@ class Prefs {
     if (key in this.boundMethods) {
       if (key in this.boundWrappers) {
         return this.boundWrappers[key];
-      } else {
-        if (key in this.values) {
-          this.boundWrappers[key] = this.boundMethods[key](this.values[key]);
-          return this.boundWrappers[key];
-        }
+      } else if (key in this.values) {
+        this.boundWrappers[key] = this.boundMethods[key](this.values[key]);
+        return this.boundWrappers[key];
       }
     }
     if (key in this.values) {
@@ -139,12 +137,12 @@ class Prefs {
     if (key in defaultPrefValue) {
       return defaultPrefValue[key];
     }
-    console.warn('No default preference for ' + key);
+    console.warn(`No default preference for ${key}`);
   }
   getAll() {
     return { ...this.values };
   }
-  set(key: string, value: any, noSync: boolean = false) {
+  set(key: string, value: any, noSync = false) {
     const oldValue = this.values[key];
     if (!equal(value, oldValue)) {
       this.values[key] = value;

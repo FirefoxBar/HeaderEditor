@@ -4,7 +4,9 @@ import { TABLE_NAMES, TinyRule } from './var';
 
 function getTotalCount(rules: { [key: string]: TinyRule[] }) {
   let count = 0;
-  TABLE_NAMES.forEach(e => (count += rules[e].length));
+  TABLE_NAMES.forEach((e) => {
+    count += rules[e].length;
+  });
   return count;
 }
 
@@ -19,17 +21,18 @@ class BrowserSync {
       if (IS_CHROME) {
         const toSave: { [key: string]: any } = {};
         // split
+        // @ts-ignore
         const limit = chrome.storage.sync.QUOTA_BYTES_PER_ITEM - 500;
         let index = 0;
         while (getTotalCount(rules) > 0) {
           const one: { [key: string]: TinyRule[] } = {};
-          TABLE_NAMES.forEach(e => {
+          TABLE_NAMES.forEach((e) => {
             one[e] = [];
           });
           let t = 0;
           let toPut: TinyRule | null = null;
           while (JSON.stringify(one).length < limit) {
-            // find avaliable
+            // find available
             while (TABLE_NAMES[t] && rules[TABLE_NAMES[t]].length === 0) {
               t++;
             }
@@ -43,7 +46,7 @@ class BrowserSync {
             rules[TABLE_NAMES[t]].push(toPut);
             one[TABLE_NAMES[t]].splice(one[TABLE_NAMES[t]].indexOf(toPut), 1);
           }
-          toSave['backup_' + index++] = one;
+          toSave[`backup_${index++}`] = one;
         }
         toSave.backup = {
           time: new Date().getTime(),
@@ -71,7 +74,7 @@ class BrowserSync {
     return new Promise((resolve, reject) => {
       getSync()
         .get('backup')
-        .then(e => {
+        .then((e) => {
           resolve(e.backup);
         })
         .catch(reject);
@@ -81,21 +84,21 @@ class BrowserSync {
     return new Promise((resolve, reject) => {
       getSync()
         .get('backup')
-        .then(e => {
-          const index = e.backup.index;
+        .then((e) => {
+          const { index } = e.backup;
           const result: { [key: string]: TinyRule[] } = {};
-          TABLE_NAMES.forEach(it => {
+          TABLE_NAMES.forEach((it) => {
             result[it] = [];
           });
           const toGet: string[] = [];
           for (let i = 0; i <= index; i++) {
-            toGet.push('backup_' + i);
+            toGet.push(`backup_${i}`);
           }
           getSync()
             .get(toGet)
-            .then(res => {
-              toGet.forEach(name => {
-                TABLE_NAMES.forEach(it => {
+            .then((res) => {
+              toGet.forEach((name) => {
+                TABLE_NAMES.forEach((it) => {
                   result[it] = result[it].concat(res[name][it]);
                 });
               });
@@ -110,15 +113,15 @@ class BrowserSync {
       const toRemove = ['backup'];
       getSync()
         .get('backup')
-        .then(e => {
+        .then((e) => {
           if (e.backup) {
-            const index = e.backup.index;
+            const { index } = e.backup;
             const result: { [key: string]: TinyRule[] } = {};
-            TABLE_NAMES.forEach(it => {
+            TABLE_NAMES.forEach((it) => {
               result[it] = [];
             });
             for (let i = 0; i <= index; i++) {
-              toRemove.push('backup_' + i);
+              toRemove.push(`backup_${i}`);
             }
           }
           getSync()

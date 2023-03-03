@@ -23,9 +23,9 @@ export enum RULE_MATCH_TYPE {
 type RuleAction =
   | 'cancel'
   | {
-      name: string;
-      value: string;
-    };
+    name: string;
+    value: string;
+  };
 
 export interface TinyRule {
   [key: string]: any;

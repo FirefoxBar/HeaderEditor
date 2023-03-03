@@ -1,34 +1,30 @@
-import { browser, Tabs } from 'webextension-polyfill-ts';
+import browser, { Tabs } from 'webextension-polyfill';
 import { canAccess, IS_ANDROID } from './utils';
 
 class Notify {
-  tabs(request: any) {
-    return new Promise(resolve => {
-      if (IS_ANDROID) {
-        browser.tabs.query({}).then(tabs => {
-          tabs.forEach((tab: Tabs.Tab) => {
-            if (canAccess(tab.url)) {
-              browser.tabs.sendMessage(tab.id!, request);
-            }
-          });
-          resolve();
-        });
-      } else {
-        // notify other tabs
-        browser.windows.getAll({ populate: true }).then(windows => {
-          windows.forEach(win => {
-            if (!win.tabs) {
-              return;
-            }
-            win.tabs.forEach(tab => {
-              if (canAccess(tab.url)) {
-                browser.tabs.sendMessage(tab.id!, request);
-              }
-            });
-          });
-          resolve();
-        });
+  async tabs(request: any) {
+    if (IS_ANDROID) {
+      const tabs = await browser.tabs.query({});
+
+      tabs.forEach((tab: Tabs.Tab) => {
+        if (canAccess(tab.url)) {
+          browser.tabs.sendMessage(tab.id!, request);
+        }
+      });
+      return;
+    }
+
+    // notify other tabs
+    const windows = await browser.windows.getAll({ populate: true });
+    windows.forEach((win) => {
+      if (!win.tabs) {
+        return;
       }
+      win.tabs.forEach((tab) => {
+        if (canAccess(tab.url)) {
+          browser.tabs.sendMessage(tab.id!, request);
+        }
+      });
     });
   }
   background(request: any) {

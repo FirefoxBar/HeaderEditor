@@ -1,7 +1,7 @@
 import emitter from '@/share/core/emitter';
 import { prefs } from '@/share/core/storage';
 import { IS_ANDROID, t } from '@/share/core/utils';
-import { browser } from 'webextension-polyfill-ts';
+import browser from 'webextension-polyfill';
 import { openURL } from './utils';
 
 let antiHotLinkMenu: string | number | null = null;
@@ -26,10 +26,10 @@ export default function initHotLinkMenu() {
   }
 
   if (typeof browser.contextMenus !== 'undefined') {
-    browser.contextMenus.onClicked.addListener((info, tab) => {
+    browser.contextMenus.onClicked.addListener((info) => {
       if (info.menuItemId === 'add-anti-hot-link') {
         openURL({
-          url: `${browser.extension.getURL('options/options.html')}?action=add-anti-hot-link&url=${info.srcUrl}`,
+          url: `${browser.runtime.getURL('options/options.html')}?action=add-anti-hot-link&url=${info.srcUrl}`,
         });
       }
     });

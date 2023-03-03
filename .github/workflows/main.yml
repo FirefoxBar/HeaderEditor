@@ -3,12 +3,10 @@ name: main
 on:
   push:
     branches:
-    - master
     - dev
     - feat/react
   pull_request:
     branches:
-    - master
     - dev
 
 jobs:
@@ -28,13 +26,12 @@ jobs:
       with:
         node-version: ${{ matrix.node-version }}
         cache: 'pnpm'
-    # Install dependencies
     - name: Install dependencies
       run: pnpm i --frozen-lockfile
     - name: Build
       run: npm run build
     - name: Upload bundles
-      uses: actions/upload-artifact@v1
+      uses: actions/upload-artifact@v3
       with:
         name: dist
         path: dist

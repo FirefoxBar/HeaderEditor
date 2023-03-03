@@ -1,30 +1,30 @@
-import { browser, Tabs } from 'webextension-polyfill-ts';
+import browser, { Tabs } from 'webextension-polyfill';
 import { RULE_TYPE, TABLE_NAMES_TYPE } from './var';
 
 export const IS_ANDROID = navigator.userAgent.includes('Android');
 export const IS_CHROME = /Chrome\/(\d+)\.(\d+)/.test(navigator.userAgent);
 export const CHROME_VERSION = IS_CHROME
   ? (() => {
-      const a = navigator.userAgent.match(/Chrome\/(\d+)\.(\d+)/);
-      return a ? parseFloat(`${a[1]}.${a[2]}`) : 0;
-    })()
+    const a = navigator.userAgent.match(/Chrome\/(\d+)\.(\d+)/);
+    return a ? parseFloat(`${a[1]}.${a[2]}`) : 0;
+  })()
   : 0;
 export const IS_FIREFOX = !IS_CHROME;
 export const FIREFOX_VERSION = IS_FIREFOX
   ? (() => {
-      const a = navigator.userAgent.match(/Firefox\/(\d+)\.(\d+)/);
-      return a ? parseFloat(`${a[1]}.${a[2]}`) : 0;
-    })()
+    const a = navigator.userAgent.match(/Firefox\/(\d+)\.(\d+)/);
+    return a ? parseFloat(`${a[1]}.${a[2]}`) : 0;
+  })()
   : 0;
 
 export const IS_SUPPORT_STREAM_FILTER = typeof browser.webRequest.filterResponseData === 'function';
 
 // Get Active Tab
 export function getActiveTab(): Promise<Tabs.Tab> {
-  return new Promise(resolve => {
+  return new Promise((resolve) => {
     browser.tabs
       .query({ currentWindow: true, active: true })
-      .then(tabs => tabs[0])
+      .then((tabs) => tabs[0])
       .then(resolve);
   });
 }
@@ -44,9 +44,9 @@ export function fetchUrl(param: FetchUrlParam): Promise<string> {
       method: param.post ? 'POST' : 'GET',
     };
     const headers: Record<string, string> = {};
-    let url = param.url;
+    let { url } = param;
     if (param.query) {
-      url += '?' + new URLSearchParams(param.query).toString();
+      url += `?${new URLSearchParams(param.query).toString()}`;
     }
     if (fetchParam.method === 'POST') {
       // 遍历一下，查找是否有File
@@ -73,14 +73,13 @@ export function fetchUrl(param: FetchUrlParam): Promise<string> {
       }
     }
     if (param.header) {
-      // tslint:disable-next-line
-      for (const name in param.header) {
-        headers[name] = param.header[name];
-      }
+      Object.keys(param.header).forEach((name) => {
+        headers[name] = param.header![name];
+      });
     }
     fetchParam.headers = headers;
     fetch(url, fetchParam)
-      .then(r => r.text())
+      .then((r) => r.text())
       .then(resolve)
       .catch(reject);
   });
@@ -97,6 +96,8 @@ export function getTableName(ruleType: RULE_TYPE): TABLE_NAMES_TYPE {
       return 'receiveHeader';
     case 'modifyReceiveBody':
       return 'receiveBody';
+    default:
+      return 'request';
   }
 }
 
@@ -117,7 +118,7 @@ export function canAccess(url?: string) {
   // other extensions can't be styled
   if (
     (url.indexOf('moz-extension') === 0 || url.indexOf('chrome-extension') === 0) &&
-    url.indexOf(browser.extension.getURL('')) !== 0
+    url.indexOf(browser.runtime.getURL('')) !== 0
   ) {
     return false;
   }
@@ -136,6 +137,6 @@ export function getDomain(url: string) {
   if (url.indexOf('file:') === 0) {
     return '';
   }
-  const d = /.*?:\/*([^\/:]+)/.exec(url);
+  const d = /.*?:\/*([^/:]+)/.exec(url);
   return d ? d[1] : null;
 }

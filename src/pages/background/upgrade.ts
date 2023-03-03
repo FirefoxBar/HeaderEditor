@@ -1,6 +1,6 @@
 import * as storage from '@/share/core/storage';
 import { TABLE_NAMES } from '@/share/core/var';
-import { browser } from 'webextension-polyfill-ts';
+import browser from 'webextension-polyfill';
 
 // Upgrade
 const downloadHistory = localStorage.getItem('dl_history');
@@ -13,15 +13,15 @@ if (downloadHistory) {
 storage
   .getLocal()
   .get('version_mark')
-  .then(v => {
-    const version = v.version_mark ? parseInt(v.version_mark) : 0;
+  .then((v) => {
+    const version = v.version_mark ? parseInt(v.version_mark, 10) : 0;
     if (!(version >= 1)) {
       storage.getLocal().set({
         version_mark: 1,
       });
       // Upgrade group
-      function rebindRuleWithGroup(group) {
-        return new Promise(resolve => {
+      const rebindRuleWithGroup = (group) => {
+        return new Promise((resolve) => {
           const cacheQueue: Array<Promise<void>> = [];
           function findGroup(type, id) {
             let result = browser.i18n.getMessage('ungrouped');
@@ -33,11 +33,11 @@ storage
             }
             return result;
           }
-          TABLE_NAMES.forEach(k => {
-            storage.getDatabase().then(db => {
+          TABLE_NAMES.forEach((k) => {
+            storage.getDatabase().then((db) => {
               const tx = db.transaction([k], 'readwrite');
               const os = tx.objectStore(k);
-              os.openCursor().onsuccess = e => {
+              os.openCursor().onsuccess = (e) => {
                 if (!e.target) {
                   return;
                 }
@@ -58,7 +58,7 @@ storage
           });
           Promise.all(cacheQueue).then(resolve);
         });
-      }
+      };
 
       const groups = localStorage.getItem('groups');
       if (groups) {
@@ -69,7 +69,7 @@ storage
         storage
           .getLocal()
           .get('groups')
-          .then(r => {
+          .then((r) => {
             if (r.groups !== undefined) {
               rebindRuleWithGroup(r.groups).then(() => storage.getLocal().remove('groups'));
             } else {

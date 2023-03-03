@@ -2,7 +2,7 @@ import emitter from '@/share/core/emitter';
 import logger, { LogItem } from '@/share/core/logger';
 import { prefs } from '@/share/core/storage';
 import dayjs from 'dayjs';
-import clone from 'lodash.clonedeep';
+import { cloneDeep } from 'lodash-es';
 
 function handleMessage(it: LogItem) {
   console.log(
@@ -11,7 +11,7 @@ function handleMessage(it: LogItem) {
     'color:#ff9300;',
   );
   if (it.data) {
-    console.log(clone(it.data));
+    console.log(cloneDeep(it.data));
   }
 }
 

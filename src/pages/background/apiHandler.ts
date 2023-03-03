@@ -2,7 +2,7 @@ import logger from '@/share/core/logger';
 import rules from '@/share/core/rules';
 import { getDatabase, prefs } from '@/share/core/storage';
 import { APIs } from '@/share/core/var';
-import { browser } from 'webextension-polyfill-ts';
+import browser from 'webextension-polyfill';
 import { openURL } from './utils';
 
 export default function createApiHandler() {
@@ -13,7 +13,7 @@ export default function createApiHandler() {
     logger.d('Background Receive Message', request);
     switch (request.method) {
       case APIs.HEALTH_CHECK:
-        return new Promise(resolve => {
+        return new Promise((resolve) => {
           getDatabase()
             .then(() => resolve(true))
             .catch(() => resolve(false));
@@ -39,6 +39,8 @@ export default function createApiHandler() {
         } else {
           return rules.updateCache(request.type);
         }
+      default:
+        break;
     }
   });
 }

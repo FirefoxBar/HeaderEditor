@@ -1,4 +1,4 @@
-import { browser } from 'webextension-polyfill-ts';
+import browser from 'webextension-polyfill';
 import { convertToRule } from './ruleUtils';
 import { APIs, isTinyRule, Rule, TABLE_NAMES, TABLE_NAMES_TYPE, TinyRule } from './var';
 
@@ -26,7 +26,7 @@ class BackgroundAPI {
     });
   }
   getAllRules(): Promise<{ [x: string]: Rule[] }> {
-    return Promise.all(TABLE_NAMES.map(k => this.getRules(k))).then(res => {
+    return Promise.all(TABLE_NAMES.map((k) => this.getRules(k))).then((res) => {
       const result: any = {};
       res.forEach((it, index) => {
         result[TABLE_NAMES[index]] = it;

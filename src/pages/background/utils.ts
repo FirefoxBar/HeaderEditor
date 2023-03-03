@@ -1,5 +1,5 @@
 import { getActiveTab } from '@/share/core/utils';
-import { browser } from 'webextension-polyfill-ts';
+import browser from 'webextension-polyfill';
 
 interface OpenURLOptions {
   method?: string;
@@ -9,11 +9,11 @@ interface OpenURLOptions {
 
 export function openURL(options: OpenURLOptions) {
   delete options.method;
-  return new Promise(resolve => {
+  return new Promise((resolve) => {
     const doCreate = () => browser.tabs.create(options).then(resolve);
     browser.tabs
       .query({ currentWindow: true, url: options.url })
-      .then(tabs => {
+      .then((tabs) => {
         if (tabs.length) {
           browser.tabs
             .update(tabs[0].id, {
@@ -22,7 +22,7 @@ export function openURL(options: OpenURLOptions) {
             .then(resolve)
             .catch(doCreate);
         } else {
-          getActiveTab().then(tab => {
+          getActiveTab().then((tab) => {
             const url = tab.url || '';
             // re-use an active new tab page
             // Firefox may have more than 1 newtab url, so check all

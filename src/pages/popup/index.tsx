@@ -4,7 +4,7 @@ import { t } from '@/share/core/utils';
 import '@/share/global.less';
 import { Button, Switch } from '@alifd/next';
 import * as React from 'react';
-import { browser } from 'webextension-polyfill-ts';
+import browser from 'webextension-polyfill';
 import './index.less';
 
 interface PopupState {
@@ -35,7 +35,7 @@ export default class Popup extends React.Component<any, PopupState> {
   }
 
   handleOpen() {
-    Api.openURL(browser.extension.getURL('options.html'));
+    Api.openURL(browser.runtime.getURL('options.html'));
     window.close();
   }
 
