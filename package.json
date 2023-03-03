@@ -9,8 +9,8 @@
     "url": "https://github.com/FirefoxBar/HeaderEditor.git"
   },
   "scripts": {
-    "start": "icejs start --disable-open",
-    "build": "icejs build",
+    "start": "icejs start --disable-open --config build.config.js",
+    "build": "icejs build --config build.config.js",
     "lint": "npm run eslint && npm run stylelint",
     "eslint": "eslint --cache --ext .js,.jsx,.ts,.tsx ./",
     "eslint:fix": "npm run eslint -- --fix",
@@ -21,8 +21,10 @@
   },
   "dependencies": {
     "@alifd/next": "^1.18.17",
+    "@douyinfe/semi-icons": "^2.30.1",
     "@douyinfe/semi-ui": "^2.30.1",
     "@emotion/css": "^11.10.6",
+    "@ice/runtime": "^0.1.2",
     "classnames": "^2.2.6",
     "create-app-shared": "^1.2.6",
     "dayjs": "^1.9.5",

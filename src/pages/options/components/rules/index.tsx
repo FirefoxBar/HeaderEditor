@@ -1,4 +1,4 @@
-import { Balloon, Button, Card, Dialog, Loading, Switch, Table } from '@alifd/next';
+/* eslint-disable max-lines */
 import classNames from 'classnames';
 import { selectGroup } from '@/pages/options/lib/utils';
 import { getExportName } from '@/pages/options/utils';
@@ -15,6 +15,9 @@ import Float from './float';
 import './index.less';
 import RuleDetail from './ruleDetail';
 import { batchShare, remove, toggleRule } from './utils';
+import { Button, ButtonGroup, Card, Modal, Popover, Spin, Switch, Table, Tooltip } from '@douyinfe/semi-ui';
+import { css, cx } from '@emotion/css';
+import { IconChevronDown, IconSend } from '@douyinfe/semi-icons';
 
 const V_KEY = '_v_key';
 
@@ -118,16 +121,14 @@ export default class Rules extends React.Component<RulesProps, RulesState> {
           };
         }
       }
+    } else if (toGroup) {
+      toGroup.push(displayRule);
     } else {
-      if (toGroup) {
-        toGroup.push(displayRule);
-      } else {
-        // 插入一个新的Group
-        this.state.group[rule.group] = {
-          name: rule.group,
-          rules: [displayRule],
-        };
-      }
+      // 插入一个新的Group
+      this.state.group[rule.group] = {
+        name: rule.group,
+        rules: [displayRule],
+      };
     }
     this.forceUpdate();
   }
@@ -149,38 +150,35 @@ export default class Rules extends React.Component<RulesProps, RulesState> {
   }
 
   // 更换分组
-  handleChangeGroup(item: InitdRule) {
-    selectGroup(item.group).then(newGroup => {
-      const oldGroup = item.group;
-      if (oldGroup === newGroup) {
-        return;
-      }
-      item.group = newGroup;
-      Api.saveRule(item).then(() => {
-        const oldGroupRules = this.state.group[oldGroup].rules;
-        oldGroupRules.splice(oldGroupRules.indexOf(item), 1);
-        if (typeof this.state.group[newGroup] === 'undefined') {
-          this.state.group[newGroup] = {
-            name: newGroup,
-            rules: [],
-          };
-        }
-        this.state.group[newGroup].rules.push(item);
-        this.forceUpdate();
-      });
-    });
+  async handleChangeGroup(item: InitdRule) {
+    const newGroup = await selectGroup(item.group);
+    const oldGroup = item.group;
+    if (oldGroup === newGroup) {
+      return;
+    }
+    item.group = newGroup;
+    await Api.saveRule(item);
+    const oldGroupRules = this.state.group[oldGroup].rules;
+    oldGroupRules.splice(oldGroupRules.indexOf(item), 1);
+    if (typeof this.state.group[newGroup] === 'undefined') {
+      this.state.group[newGroup] = {
+        name: newGroup,
+        rules: [],
+      };
+    }
+    this.state.group[newGroup].rules.push(item);
+    this.forceUpdate();
   }
 
   // 删除
   handleDelete(item: InitdRule) {
-    Dialog.confirm({
-      content: t('delete_confirm'),
-      onOk: () => {
-        remove(item).then(() => {
-          const group = this.state.group[item.group];
-          group.rules.splice(group.rules.indexOf(item), 1);
-          this.forceUpdate();
-        });
+    Modal.warning({
+      title: t('delete_confirm'),
+      onOk: async () => {
+        await remove(item);
+        const group = this.state.group[item.group];
+        group.rules.splice(group.rules.indexOf(item), 1);
+        this.forceUpdate();
       },
     });
   }
@@ -189,7 +187,7 @@ export default class Rules extends React.Component<RulesProps, RulesState> {
   handleClone(item: InitdRule) {
     const newItem = convertToTinyRule(item);
     newItem.name += '_clone';
-    Api.saveRule(newItem).then(res => {
+    Api.saveRule(newItem).then((res) => {
       this.state.group[item.group].rules.push(res);
       this.forceUpdate();
     });
@@ -197,23 +195,25 @@ export default class Rules extends React.Component<RulesProps, RulesState> {
 
   // 预览
   handlePreview(item: Rule) {
-    const newFloat = [...this.state.float];
-    if (!this.state.float.includes(item)) {
-      newFloat.push(item);
-    } else {
-      newFloat.splice(newFloat.indexOf(item), 1);
-    }
-    this.setState({
-      float: newFloat,
+    this.setState((prevState) => {
+      const newFloat = [...prevState.float];
+      if (!newFloat.includes(item)) {
+        newFloat.push(item);
+      } else {
+        newFloat.splice(newFloat.indexOf(item), 1);
+      }
+      return {
+        float: newFloat,
+      };
     });
   }
 
   // 切换多选状态
   toggleSelect() {
-    this.setState({
-      isEnableSelect: !this.state.isEnableSelect,
+    this.setState((prevState) => ({
+      isEnableSelect: !prevState.isEnableSelect,
       selectedKeys: [],
-    });
+    }));
   }
   getSelectedRules() {
     const { selectedKeys, group } = this.state;
@@ -222,8 +222,8 @@ export default class Rules extends React.Component<RulesProps, RulesState> {
     }
     // 通过 V_KEY 筛选出所需要的
     const batch = ([] as Rule[])
-      .concat(...Object.values(group).map(it => it.rules))
-      .filter(it => selectedKeys.includes(it[V_KEY]));
+      .concat(...Object.values(group).map((it) => it.rules))
+      .filter((it) => selectedKeys.includes(it[V_KEY]));
     return batch;
   }
 
@@ -235,8 +235,8 @@ export default class Rules extends React.Component<RulesProps, RulesState> {
       });
     } else {
       const keys: string[] = [];
-      Object.values(this.state.group).forEach(g => {
-        g.rules.forEach(it => {
+      Object.values(this.state.group).forEach((g) => {
+        g.rules.forEach((it) => {
           keys.push(it[V_KEY]);
         });
       });
@@ -255,7 +255,7 @@ export default class Rules extends React.Component<RulesProps, RulesState> {
     const queue: Array<Promise<any>> = [];
     const table: TABLE_NAMES_TYPE[] = [];
     const setTo = !batch[0].enable;
-    batch.forEach(rule => {
+    batch.forEach((rule) => {
       if (rule.enable === setTo) {
         return;
       }
@@ -267,14 +267,14 @@ export default class Rules extends React.Component<RulesProps, RulesState> {
       }
     });
     await Promise.all(queue);
-    await Promise.all(table.map(tb => Api.updateCache(tb)));
+    await Promise.all(table.map((tb) => Api.updateCache(tb)));
     this.forceUpdate();
   }
   // 批量移动群组
   handleBatchMove() {
-    selectGroup().then(newGroup => {
-      const batch = this.getSelectedRules().filter(it => it.group !== newGroup);
-      batch.forEach(it => {
+    selectGroup().then((newGroup) => {
+      const batch = this.getSelectedRules().filter((it) => it.group !== newGroup);
+      batch.forEach((it) => {
         const oldGroup = it.group;
         it.group = newGroup;
         const oldGroupRules = this.state.group[oldGroup].rules;
@@ -290,7 +290,7 @@ export default class Rules extends React.Component<RulesProps, RulesState> {
         }
         this.state.group[newGroup].rules.push(it);
       });
-      Promise.all(batch.map(item => Api.saveRule(item))).then(() => this.forceUpdate());
+      Promise.all(batch.map((item) => Api.saveRule(item))).then(() => this.forceUpdate());
     });
   }
   // 批量分享
@@ -299,12 +299,12 @@ export default class Rules extends React.Component<RulesProps, RulesState> {
   }
   // 批量删除
   handleBatchDelete() {
-    Dialog.confirm({
-      content: t('delete_confirm'),
+    Modal.warning({
+      title: t('delete_confirm'),
       onOk: async () => {
         const batch = this.getSelectedRules();
         await Promise.all(
-          batch.map(async item => {
+          batch.map(async (item) => {
             await remove(item);
             const group = this.state.group[item.group];
             group.rules.splice(group.rules.indexOf(item), 1);
@@ -316,71 +316,76 @@ export default class Rules extends React.Component<RulesProps, RulesState> {
   }
 
   handleGroupShare(name: string) {
-    const rules = this.state.group[name].rules;
+    const { rules } = this.state.group[name];
     const result: any = {};
-    TABLE_NAMES.forEach(tb => (result[tb] = []));
-    rules.forEach(e => result[getTableName(e.ruleType)].push(e));
+    TABLE_NAMES.forEach((tb) => {
+      result[tb] = [];
+    });
+    rules.forEach((e) => result[getTableName(e.ruleType)].push(e));
     file.save(JSON.stringify(createExport(result), null, '\t'), getExportName());
   }
-  handleGroupRename(name: string) {
-    selectGroup(name).then(async newGroup => {
-      if (name === newGroup) {
-        return;
-      }
-      // 更新规则
-      const rules = this.state.group[name].rules;
-      for (const item of rules) {
-        item.group = newGroup;
-        await Api.saveRule(item);
-      }
-      const newStateGroup = { ...this.state.group };
-      if (typeof newStateGroup[newGroup] === 'undefined') {
-        newStateGroup[newGroup] = {
+  async handleGroupRename(name: string) {
+    const newGroup = await selectGroup(name);
+    if (name === newGroup) {
+      return;
+    }
+    // 更新规则
+    const { rules } = this.state.group[name];
+    for (const item of rules) {
+      item.group = newGroup;
+      await Api.saveRule(item);
+    }
+    this.setState((prevState) => {
+      const result = { ...prevState, group: { ...prevState.group } };
+      if (typeof result.group[newGroup] === 'undefined') {
+        result.group[newGroup] = {
           name: newGroup,
-          rules: this.state.group[name].rules,
+          rules: result.group.group[name].rules,
         };
       } else {
         for (const item of rules) {
-          newStateGroup[newGroup].rules.push(item);
+          result.group[newGroup].rules.push(item);
         }
       }
-      if (this.state.collapsed.includes(name)) {
-        const newCollapsed = [...this.state.collapsed];
+      if (prevState.collapsed.includes(name)) {
+        const newCollapsed = [...prevState.collapsed];
         newCollapsed.splice(newCollapsed.indexOf(name), 1);
         newCollapsed.push(newGroup);
-        this.setState({ collapsed: newCollapsed });
+        result.collapsed = newCollapsed;
       }
-      delete newStateGroup[name];
-      this.setState({ group: newStateGroup });
+      delete result.group[name];
+      return result;
     });
   }
   handleGroupDelete(name: string) {
-    Dialog.confirm({
-      content: t('delete_confirm'),
+    Modal.confirm({
+      title: t('delete_confirm'),
       onOk: async () => {
-        const rules = this.state.group[name].rules;
-        await Promise.all(rules.map(item => remove(item)));
-        const newGroup = {
-          ...this.state.group,
-        };
-        if (this.state.collapsed.includes(name)) {
-          const newCollapsed = [...this.state.collapsed];
-          newCollapsed.splice(newCollapsed.indexOf(name), 1);
-          this.setState({ collapsed: newCollapsed });
-        }
-        delete newGroup[name];
-        this.setState({ group: newGroup });
+        const { rules } = this.state.group[name];
+        await Promise.all(rules.map((item) => remove(item)));
+        this.setState((prevState) => {
+          const result = { ...prevState, group: { ...prevState.group } };
+          if (prevState.collapsed.includes(name)) {
+            const newCollapsed = [...prevState.collapsed];
+            newCollapsed.splice(newCollapsed.indexOf(name), 1);
+            result.collapsed = newCollapsed;
+          }
+          delete result.group[name];
+          return result;
+        });
       },
     });
   }
   handleCollapse(name: string) {
-    const collapsed = [...this.state.collapsed];
-    if (collapsed.includes(name)) {
-      collapsed.splice(collapsed.indexOf(name), 1);
-    } else {
-      collapsed.push(name);
-    }
-    this.setState({ collapsed });
+    this.setState((prevState) => {
+      const collapsed = [...prevState.collapsed];
+      if (collapsed.includes(name)) {
+        collapsed.splice(collapsed.indexOf(name), 1);
+      } else {
+        collapsed.push(name);
+      }
+      return { collapsed };
+    });
   }
 
   load() {
@@ -405,7 +410,7 @@ export default class Rules extends React.Component<RulesProps, RulesState> {
         requestRules(table);
         return;
       }
-      response.forEach(item => {
+      response.forEach((item) => {
         if (typeof result[item.group] === 'undefined') {
           result[item.group] = {
             name: item.group,
@@ -429,10 +434,10 @@ export default class Rules extends React.Component<RulesProps, RulesState> {
     };
     const requestRules = (table: TABLE_NAMES_TYPE) => {
       setTimeout(() => {
-        Api.getRules(table).then(res => checkResult(table, res));
+        Api.getRules(table).then((res) => checkResult(table, res));
       });
     };
-    TABLE_NAMES.forEach(table => requestRules(table));
+    TABLE_NAMES.forEach((table) => requestRules(table));
   }
 
   render() {
@@ -476,109 +481,97 @@ export default class Rules extends React.Component<RulesProps, RulesState> {
             <Icon type="add" />
           </Button>
         </div>
-        <Loading size="large" visible={this.state.loading} inline={false}>
-          {Object.values(this.state.group).map(group => {
+        <Spin size="large" spinning={this.state.loading}>
+          {Object.values(this.state.group).map((group) => {
             const { name } = group;
             return (
               <Card
+                className={!collapsed.includes(name) ? css`
+                    .semi-card-body {
+                      display: none;
+                    }
+                  ` : ''}
                 key={name}
-                showTitleBullet={false}
                 title={name}
-                extra={
-                  <div className="group-item-actions">
-                    <Button.Group>
+                headerExtraContent={
+                  <div className={cx(css`
+                    display: flex;
+                    flex-direction: row;
+
+                    .collapse-icon {
+                      display: inline-block;
+                      transition: all .2s ease;
+                      transform: rotateZ(180deg);
+                    }
+                  `, !collapsed.includes(name) ? css`
+                      .collapse-icon {
+                      transform: rotateZ(0deg);
+                    }
+                  ` : '')}
+                  >
+                    <ButtonGroup>
                       {name !== t('ungrouped') && (
-                        <Balloon.Tooltip
-                          className="rule-tooltip"
-                          trigger={
-                            <Button type="normal" onClick={this.handleGroupRename.bind(this, name)}>
-                              <i className="iconfont icon-edit" />
-                            </Button>
-                          }
-                        >
-                          {t('rename')}
-                        </Balloon.Tooltip>
+                        <Tooltip content={t('rename')}>
+                          <Button type="tertiary" onClick={this.handleGroupRename.bind(this, name)} icon={<i className="iconfont icon-edit" />} />
+                        </Tooltip>
                       )}
-                      <Balloon.Tooltip
-                        className="rule-tooltip"
-                        trigger={
-                          <Button type="normal" onClick={this.handleGroupShare.bind(this, name)}>
-                            <i className="iconfont icon-share" />
-                          </Button>
-                        }
-                      >
-                        {t('share')}
-                      </Balloon.Tooltip>
+                      <Tooltip content={t('share')}>
+                        <Button type="tertiary" onClick={this.handleGroupShare.bind(this, name)} icon={<IconSend />} />
+                      </Tooltip>
                       {name !== t('ungrouped') && (
-                        <Balloon.Tooltip
-                          className="rule-tooltip"
-                          trigger={
-                            <Button type="normal" onClick={this.handleGroupDelete.bind(this, name)}>
-                              <i className="iconfont icon-delete" />
-                            </Button>
-                          }
-                        >
-                          {t('delete')}
-                        </Balloon.Tooltip>
+                        <Tooltip content={t('delete')}>
+                          <Button type="tertiary" onClick={this.handleGroupDelete.bind(this, name)} icon={<i className="iconfont icon-delete" />} />
+                        </Tooltip>
                       )}
-                    </Button.Group>
-                    <Button type="normal" onClick={this.handleCollapse.bind(this, name)}>
-                      <i className="iconfont icon-keyboard-arrow-down collapse-icon" />
-                    </Button>
+                    </ButtonGroup>
+                    <Button icon={<IconChevronDown className="collapse-icon" />} type="tertiary" onClick={this.handleCollapse.bind(this, name)} />
                   </div>
                 }
-                contentHeight="auto"
-                className={classNames('group-item', {
-                  'is-hide': !collapsed.includes(name),
-                })}
               >
                 <Table
+                  rowKey={V_KEY}
                   dataSource={group.rules}
-                  primaryKey={V_KEY}
+                  size="small"
+                  pagination={false}
                   rowSelection={
                     this.state.isEnableSelect
                       ? {
-                          onChange: this.handleSelect,
-                          selectedRowKeys: this.state.selectedKeys,
-                        }
+                        onChange: this.handleSelect,
+                        selectedRowKeys: this.state.selectedKeys,
+                      }
                       : undefined
                   }
-                >
-                  <Table.Column
-                    className="cell-enable"
-                    title={t('enable')}
-                    alignHeader="left"
-                    align="center"
-                    dataIndex="enable"
-                    cell={(value: boolean, index: number, item: InitdRule) => {
-                      return (
+                  columns={[
+                    {
+                      title: t('enable'),
+                      className: 'cell-enable',
+                      dataIndex: 'enable',
+                      align: 'center',
+                      render: (value: boolean, item: InitdRule) => (
                         <Switch size="small" checked={value} onChange={this.handleToggleEnable.bind(this, item)} />
-                      );
-                    }}
-                  />
-                  <Table.Column
-                    className="cell-name"
-                    title={t('name')}
-                    dataIndex="name"
-                    cell={(value: string, index: number, item: InitdRule) => {
-                      return (
-                        <Balloon.Tooltip className="rule-tooltip" trigger={<div>{value}</div>}>
-                          <RuleDetail rule={item} />
-                        </Balloon.Tooltip>
-                      );
-                    }}
-                  />
-                  <Table.Column
-                    className="cell-type"
-                    title={t('ruleType')}
-                    dataIndex="ruleType"
-                    cell={(value: string) => t(`rule_${value}`)}
-                  />
-                  <Table.Column
-                    className="cell-action"
-                    title={t('action')}
-                    cell={(value: string, index: number, item: InitdRule) => {
-                      return (
+                      ),
+                    },
+                    {
+                      title: t('name'),
+                      className: 'cell-name',
+                      dataIndex: 'name',
+                      render: (value: string, item: InitdRule) => (
+                        <Popover showArrow position="top" content={<RuleDetail rule={item} />} style={{ maxWidth: '300px' }}>
+                          <span>{value}</span>
+                        </Popover>
+                      ),
+                    },
+                    {
+                      title: t('ruleType'),
+                      className: 'cell-type',
+                      dataIndex: 'ruleType',
+                      render: (value: string) => t(`rule_${value}`),
+                    },
+                    {
+                      title: t('action'),
+                      className: 'cell-action',
+                      dataIndex: 'action',
+                      render: (v, item: InitdRule) => (
                         <div className="buttons">
                           <Button type="secondary" onClick={this.handleChangeGroup.bind(this, item)}>
                             <Icon type="playlist-add" />
@@ -601,15 +594,15 @@ export default class Rules extends React.Component<RulesProps, RulesState> {
                             {t('delete')}
                           </Button>
                         </div>
-                      );
-                    }}
-                  />
-                </Table>
+                      ),
+                    },
+                  ]}
+                />
               </Card>
             );
           })}
-        </Loading>
-        {this.state.float.map(it => (
+        </Spin>
+        {this.state.float.map((it) => (
           <Float key={it[V_KEY]} rule={it} onClose={() => this.handlePreview(it)} />
         ))}
       </section>

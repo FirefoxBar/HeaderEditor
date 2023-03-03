@@ -1,4 +1,3 @@
-import { Button, Drawer, Message, Radio, Select, Table } from '@alifd/next';
 import { selectGroup } from '@/pages/options/lib/utils';
 import * as React from 'react';
 import Api from '@/share/core/api';
@@ -6,7 +5,8 @@ import emitter from '@/share/core/emitter';
 import { fromJson } from '@/share/core/ruleUtils';
 import { t } from '@/share/core/utils';
 import { ImportRule, TABLE_NAMES, TinyRule } from '@/share/core/var';
-import './index.less';
+import { SideSheet, Button, Table, Select, RadioGroup, Toast } from '@douyinfe/semi-ui';
+import { css } from '@emotion/css';
 
 interface ImportDrawerProps {
   onCancel?: () => void;
@@ -48,13 +48,13 @@ export default class ImportDrawer extends React.Component<ImportDrawerProps, Imp
       let totalCount = 0;
       const importList: ImportRule[] = [];
       const list = typeof content === 'string' ? fromJson(content) : content;
-      TABLE_NAMES.forEach(tableName => {
+      TABLE_NAMES.forEach((tableName) => {
         if (!list[tableName]) {
           return;
         }
-        list[tableName].forEach(e => {
+        list[tableName].forEach((e) => {
           totalCount++;
-          Api.getRules(tableName, { name: e.name }).then(rule => {
+          Api.getRules(tableName, { name: e.name }).then((rule) => {
             const it: ImportRule = {
               ...e,
               group: e.group || t('ungrouped'),
@@ -76,14 +76,13 @@ export default class ImportDrawer extends React.Component<ImportDrawerProps, Imp
       });
     } catch (e) {
       console.error(e);
-      return;
     }
   }
 
   handleConfirm() {
     // 确认导入
     const queue: any[] = [];
-    this.state.list.forEach(e => {
+    this.state.list.forEach((e) => {
       // 不导入
       if (e.importAction === 3) {
         return;
@@ -105,7 +104,7 @@ export default class ImportDrawer extends React.Component<ImportDrawerProps, Imp
     });
     Promise.all(queue).then(() => {
       // this.imports.status = 0;
-      Message.success(t('import_success'));
+      Toast.success(t('import_success'));
       setTimeout(() => emitter.emit(emitter.EVENT_HAS_RULE_UPDATE), 300);
     });
     this.setState({
@@ -130,7 +129,7 @@ export default class ImportDrawer extends React.Component<ImportDrawerProps, Imp
   }
 
   handleSelectGroup(item: ImportRule) {
-    selectGroup(item.group).then(res => {
+    selectGroup(item.group).then((res) => {
       item.group = res;
       this.forceUpdate();
     });
@@ -143,65 +142,96 @@ export default class ImportDrawer extends React.Component<ImportDrawerProps, Imp
   }
 
   handleSelectAll() {
-    selectGroup(this.state.group).then(group => this.setState({ group }));
+    selectGroup(this.state.group).then((group) => this.setState({ group }));
   }
 
   render() {
     return (
-      <Drawer
-        className="import-drawer"
+      <SideSheet
         placement="left"
-        title={t('import')}
         visible={this.state.visible}
-        onClose={this.handleCancel}
+        onCancel={this.handleCancel}
+        title={t('import')}
+        width="100vw"
+        className={css`
+          .semi-sidesheet-inner {
+            width: 100vw;
+            max-width: 800px;
+          }
+        `}
+        footer={
+          <div style={{ display: 'flex', justifyContent: 'flex-end', gap: '8px' }}>
+            <Button onClick={this.handleConfirm}>
+              {t('save')}
+            </Button>
+            <Button onClick={this.handleCancel}>
+              {t('cancel')}
+            </Button>
+          </div>
+        }
       >
-        <Table dataSource={this.state.list}>
-          <Table.Column title={t('name')} dataIndex="name" />
-          <Table.Column title={t('ruleType')} dataIndex="ruleType" cell={(value: string) => t(`rule_${value}`)} />
-          <Table.Column
-            title={t('suggested_group')}
-            dataIndex="group"
-            cell={(value: string, _i: number, item: ImportRule) => (
-              <span>
-                <span>{value}</span>
-                <Button className="select-group" size="small" onClick={this.handleSelectGroup.bind(this, item)}>
-                  {t('choose')}
-                </Button>
-              </span>
-            )}
-          />
-          <Table.Column
-            title={t('action')}
-            cell={(_v: any, _i: number, item: ImportRule) => (
-              <Select value={item.importAction} onChange={(value: string) => this.handleActionChange(item, value)}>
-                <Select.Option value="1">{t('import_new')}</Select.Option>
-                {item.importOldId !== -1 && <Select.Option value="2">{t('import_override')}</Select.Option>}
-                <Select.Option value="3">{t('import_drop')}</Select.Option>
-              </Select>
-            )}
-          />
-        </Table>
+        <Table
+          dataSource={this.state.list}
+          pagination={false}
+          columns={[
+            {
+              title: t('name'),
+              dataIndex: 'name',
+            },
+            {
+              title: t('ruleType'),
+              dataIndex: 'ruleType',
+              render: (value: string) => t(`rule_${value}`),
+            },
+            {
+              title: t('suggested_group'),
+              dataIndex: 'group',
+              render: (value: string, item: ImportRule) => (
+                <span>
+                  <span>{value}</span>
+                  <Button className="select-group" size="small" onClick={this.handleSelectGroup.bind(this, item)}>
+                    {t('choose')}
+                  </Button>
+                </span>
+              ),
+            },
+            {
+              title: t('action'),
+              render: (_v: any, item: ImportRule) => (
+                <Select
+                  value={item.importAction}
+                  onChange={(value: string) => this.handleActionChange(item, value)}
+                  optionList={[
+                    { label: t('import_new'), value: 1 },
+                    { label: t('import_override'), value: 2, disabled: item.importOldId === -1 },
+                    { label: t('import_drop'), value: 3 },
+                  ]}
+                />
+              ),
+            },
+          ]}
+        />
         <div className="save-to">
           <span>{t('save_to')}</span>
-          <Radio.Group onChange={this.handleRecommendChange} value={this.state.useRecommend}>
-            <Radio value={true} label={t('suggested_group')} />
-            <Radio value={false}>
-              {this.state.group}{' '}
-              <Button className="select-group" size="small" onClick={this.handleSelectAll}>
-                {t('choose')}
-              </Button>
-            </Radio>
-          </Radio.Group>
+          <RadioGroup
+            onChange={this.handleRecommendChange}
+            value={this.state.useRecommend}
+            options={[
+              { label: t('suggested_group'), value: true },
+              {
+                label: (
+                  <span>
+                    <span>{this.state.group}</span>
+                    <Button className="select-group" size="small" onClick={this.handleSelectAll}>
+                      {t('choose')}
+                    </Button>
+                  </span>),
+                value: false,
+              },
+            ]}
+          />
         </div>
-        <div className="buttons">
-          <Button onClick={this.handleConfirm} type="secondary">
-            {t('save')}
-          </Button>
-          <Button onClick={this.handleCancel} type="normal" warning>
-            {t('cancel')}
-          </Button>
-        </div>
-      </Drawer>
+      </SideSheet>
     );
   }
 }

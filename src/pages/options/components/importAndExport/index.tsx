@@ -1,4 +1,3 @@
-import { Button, Card, Input, Message } from '@alifd/next';
 import { getExportName } from '@/pages/options/utils';
 import * as React from 'react';
 import Icon from '@/share/components/icon';
@@ -10,6 +9,8 @@ import { TinyRule } from '@/share/core/var';
 import Cloud from './cloud';
 import ImportDrawer from './importDrawer';
 import './index.less';
+import { Button, ButtonGroup, Card, Input, Spin, Toast } from '@douyinfe/semi-ui';
+import { css } from '@emotion/css';
 
 interface IEProps {
   visible: boolean;
@@ -17,6 +18,7 @@ interface IEProps {
 
 interface IEState {
   downloadUrl: string;
+  downloading: boolean;
   showCloud: boolean;
 }
 
@@ -31,6 +33,7 @@ export default class ImportAndExport extends React.Component<IEProps, IEState> {
 
     this.state = {
       downloadUrl: '',
+      downloading: false,
       showCloud: false,
     };
   }
@@ -60,79 +63,75 @@ export default class ImportAndExport extends React.Component<IEProps, IEState> {
   }
 
   handleImport() {
-    file.load('.json').then(content => {
+    file.load('.json').then((content) => {
       try {
         this.importRef.current!.show(JSON.parse(content));
       } catch (e) {
-        Message.error(e.message);
+        Toast.error(e.message);
       }
     });
   }
 
-  handleDownload() {
-    Message.loading('loading');
-    fetchUrl({
-      url: this.state.downloadUrl,
-    }).then(res => {
-      Message.hide();
-      try {
-        this.importRef.current!.show(JSON.parse(res));
-      } catch (e) {
-        Message.error(e.message);
-      }
-    });
+  async handleDownload() {
+    this.setState({ downloading: true });
+    try {
+      const res = await fetchUrl({
+        url: this.state.downloadUrl,
+      });
+      this.importRef.current!.show(JSON.parse(res));
+    } catch (e) {
+      Toast.error(e.message);
+    }
+    this.setState({ downloading: false });
   }
 
   handleCloudImport(res: { [key: string]: TinyRule[] }) {
     try {
       this.importRef.current!.show(res);
     } catch (e) {
-      Message.error(e.message);
+      Toast.error(e.message);
     }
   }
 
   handleExport() {
-    Api.getAllRules().then(result => file.save(JSON.stringify(createExport(result), null, '\t'), getExportName(name)));
+    Api.getAllRules().then((result) => file.save(JSON.stringify(createExport(result), null, '\t'), getExportName(name)));
   }
 
   render() {
     return (
       <section className={`section-ie ${this.props.visible ? 'visible' : 'in-visible'}`}>
-        <Card showTitleBullet={false} contentHeight="auto" title={t('export_and_import')}>
-          <div className="buttons">
-            <Button type="secondary" onClick={this.handleExport}>
-              <Icon type="save" />
+        <Card title={t('export_and_import')}>
+          <div className={css`
+            > .semi-button {
+              margin-right: 8px;
+            }
+          `}
+          >
+            <Button onClick={this.handleExport} icon={<Icon type="save" />}>
               {t('export')}
             </Button>
-            <Button type="secondary" onClick={this.handleImport}>
-              <Icon type="folder-open" />
+            <Button onClick={this.handleImport} icon={<Icon type="folder-open" />}>
               {t('import')}
             </Button>
-            <Button type="secondary" onClick={() => this.setState({ showCloud: true })}>
-              <Icon type="cloud" />
+            <Button onClick={() => this.setState({ showCloud: true })} icon={<Icon type="cloud" />}>
               {t('cloud_backup')}
             </Button>
           </div>
         </Card>
-        <Card showTitleBullet={false} contentHeight="auto" title={t('download_rule')}>
-          <Input.Group
+        <Card title={t('download_rule')}>
+          <Input
             addonAfter={
-              <Button.Group className="download-button">
-                <Button className="btn-icon" onClick={this.handleDownload}>
-                  <Icon type="file-download" />
-                </Button>
+              <ButtonGroup className="download-button">
+                <Button className="btn-icon" onClick={this.handleDownload} icon={<Icon type="file-download" />} loading={this.state.downloading} />
                 <Button className="btn-icon">
                   <Icon type="search" />
                 </Button>
-              </Button.Group>
+              </ButtonGroup>
             }
-          >
-            <Input
-              value={this.state.downloadUrl}
-              style={{ width: '100%' }}
-              onChange={downloadUrl => this.setState({ downloadUrl })}
-            />
-          </Input.Group>
+            value={this.state.downloadUrl}
+            style={{ width: '100%' }}
+            onChange={(downloadUrl) => this.setState({ downloadUrl })}
+          />
         </Card>
         <ImportDrawer ref={this.importRef} />
         <Cloud

@@ -4,12 +4,14 @@ import { initRule, isMatchUrl } from '@/share/core/ruleUtils';
 import { prefs } from '@/share/core/storage';
 import { IS_SUPPORT_STREAM_FILTER, t } from '@/share/core/utils';
 import { InitdRule, IS_MATCH, Rule, RULE_MATCH_TYPE, RULE_TYPE } from '@/share/core/var';
-import { Drawer, Form, Input, Message, Radio, Select } from '@alifd/next';
+import { Message } from '@alifd/next';
 import { highlight, languages } from 'prismjs';
 import * as React from 'react';
 import Editor from 'react-simple-code-editor';
 import ENCODING_LIST from './encoding';
 import COMMON_HEADERS from './headers';
+import { Button, Form, Input, SideSheet } from '@douyinfe/semi-ui';
+import { css, cx } from '@emotion/css';
 import './index.less';
 
 // 保持在最后，顺序不能乱
@@ -94,21 +96,21 @@ export default class Edit extends React.Component<EditProps, EditState> {
   }
 
   handleChange(_: any, item: any) {
-    const rule = {
-      ...this.state.rule,
-      [item.name]: item.value,
-    };
-    if (item.name === 'ruleType' && item.value === 'modifyReceiveBody') {
-      rule.isFunction = true;
-    }
-    this.setState(
-      {
-        rule,
-      },
-      () => {
-        this.getTestResult(true);
-      },
-    );
+    console.log('handleChange', item);
+    this.setState((prevState) => {
+      const rule = { ...prevState.rule };
+      Object.keys(item).forEach((k) => {
+        rule[k] = item[k];
+      });
+      if (item.name === 'ruleType' && item.value === 'modifyReceiveBody') {
+        rule.isFunction = true;
+      }
+
+      return { rule };
+    },
+    () => {
+      this.getTestResult(true);
+    });
   }
 
   handleTestChange(value: string) {
@@ -241,103 +243,121 @@ export default class Edit extends React.Component<EditProps, EditState> {
     const isHeaderReceive = this.state.rule.ruleType === 'modifyReceiveHeader';
     const isHeader = isHeaderSend || isHeaderReceive;
     return (
-      <Drawer
-        className="edit-drawer"
+      <SideSheet
         placement="left"
         visible={this.props.visible}
-        onClose={this.props.onClose}
+        onCancel={this.props.onClose}
         title={this.isEdit ? t('edit') : t('add')}
+        width="100vw"
+        className={css`
+          .semi-sidesheet-inner {
+            width: 100vw;
+            max-width: 800px;
+          }
+        `}
+        footer={
+          <div style={{ display: 'flex', justifyContent: 'flex-end' }}>
+            <Button theme="solid" onClick={this.handleSubmit}>{t('save')}</Button>
+          </div>
+        }
       >
-        <Form {...formItemLayout} value={this.state.rule} onChange={this.handleChange}>
-          <Form.Item label={t('name')}>
-            <Input name="name" />
-          </Form.Item>
-          <Form.Item label={t('ruleType')}>
-            <Select name="ruleType" disabled={this.isEdit}>
-              <Select.Option value="cancel">{t('rule_cancel')}</Select.Option>
-              <Select.Option value="redirect">{t('rule_redirect')}</Select.Option>
-              <Select.Option value="modifySendHeader">{t('rule_modifySendHeader')}</Select.Option>
-              <Select.Option value="modifyReceiveHeader">{t('rule_modifyReceiveHeader')}</Select.Option>
-              <Select.Option value="modifyReceiveBody" disabled={!IS_SUPPORT_STREAM_FILTER}>
-                {t('rule_modifyReceiveBody')}
-              </Select.Option>
-            </Select>
-          </Form.Item>
-          <Form.Item label={t('matchType')}>
-            <Select name="matchType">
-              <Select.Option value="all">{t('match_all')}</Select.Option>
-              <Select.Option value="regexp">{t('match_regexp')}</Select.Option>
-              <Select.Option value="prefix">{t('match_prefix')}</Select.Option>
-              <Select.Option value="domain">{t('match_domain')}</Select.Option>
-              <Select.Option value="url">{t('match_url')}</Select.Option>
-            </Select>
-          </Form.Item>
+        <Form
+          {...formItemLayout}
+          initValues={this.state.rule}
+          onValueChange={this.handleChange}
+          labelPosition="left"
+          labelAlign="right"
+          labelWidth={140}
+        >
+          <Form.Input field="name" label={t('name')} />
+          <Form.Select
+            label={t('ruleType')}
+            field="ruleType"
+            disabled={this.isEdit}
+            optionList={[
+              { label: t('rule_cancel'), value: 'cancel' },
+              { label: t('rule_redirect'), value: 'redirect' },
+              { label: t('rule_modifySendHeader'), value: 'modifySendHeader' },
+              { label: t('rule_modifyReceiveHeader'), value: 'modifyReceiveHeader' },
+              { label: t('rule_modifyReceiveBody'), value: 'modifyReceiveBody', disabled: !IS_SUPPORT_STREAM_FILTER },
+            ]}
+          />
+          <Form.Select
+            label={t('matchType')}
+            field="matchType"
+            optionList={[
+              { label: t('match_all'), value: 'all' },
+              { label: t('match_regexp'), value: 'regexp' },
+              { label: t('match_prefix'), value: 'prefix' },
+              { label: t('match_domain'), value: 'domain' },
+              { label: t('match_url'), value: 'url' },
+            ]}
+          />
           {this.state.rule.matchType !== 'all' && (
-            <Form.Item label={t('matchRule')}>
-              <Input name="pattern" />
-            </Form.Item>
+            <Form.Input label={t('matchRule')} field="pattern" />
           )}
-          <Form.Item label={t('excludeRule')}>
-            <Input name="exclude" />
-          </Form.Item>
+          <Form.Input label={t('excludeRule')} field="exclude" />
           {/* Response body encoding */}
           {this.state.rule.ruleType === 'modifyReceiveBody' && (
-            <Form.Item label={t('encoding')}>
-              <Select.AutoComplete name="encoding" filterLocal dataSource={ENCODING_LIST} />
-            </Form.Item>
+            <Form.Select filter field="encoding" label={t('encoding')} optionList={ENCODING_LIST.map((x) => ({ label: x, value: x }))} />
           )}
           {/* isFunction or not */}
-          <Form.Item label={t('exec_type')}>
-            <Radio.Group name="isFunction" disabled={this.state.rule.ruleType === 'modifyReceiveBody'}>
-              <Radio value={false} label={t('exec_normal')} />
-              <Radio value={true} label={t('exec_function')} />
-            </Radio.Group>
-          </Form.Item>
+          <Form.RadioGroup
+            label={t('exec_type')}
+            field="isFunction"
+            options={[
+              { label: t('exec_normal'), value: false },
+              { label: t('exec_function'), value: true },
+            ]}
+          />
           {/* Redirect */}
           {this.state.rule.ruleType === 'redirect' && !this.state.rule.isFunction && (
-            <Form.Item label={t('redirectTo')}>
-              <Input name="to" />
-            </Form.Item>
+            <Form.Input label={t('redirectTo')} field="to" />
           )}
           {/* Header modify */}
           {isHeader && !this.state.rule.isFunction && (
-            <Form.Item label={t('headerName')}>
-              <Select.AutoComplete
-                name="headerName"
-                filterLocal
-                dataSource={isHeaderSend ? COMMON_HEADERS.request : COMMON_HEADERS.response}
-              />
-            </Form.Item>
+            <Form.Select
+              filter
+              field="headerName"
+              label={t('headerName')}
+              optionList={(isHeaderSend ? COMMON_HEADERS.request : COMMON_HEADERS.response).map((x) => ({ label: x, value: x }))}
+            />
           )}
           {isHeader && !this.state.rule.isFunction && (
-            <Form.Item label={t('headerValue')}>
-              <Input name="headerValue" />
-            </Form.Item>
+            <Form.Input label={t('headerValue')} field="headerValue" />
           )}
           {/* Custom function */}
           {this.state.rule.isFunction && (
-            <Form.Item label={t('code')}>
+            <Form.Slot label={t('code')}>
               <Editor
-                className="code-editor next-input language-javascript"
+                className={cx('code-editor', 'language-javascript', 'semi-input-wrapper', css`
+                  display: block;
+                  width: 100%;
+                  font-size: 12px;
+                  line-height: 18px;
+                  border-radius: 3px;
+                  min-height: 100px;
+
+                  pre, textarea {
+                    font-family: "Fira Code", "Source Code Pro", "Consolas", "Bitstream Vera Sans Mono", "Courier New", Courier, monospace;
+                  }
+                `)}
                 padding="8px"
                 value={this.state.rule.code}
-                onValueChange={value => this.handleChange(null, { name: 'code', value })}
+                onValueChange={(value) => this.handleChange(null, { code: value })}
                 // @ts-ignore
-                highlight={code => highlight(code, languages.js)}
+                highlight={(code) => highlight(code, languages.js)}
               />
-            </Form.Item>
+            </Form.Slot>
           )}
-          <Form.Item label={t('test_url')}>
+          <Form.Slot label={t('test_url')}>
             <Input value={this.state.testUrl} onChange={this.handleTestChange} />
-          </Form.Item>
-          <Form.Item label=" ">
+          </Form.Slot>
+          <Form.Slot label=" ">
             <pre>{this.state.testResult}</pre>
-          </Form.Item>
-          <Form.Item label=" ">
-            <Form.Submit onClick={this.handleSubmit}>{t('save')}</Form.Submit>
-          </Form.Item>
+          </Form.Slot>
         </Form>
-      </Drawer>
+      </SideSheet>
     );
   }
 }

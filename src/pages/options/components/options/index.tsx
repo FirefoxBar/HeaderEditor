@@ -1,13 +1,11 @@
-import { Card, Checkbox, Form, Grid } from '@alifd/next';
+import Api from '@/share/core/api';
+import emitter from '@/share/core/emitter';
 import { prefs } from '@/share/core/storage';
 import { t } from '@/share/core/utils';
 import { defaultPrefValue, PrefValue } from '@/share/core/var';
+import { Card, Checkbox, Col, Row } from '@douyinfe/semi-ui';
+import type { CheckboxEvent } from '@douyinfe/semi-ui/lib/es/checkbox';
 import * as React from 'react';
-import './index.less';
-import Api from '@/share/core/api';
-import emitter from '@/share/core/emitter';
-
-const { Row, Col } = Grid;
 
 interface OptionsProps {
   visible: boolean;
@@ -42,7 +40,7 @@ export default class Options extends React.Component<OptionsProps, OptionsState>
   componentDidMount() {
     prefs.ready(() => {
       const newPrefs = { ...this.state.prefs };
-      Object.keys(newPrefs).forEach(it => {
+      Object.keys(newPrefs).forEach((it) => {
         newPrefs[it] = prefs.get(it);
       });
       this.setState({
@@ -57,41 +55,45 @@ export default class Options extends React.Component<OptionsProps, OptionsState>
   }
 
   handleUpdate(key: string, val: any) {
-    const newPrefs = { ...this.state.prefs };
-    newPrefs[key] = val;
-    this.setState({
-      prefs: newPrefs,
-    });
+    if (this.state.prefs[key] === val) {
+      return;
+    }
+    this.setState((prevState) => ({
+      prefs: {
+        ...prevState.prefs,
+        [key]: val,
+      },
+    }));
   }
 
-  handleChange(name: string, checked: boolean) {
-    const newPrefs = { ...this.state.prefs, [name]: checked };
-    Api.setPrefs(name, checked);
-    prefs.set(name, checked);
-    this.setState({
-      prefs: newPrefs,
+  handleChange(name: string, e: CheckboxEvent) {
+    const checked = Boolean(e.target.checked);
+    this.setState((prevState) => {
+      const newPrefs = { ...prevState.prefs, [name]: checked };
+      Api.setPrefs(name, checked);
+      prefs.set(name, checked);
+      return { prefs: newPrefs };
     });
   }
 
   render() {
     return (
       <section className={`section-options ${this.props.visible ? 'visible' : 'in-visible'}`}>
-        <Card showTitleBullet={false} contentHeight="auto" title={t('options')}>
-          <Form>
-            <Row wrap={true}>
-              {Object.entries(mapPrefToProps).map(it => {
-                return (
-                  <Col span={24} m={12} key={it[0]}>
-                    <Checkbox
-                      onChange={this.handleChange.bind(this, it[0])}
-                      checked={this.state.prefs[it[0]]}
-                      label={it[1]}
-                    />
-                  </Col>
-                );
-              })}
-            </Row>
-          </Form>
+        <Card title={t('options')}>
+          <Row gutter={8}>
+            {Object.entries(mapPrefToProps).map((it) => {
+              return (
+                <Col xl={12} span={24} key={it[0]} style={{ marginBottom: '8px' }}>
+                  <Checkbox
+                    onChange={this.handleChange.bind(this, it[0])}
+                    checked={this.state.prefs[it[0]]}
+                  >
+                    {it[1]}
+                  </Checkbox>
+                </Col>
+              );
+            })}
+          </Row>
         </Card>
       </section>
     );

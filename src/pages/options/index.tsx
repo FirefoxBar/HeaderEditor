@@ -3,7 +3,7 @@ import { convertToRule } from '@/share/core/ruleUtils';
 import { getDomain, t } from '@/share/core/utils';
 import { Rule, RULE_MATCH_TYPE, RULE_TYPE } from '@/share/core/var';
 import '@/share/global.less';
-import { Nav } from '@alifd/next';
+import { Nav } from '@douyinfe/semi-ui';
 import * as React from 'react';
 import GroupSelect from './components/groupSelect';
 import ImportAndExportSection from './components/importAndExport';
@@ -12,9 +12,13 @@ import RulesSection from './components/rules';
 import Edit from './components/rules/edit';
 import { parse } from 'querystring';
 import './index.less';
+import type { OnSelectedData } from '@douyinfe/semi-ui/lib/es/navigation';
+import { css } from '@emotion/css';
+import { IconFolderOpen, IconHelpCircle, IconMenu, IconSetting } from '@douyinfe/semi-icons';
 
 interface OptionsState {
   active: string;
+  navCollapse: boolean;
   editShow: boolean;
   editRule?: Rule;
 }
@@ -28,6 +32,7 @@ export default class Options extends React.Component<any, OptionsState> {
 
     this.state = {
       editShow: false,
+      navCollapse: false,
       active: 'rules',
     };
   }
@@ -59,18 +64,14 @@ export default class Options extends React.Component<any, OptionsState> {
     }
   }
 
-  handleSwitch(selectedKeys: string[]) {
-    const active = selectedKeys[0];
+  handleSwitch(data: OnSelectedData) {
+    const active = data.itemKey as string;
     if (active && active !== this.state.active) {
-      // 如果是帮助，不进行切换，打开新标签页
-      if (active === 'help') {
-        Api.openURL(t('url_help'));
-      } else {
-        this.setState({
-          active,
-        });
-        window.scrollTo(0, 0);
-      }
+      this.setState({
+        active,
+        navCollapse: this.state.navCollapse || active === 'help',
+      });
+      window.scrollTo(0, 0);
     }
   }
 
@@ -90,23 +91,74 @@ export default class Options extends React.Component<any, OptionsState> {
 
   render() {
     return (
-      <div className="page-options">
+      <div className={css`
+          display: flex;
+          flex-direction: row;
+          height: 100vh;
+
+          > .navbar {
+            /* width: 240px; */
+            flex-grow: 0;
+            flex-shrink: 0;
+            height: 100vh;
+          }
+
+          > .main-content {
+            flex-grow: 1;
+            flex-shrink: 1;
+            height: 100vh;
+            overflow: auto;
+            box-sizing: border-box;
+            padding: 16px;
+            background-color: var(--semi-color-fill-0);
+
+            > .in-visible {
+              display: none;
+            }
+
+            > section {
+              > .semi-card {
+                margin-bottom: 16px;
+              }
+            }
+          }
+        `}
+      >
         <Nav
           className="navbar"
-          direction="hoz"
-          type="secondary"
           selectedKeys={[this.state.active]}
           onSelect={this.handleSwitch}
-        >
-          <Nav.Item key="rules">{t('rule_list')}</Nav.Item>
-          <Nav.Item key="options">{t('options')}</Nav.Item>
-          <Nav.Item key="export_and_import">{t('export_and_import')}</Nav.Item>
-          <Nav.Item key="help">{t('help')}</Nav.Item>
-        </Nav>
+          items={[
+            { itemKey: 'rules', text: t('rule_list'), icon: <IconMenu /> },
+            { itemKey: 'options', text: t('options'), icon: <IconSetting /> },
+            { itemKey: 'export_and_import', text: t('export_and_import'), icon: <IconFolderOpen /> },
+            { itemKey: 'help', text: t('help'), icon: <IconHelpCircle /> },
+          ]}
+          isCollapsed={this.state.navCollapse}
+          onCollapseChange={(v) => this.setState({ navCollapse: v })}
+          footer={{
+            collapseButton: true,
+          }}
+        />
         <main className="main-content">
           <RulesSection visible={this.state.active === 'rules'} onEdit={this.handleEdit} />
           <OptionsSection visible={this.state.active === 'options'} />
           <ImportAndExportSection visible={this.state.active === 'export_and_import'} />
+          {this.state.active === 'help' && (
+            <div className={css`
+              width: 100%;
+              height: 100%;
+
+              > iframe {
+                border: 0;
+                width: 100%;
+                height: 100%;
+              }
+            `}
+            >
+              <iframe src="https://he.firefoxcn.net/zh-CN/guide.html" />
+            </div>
+          )}
         </main>
         <GroupSelect />
         <Edit visible={this.state.editShow} rule={this.state.editRule} onClose={this.handleEditClose} />
