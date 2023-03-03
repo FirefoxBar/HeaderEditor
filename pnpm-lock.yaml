@@ -39,9 +39,11 @@ specifiers:
   react: ^16.12.0
   react-dom: ^16.12.0
   react-simple-code-editor: ^0.10.0
+  regenerator-runtime: ^0.13.11
   sign-addon: ^0.3.1
   stylelint: ^13.7.2
   text-encoding: ^0.7.0
+  tslib: ^2.5.0
   tslint: ^5.20.1
   tslint-config-prettier: ^1.18.0
   tslint-plugin-prettier: ^2.0.1
@@ -93,8 +95,10 @@ devDependencies:
   node-rsa: 1.1.1
   prettier: 1.19.1
   publish-release: 1.6.1
+  regenerator-runtime: 0.13.11
   sign-addon: 0.3.1
   stylelint: 13.13.1
+  tslib: 2.5.0
   tslint: 5.20.1_typescript@3.9.10
   tslint-config-prettier: 1.18.0
   tslint-plugin-prettier: 2.3.0_gkgznbdaqgxnjlm3xduthax654
