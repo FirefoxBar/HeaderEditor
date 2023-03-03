@@ -65,21 +65,21 @@ The following are language maintainers, Thanks for their contribution. If you ha
 
 #### Prepare
 
-* Install node, npm or yarn. (It is recommended to use yarn, or the build result may be inconsistent with the release version)
+* Install node and pnpm.
 
-* Clone this project, or download the source code and extract it
+* Clone this project, or download the source code and extract it.
 
-* Run `yarn` or `npm install`
+* Run `pnpm i`.
 
 #### Build
 
-* Run `yarn build` or `npm run build`
+* Run `npm run build`
 
 * Find build result at `/dist`
 
 #### Development
 
-* Run `yarn watch:dev` or `npm run watch:dev`
+* Run `npm run watch:dev`
 
 * Open browser, load extension from `/dist` directory or `/dist/manifest.json`
 

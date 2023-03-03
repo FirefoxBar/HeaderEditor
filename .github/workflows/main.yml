@@ -16,34 +16,23 @@ jobs:
     runs-on: ubuntu-latest
     strategy:
       matrix:
-        node-version: [12.x]
+        node-version: [14.x]
 
     steps:
     - uses: actions/checkout@v2
-    # Install node
+    - uses: pnpm/action-setup@v2
+      with:
+        version: 7
     - name: Use Node.js ${{ matrix.node-version }}
-      uses: actions/setup-node@v1
+      uses: actions/setup-node@v3
       with:
         node-version: ${{ matrix.node-version }}
-    # Install Yarn
-    - name: Install Yarn
-      run: npm i -g yarn
-    # Yarn caches
-    - name: Get yarn cache directory path
-      id: yarn-cache-dir-path
-      run: echo "::set-output name=dir::$(yarn cache dir)"
-    - uses: actions/cache@v1
-      id: yarn-cache
-      with:
-        path: ${{ steps.yarn-cache-dir-path.outputs.dir }}
-        key: ${{ runner.os }}-yarn-${{ hashFiles('**/yarn.lock') }}
-        restore-keys: |
-          ${{ runner.os }}-yarn-
+        cache: 'pnpm'
     # Install dependencies
     - name: Install dependencies
-      run: yarn install --frozen-lockfile
+      run: pnpm i --frozen-lockfile
     - name: Build
-      run: yarn run build
+      run: npm run build
     - name: Upload bundles
       uses: actions/upload-artifact@v1
       with:
