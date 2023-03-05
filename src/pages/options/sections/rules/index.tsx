@@ -15,7 +15,7 @@ import Float from './float';
 import './index.less';
 import RuleDetail from './ruleDetail';
 import { batchShare, remove, toggleRule } from './utils';
-import { Button, ButtonGroup, Card, Modal, Popover, Spin, Switch, Table, Tooltip } from '@douyinfe/semi-ui';
+import { Button, ButtonGroup, Card, Modal, Popover, Space, Spin, Switch, Table, Tooltip } from '@douyinfe/semi-ui';
 import { css, cx } from '@emotion/css';
 import { IconChevronDown, IconSend } from '@douyinfe/semi-icons';
 
@@ -486,11 +486,12 @@ export default class Rules extends React.Component<RulesProps, RulesState> {
             const { name } = group;
             return (
               <Card
-                className={!collapsed.includes(name) ? css`
-                    .semi-card-body {
-                      display: none;
-                    }
-                  ` : ''}
+                className={css`
+                  .semi-card-body {
+                    padding: 0;
+                    display: ${!collapsed.includes(name) ? 'none' : 'block'}
+                  }
+                `}
                 key={name}
                 title={name}
                 headerExtraContent={
@@ -572,7 +573,7 @@ export default class Rules extends React.Component<RulesProps, RulesState> {
                       className: 'cell-action',
                       dataIndex: 'action',
                       render: (v, item: InitdRule) => (
-                        <div className="buttons">
+                        <Space>
                           <Button type="secondary" onClick={this.handleChangeGroup.bind(this, item)}>
                             <Icon type="playlist-add" />
                             {t('group')}
@@ -593,7 +594,7 @@ export default class Rules extends React.Component<RulesProps, RulesState> {
                             <Icon type="delete" />
                             {t('delete')}
                           </Button>
-                        </div>
+                        </Space>
                       ),
                     },
                   ]}

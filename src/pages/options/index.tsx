@@ -1,15 +1,14 @@
-import Api from '@/share/core/api';
 import { convertToRule } from '@/share/core/ruleUtils';
 import { getDomain, t } from '@/share/core/utils';
 import { Rule, RULE_MATCH_TYPE, RULE_TYPE } from '@/share/core/var';
 import '@/share/global.less';
 import { Nav } from '@douyinfe/semi-ui';
 import * as React from 'react';
-import GroupSelect from './components/groupSelect';
-import ImportAndExportSection from './components/importAndExport';
-import OptionsSection from './components/options';
-import RulesSection from './components/rules';
-import Edit from './components/rules/edit';
+import GroupSelect from './sections/groupSelect';
+import ImportAndExportSection from './sections/importAndExport';
+import OptionsSection from './sections/options';
+import RulesSection from './sections/rules';
+import Edit from './sections/rules/edit';
 import { parse } from 'querystring';
 import './index.less';
 import type { OnSelectedData } from '@douyinfe/semi-ui/lib/es/navigation';
@@ -23,6 +22,9 @@ interface OptionsState {
   editRule?: Rule;
 }
 export default class Options extends React.Component<any, OptionsState> {
+  // 保存切换到帮助前是否为展开状态
+  private isCollapsed = true;
+
   constructor(props: any) {
     super(props);
 
@@ -67,10 +69,17 @@ export default class Options extends React.Component<any, OptionsState> {
   handleSwitch(data: OnSelectedData) {
     const active = data.itemKey as string;
     if (active && active !== this.state.active) {
-      this.setState({
+      if (active === 'help') {
+        this.isCollapsed = this.state.navCollapse;
+      }
+      const newState = {
         active,
         navCollapse: this.state.navCollapse || active === 'help',
-      });
+      };
+      if (this.state.active === 'help') {
+        newState.navCollapse = this.isCollapsed;
+      }
+      this.setState(newState);
       window.scrollTo(0, 0);
     }
   }

@@ -8,7 +8,6 @@ import { fetchUrl, t } from '@/share/core/utils';
 import { TinyRule } from '@/share/core/var';
 import Cloud from './cloud';
 import ImportDrawer from './importDrawer';
-import './index.less';
 import { Button, ButtonGroup, Card, Input, Spin, Toast } from '@douyinfe/semi-ui';
 import { css } from '@emotion/css';
 
@@ -39,19 +38,17 @@ export default class ImportAndExport extends React.Component<IEProps, IEState> {
   }
 
   componentDidMount() {
-    /*
-		// Load download history
-		storage.getLocal().get('dl_history').then(r => {
-			if (r.dl_history !== undefined) {
-				this.$set(this.download, 'log', r.dl_history);
-			}
-			this.$watch('download.log', newDl => {
-				storage.getLocal().set({
-					dl_history: newDl
-				});
-			});
-    });
-    */
+    // Load download history
+    // storage.getLocal().get('dl_history').then((r) => {
+    //   if (r.dl_history !== undefined) {
+    //     this.$set(this.download, 'log', r.dl_history);
+    //   }
+    //   this.$watch('download.log', (newDl) => {
+    //     storage.getLocal().set({
+    //       dl_history: newDl,
+    //     });
+    //   });
+    // });
   }
 
   handleImportConfirm() {

@@ -9,7 +9,6 @@ import { Button, Modal, Tag } from '@douyinfe/semi-ui';
 import { css } from '@emotion/css';
 import dayjs from 'dayjs';
 import * as React from 'react';
-import './index.less';
 
 interface CloudProps {
   visible: boolean;

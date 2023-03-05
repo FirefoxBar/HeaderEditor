@@ -17,6 +17,7 @@ import './index.less';
 // 保持在最后，顺序不能乱
 import 'prismjs/components/prism-clike';
 import 'prismjs/components/prism-javascript';
+import { BoolRadioGroupField } from '@/pages/options/components/bool-radio';
 
 interface EditProps {
   visible: boolean;
@@ -302,7 +303,7 @@ export default class Edit extends React.Component<EditProps, EditState> {
             <Form.Select filter field="encoding" label={t('encoding')} optionList={ENCODING_LIST.map((x) => ({ label: x, value: x }))} />
           )}
           {/* isFunction or not */}
-          <Form.RadioGroup
+          <BoolRadioGroupField
             label={t('exec_type')}
             field="isFunction"
             options={[

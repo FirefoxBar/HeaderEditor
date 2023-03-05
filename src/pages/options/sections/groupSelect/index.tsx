@@ -1,8 +1,7 @@
-import { Dialog, Input, Select } from '@alifd/next';
 import * as React from 'react';
 import emitter from '@/share/core/emitter';
 import { t } from '@/share/core/utils';
-import './index.less';
+import { Input, Modal, Select } from '@douyinfe/semi-ui';
 
 interface GroupSelectState {
   group: string[];
@@ -12,7 +11,7 @@ interface GroupSelectState {
 }
 
 export default class GroupSelect extends React.Component<any, GroupSelectState> {
-  private newValue = '_new_' + Math.random().toString();
+  private newValue = `_new_${Math.random().toString()}`;
 
   constructor(props: any) {
     super(props);
@@ -99,30 +98,29 @@ export default class GroupSelect extends React.Component<any, GroupSelectState> 
 
   render() {
     return (
-      <Dialog
+      <Modal
         className="group-select-dialog"
         title={t('group')}
         visible={this.state.show}
         onOk={this.handleSubmit}
         onCancel={this.handleCancel}
-        onClose={this.handleCancel}
       >
         <div>
-          <Select value={this.state.selected} onChange={this.handleChange}>
-            {this.state.group.map(it => (
-              <Select.Option value={it} key={it}>
-                {it}
-              </Select.Option>
-            ))}
-            <Select.Option value={this.newValue}>{t('add')}</Select.Option>
-          </Select>
+          <Select
+            value={this.state.selected}
+            onChange={this.handleChange}
+            optionList={[
+              ...this.state.group.map((x) => ({ label: x, value: x })),
+              { label: t('add'), value: this.newValue },
+            ]}
+          />
         </div>
         {this.state.selected === this.newValue && (
-          <div>
+          <div style={{ marginTop: '12px' }}>
             <Input value={this.state.newName} onChange={this.handleNew} />
           </div>
         )}
-      </Dialog>
+      </Modal>
     );
   }
 }

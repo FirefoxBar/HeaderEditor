@@ -1,6 +1,7 @@
 import React, { Fragment } from 'react';
 import { t } from '@/share/core/utils';
 import { Rule } from '@/share/core/var';
+import { css } from '@emotion/css';
 
 interface RuleDetailProps {
   rule: Rule;
@@ -13,7 +14,20 @@ const RuleDetail = (props: RuleDetailProps) => {
     rule.ruleType === 'modifySendHeader' || (rule.ruleType === 'modifyReceiveHeader' && !rule.isFunction);
 
   return (
-    <Fragment>
+    <div
+      className={css`
+        p {
+          margin-top: 0;
+          font-size: 14px;
+          overflow: hidden;
+          word-break: break-all;
+          text-overflow: ellipsis;
+          display: box;
+          box-orient: vertical;
+          line-clamp: 3;
+        }
+      `}
+    >
       <p>
         {t('matchType')}: {t(`match_${rule.matchType}`)}
       </p>
@@ -23,7 +37,7 @@ const RuleDetail = (props: RuleDetailProps) => {
         </p>
       )}
       <p>
-        {t('exec_type')}: {t('exec_' + (rule.isFunction ? 'function' : 'normal'))}
+        {t('exec_type')}: {t(`exec_${rule.isFunction ? 'function' : 'normal'}`)}
       </p>
       {rule.ruleType === 'redirect' && (
         <p>
@@ -45,7 +59,7 @@ const RuleDetail = (props: RuleDetailProps) => {
           </p>
         </Fragment>
       )}
-    </Fragment>
+    </div>
   );
 };
 

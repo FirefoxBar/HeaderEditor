@@ -21,7 +21,9 @@ export function save(rule: Rule) {
 
 export function batchShare(rules: Rule[]) {
   const result: any = {};
-  TABLE_NAMES.forEach(tb => (result[tb] = []));
-  rules.forEach(e => result[getTableName(e.ruleType)].push(e));
+  TABLE_NAMES.forEach((tb) => {
+    result[tb] = [];
+  });
+  rules.forEach((e) => result[getTableName(e.ruleType)].push(e));
   file.save(JSON.stringify(createExport(result), null, '\t'), getExportName());
 }
