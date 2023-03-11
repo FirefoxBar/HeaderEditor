@@ -8,8 +8,11 @@ import { fetchUrl, t } from '@/share/core/utils';
 import { TinyRule } from '@/share/core/var';
 import Cloud from './cloud';
 import ImportDrawer from './importDrawer';
-import { Button, ButtonGroup, Card, Input, Spin, Toast } from '@douyinfe/semi-ui';
+import { Button, ButtonGroup, Card, Input, InputGroup, List, Space, Spin, Table, Toast } from '@douyinfe/semi-ui';
 import { css } from '@emotion/css';
+import { getLocal } from '@/share/core/storage';
+import * as browser from 'webextension-polyfill';
+import { openURL } from '@/pages/background/utils';
 
 interface IEProps {
   visible: boolean;
@@ -19,6 +22,7 @@ interface IEState {
   downloadUrl: string;
   downloading: boolean;
   showCloud: boolean;
+  downloadHistory: string[];
 }
 
 export default class ImportAndExport extends React.Component<IEProps, IEState> {
@@ -34,29 +38,19 @@ export default class ImportAndExport extends React.Component<IEProps, IEState> {
       downloadUrl: '',
       downloading: false,
       showCloud: false,
+      downloadHistory: [],
     };
   }
 
   componentDidMount() {
     // Load download history
-    // storage.getLocal().get('dl_history').then((r) => {
-    //   if (r.dl_history !== undefined) {
-    //     this.$set(this.download, 'log', r.dl_history);
-    //   }
-    //   this.$watch('download.log', (newDl) => {
-    //     storage.getLocal().set({
-    //       dl_history: newDl,
-    //     });
-    //   });
-    // });
-  }
-
-  handleImportConfirm() {
-    //
-  }
-
-  handleImportCancel() {
-    //
+    getLocal().get('dl_history').then((r) => {
+      if (Array.isArray(r.dl_history)) {
+        this.setState({
+          downloadHistory: r.dl_history,
+        });
+      }
+    });
   }
 
   handleImport() {
@@ -76,6 +70,18 @@ export default class ImportAndExport extends React.Component<IEProps, IEState> {
         url: this.state.downloadUrl,
       });
       this.importRef.current!.show(JSON.parse(res));
+
+      if (!this.state.downloadHistory.includes(this.state.downloadUrl)) {
+        this.setState((prevState) => {
+          const newHistory = [this.state.downloadUrl, ...prevState.downloadHistory];
+          getLocal().set({
+            dl_history: newHistory,
+          });
+          return {
+            downloadHistory: newHistory,
+          };
+        });
+      }
     } catch (e) {
       Toast.error(e.message);
     }
@@ -90,20 +96,29 @@ export default class ImportAndExport extends React.Component<IEProps, IEState> {
     }
   }
 
-  handleExport() {
-    Api.getAllRules().then((result) => file.save(JSON.stringify(createExport(result), null, '\t'), getExportName(name)));
+  async handleExport() {
+    const result = await Api.getAllRules();
+    file.save(JSON.stringify(createExport(result), null, '\t'), getExportName());
+  }
+
+  handleOpenThird() {
+    const lang = browser.i18n.getUILanguage();
+    if (['zh-CN', 'zh-TW'].includes(lang)) {
+      openURL({
+        url: `https://he.firefoxcn.net/${lang}/third-party-rules.html`,
+      });
+    } else {
+      openURL({
+        url: 'https://he.firefoxcn.net/en/third-party-rules.html',
+      });
+    }
   }
 
   render() {
     return (
       <section className={`section-ie ${this.props.visible ? 'visible' : 'in-visible'}`}>
         <Card title={t('export_and_import')}>
-          <div className={css`
-            > .semi-button {
-              margin-right: 8px;
-            }
-          `}
-          >
+          <Space>
             <Button onClick={this.handleExport} icon={<Icon type="save" />}>
               {t('export')}
             </Button>
@@ -113,21 +128,82 @@ export default class ImportAndExport extends React.Component<IEProps, IEState> {
             <Button onClick={() => this.setState({ showCloud: true })} icon={<Icon type="cloud" />}>
               {t('cloud_backup')}
             </Button>
-          </div>
+          </Space>
         </Card>
         <Card title={t('download_rule')}>
-          <Input
-            addonAfter={
-              <ButtonGroup className="download-button">
-                <Button className="btn-icon" onClick={this.handleDownload} icon={<Icon type="file-download" />} loading={this.state.downloading} />
-                <Button className="btn-icon">
-                  <Icon type="search" />
-                </Button>
-              </ButtonGroup>
-            }
-            value={this.state.downloadUrl}
-            style={{ width: '100%' }}
-            onChange={(downloadUrl) => this.setState({ downloadUrl })}
+          <Space style={{ width: '100%' }}>
+            <Input
+              value={this.state.downloadUrl}
+              style={{ width: '100%' }}
+              showClear
+              onChange={(downloadUrl) => this.setState({ downloadUrl })}
+            />
+            <Button className="btn-icon" onClick={this.handleDownload} icon={<Icon type="file-download" />} loading={this.state.downloading}>
+              {t('download')}
+            </Button>
+            <Button className="btn-icon" icon={<Icon type="search" />} onClick={this.handleOpenThird}>
+              {t('third_party_rules')}
+            </Button>
+          </Space>
+          <Table
+            showHeader={false}
+            style={{ marginTop: '8px' }}
+            dataSource={this.state.downloadHistory.map((x) => ({ url: x }))}
+            size="small"
+            columns={[
+              {
+                dataIndex: 'url',
+              },
+              {
+                dataIndex: '',
+                render: (_, record) => (
+                  <Space>
+                    <Button
+                      size="small"
+                      onClick={() => {
+                        this.setState({
+                          downloadUrl: record.url,
+                        }, () => this.handleDownload());
+                      }}
+                    >
+                      {t('download')}
+                    </Button>
+                    <Button
+                      size="small"
+                      onClick={() => {
+                        this.setState({
+                          downloadUrl: record.url,
+                        });
+                      }}
+                    >
+                      {t('edit')}
+                    </Button>
+                    <Button
+                      size="small"
+                      onClick={() => {
+                        this.setState((prevState) => {
+                          const newHistory = [...prevState.downloadHistory];
+                          const index = newHistory.indexOf(record.url);
+                          if (index === -1) {
+                            return null;
+                          }
+                          newHistory.splice(index, 1);
+                          getLocal().set({
+                            dl_history: newHistory,
+                          });
+                          return {
+                            downloadHistory: newHistory,
+                          };
+                        });
+                      }}
+                    >
+                      {t('delete')}
+                    </Button>
+                  </Space>
+                ),
+              },
+            ]}
+            pagination={false}
           />
         </Card>
         <ImportDrawer ref={this.importRef} />

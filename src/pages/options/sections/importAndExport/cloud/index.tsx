@@ -4,8 +4,7 @@ import browserSync from '@/share/core/browserSync';
 import { createExport } from '@/share/core/ruleUtils';
 import { t } from '@/share/core/utils';
 import { TinyRule } from '@/share/core/var';
-import { Message } from '@alifd/next';
-import { Button, Modal, Tag } from '@douyinfe/semi-ui';
+import { Button, Modal, Tag, Toast } from '@douyinfe/semi-ui';
 import { css } from '@emotion/css';
 import dayjs from 'dayjs';
 import * as React from 'react';
@@ -55,7 +54,7 @@ export default class Cloud extends React.Component<CloudProps, CloudState> {
       .then((result) => browserSync.save(createExport(result)))
       .then(() => browserSync.getMeta())
       .then(() => this.refresh())
-      .catch(() => Message.error('cloud_over_limit'));
+      .catch(() => Toast.error('cloud_over_limit'));
   }
 
   handleDownload() {

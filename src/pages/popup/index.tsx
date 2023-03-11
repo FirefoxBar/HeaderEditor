@@ -1,15 +1,47 @@
+import SemiLocale from '@/share/components/semi-locale';
 import Api from '@/share/core/api';
 import { prefs } from '@/share/core/storage';
-import { t } from '@/share/core/utils';
+import { IS_ANDROID, t } from '@/share/core/utils';
 import '@/share/global.less';
-import { Button, Switch } from '@alifd/next';
+import { Button, Switch } from '@douyinfe/semi-ui';
+import { css, cx } from '@emotion/css';
 import * as React from 'react';
 import browser from 'webextension-polyfill';
-import './index.less';
 
 interface PopupState {
   enable: boolean;
 }
+
+const basicStyle = css`
+  min-height: 90px;
+  min-width: 260px;
+  max-width: 400px;
+  padding: 15px 17px;
+  box-sizing: border-box;
+
+  .switcher {
+    padding-bottom: 10px;
+
+    > * {
+      vertical-align: middle;
+    }
+
+    span {
+      font-size: 14px;
+      padding-left: 5px;
+    }
+  }
+
+  .semi-button {
+    width: 100%;
+  }
+`;
+
+const mobileStyle = css`
+  height: 100vh;
+  width: 100vw;
+`;
+
 export default class Popup extends React.Component<any, PopupState> {
   constructor(props: any) {
     super(props);
@@ -41,17 +73,23 @@ export default class Popup extends React.Component<any, PopupState> {
 
   render() {
     return (
-      <div className="page-popup">
-        <div className="switcher">
-          <Switch checked={this.state.enable} onChange={this.handleChange} size="small" />
-          <span>{t('enable_he')}</span>
+      <SemiLocale>
+        <div
+          className={cx(basicStyle, {
+            [mobileStyle]: IS_ANDROID,
+          })}
+        >
+          <div className="switcher">
+            <Switch checked={this.state.enable} onChange={this.handleChange} size="small" />
+            <span>{t('enable_he')}</span>
+          </div>
+          <div>
+            <Button onClick={this.handleOpen} type="secondary">
+              {t('manage')}
+            </Button>
+          </div>
         </div>
-        <div>
-          <Button onClick={this.handleOpen} type="secondary">
-            {t('manage')}
-          </Button>
-        </div>
-      </div>
+      </SemiLocale>
     );
   }
 }

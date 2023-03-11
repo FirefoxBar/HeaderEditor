@@ -14,6 +14,7 @@ import './index.less';
 import type { OnSelectedData } from '@douyinfe/semi-ui/lib/es/navigation';
 import { css } from '@emotion/css';
 import { IconFolderOpen, IconHelpCircle, IconMenu, IconSetting } from '@douyinfe/semi-icons';
+import SemiLocale from '@/share/components/semi-locale';
 
 interface OptionsState {
   active: string;
@@ -100,7 +101,8 @@ export default class Options extends React.Component<any, OptionsState> {
 
   render() {
     return (
-      <div className={css`
+      <SemiLocale>
+        <div className={css`
           display: flex;
           flex-direction: row;
           height: 100vh;
@@ -132,28 +134,28 @@ export default class Options extends React.Component<any, OptionsState> {
             }
           }
         `}
-      >
-        <Nav
-          className="navbar"
-          selectedKeys={[this.state.active]}
-          onSelect={this.handleSwitch}
-          items={[
-            { itemKey: 'rules', text: t('rule_list'), icon: <IconMenu /> },
-            { itemKey: 'options', text: t('options'), icon: <IconSetting /> },
-            { itemKey: 'export_and_import', text: t('export_and_import'), icon: <IconFolderOpen /> },
-            { itemKey: 'help', text: t('help'), icon: <IconHelpCircle /> },
-          ]}
-          isCollapsed={this.state.navCollapse}
-          onCollapseChange={(v) => this.setState({ navCollapse: v })}
-          footer={{
-            collapseButton: true,
-          }}
-        />
-        <main className="main-content">
-          <RulesSection visible={this.state.active === 'rules'} onEdit={this.handleEdit} />
-          <OptionsSection visible={this.state.active === 'options'} />
-          <ImportAndExportSection visible={this.state.active === 'export_and_import'} />
-          {this.state.active === 'help' && (
+        >
+          <Nav
+            className="navbar"
+            selectedKeys={[this.state.active]}
+            onSelect={this.handleSwitch}
+            items={[
+              { itemKey: 'rules', text: t('rule_list'), icon: <IconMenu /> },
+              { itemKey: 'options', text: t('options'), icon: <IconSetting /> },
+              { itemKey: 'export_and_import', text: t('export_and_import'), icon: <IconFolderOpen /> },
+              { itemKey: 'help', text: t('help'), icon: <IconHelpCircle /> },
+            ]}
+            isCollapsed={this.state.navCollapse}
+            onCollapseChange={(v) => this.setState({ navCollapse: v })}
+            footer={{
+              collapseButton: true,
+            }}
+          />
+          <main className="main-content">
+            <RulesSection visible={this.state.active === 'rules'} onEdit={this.handleEdit} />
+            <OptionsSection visible={this.state.active === 'options'} />
+            <ImportAndExportSection visible={this.state.active === 'export_and_import'} />
+            {this.state.active === 'help' && (
             <div className={css`
               width: 100%;
               height: 100%;
@@ -167,11 +169,12 @@ export default class Options extends React.Component<any, OptionsState> {
             >
               <iframe src="https://he.firefoxcn.net/zh-CN/guide.html" />
             </div>
-          )}
-        </main>
-        <GroupSelect />
-        <Edit visible={this.state.editShow} rule={this.state.editRule} onClose={this.handleEditClose} />
-      </div>
+            )}
+          </main>
+          <GroupSelect />
+          <Edit visible={this.state.editShow} rule={this.state.editRule} onClose={this.handleEditClose} />
+        </div>
+      </SemiLocale>
     );
   }
 }

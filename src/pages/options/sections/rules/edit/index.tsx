@@ -4,13 +4,12 @@ import { initRule, isMatchUrl } from '@/share/core/ruleUtils';
 import { prefs } from '@/share/core/storage';
 import { IS_SUPPORT_STREAM_FILTER, t } from '@/share/core/utils';
 import { InitdRule, IS_MATCH, Rule, RULE_MATCH_TYPE, RULE_TYPE } from '@/share/core/var';
-import { Message } from '@alifd/next';
 import { highlight, languages } from 'prismjs';
 import * as React from 'react';
 import Editor from 'react-simple-code-editor';
 import ENCODING_LIST from './encoding';
 import COMMON_HEADERS from './headers';
-import { Button, Form, Input, SideSheet } from '@douyinfe/semi-ui';
+import { Button, Form, Input, SideSheet, Toast } from '@douyinfe/semi-ui';
 import { css, cx } from '@emotion/css';
 import './index.less';
 
@@ -199,11 +198,11 @@ export default class Edit extends React.Component<EditProps, EditState> {
     const rule = getRuleFromInput(this.state.rule);
     // 常规检查
     if (rule.name === '') {
-      Message.error(t('name_empty'));
+      Toast.error(t('name_empty'));
       return;
     }
     if (rule.matchType !== 'all' && rule.matchRule === '') {
-      Message.error(t('match_rule_empty'));
+      Toast.error(t('match_rule_empty'));
       return;
     }
     if (rule.ruleType !== 'modifyReceiveBody' && !rule.encoding) {
@@ -211,18 +210,18 @@ export default class Edit extends React.Component<EditProps, EditState> {
     }
 
     if (rule.isFunction && rule.code === '') {
-      Message.error(t('code_empty'));
+      Toast.error(t('code_empty'));
       return;
     }
     if (rule.ruleType === 'redirect' && (!rule.to || rule.to === '')) {
-      Message.error(t('redirect_empty'));
+      Toast.error(t('redirect_empty'));
       return;
     }
     if (
       (rule.ruleType === 'modifySendHeader' || rule.ruleType === 'modifyReceiveHeader') &&
       (typeof rule.action !== 'object' || rule.action.name === '')
     ) {
-      Message.error(t('header_empty'));
+      Toast.error(t('header_empty'));
       return;
     }
 
@@ -230,7 +229,7 @@ export default class Edit extends React.Component<EditProps, EditState> {
     if (rule.ruleType === RULE_TYPE.MODIFY_RECV_BODY) {
       if (!prefs.get('modify-body')) {
         prefs.set('modify-body', true);
-        Message.notice('已自动开启选项 - 修改响应体，若不需要请手动关闭');
+        Toast.info('已自动开启选项 - 修改响应体，若不需要请手动关闭');
       }
     }
 

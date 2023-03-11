@@ -1,18 +1,15 @@
-import browser, { Downloads } from 'webextension-polyfill';
-import { FIREFOX_VERSION, IS_ANDROID, IS_CHROME } from './utils';
-
 class File {
   save(text: string, fileName: string) {
-    return new Promise((resolve) => {
-      const blob = new Blob([text]);
-      const fileUrl = URL.createObjectURL(blob);
-      const option: Downloads.DownloadOptionsType = { filename: fileName, url: fileUrl };
-      // Firefox supported saveAs since version 52
-      if (IS_CHROME || (!IS_ANDROID && FIREFOX_VERSION >= 52)) {
-        option.saveAs = true;
-      }
-      browser.downloads.download(option).then(resolve);
-    });
+    const blob = new Blob([text]);
+    const fileUrl = URL.createObjectURL(blob);
+    const link = document.createElement('a');
+    link.href = fileUrl;
+    link.download = fileName;
+    link.style.display = 'none';
+    link.target = '_blank';
+    document.body.appendChild(link);
+    link.click();
+    setTimeout(() => link.remove(), 500);
   }
   load(formatToFilter: string): Promise<string> {
     return new Promise((resolve) => {

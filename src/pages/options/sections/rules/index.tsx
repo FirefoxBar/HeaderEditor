@@ -487,6 +487,14 @@ export default class Rules extends React.Component<RulesProps, RulesState> {
             return (
               <Card
                 className={css`
+                  margin-bottom: 12px;
+
+                  .semi-card-header-wrapper {
+                    display: flex;
+                    flex-direction: row-reverse;
+                    align-items: center;
+                  }
+
                   .semi-card-body {
                     padding: 0;
                     display: ${!collapsed.includes(name) ? 'none' : 'block'}
@@ -495,38 +503,37 @@ export default class Rules extends React.Component<RulesProps, RulesState> {
                 key={name}
                 title={name}
                 headerExtraContent={
-                  <div className={cx(css`
-                    display: flex;
-                    flex-direction: row;
+                  <ButtonGroup
+                    className={cx(css`
+                      display: flex;
+                      flex-direction: row;
 
-                    .collapse-icon {
-                      display: inline-block;
-                      transition: all .2s ease;
-                      transform: rotateZ(180deg);
-                    }
-                  `, !collapsed.includes(name) ? css`
                       .collapse-icon {
-                      transform: rotateZ(0deg);
-                    }
-                  ` : '')}
+                        display: inline-block;
+                        transition: all .2s ease;
+                        transform: rotateZ(180deg);
+                      }
+                    `, !collapsed.includes(name) ? css`
+                        .collapse-icon {
+                        transform: rotateZ(0deg);
+                      }
+                    ` : '')}
                   >
-                    <ButtonGroup>
-                      {name !== t('ungrouped') && (
-                        <Tooltip content={t('rename')}>
-                          <Button type="tertiary" onClick={this.handleGroupRename.bind(this, name)} icon={<i className="iconfont icon-edit" />} />
-                        </Tooltip>
-                      )}
-                      <Tooltip content={t('share')}>
-                        <Button type="tertiary" onClick={this.handleGroupShare.bind(this, name)} icon={<IconSend />} />
-                      </Tooltip>
-                      {name !== t('ungrouped') && (
-                        <Tooltip content={t('delete')}>
-                          <Button type="tertiary" onClick={this.handleGroupDelete.bind(this, name)} icon={<i className="iconfont icon-delete" />} />
-                        </Tooltip>
-                      )}
-                    </ButtonGroup>
+                    {name !== t('ungrouped') && (
+                    <Tooltip content={t('rename')}>
+                      <Button type="tertiary" onClick={this.handleGroupRename.bind(this, name)} icon={<i className="iconfont icon-edit" />} />
+                    </Tooltip>
+                    )}
+                    <Tooltip content={t('share')}>
+                      <Button type="tertiary" onClick={this.handleGroupShare.bind(this, name)} icon={<IconSend />} />
+                    </Tooltip>
+                    {name !== t('ungrouped') && (
+                    <Tooltip content={t('delete')}>
+                      <Button type="tertiary" onClick={this.handleGroupDelete.bind(this, name)} icon={<i className="iconfont icon-delete" />} />
+                    </Tooltip>
+                    )}
                     <Button icon={<IconChevronDown className="collapse-icon" />} type="tertiary" onClick={this.handleCollapse.bind(this, name)} />
-                  </div>
+                  </ButtonGroup>
                 }
               >
                 <Table
