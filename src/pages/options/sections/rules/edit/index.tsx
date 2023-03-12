@@ -93,7 +93,7 @@ export default class Edit extends React.Component<EditProps, EditState> {
   }
 
   handleChange(_: any, item: any) {
-    console.log('handleChange', item);
+    // console.log('handleChange', item);
     this.setState((prevState) => {
       const rule = { ...prevState.rule };
       Object.keys(item).forEach((k) => {
@@ -192,6 +192,7 @@ export default class Edit extends React.Component<EditProps, EditState> {
       this.setState({
         rule: newRule,
       }, () => {
+        this.formApi?.reset();
         this.formApi?.setValues(newRule);
       });
     }

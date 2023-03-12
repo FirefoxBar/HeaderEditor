@@ -145,6 +145,7 @@ const RuleCard = (props: RuleCardProps) => {
             title: t('ruleType'),
             className: 'cell-type',
             dataIndex: 'ruleType',
+            width: 180,
             render: (value: string) => t(`rule_${value}`),
           },
           {
