@@ -17,6 +17,7 @@ import './index.less';
 import 'prismjs/components/prism-clike';
 import 'prismjs/components/prism-javascript';
 import { BoolRadioGroupField } from '@/pages/options/components/bool-radio';
+import { FormApi } from '@douyinfe/semi-ui/lib/es/form';
 
 interface EditProps {
   visible: boolean;
@@ -77,6 +78,7 @@ function getRuleFromInput(input: Rule): Rule {
 
 export default class Edit extends React.Component<EditProps, EditState> {
   private initedRule?: InitdRule;
+  private formApi: FormApi | null = null;
   constructor(props: any) {
     super(props);
 
@@ -181,15 +183,21 @@ export default class Edit extends React.Component<EditProps, EditState> {
   }
 
   componentDidUpdate(prevProps: EditProps) {
-    if (this.props.rule !== prevProps.rule) {
-      this.setState({
-        rule: getInput(this.props.rule ? this.props.rule : EMPTY_RULE),
-      });
-    }
     if (this.props.visible !== prevProps.visible) {
       this.setState({
         testUrl: '',
         testResult: '',
+      });
+      if (!this.props.visible) {
+        this.formApi = null;
+      }
+    }
+    if (this.props.rule !== prevProps.rule) {
+      const newRule = getInput(this.props.rule ? this.props.rule : EMPTY_RULE);
+      this.setState({
+        rule: newRule,
+      }, () => {
+        this.formApi?.setValues(newRule);
       });
     }
   }
@@ -244,10 +252,11 @@ export default class Edit extends React.Component<EditProps, EditState> {
     const isHeader = isHeaderSend || isHeaderReceive;
     return (
       <SideSheet
-        placement="left"
+        placement="right"
         visible={this.props.visible}
         onCancel={this.props.onClose}
         title={this.isEdit ? t('edit') : t('add')}
+        keepDOM={false}
         width="100vw"
         className={css`
           .semi-sidesheet-inner {
@@ -263,6 +272,7 @@ export default class Edit extends React.Component<EditProps, EditState> {
       >
         <Form
           {...formItemLayout}
+          getFormApi={(api) => this.formApi = api}
           initValues={this.state.rule}
           onValueChange={this.handleChange}
           labelPosition="left"

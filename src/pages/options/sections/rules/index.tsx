@@ -1,8 +1,6 @@
 /* eslint-disable max-lines */
-import classNames from 'classnames';
 import { selectGroup } from '@/pages/options/lib/utils';
 import { getExportName } from '@/pages/options/utils';
-import * as React from 'react';
 import Icon from '@/share/components/icon';
 import Api from '@/share/core/api';
 import emitter from '@/share/core/emitter';
@@ -11,13 +9,14 @@ import { convertToTinyRule, createExport } from '@/share/core/ruleUtils';
 import { prefs } from '@/share/core/storage';
 import { getTableName, t } from '@/share/core/utils';
 import { InitdRule, Rule, TABLE_NAMES, TABLE_NAMES_TYPE } from '@/share/core/var';
+import { IconPlusCircle } from '@douyinfe/semi-icons';
+import { Button, ButtonGroup, Modal, Space, Spin, Typography } from '@douyinfe/semi-ui';
+import { css } from '@emotion/css';
+import classNames from 'classnames';
+import * as React from 'react';
 import Float from './float';
-import './index.less';
-import RuleDetail from './ruleDetail';
+import RuleCard from './rule-card';
 import { batchShare, remove, toggleRule } from './utils';
-import { Button, ButtonGroup, Card, Modal, Popover, Space, Spin, Switch, Table, Tooltip } from '@douyinfe/semi-ui';
-import { css, cx } from '@emotion/css';
-import { IconChevronDown, IconSend } from '@douyinfe/semi-icons';
 
 const V_KEY = '_v_key';
 
@@ -56,6 +55,11 @@ export default class Rules extends React.Component<RulesProps, RulesState> {
     this.handleBatchMove = this.handleBatchMove.bind(this);
     this.handleBatchShare = this.handleBatchShare.bind(this);
     this.handleBatchDelete = this.handleBatchDelete.bind(this);
+    this.handleClone = this.handleClone.bind(this);
+    this.handleToggleEnable = this.handleToggleEnable.bind(this);
+    this.handlePreview = this.handlePreview.bind(this);
+    this.handleDelete = this.handleDelete.bind(this);
+    this.handleChangeGroup = this.handleChangeGroup.bind(this);
 
     prefs.ready(() => {
       this.isCollapse = prefs.get('manage-collapse-group');
@@ -451,164 +455,76 @@ export default class Rules extends React.Component<RulesProps, RulesState> {
         })}
       >
         <div
-          className={classNames('helper-button', {
-            enable: this.state.isEnableSelect,
-          })}
+          className={css`
+            display: flex;
+            flex-direction: row;
+            padding-bottom: 16px;
+          `}
         >
-          {this.state.isEnableSelect && (
-            <React.Fragment>
-              <Button className="button" size="large" title={t('select_all')} onClick={this.handleToggleSelectAll}>
-                <Icon type="done-all" />
+          <Typography.Title heading={2}>{t('rule_list')}</Typography.Title>
+          <div style={{ flexGrow: 1 }} />
+          <Space>
+            <ButtonGroup>
+              {this.state.isEnableSelect && (
+              <React.Fragment>
+                <Button theme="light" type="tertiary" onClick={this.handleToggleSelectAll} icon={<Icon type="done-all" />}>
+                  {t('select_all')}
+                </Button>
+                <Button theme="light" type="tertiary" onClick={this.handleBatchEnable} icon={<Icon type="touch-app" />}>
+                  {t('enable')}
+                </Button>
+                <Button theme="light" type="tertiary" onClick={this.handleBatchMove} icon={<Icon type="playlist-add" />}>
+                  {t('group')}
+                </Button>
+                <Button theme="light" type="tertiary" onClick={this.handleBatchShare} icon={<Icon type="share" />}>
+                  {t('share')}
+                </Button>
+                <Button theme="light" type="tertiary" onClick={this.handleBatchDelete} icon={<Icon type="delete" />}>
+                  {t('delete')}
+                </Button>
+              </React.Fragment>
+              )}
+              <Button theme="light" type="tertiary" onClick={this.toggleSelect} icon={<Icon type="playlist-add-check" />}>
+                {t('batch_mode')}
               </Button>
-              <Button className="button" size="large" title={t('enable')} onClick={this.handleBatchEnable}>
-                <Icon type="touch-app" />
-              </Button>
-              <Button className="button" size="large" title={t('group')} onClick={this.handleBatchMove}>
-                <Icon type="playlist-add" />
-              </Button>
-              <Button className="button" size="large" title={t('share')} onClick={this.handleBatchShare}>
-                <Icon type="share" />
-              </Button>
-              <Button className="button" size="large" title={t('delete')} onClick={this.handleBatchDelete}>
-                <Icon type="delete" />
-              </Button>
-            </React.Fragment>
-          )}
-          <Button className="button" size="large" onClick={this.toggleSelect}>
-            <Icon type="playlist-add-check" />
-          </Button>
-          <Button className="button" size="large" onClick={() => this.props.onEdit()}>
-            <Icon type="add" />
-          </Button>
+            </ButtonGroup>
+            <Button type="primary" theme="solid" onClick={() => this.props.onEdit()} icon={<IconPlusCircle />}>
+              {t('add')}
+            </Button>
+          </Space>
         </div>
         <Spin size="large" spinning={this.state.loading}>
-          {Object.values(this.state.group).map((group) => {
-            const { name } = group;
-            return (
-              <Card
-                className={css`
-                  margin-bottom: 12px;
-
-                  .semi-card-header-wrapper {
-                    display: flex;
-                    flex-direction: row-reverse;
-                    align-items: center;
-                  }
-
-                  .semi-card-body {
-                    padding: 0;
-                    display: ${!collapsed.includes(name) ? 'none' : 'block'}
-                  }
-                `}
-                key={name}
-                title={name}
-                headerExtraContent={
-                  <ButtonGroup
-                    className={cx(css`
-                      display: flex;
-                      flex-direction: row;
-
-                      .collapse-icon {
-                        display: inline-block;
-                        transition: all .2s ease;
-                        transform: rotateZ(180deg);
-                      }
-                    `, !collapsed.includes(name) ? css`
-                        .collapse-icon {
-                        transform: rotateZ(0deg);
-                      }
-                    ` : '')}
-                  >
-                    {name !== t('ungrouped') && (
-                    <Tooltip content={t('rename')}>
-                      <Button type="tertiary" onClick={this.handleGroupRename.bind(this, name)} icon={<i className="iconfont icon-edit" />} />
-                    </Tooltip>
-                    )}
-                    <Tooltip content={t('share')}>
-                      <Button type="tertiary" onClick={this.handleGroupShare.bind(this, name)} icon={<IconSend />} />
-                    </Tooltip>
-                    {name !== t('ungrouped') && (
-                    <Tooltip content={t('delete')}>
-                      <Button type="tertiary" onClick={this.handleGroupDelete.bind(this, name)} icon={<i className="iconfont icon-delete" />} />
-                    </Tooltip>
-                    )}
-                    <Button icon={<IconChevronDown className="collapse-icon" />} type="tertiary" onClick={this.handleCollapse.bind(this, name)} />
-                  </ButtonGroup>
-                }
-              >
-                <Table
-                  rowKey={V_KEY}
-                  dataSource={group.rules}
-                  size="small"
-                  pagination={false}
-                  rowSelection={
-                    this.state.isEnableSelect
-                      ? {
-                        onChange: this.handleSelect,
-                        selectedRowKeys: this.state.selectedKeys,
-                      }
-                      : undefined
-                  }
-                  columns={[
-                    {
-                      title: t('enable'),
-                      className: 'cell-enable',
-                      dataIndex: 'enable',
-                      align: 'center',
-                      render: (value: boolean, item: InitdRule) => (
-                        <Switch size="small" checked={value} onChange={this.handleToggleEnable.bind(this, item)} />
-                      ),
-                    },
-                    {
-                      title: t('name'),
-                      className: 'cell-name',
-                      dataIndex: 'name',
-                      render: (value: string, item: InitdRule) => (
-                        <Popover showArrow position="top" content={<RuleDetail rule={item} />} style={{ maxWidth: '300px' }}>
-                          <span>{value}</span>
-                        </Popover>
-                      ),
-                    },
-                    {
-                      title: t('ruleType'),
-                      className: 'cell-type',
-                      dataIndex: 'ruleType',
-                      render: (value: string) => t(`rule_${value}`),
-                    },
-                    {
-                      title: t('action'),
-                      className: 'cell-action',
-                      dataIndex: 'action',
-                      render: (v, item: InitdRule) => (
-                        <Space>
-                          <Button type="secondary" onClick={this.handleChangeGroup.bind(this, item)}>
-                            <Icon type="playlist-add" />
-                            {t('group')}
-                          </Button>
-                          <Button type="secondary" onClick={() => this.props.onEdit(item)}>
-                            <Icon type="edit" />
-                            {t('edit')}
-                          </Button>
-                          <Button type="secondary" onClick={this.handleClone.bind(this, item)}>
-                            <Icon type="content-copy" />
-                            {t('clone')}
-                          </Button>
-                          <Button type="secondary" onClick={this.handlePreview.bind(this, item)}>
-                            <Icon type="search" />
-                            {t('view')}
-                          </Button>
-                          <Button type="secondary" onClick={this.handleDelete.bind(this, item)}>
-                            <Icon type="delete" />
-                            {t('delete')}
-                          </Button>
-                        </Space>
-                      ),
-                    },
-                  ]}
+          <div
+            className={css`
+              height: calc(100vh - 88px);
+              overflow: auto;
+            `}
+          >
+            {Object.values(this.state.group).map((group) => {
+              const { name } = group;
+              return (
+                <RuleCard
+                  key={name}
+                  name={group.name}
+                  collapsed={collapsed.includes(name)}
+                  rules={group.rules}
+                  isEnableSelect={this.state.isEnableSelect}
+                  onSelect={this.handleSelect}
+                  selectedKeys={this.state.selectedKeys}
+                  onRename={() => this.handleGroupRename(name)}
+                  onShare={() => this.handleGroupShare(name)}
+                  onDelete={() => this.handleGroupDelete(name)}
+                  onCollapse={() => this.handleCollapse(name)}
+                  onRuleEnable={this.handleToggleEnable}
+                  onRuleChangeGroup={this.handleChangeGroup}
+                  onRuleEdit={this.props.onEdit}
+                  onRuleClone={this.handleClone}
+                  onRuleDelete={this.handleDelete}
+                  onRulePreview={this.handlePreview}
                 />
-              </Card>
-            );
-          })}
+              );
+            })}
+          </div>
         </Spin>
         {this.state.float.map((it) => (
           <Float key={it[V_KEY]} rule={it} onClose={() => this.handlePreview(it)} />
