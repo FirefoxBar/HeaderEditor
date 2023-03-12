@@ -41,7 +41,17 @@ const RuleCard = (props: RuleCardProps) => {
     isEnableSelect,
     onCollapse,
     onDelete,
-    onRename, onRuleChangeGroup, onRuleClone, onRuleDelete, onRuleEdit, onRulePreview, onShare, onSelect, selectedKeys, onRuleEnable } = props;
+    onRename,
+    onRuleChangeGroup,
+    onRuleClone,
+    onRuleDelete,
+    onRuleEdit,
+    onRulePreview,
+    onShare,
+    onSelect,
+    selectedKeys,
+    onRuleEnable,
+  } = props;
 
   const rowSelection = isEnableSelect ? {
     onChange: onSelect,
@@ -52,6 +62,10 @@ const RuleCard = (props: RuleCardProps) => {
     <Card
       className={css`
       margin-bottom: 12px;
+
+      .semi-card-header {
+        padding: 12px;
+      }
 
       .semi-card-header-wrapper {
         display: flex;
