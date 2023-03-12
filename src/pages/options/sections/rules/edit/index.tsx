@@ -1,24 +1,18 @@
+import { BoolRadioGroupField } from '@/pages/options/components/bool-radio';
 import Api from '@/share/core/api';
 import emitter from '@/share/core/emitter';
 import { initRule, isMatchUrl } from '@/share/core/ruleUtils';
 import { prefs } from '@/share/core/storage';
 import { IS_SUPPORT_STREAM_FILTER, t } from '@/share/core/utils';
 import { InitdRule, IS_MATCH, Rule, RULE_MATCH_TYPE, RULE_TYPE } from '@/share/core/var';
-import { highlight, languages } from 'prismjs';
+import { IconSave } from '@douyinfe/semi-icons';
+import { Button, Form, Input, SideSheet, Toast } from '@douyinfe/semi-ui';
+import { FormApi } from '@douyinfe/semi-ui/lib/es/form';
+import { css } from '@emotion/css';
 import * as React from 'react';
-import Editor from 'react-simple-code-editor';
+import { CodeEditorField } from './code-editor';
 import ENCODING_LIST from './encoding';
 import COMMON_HEADERS from './headers';
-import { Button, Form, Input, SideSheet, Toast } from '@douyinfe/semi-ui';
-import { css, cx } from '@emotion/css';
-import './index.less';
-
-// 保持在最后，顺序不能乱
-import 'prismjs/components/prism-clike';
-import 'prismjs/components/prism-javascript';
-import { BoolRadioGroupField } from '@/pages/options/components/bool-radio';
-import { FormApi } from '@douyinfe/semi-ui/lib/es/form';
-import { IconSave } from '@douyinfe/semi-icons';
 
 interface EditProps {
   visible: boolean;
@@ -339,27 +333,7 @@ export default class Edit extends React.Component<EditProps, EditState> {
           )}
           {/* Custom function */}
           {this.state.rule.isFunction && (
-            <Form.Slot label={t('code')}>
-              <Editor
-                className={cx('code-editor', 'language-javascript', 'semi-input-wrapper', css`
-                  display: block;
-                  width: 100%;
-                  font-size: 12px;
-                  line-height: 18px;
-                  border-radius: 3px;
-                  min-height: 100px;
-
-                  pre, textarea {
-                    font-family: "Fira Code", "Source Code Pro", "Consolas", "Bitstream Vera Sans Mono", "Courier New", Courier, monospace;
-                  }
-                `)}
-                padding="8px"
-                value={this.state.rule.code}
-                onValueChange={(value) => this.handleChange(null, { code: value })}
-                // @ts-ignore
-                highlight={(code) => highlight(code, languages.js)}
-              />
-            </Form.Slot>
+            <CodeEditorField field="code" label={t('code')} height={200} />
           )}
           <Form.Slot label={t('test_url')}>
             <Input value={this.state.testUrl} onChange={this.handleTestChange} />

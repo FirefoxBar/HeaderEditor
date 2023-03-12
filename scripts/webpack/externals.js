@@ -1,6 +1,4 @@
-const fs = require('fs');
 const path = require('path');
-const fetch = require('node-fetch');
 const CopyWebpackPlugin = require('copy-webpack-plugin');
 
 const copy = [
@@ -16,11 +14,11 @@ const copy = [
 
 const root = path.join(__dirname, '../..');
 
-module.exports = function(config) {
+module.exports = function (config) {
   const { version } = require(path.join(root, 'package.json'));
   if (config.get('mode') === 'development') {
     // dev 环境复制 development 的 react 资源
-    copy.forEach(x => {
+    copy.forEach((x) => {
       if (x.from.includes('.production.min.js')) {
         x.from = x.from.replace('.production.min.js', '.development.js');
       }
@@ -30,7 +28,7 @@ module.exports = function(config) {
   copy.push({
     from: './src/manifest.json',
     to: 'manifest.json',
-    transform: content => {
+    transform: (content) => {
       const jsonContent = JSON.parse(content);
       jsonContent.version = version;
 

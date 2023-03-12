@@ -10,7 +10,6 @@ import OptionsSection from './sections/options';
 import RulesSection from './sections/rules';
 import Edit from './sections/rules/edit';
 import { parse } from 'querystring';
-import './index.less';
 import type { OnSelectedData } from '@douyinfe/semi-ui/lib/es/navigation';
 import { css } from '@emotion/css';
 import { IconFolderOpen, IconHelpCircle, IconMenu, IconSetting } from '@douyinfe/semi-icons';

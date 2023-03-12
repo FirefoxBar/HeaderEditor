@@ -37,10 +37,7 @@ package-lock.json
 .Trashes
 ehthumbs.db
 Thumbs.db
-
-_locales
 encrypt
-
 .ice
 .eslintcache
 .vscode
