@@ -37,7 +37,9 @@ package-lock.json
 .Trashes
 ehthumbs.db
 Thumbs.db
+
 encrypt
+
 .ice
 .eslintcache
 .vscode
