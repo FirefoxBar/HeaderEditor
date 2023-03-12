@@ -18,6 +18,7 @@ import 'prismjs/components/prism-clike';
 import 'prismjs/components/prism-javascript';
 import { BoolRadioGroupField } from '@/pages/options/components/bool-radio';
 import { FormApi } from '@douyinfe/semi-ui/lib/es/form';
+import { IconSave } from '@douyinfe/semi-icons';
 
 interface EditProps {
   visible: boolean;
@@ -266,7 +267,7 @@ export default class Edit extends React.Component<EditProps, EditState> {
         `}
         footer={
           <div style={{ display: 'flex', justifyContent: 'flex-end' }}>
-            <Button theme="solid" onClick={this.handleSubmit}>{t('save')}</Button>
+            <Button theme="solid" onClick={this.handleSubmit} icon={<IconSave />}>{t('save')}</Button>
           </div>
         }
       >

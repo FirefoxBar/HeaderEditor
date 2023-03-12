@@ -1,9 +1,9 @@
 import Icon from '@/share/components/icon';
 import { t } from '@/share/core/utils';
 import { InitdRule, Rule } from '@/share/core/var';
-import { IconChevronDown, IconSend } from '@douyinfe/semi-icons';
-import { Button, ButtonGroup, Card, Popover, Space, Switch, Table, Tooltip } from '@douyinfe/semi-ui';
-import { RowSelectionProps, TableProps } from '@douyinfe/semi-ui/lib/es/table';
+import { IconChevronDown, IconMore, IconSend } from '@douyinfe/semi-icons';
+import { Button, ButtonGroup, Card, Dropdown, Popover, Space, Switch, Table, Tooltip } from '@douyinfe/semi-ui';
+import type { RowSelectionProps } from '@douyinfe/semi-ui/lib/es/table';
 import { css, cx } from '@emotion/css';
 import React from 'react';
 import RuleDetail from './rule-detail';
@@ -112,6 +112,7 @@ const RuleCard = (props: RuleCardProps) => {
             className: 'cell-enable',
             dataIndex: 'enable',
             align: 'center',
+            width: 80,
             render: (value: boolean, item: InitdRule) => (
               <Switch size="small" checked={value} onChange={(checked) => onRuleEnable(item, checked)} />
             ),
@@ -136,29 +137,45 @@ const RuleCard = (props: RuleCardProps) => {
             title: t('action'),
             className: 'cell-action',
             dataIndex: 'action',
+            width: 128,
             render: (v, item: InitdRule) => (
-              <Space>
-                <Button type="secondary" onClick={() => onRuleChangeGroup(item)}>
-                  <Icon type="playlist-add" />
-                  {t('group')}
-                </Button>
-                <Button type="secondary" onClick={() => onRuleEdit(item)}>
-                  <Icon type="edit" />
-                  {t('edit')}
-                </Button>
-                <Button type="secondary" onClick={() => onRuleClone(item)}>
-                  <Icon type="content-copy" />
-                  {t('clone')}
-                </Button>
-                <Button type="secondary" onClick={() => onRulePreview(item)}>
-                  <Icon type="search" />
-                  {t('view')}
-                </Button>
-                <Button type="secondary" onClick={() => onRuleDelete(item)}>
-                  <Icon type="delete" />
-                  {t('delete')}
-                </Button>
-              </Space>
+              <ButtonGroup>
+                <Tooltip content={t('edit')}>
+                  <Button theme="borderless" type="tertiary" onClick={() => onRuleEdit(item)} icon={<Icon type="edit" />} />
+                </Tooltip>
+                <Tooltip content={t('view')}>
+                  <Button theme="borderless" type="tertiary" onClick={() => onRulePreview(item)} icon={<Icon type="search" />} />
+                </Tooltip>
+                <Dropdown
+                  position="bottomRight"
+                  menu={[
+                    {
+                      node: 'item',
+                      name: t('group'),
+                      onClick: () => onRuleChangeGroup(item),
+                      icon: <Icon type="playlist-add" />,
+                    },
+                    {
+                      node: 'item',
+                      name: t('clone'),
+                      onClick: () => onRuleClone(item),
+                      icon: <Icon type="content-copy" />,
+                    },
+                    {
+                      node: 'divider',
+                    },
+                    {
+                      node: 'item',
+                      name: t('delete'),
+                      onClick: () => onRuleDelete(item),
+                      type: 'danger',
+                      icon: <Icon type="delete" />,
+                    },
+                  ]}
+                >
+                  <Button theme="borderless" type="tertiary" icon={<IconMore />} />
+                </Dropdown>
+              </ButtonGroup>
             ),
           },
         ]}

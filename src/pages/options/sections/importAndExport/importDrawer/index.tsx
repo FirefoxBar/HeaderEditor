@@ -8,6 +8,7 @@ import { ImportRule, TABLE_NAMES, TinyRule } from '@/share/core/var';
 import { SideSheet, Button, Table, Select, Toast } from '@douyinfe/semi-ui';
 import { css } from '@emotion/css';
 import BoolRadioGroup from '@/pages/options/components/bool-radio';
+import { IconSave } from '@douyinfe/semi-icons';
 
 interface ImportDrawerProps {
   onCancel?: () => void;
@@ -170,7 +171,7 @@ export default class ImportDrawer extends React.Component<ImportDrawerProps, Imp
             <Button type="tertiary" theme="light" onClick={this.handleCancel}>
               {t('cancel')}
             </Button>
-            <Button type="primary" theme="solid" onClick={this.handleConfirm}>
+            <Button type="primary" theme="solid" onClick={this.handleConfirm} icon={<IconSave />}>
               {t('save')}
             </Button>
           </div>
