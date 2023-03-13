@@ -12,7 +12,7 @@
         "description": "A option. if enabled, a menu item well add to the right-click menu, Hotlinking: https://en.wikipedia.org/wiki/Inline_linking"
     },
     "auto": {
-        "message": "Auto",
+        "message": "自动",
         "description": "Auto detect dark mode"
     },
     "batch_delete": {
