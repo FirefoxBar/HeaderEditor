@@ -1,10 +1,8 @@
 # Header Editor
 
-[![Build Status](
-https://img.shields.io/travis/FirefoxBar/HeaderEditor/master.svg?style=flat-square)](https://travis-ci.org/FirefoxBar/HeaderEditor)
-[![GitHub release](https://img.shields.io/github/release/FirefoxBar/HeaderEditor.svg?style=flat-square)](https://github.com/FirefoxBar/HeaderEditor/releases)
-[![license](https://img.shields.io/github/license/FirefoxBar/HeaderEditor.svg?style=flat-square)](https://github.com/FirefoxBar/HeaderEditor/blob/master/LICENSE)
-[![Gitter](https://img.shields.io/gitter/room/FirefoxBar/HeaderEditor.svg?style=flat-square)](https://gitter.im/FirefoxBar/HeaderEditor)
+[![Build Status](https://github.com/FirefoxBar/HeaderEditor/actions/workflows/main.yml/badge.svg)
+[![GitHub release](https://img.shields.io/github/release/FirefoxBar/HeaderEditor.svg)](https://github.com/FirefoxBar/HeaderEditor/releases)
+[![license](https://img.shields.io/github/license/FirefoxBar/HeaderEditor.svg)](https://github.com/FirefoxBar/HeaderEditor/blob/master/LICENSE)
 
 An extension which can modify the request, include request headers, response headers, redirect requests, and cancel requests.
 
@@ -12,11 +10,11 @@ For more documentations, Please visit [documentions](https://he.firefoxcn.net)
 
 ## Get this extension
 
-![Firefox Logo](https://cdnjs.cloudflare.com/ajax/libs/browser-logos/42.8.0/firefox/firefox_16x16.png) [Mozilla Add-on](https://addons.mozilla.org/en-US/firefox/addon/header-editor/).
+![Firefox Logo](https://cdnjs.cloudflare.com/ajax/libs/browser-logos/73.0.0/firefox/firefox_16x16.png) [Mozilla Add-on](https://addons.mozilla.org/en-US/firefox/addon/header-editor/).
 
-![Chrome Logo](https://cdnjs.cloudflare.com/ajax/libs/browser-logos/42.8.0/chrome/chrome_16x16.png) [Chrome Web Store](https://chrome.google.com/webstore/detail/header-editor/eningockdidmgiojffjmkdblpjocbhgh).
+![Chrome Logo](https://cdnjs.cloudflare.com/ajax/libs/browser-logos/73.0.0/chrome/chrome_16x16.png) [Chrome Web Store](https://chrome.google.com/webstore/detail/header-editor/eningockdidmgiojffjmkdblpjocbhgh).
 
-![Firefox Logo](https://cdnjs.cloudflare.com/ajax/libs/browser-logos/42.8.0/firefox/firefox_16x16.png) Install our [self-distributed version](https://github.com/FirefoxBar/HeaderEditor/releases).
+![Firefox Logo](https://cdnjs.cloudflare.com/ajax/libs/browser-logos/73.0.0/firefox/firefox_16x16.png) Install our [self-distributed version](https://github.com/FirefoxBar/HeaderEditor/releases).
 
 ## About Permissions
 
@@ -79,12 +77,12 @@ The following are language maintainers, Thanks for their contribution. If you ha
 
 #### Development
 
-* Run `npm run watch:dev`
+* Run `npm run start`
 
 * Open browser, load extension from `/dist` directory or `/dist/manifest.json`
 
 ## Licenses
 
-Copyright © 2017-2019 [FirefoxBar Team](http://team.firefoxcn.net)
+Copyright © 2017-2023 [FirefoxBar Team](http://team.firefoxcn.net)
 
 Open source licensed under [GPLv2](LICENSE).
