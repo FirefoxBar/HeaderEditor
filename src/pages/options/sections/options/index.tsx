@@ -3,7 +3,7 @@ import emitter from '@/share/core/emitter';
 import { prefs } from '@/share/core/storage';
 import { t } from '@/share/core/utils';
 import { defaultPrefValue, PrefValue } from '@/share/core/var';
-import { Card, Checkbox, Col, Select, Row } from '@douyinfe/semi-ui';
+import { Card, Checkbox, Col, Row, Select, Typography } from '@douyinfe/semi-ui';
 import type { CheckboxEvent } from '@douyinfe/semi-ui/lib/es/checkbox';
 import * as React from 'react';
 
@@ -132,6 +132,7 @@ export default class Options extends React.Component<OptionsProps, OptionsState>
               );
             })}
           </Row>
+          <Typography.Text type="tertiary">{t('dark_mode_help')}</Typography.Text>
         </Card>
       </section>
     );

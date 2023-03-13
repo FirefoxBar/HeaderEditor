@@ -72,6 +72,10 @@
     "message": "Dark mode",
     "description": "Dark mode select"
   },
+  "dark_mode_help": {
+    "message": "Dark mode is experimental, refresh this page to see the effect",
+    "description": "Dark help text"
+  },
   "delete": {
     "message": "Delete",
     "description": "Delete button"
