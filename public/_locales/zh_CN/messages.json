@@ -1,1 +1,382 @@
-{"action":{"message":"操作"},"add":{"message":"添加"},"add_anti_hot_link":{"message":"添加反-防盗链规则"},"add_anti_hot_link_to_menu":{"message":"添加“添加反防盗链”到右键菜单"},"batch_delete":{"message":"批量删除"},"batch_mode":{"message":"批量操作"},"cancel":{"message":"取消"},"choose":{"message":"选择"},"clone":{"message":"克隆"},"cloud_backup":{"message":"云备份"},"cloud_backup_at":{"message":"最后备份于 $date$","placeholders":{"date":{"content":"$1"}}},"cloud_no_backup":{"message":"无备份"},"cloud_over_limit":{"message":"超出备份大小限制"},"code":{"message":"代码"},"code_empty":{"message":"代码不能为空"},"delete":{"message":"删除"},"delete_confirm":{"message":"您确认要删除这些规则吗？"},"description":{"message":"管理浏览器请求，包括修改请求头和响应头、重定向请求、取消请求"},"display_common_header":{"message":"编辑时显示常用头"},"download":{"message":"下载"},"download_rule":{"message":"下载规则"},"edit":{"message":"编辑"},"enable":{"message":"启用"},"enable_he":{"message":"启用Header Editor"},"encoding":{"message":"编码"},"enter_group_name":{"message":"请输入组名称"},"excludeRule":{"message":"排除规则"},"exec_function":{"message":"自定义函数"},"exec_normal":{"message":"常规"},"exec_type":{"message":"执行类型"},"export":{"message":"导出"},"export_and_import":{"message":"导出和导入"},"extButtonTitle":{"message":"Header Editor"},"extName":{"message":"Header Editor"},"group":{"message":"分组"},"headerName":{"message":"头名称"},"headerValue":{"message":"头内容"},"header_empty":{"message":"头名称不能为空"},"help":{"message":"帮助"},"import":{"message":"导入"},"import_drop":{"message":"不导入"},"import_new":{"message":"添加"},"import_override":{"message":"覆盖已有"},"import_success":{"message":"导入成功"},"include_header_in_custom_function":{"message":"在自定义函数中包含请求头"},"manage":{"message":"管理"},"manage_collapse_group":{"message":"默认折叠分组"},"matchRule":{"message":"匹配规则"},"matchType":{"message":"匹配类型"},"match_all":{"message":"全部"},"match_domain":{"message":"域名"},"match_prefix":{"message":"网址前缀"},"match_regexp":{"message":"正则表达式"},"match_rule_empty":{"message":"匹配规则不能为空"},"match_url":{"message":"网址"},"modify_body":{"message":"修改响应体（仅支持Firefox）"},"name":{"message":"名称"},"name_empty":{"message":"名称不能为空"},"ok":{"message":"确定"},"options":{"message":"选项"},"pack_up_or_unfurl":{"message":"收起/展开分组"},"redirectTo":{"message":"重定向至"},"redirect_empty":{"message":"重定向目标不能为空"},"rename":{"message":"重命名"},"ruleType":{"message":"规则类型"},"rule_cancel":{"message":"阻止请求"},"rule_list":{"message":"规则列表"},"rule_modifyReceiveBody":{"message":"修改响应体"},"rule_modifyReceiveHeader":{"message":"修改响应头"},"rule_modifySendHeader":{"message":"修改请求头"},"rule_redirect":{"message":"重定向请求"},"rules_no_effect_for_he":{"message":"规则对Header Editor无效"},"save":{"message":"保存"},"save_to":{"message":"保存至"},"saved":{"message":"已保存"},"select_all":{"message":"全选/全不选"},"select_or_download":{"message":"请从文件导入或下载规则"},"share":{"message":"分享"},"suggested_group":{"message":"建议分组"},"test_custom_code":{"message":"暂不支持自定义函数"},"test_exclude":{"message":"已匹配但被排除"},"test_invalid_regexp":{"message":"正则表达式无效"},"test_mismatch":{"message":"不匹配"},"test_url":{"message":"测试（不会保存）"},"third_party_rules":{"message":"第三方规则"},"ungrouped":{"message":"未分组"},"upload":{"message":"上传"},"url_cloud_backup":{"message":"https://he.firefoxcn.net/zh-CN/cloud-backup.html"},"url_help":{"message":"https://he.firefoxcn.net/zh-CN/guide.html"},"url_third_party_rules":{"message":"https://he.firefoxcn.net/zh-CN/third-party-rules.html"},"view":{"message":"查看"}}
+{
+    "add": {
+        "message": "添加",
+        "description": "Button to add somethings"
+    },
+    "add_anti_hot_link": {
+        "message": "添加反-防盗链规则",
+        "description": "Right-click menu to add a rule"
+    },
+    "add_anti_hot_link_to_menu": {
+        "message": "添加“添加反防盗链”到右键菜单",
+        "description": "A option. if enabled, a menu item well add to the right-click menu, Hotlinking: https://en.wikipedia.org/wiki/Inline_linking"
+    },
+    "auto": {
+        "message": "Auto",
+        "description": "Auto detect dark mode"
+    },
+    "batch_delete": {
+        "message": "批量删除",
+        "description": "Button to delete multiple rules"
+    },
+    "batch_mode": {
+        "message": "批量操作",
+        "description": "Button to enter batch operation mode"
+    },
+    "cancel": {
+        "message": "取消",
+        "description": "Button to close modal without save"
+    },
+    "choose": {
+        "message": "选择",
+        "description": "Choose a group"
+    },
+    "clone": {
+        "message": "克隆",
+        "description": "Clone rule"
+    },
+    "cloud_backup": {
+        "message": "云备份",
+        "description": "Cloud backup button"
+    },
+    "cloud_backup_at": {
+        "message": "最后备份于 $date$",
+        "description": "Display last backup time if any backup found"
+    },
+    "cloud_no_backup": {
+        "message": "无备份",
+        "description": "Display if no backup found"
+    },
+    "cloud_over_limit": {
+        "message": "超出备份大小限制",
+        "description": "Message display when exceeded backup size limit"
+    },
+    "code": {
+        "message": "代码",
+        "description": "Label for code section in modal"
+    },
+    "code_empty": {
+        "message": "代码不能为空",
+        "description": "Tips when a rule is custom function but code is empty"
+    },
+    "dark_mode": {
+        "message": "Dark mode",
+        "description": "Dark mode select"
+    },
+    "dark_mode_help": {
+        "message": "Dark mode is experimental, refresh this page to see the effect",
+        "description": "Dark help text"
+    },
+    "delete": {
+        "message": "删除",
+        "description": "Delete button"
+    },
+    "delete_confirm": {
+        "message": "您确认要删除这些规则吗？",
+        "description": "A confirmation box shows when user want to delete rules"
+    },
+    "description": {
+        "message": "管理浏览器请求，包括修改请求头和响应头、重定向请求、取消请求",
+        "description": "Extension description"
+    },
+    "disable": {
+        "message": "Disable",
+        "description": "disable"
+    },
+    "display_common_header": {
+        "message": "编辑时显示常用头",
+        "description": "An option to enable header auto-complete when editing rules"
+    },
+    "download": {
+        "message": "下载",
+        "description": "Download button"
+    },
+    "download_rule": {
+        "message": "下载规则",
+        "description": "Title of the rule download area"
+    },
+    "edit": {
+        "message": "编辑",
+        "description": "Modal title for editing a rule"
+    },
+    "enable": {
+        "message": "启用",
+        "description": "Switch one rule on/off in table title"
+    },
+    "enable_he": {
+        "message": "启用Header Editor",
+        "description": "If not checked, all rules will take no effects"
+    },
+    "encoding": {
+        "message": "编码",
+        "description": "Label for responseBody's character encoding"
+    },
+    "enter_group_name": {
+        "message": "请输入组名称",
+        "description": "Prompt the user when the user click add group button"
+    },
+    "excludeRule": {
+        "message": "排除规则",
+        "description": "Label for exclude rule in modal"
+    },
+    "exec_function": {
+        "message": "自定义函数",
+        "description": "Custom function in execute type"
+    },
+    "exec_normal": {
+        "message": "常规",
+        "description": "Normal option in execute type"
+    },
+    "exec_type": {
+        "message": "执行类型",
+        "description": "Label for execute type in modal"
+    },
+    "export": {
+        "message": "导出",
+        "description": "Button to export all rules as a json file"
+    },
+    "export_and_import": {
+        "message": "导出和导入",
+        "description": "The tab title in the top"
+    },
+    "extButtonTitle": {
+        "message": "Header Editor",
+        "description": "Toolbar tooltip"
+    },
+    "extName": {
+        "message": "Header Editor",
+        "description": "Extension name"
+    },
+    "group": {
+        "message": "分组",
+        "description": "Group button"
+    },
+    "headerName": {
+        "message": "头名称",
+        "description": "Label for header name in modal"
+    },
+    "headerValue": {
+        "message": "头内容",
+        "description": "Label for header value in modal"
+    },
+    "header_empty": {
+        "message": "头名称不能为空",
+        "description": "Message for saving a rule without header name"
+    },
+    "help": {
+        "message": "帮助",
+        "description": "Help link"
+    },
+    "import": {
+        "message": "导入",
+        "description": "Button to import rules from a file"
+    },
+    "import_drop": {
+        "message": "不导入",
+        "description": "do not import a rule"
+    },
+    "import_new": {
+        "message": "添加",
+        "description": "Add a new rule"
+    },
+    "import_override": {
+        "message": "覆盖已有",
+        "description": "Overrides already existing rule"
+    },
+    "import_success": {
+        "message": "导入成功",
+        "description": "Displays when import successfully"
+    },
+    "include_header_in_custom_function": {
+        "message": "在自定义函数中包含请求头",
+        "description": "An option to enable this feature, for more info, see wiki in GitHub"
+    },
+    "manage": {
+        "message": "管理",
+        "description": "Manage rules, options and more"
+    },
+    "manage_collapse_group": {
+        "message": "默认折叠分组",
+        "description": "All groups will be collapsed when open the management page"
+    },
+    "matchRule": {
+        "message": "匹配规则",
+        "description": "Label for match rule in modal"
+    },
+    "matchType": {
+        "message": "匹配类型",
+        "description": "Label for match type in modal"
+    },
+    "match_all": {
+        "message": "全部",
+        "description": "All option in modal"
+    },
+    "match_domain": {
+        "message": "域名",
+        "description": "Domain option in modal"
+    },
+    "match_prefix": {
+        "message": "网址前缀",
+        "description": "URL prefix option in modal"
+    },
+    "match_regexp": {
+        "message": "正则表达式",
+        "description": "Regular expression option in modal"
+    },
+    "match_rule_empty": {
+        "message": "匹配规则不能为空",
+        "description": "Message for saving a rule without match rule"
+    },
+    "match_url": {
+        "message": "网址",
+        "description": "URL option in modal"
+    },
+    "modify_body": {
+        "message": "修改响应体（仅支持Firefox）",
+        "description": "Option to enable/disable modify body"
+    },
+    "name": {
+        "message": "名称",
+        "description": "Label for name in modal"
+    },
+    "name_empty": {
+        "message": "名称不能为空",
+        "description": "Message for saving a rule without name"
+    },
+    "ok": {
+        "message": "确定",
+        "description": "OK Button"
+    },
+    "options": {
+        "message": "选项",
+        "description": "Heading for options section on manage page."
+    },
+    "pack_up_or_unfurl": {
+        "message": "收起/展开分组",
+        "description": "Button to pack up or unfurl a group"
+    },
+    "redirectTo": {
+        "message": "重定向至",
+        "description": "Label for redirect to in modal"
+    },
+    "redirect_empty": {
+        "message": "重定向目标不能为空",
+        "description": "Message for saving a rule without redirect target if rule type is redirect"
+    },
+    "rename": {
+        "message": "重命名",
+        "description": "Rename group"
+    },
+    "ruleType": {
+        "message": "规则类型",
+        "description": "Label for rule type in modal"
+    },
+    "rule_cancel": {
+        "message": "阻止请求",
+        "description": "Cancel request option in modal"
+    },
+    "rule_list": {
+        "message": "规则列表",
+        "description": "Title of the rules list"
+    },
+    "rule_modifyReceiveBody": {
+        "message": "修改响应体",
+        "description": "Response body option in modal"
+    },
+    "rule_modifyReceiveHeader": {
+        "message": "修改响应头",
+        "description": "Response header option in modal"
+    },
+    "rule_modifySendHeader": {
+        "message": "修改请求头",
+        "description": "Request header option in modal"
+    },
+    "rule_redirect": {
+        "message": "重定向请求",
+        "description": "Redirect option in modal"
+    },
+    "rules_no_effect_for_he": {
+        "message": "规则对Header Editor无效",
+        "description": "If checked, all rules will take no effect on pages in Header Editor"
+    },
+    "save": {
+        "message": "保存",
+        "description": "Button to save a rule"
+    },
+    "save_to": {
+        "message": "保存至",
+        "description": "Save rule to"
+    },
+    "saved": {
+        "message": "已保存",
+        "description": "Displays when rule saved successfully"
+    },
+    "select_all": {
+        "message": "全选/全不选",
+        "description": "Button to select or unselect all rules in batch management mode"
+    },
+    "select_or_download": {
+        "message": "请从文件导入或下载规则",
+        "description": "A notice in import card"
+    },
+    "share": {
+        "message": "分享",
+        "description": "Share button title"
+    },
+    "suggested_group": {
+        "message": "建议分组",
+        "description": "The suggested group name provided by the rule author"
+    },
+    "test_custom_code": {
+        "message": "暂不支持自定义函数",
+        "description": "Label to test a redirect rule"
+    },
+    "test_exclude": {
+        "message": "已匹配但被排除",
+        "description": "Label to test a redirect rule"
+    },
+    "test_invalid_regexp": {
+        "message": "正则表达式无效",
+        "description": "Label to test a redirect rule"
+    },
+    "test_mismatch": {
+        "message": "不匹配",
+        "description": "Label to test a redirect rule"
+    },
+    "test_url": {
+        "message": "测试（不会保存）",
+        "description": "Label to test a redirect rule"
+    },
+    "third_party_rules": {
+        "message": "第三方规则",
+        "description": "Link to find more third party rules"
+    },
+    "ungrouped": {
+        "message": "未分组",
+        "description": "The default group name"
+    },
+    "upload": {
+        "message": "上传",
+        "description": "Upload button"
+    },
+    "url_cloud_backup": {
+        "message": "https://he.firefoxcn.net/zh-CN/cloud-backup.html",
+        "description": "URL of documentions, if not translated, please use english version"
+    },
+    "url_help": {
+        "message": "https://he.firefoxcn.net/zh-CN/guide.html",
+        "description": "URL of documentions, if not translated, please use english version"
+    },
+    "url_third_party_rules": {
+        "message": "https://he.firefoxcn.net/zh-CN/third-party-rules.html",
+        "description": "URL of documentions, if not translated, please use english version"
+    },
+    "view": {
+        "message": "查看",
+        "description": "View rule or a link"
+    },
+    "action": {
+        "message": "操作",
+        "description": "Table title in management page"
+    }
+}
