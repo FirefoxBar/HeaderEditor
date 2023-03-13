@@ -72,6 +72,7 @@ export interface PrefValue {
   'include-headers': boolean; // Include headers in custom function
   'modify-body': boolean; // Enable modify received body feature
   'is-debug': boolean;
+  'dark-mode': 'auto' | 'on' | 'off';
 }
 
 export const defaultPrefValue: PrefValue = {
@@ -83,6 +84,7 @@ export const defaultPrefValue: PrefValue = {
   'include-headers': false,
   'modify-body': false,
   'is-debug': false,
+  'dark-mode': 'auto',
 };
 
 export enum APIs {

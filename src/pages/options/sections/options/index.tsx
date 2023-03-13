@@ -3,7 +3,7 @@ import emitter from '@/share/core/emitter';
 import { prefs } from '@/share/core/storage';
 import { t } from '@/share/core/utils';
 import { defaultPrefValue, PrefValue } from '@/share/core/var';
-import { Card, Checkbox, Col, Row } from '@douyinfe/semi-ui';
+import { Card, Checkbox, Col, Select, Row } from '@douyinfe/semi-ui';
 import type { CheckboxEvent } from '@douyinfe/semi-ui/lib/es/checkbox';
 import * as React from 'react';
 
@@ -15,7 +15,7 @@ interface OptionsState {
   prefs: PrefValue;
 }
 
-const mapPrefToProps: { [key: string]: string } = {
+const checkPrefs: { [key: string]: string } = {
   'manage-collapse-group': t('manage_collapse_group'),
   'exclude-he': t('rules_no_effect_for_he'),
   'add-hot-link': t('add_anti_hot_link_to_menu'),
@@ -23,6 +23,33 @@ const mapPrefToProps: { [key: string]: string } = {
   'include-headers': t('include_header_in_custom_function'),
   'modify-body': t('modify_body'),
   'is-debug': 'Enable debug',
+};
+
+interface SelectItem {
+  title: string;
+  options: Array<{
+    label: string;
+    value: string;
+  }>;
+}
+const selectPrefs: { [key: string]: SelectItem } = {
+  'dark-mode': {
+    title: t('dark_mode'),
+    options: [
+      {
+        label: t('auto'),
+        value: 'auto',
+      },
+      {
+        label: t('on'),
+        value: 'on',
+      },
+      {
+        label: t('off'),
+        value: 'off',
+      }
+    ]
+  }
 };
 
 export default class Options extends React.Component<OptionsProps, OptionsState> {
@@ -66,12 +93,11 @@ export default class Options extends React.Component<OptionsProps, OptionsState>
     }));
   }
 
-  handleChange(name: string, e: CheckboxEvent) {
-    const checked = Boolean(e.target.checked);
+  handleChange(name: string, value: string) {
     this.setState((prevState) => {
-      const newPrefs = { ...prevState.prefs, [name]: checked };
-      Api.setPrefs(name, checked);
-      prefs.set(name, checked);
+      const newPrefs = { ...prevState.prefs, [name]: value };
+      Api.setPrefs(name, value);
+      prefs.set(name, value);
       return { prefs: newPrefs };
     });
   }
@@ -81,15 +107,27 @@ export default class Options extends React.Component<OptionsProps, OptionsState>
       <section className={`section-options ${this.props.visible ? 'visible' : 'in-visible'}`}>
         <Card title={t('options')}>
           <Row gutter={8}>
-            {Object.entries(mapPrefToProps).map((it) => {
+            {Object.entries(checkPrefs).map((it) => {
               return (
                 <Col xl={12} span={24} key={it[0]} style={{ marginBottom: '8px' }}>
                   <Checkbox
-                    onChange={this.handleChange.bind(this, it[0])}
+                    onChange={e => this.handleChange(it[0], Boolean(e.target.checked))}
                     checked={this.state.prefs[it[0]]}
                   >
                     {it[1]}
                   </Checkbox>
+                </Col>
+              );
+            })}
+            {Object.entries(selectPrefs).map((it) => {
+              return (
+                <Col xl={12} span={24} key={it[0]} style={{ marginBottom: '8px' }}>
+                  <Select
+                    insetLabel={selectPrefs[1].title}
+                    optionList={selectPrefs[1].options}
+                    onChange={v => this.handleChange(it[0], v)}
+                    value={this.state.prefs[it[0]]}
+                  />
                 </Col>
               );
             })}

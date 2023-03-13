@@ -1,5 +1,6 @@
 import { convertToRule } from '@/share/core/ruleUtils';
 import { getDomain, t } from '@/share/core/utils';
+import { prefs } from '@/share/core/storage';
 import { Rule, RULE_MATCH_TYPE, RULE_TYPE } from '@/share/core/var';
 import '@/share/global.less';
 import { Nav } from '@douyinfe/semi-ui';
@@ -64,6 +65,30 @@ export default class Options extends React.Component<any, OptionsState> {
         },
       });
     }
+
+    // Get dark mode setting
+    prefs.ready(() => {
+      const darkMode = prefs.get('dark-mode');
+      switch (darkMode) {
+        case 'auto':
+          try {
+            const mql = window.matchMedia('(prefers-color-scheme: dark)');
+            mql.addListener(e => {
+              if (e.matches) {
+                document.body.setAttribute('theme-mode', 'dark');
+              }
+            });
+          } catch (e) {
+            // ignore
+          }
+          break;
+        case 'on':
+          document.body.setAttribute('theme-mode', 'dark');
+          break;
+        default:
+          return;
+      }
+    });
   }
 
   handleSwitch(data: OnSelectedData) {
@@ -135,7 +160,7 @@ export default class Options extends React.Component<any, OptionsState> {
         `}
         >
           <Nav
-            className="navbar"
+            className="navbar semi-always-dark"
             selectedKeys={[this.state.active]}
             onSelect={this.handleSwitch}
             items={[
