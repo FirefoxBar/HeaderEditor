@@ -1,0 +1,38 @@
+name: main
+
+on:
+  push:
+    branches:
+    - dev
+    - feat/react
+  pull_request:
+    branches:
+    - dev
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        node-version: [14.x]
+
+    steps:
+    - uses: actions/checkout@v2
+    - uses: pnpm/action-setup@v2
+      with:
+        version: 7
+    - name: Use Node.js ${{ matrix.node-version }}
+      uses: actions/setup-node@v3
+      with:
+        node-version: ${{ matrix.node-version }}
+        cache: 'pnpm'
+    - name: Install dependencies
+      run: pnpm i --frozen-lockfile
+    - name: Build
+      run: npm run build
+    - name: Upload bundles
+      uses: actions/upload-artifact@v3
+      with:
+        name: dist
+        path: dist
+

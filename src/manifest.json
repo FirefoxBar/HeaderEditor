@@ -20,18 +20,31 @@
 	],
 	"content_security_policy": "script-src 'self' 'unsafe-eval'; object-src 'self';",
 	"background": {
-		"scripts": ["background.js"]
+		"page": "background.html"
 	},
 	"browser_action": {
 		"default_icon": {
 			"128": "assets/images/128.png"
 		},
 		"default_title": "__MSG_extButtonTitle__",
-		"default_popup": "popup/popup.html"
+		"default_popup": "popup.html"
 	},
 	"default_locale": "en",
 	"options_ui": {
-		"page": "options/options.html",
+		"page": "options.html",
 		"open_in_tab": true
-	}
+  },
+  "__amo__applications": {
+    "gecko": {
+      "id": "headereditor-amo@addon.firefoxcn.net",
+      "strict_min_version": "52.0"
+    }
+  },
+  "__xpi__applications": {
+    "gecko": {
+      "id": "headereditor@addon.firefoxcn.net",
+      "strict_min_version": "52.0",
+      "update": "https://ext.firefoxcn.net/headereditor/install/update.json"
+    }
+  }
 }
