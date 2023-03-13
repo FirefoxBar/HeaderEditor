@@ -15,6 +15,10 @@
     "message": "Add \"Add anti-anti-hotlinking\" to right-click menu",
     "description": "A option. if enabled, a menu item well add to the right-click menu, Hotlinking: https://en.wikipedia.org/wiki/Inline_linking"
   },
+  "auto": {
+    "message": "Auto",
+    "description": "Auto detect dark mode"
+  },
   "batch_delete": {
     "message": "batch deletion",
     "description": "Button to delete multiple rules"
@@ -64,6 +68,10 @@
     "message": "Code can not be empty",
     "description": "Tips when a rule is custom function but code is empty"
   },
+  "dark_mode": {
+    "message": "Dark mode",
+    "description": "Dark mode select"
+  },
   "delete": {
     "message": "Delete",
     "description": "Delete button"
@@ -75,6 +83,10 @@
   "description": {
     "message": "Manage browser's requests, include modify the request headers and response headers, redirect requests, cancel requests",
     "description": "Extension description"
+  },
+  "disable": {
+    "message": "Disable",
+    "description": "disable"
   },
   "display_common_header": {
     "message": "Display common header",

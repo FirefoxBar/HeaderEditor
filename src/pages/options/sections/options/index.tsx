@@ -41,11 +41,11 @@ const selectPrefs: { [key: string]: SelectItem } = {
         value: 'auto',
       },
       {
-        label: t('on'),
+        label: t('enable'),
         value: 'on',
       },
       {
-        label: t('off'),
+        label: t('disable'),
         value: 'off',
       }
     ]
