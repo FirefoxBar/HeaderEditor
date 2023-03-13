@@ -64,7 +64,7 @@
         "description": "Dark mode select"
     },
     "dark_mode_help": {
-        "message": "Dark mode is experimental, refresh this page to see the effect",
+        "message": "暗黑魔兽为试验性特性，刷新页面查看效果",
         "description": "Dark help text"
     },
     "delete": {
