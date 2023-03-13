@@ -1,8 +1,7 @@
 git:
   filters:
-  - filter_type: dir
+  - filter_type: file
     file_format: CHROME
-    source_file_extension: json
     source_language: en
-    source_file_dir: public/_locales
-    translation_files_expression: '<lang>/message.json'
+    source_file: 'public/_locales/en/messages.json'
+    translation_files_expression: 'public/_locales/<lang>/messages.json'
