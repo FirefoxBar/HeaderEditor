@@ -64,7 +64,7 @@
         "description": "Dark mode select"
     },
     "dark_mode_help": {
-        "message": "暗黑魔兽为试验性特性，刷新页面查看效果",
+        "message": "暗黑模式为试验性特性，刷新页面查看效果",
         "description": "Dark help text"
     },
     "delete": {
@@ -80,7 +80,7 @@
         "description": "Extension description"
     },
     "disable": {
-        "message": "Disable",
+        "message": "禁用",
         "description": "disable"
     },
     "display_common_header": {
