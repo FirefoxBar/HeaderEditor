@@ -1,6 +1,6 @@
 # Header Editor
 
-[![Build Status](https://github.com/FirefoxBar/HeaderEditor/actions/workflows/main.yml/badge.svg)
+[![Build Status](https://github.com/FirefoxBar/HeaderEditor/actions/workflows/main.yml/badge.svg)](https://github.com/FirefoxBar/HeaderEditor/actions/workflows/main.yml)
 [![GitHub release](https://img.shields.io/github/release/FirefoxBar/HeaderEditor.svg)](https://github.com/FirefoxBar/HeaderEditor/releases)
 [![license](https://img.shields.io/github/license/FirefoxBar/HeaderEditor.svg)](https://github.com/FirefoxBar/HeaderEditor/blob/master/LICENSE)
 
