@@ -33,15 +33,20 @@ jobs:
 
   sync-locale:
     runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        node-version: [14.x]
     steps:
     - uses: actions/checkout@v2
-    - name: Generate files
-      run: |
-        mkdir ./_SYNC_LOCALE_
-        cp -r ./src/locale ./_SYNC_LOCALE_/original
-        cp ./transifex.yml ./_SYNC_LOCALE_
+    - name: Use Node.js ${{ matrix.node-version }}
+      uses: actions/setup-node@v3
+      with:
+        node-version: ${{ matrix.node-version }}
+    - name: Sort
+      run: node ./locale/sort-origin.js
     - name: Deploy
       uses: JamesIves/github-pages-deploy-action@4.1.4
       with:
         branch: sync-locale
-        folder: _SYNC_LOCALE_
+        folder: locale
+        commit-message: '[skip ci] sync locale'

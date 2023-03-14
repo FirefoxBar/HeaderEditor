@@ -1,0 +1,13 @@
+name: sync-locale
+
+on:
+  push:
+    branches:
+    - sync-locale
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    - uses: actions/checkout@v2
+    - name: Test
+      run: ls
