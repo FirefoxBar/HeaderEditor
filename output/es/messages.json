@@ -1,0 +1,387 @@
+{
+	"action": {
+		"message": "Acción",
+		"description": "Table title in management page"
+	},
+	"add": {
+		"message": "Añadir",
+		"description": "Button to add somethings"
+	},
+	"add_anti_hot_link": {
+		"message": "Add a anti-anti-hotlinking rule",
+		"description": "Right-click menu to add a rule"
+	},
+	"add_anti_hot_link_to_menu": {
+		"message": "Add \"Add anti-anti-hotlinking\" to right-click menu",
+		"description": "A option. if enabled, a menu item well add to the right-click menu, Hotlinking: https://en.wikipedia.org/wiki/Inline_linking"
+	},
+	"auto": {
+		"message": "Auto",
+		"description": "Auto detect dark mode"
+	},
+	"batch_delete": {
+		"message": "batch deletion",
+		"description": "Button to delete multiple rules"
+	},
+	"batch_mode": {
+		"message": "Batch operation",
+		"description": "Button to enter batch operation mode"
+	},
+	"cancel": {
+		"message": "Cancelar",
+		"description": "Button to close modal without save"
+	},
+	"choose": {
+		"message": "Escoger",
+		"description": "Choose a group"
+	},
+	"clone": {
+		"message": "Duplicar",
+		"description": "Clone rule"
+	},
+	"cloud_backup": {
+		"message": "Copia de seguridad en línea",
+		"description": "Cloud backup button"
+	},
+	"cloud_backup_at": {
+		"message": "Última copia de seguridad del $date$",
+		"description": "Display last backup time if any backup found",
+		"placeholders": {
+			"date": {
+				"content": "$1"
+			}
+		}
+	},
+	"cloud_no_backup": {
+		"message": "No existe ninguna copia de seguridad",
+		"description": "Display if no backup found"
+	},
+	"cloud_over_limit": {
+		"message": "Número de copias de seguridad excedido",
+		"description": "Message display when exceeded backup size limit"
+	},
+	"code": {
+		"message": "Código",
+		"description": "Label for code section in modal"
+	},
+	"code_empty": {
+		"message": "El código no puede estar vacío",
+		"description": "Tips when a rule is custom function but code is empty"
+	},
+	"dark_mode": {
+		"message": "Dark mode",
+		"description": "Dark mode select"
+	},
+	"dark_mode_help": {
+		"message": "Dark mode is experimental, refresh this page to see the effect",
+		"description": "Dark help text"
+	},
+	"delete": {
+		"message": "Eliminar",
+		"description": "Delete button"
+	},
+	"delete_confirm": {
+		"message": "¿Quiere eliminar estas reglas?",
+		"description": "A confirmation box shows when user want to delete rules"
+	},
+	"description": {
+		"message": "Manage browser's requests, include modify the request headers and response headers, redirect requests, cancel requests",
+		"description": "Extension description"
+	},
+	"disable": {
+		"message": "Disable",
+		"description": "disable"
+	},
+	"display_common_header": {
+		"message": "Display common header",
+		"description": "An option to enable header auto-complete when editing rules"
+	},
+	"download": {
+		"message": "Descarga",
+		"description": "Download button"
+	},
+	"download_rule": {
+		"message": "Regla de descarga",
+		"description": "Title of the rule download area"
+	},
+	"edit": {
+		"message": "Editar",
+		"description": "Modal title for editing a rule"
+	},
+	"enable": {
+		"message": "Habilitar",
+		"description": "Switch one rule on/off in table title"
+	},
+	"enable_he": {
+		"message": "Enable Header Editor",
+		"description": "If not checked, all rules will take no effects"
+	},
+	"encoding": {
+		"message": "Encoding",
+		"description": "Label for responseBody's character encoding"
+	},
+	"enter_group_name": {
+		"message": "Favor de ingresar un nombre de grupo",
+		"description": "Prompt the user when the user click add group button"
+	},
+	"excludeRule": {
+		"message": "Regla de exclusión",
+		"description": "Label for exclude rule in modal"
+	},
+	"exec_function": {
+		"message": "Función personalizado",
+		"description": "Custom function in execute type"
+	},
+	"exec_normal": {
+		"message": "normal",
+		"description": "Normal option in execute type"
+	},
+	"exec_type": {
+		"message": "Execute type",
+		"description": "Label for execute type in modal"
+	},
+	"export": {
+		"message": "Exportar",
+		"description": "Button to export all rules as a json file"
+	},
+	"export_and_import": {
+		"message": "Exportar e importar",
+		"description": "The tab title in the top"
+	},
+	"extButtonTitle": {
+		"message": "Header Editor",
+		"description": "Toolbar tooltip"
+	},
+	"extName": {
+		"message": "Header Editor",
+		"description": "Extension name"
+	},
+	"group": {
+		"message": "Grupo",
+		"description": "Group button"
+	},
+	"headerName": {
+		"message": "Header name",
+		"description": "Label for header name in modal"
+	},
+	"headerValue": {
+		"message": "Header value",
+		"description": "Label for header value in modal"
+	},
+	"header_empty": {
+		"message": "Header name can not be empty",
+		"description": "Message for saving a rule without header name"
+	},
+	"help": {
+		"message": "Ayuda",
+		"description": "Help link"
+	},
+	"import": {
+		"message": "Importar",
+		"description": "Button to import rules from a file"
+	},
+	"import_drop": {
+		"message": "No importar",
+		"description": "do not import a rule"
+	},
+	"import_new": {
+		"message": "Añadir",
+		"description": "Add a new rule"
+	},
+	"import_override": {
+		"message": "Overrides existing",
+		"description": "Overrides already existing rule"
+	},
+	"import_success": {
+		"message": "Importación exitosa",
+		"description": "Displays when import successfully"
+	},
+	"include_header_in_custom_function": {
+		"message": "Include request headers in custom function",
+		"description": "An option to enable this feature, for more info, see wiki in GitHub"
+	},
+	"manage": {
+		"message": "Manerar",
+		"description": "Manage rules, options and more"
+	},
+	"manage_collapse_group": {
+		"message": "Colapsar grupos por predeterminado",
+		"description": "All groups will be collapsed when open the management page"
+	},
+	"matchRule": {
+		"message": "Match rules",
+		"description": "Label for match rule in modal"
+	},
+	"matchType": {
+		"message": "Match type",
+		"description": "Label for match type in modal"
+	},
+	"match_all": {
+		"message": "Todo",
+		"description": "All option in modal"
+	},
+	"match_domain": {
+		"message": "Dominio",
+		"description": "Domain option in modal"
+	},
+	"match_prefix": {
+		"message": "URL de prefijo",
+		"description": "URL prefix option in modal"
+	},
+	"match_regexp": {
+		"message": "Expresión regular",
+		"description": "Regular expression option in modal"
+	},
+	"match_rule_empty": {
+		"message": "Match rule can not be empty",
+		"description": "Message for saving a rule without match rule"
+	},
+	"match_url": {
+		"message": "URL",
+		"description": "URL option in modal"
+	},
+	"modify_body": {
+		"message": "Modify response body (only supports Firefox)",
+		"description": "Option to enable/disable modify body"
+	},
+	"name": {
+		"message": "Nombre",
+		"description": "Label for name in modal"
+	},
+	"name_empty": {
+		"message": "No puede haber nombres vacíos",
+		"description": "Message for saving a rule without name"
+	},
+	"ok": {
+		"message": "OK",
+		"description": "OK Button"
+	},
+	"options": {
+		"message": "Opciones",
+		"description": "Heading for options section on manage page."
+	},
+	"pack_up_or_unfurl": {
+		"message": "Pack up or unfurl group",
+		"description": "Button to pack up or unfurl a group"
+	},
+	"redirectTo": {
+		"message": "Redireccionar a",
+		"description": "Label for redirect to in modal"
+	},
+	"redirect_empty": {
+		"message": "Redirect target can not be empty",
+		"description": "Message for saving a rule without redirect target if rule type is redirect"
+	},
+	"rename": {
+		"message": "Renombrar",
+		"description": "Rename group"
+	},
+	"ruleType": {
+		"message": "Tipo de regla",
+		"description": "Label for rule type in modal"
+	},
+	"rule_cancel": {
+		"message": "Cancelar solicitud",
+		"description": "Cancel request option in modal"
+	},
+	"rule_list": {
+		"message": "Rules list",
+		"description": "Title of the rules list"
+	},
+	"rule_modifyReceiveBody": {
+		"message": "Modify response body",
+		"description": "Response body option in modal"
+	},
+	"rule_modifyReceiveHeader": {
+		"message": "Modify response header",
+		"description": "Response header option in modal"
+	},
+	"rule_modifySendHeader": {
+		"message": "Modify request header",
+		"description": "Request header option in modal"
+	},
+	"rule_redirect": {
+		"message": "Redirect request",
+		"description": "Redirect option in modal"
+	},
+	"rules_no_effect_for_he": {
+		"message": "Rules take no effect on Header Editor",
+		"description": "If checked, all rules will take no effect on pages in Header Editor"
+	},
+	"save": {
+		"message": "Guardar",
+		"description": "Button to save a rule"
+	},
+	"save_to": {
+		"message": "Guardar en...",
+		"description": "Save rule to"
+	},
+	"saved": {
+		"message": "Guardado",
+		"description": "Displays when rule saved successfully"
+	},
+	"select_all": {
+		"message": "Seleccionar/Deseleccionar todo",
+		"description": "Button to select or unselect all rules in batch management mode"
+	},
+	"select_or_download": {
+		"message": "De favor, importe desde un archivo local o por reglas de descarga",
+		"description": "A notice in import card"
+	},
+	"share": {
+		"message": "Compartir",
+		"description": "Share button title"
+	},
+	"suggested_group": {
+		"message": "Grupo sugerido",
+		"description": "The suggested group name provided by the rule author"
+	},
+	"test_custom_code": {
+		"message": "Does not support testing custom code now",
+		"description": "Label to test a redirect rule"
+	},
+	"test_exclude": {
+		"message": "Matched but excluded",
+		"description": "Label to test a redirect rule"
+	},
+	"test_invalid_regexp": {
+		"message": "La expresión regular es inválida",
+		"description": "Label to test a redirect rule"
+	},
+	"test_mismatch": {
+		"message": "Mismatch",
+		"description": "Label to test a redirect rule"
+	},
+	"test_url": {
+		"message": "Prueba (no se guardará)",
+		"description": "Label to test a redirect rule"
+	},
+	"third_party_rules": {
+		"message": "Third party rules",
+		"description": "Link to find more third party rules"
+	},
+	"ungrouped": {
+		"message": "Desagrupado ",
+		"description": "The default group name"
+	},
+	"upload": {
+		"message": "Subir",
+		"description": "Upload button"
+	},
+	"url_cloud_backup": {
+		"message": "https://he.firefoxcn.net/en/cloud-backup.html",
+		"description": "URL of documentions, if not translated, please use english version"
+	},
+	"url_help": {
+		"message": "https://he.firefoxcn.net/en/guide.html",
+		"description": "URL of documentions, if not translated, please use english version"
+	},
+	"url_third_party_rules": {
+		"message": "https://he.firefoxcn.net/en/third-party-rules.html",
+		"description": "URL of documentions, if not translated, please use english version"
+	},
+	"view": {
+		"message": "Ver",
+		"description": "View rule or a link"
+	}
+}
