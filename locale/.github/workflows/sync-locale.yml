@@ -5,6 +5,10 @@ on:
     branches:
     - sync-locale
 
+concurrency:
+  group: ${{ github.action }}-${{ github.ref }}
+  cancel-in-progress: true
+
 jobs:
   locale:
     runs-on: ubuntu-latest

@@ -5,6 +5,10 @@ on:
     branches:
     - dev
 
+concurrency:
+  group: ${{ github.action }}-${{ github.ref }}
+  cancel-in-progress: true
+
 jobs:
   build:
     runs-on: ubuntu-latest
@@ -30,7 +34,6 @@ jobs:
       with:
         name: dist
         path: dist
-
   sync-locale:
     runs-on: ubuntu-latest
     strategy:
