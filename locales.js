@@ -89,8 +89,14 @@ function main() {
     }
   }
 
-  // Copy english
+  // Copy original language
   const files = fs.readdirSync(originalDir);
+  const originalOutput = path.join(outputDir, ORIGINAL_NAME);
+  if (!fs.existsSync(originalOutput)) {
+    fs.mkdirSync(originalOutput, {
+      recursive: true,
+    });
+  }
   for (const file of files) {
     const basicLanguage = getBasicLanguage(file);
     // sort
@@ -99,7 +105,7 @@ function main() {
       // remove description
       delete currentLanguage[k].description;
     });
-    fs.writeFileSync(path.join(outputDir, ORIGINAL_NAME, file), JSON.stringify(currentLanguage), {
+    fs.writeFileSync(path.join(originalOutput, file), JSON.stringify(currentLanguage), {
       encoding: "utf8"
     });
     console.log("[" + file + "] write ok");
