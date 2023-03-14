@@ -1,6 +1,10 @@
 const fs = require('fs');
 const path = require('path');
 
+const ORIGINAL_NAME = 'en';
+const originalDir = path.join(__dirname, 'original');
+const outputDir = path.join(__dirname, 'output');
+
 function ksort(obj) {
   let objKeys = Object.keys(obj);
   objKeys.sort((k1, k2) => {
@@ -28,14 +32,13 @@ function readJSON(filePath) {
 let _basicLanguage = {};
 function getBasicLanguage(fileName) {
   if (typeof _basicLanguage[fileName] === 'undefined') {
-    _basicLanguage[fileName] = readJSON(path.join(__dirname, 'original', fileName));
+    _basicLanguage[fileName] = readJSON(path.join(originalDir, fileName));
   }
   return _basicLanguage[fileName];
 }
 
 // Get default language
 function main() {
-  const outputDir = path.join(__dirname, 'output');
   const dir = fs.readdirSync(outputDir);
 
   for (const lang of dir) {
@@ -48,7 +51,7 @@ function main() {
     }
 
     // get detail messages
-    const files = fs.readdirSync(outputDir);
+    const files = fs.readdirSync(langDir);
     for (const file of files) {
       if (!file.endsWith('.json')) {
         console.log("[" + file + "] skip file");
@@ -84,6 +87,22 @@ function main() {
       });
       console.log("[" + file + "] write ok");
     }
+  }
+
+  // Copy english
+  const files = fs.readdirSync(originalDir);
+  for (const file of files) {
+    const basicLanguage = getBasicLanguage(file);
+    // sort
+    const currentLanguage = ksort(basicLanguage);
+    Object.keys(currentLanguage).forEach(k => {
+      // remove description
+      delete currentLanguage[k].description;
+    });
+    fs.writeFileSync(path.join(langDir, ORIGINAL_NAME, file), JSON.stringify(currentLanguage), {
+      encoding: "utf8"
+    });
+    console.log("[" + file + "] write ok");
   }
 }
 
