@@ -99,7 +99,7 @@ function main() {
       // remove description
       delete currentLanguage[k].description;
     });
-    fs.writeFileSync(path.join(langDir, ORIGINAL_NAME, file), JSON.stringify(currentLanguage), {
+    fs.writeFileSync(path.join(outputDir, ORIGINAL_NAME, file), JSON.stringify(currentLanguage), {
       encoding: "utf8"
     });
     console.log("[" + file + "] write ok");
