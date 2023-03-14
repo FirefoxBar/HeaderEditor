@@ -49,4 +49,5 @@ jobs:
       with:
         branch: sync-locale
         folder: locale
+        clean: false
         commit-message: '[skip ci] sync locale'

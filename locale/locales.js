@@ -1,6 +1,10 @@
 const fs = require('fs');
 const path = require('path');
 
+const ORIGINAL_NAME = 'en';
+const originalDir = path.join(__dirname, 'original');
+const outputDir = path.join(__dirname, 'output');
+
 function ksort(obj) {
   let objKeys = Object.keys(obj);
   objKeys.sort((k1, k2) => {
@@ -28,14 +32,13 @@ function readJSON(filePath) {
 let _basicLanguage = {};
 function getBasicLanguage(fileName) {
   if (typeof _basicLanguage[fileName] === 'undefined') {
-    _basicLanguage[fileName] = readJSON(path.join(__dirname, 'original', fileName));
+    _basicLanguage[fileName] = readJSON(path.join(originalDir, fileName));
   }
   return _basicLanguage[fileName];
 }
 
 // Get default language
 function main() {
-  const outputDir = path.join(__dirname, 'output');
   const dir = fs.readdirSync(outputDir);
 
   for (const lang of dir) {
@@ -48,14 +51,14 @@ function main() {
     }
 
     // get detail messages
-    const files = fs.readdirSync(outputDir);
+    const files = fs.readdirSync(langDir);
     for (const file of files) {
       if (!file.endsWith('.json')) {
-        console.log("[" + file + "] skip file");
+        console.log("[" + lang + "/" + file + "] skip file");
         continue;
       }
 
-      console.log("[" + file + "] read file");
+      console.log("[" + lang + "/" + file + "] read file");
       const basicLanguage = getBasicLanguage(file);
       const orignalCurrentLanguage = readJSON(path.join(langDir, file));
       // sort
@@ -64,12 +67,12 @@ function main() {
       Object.keys(basicLanguage).forEach(k => {
         // add not exists
         if (typeof currentLanguage[k] === 'undefined') {
-          console.log("[" + file + "] add default locale: " + k);
+          console.log("[" + lang + "/" + file + "] add default locale: " + k);
           currentLanguage[k] = basicLanguage[k];
         }
         // add placeholder
         if (basicLanguage[k].placeholders) {
-          console.log("[" + file + "] add placeholder: " + k);
+          console.log("[" + lang + "/" + file + "] add placeholder: " + k);
           currentLanguage[k].placeholders = basicLanguage[k].placeholders;
         }
       });
@@ -82,8 +85,30 @@ function main() {
       fs.writeFileSync(path.join(langDir, file), JSON.stringify(currentLanguage), {
         encoding: "utf8"
       });
-      console.log("[" + file + "] write ok");
+      console.log("[" + lang + "/" + file + "] write ok");
     }
+  }
+
+  // Copy original language
+  const files = fs.readdirSync(originalDir);
+  const originalOutput = path.join(outputDir, ORIGINAL_NAME);
+  if (!fs.existsSync(originalOutput)) {
+    fs.mkdirSync(originalOutput, {
+      recursive: true,
+    });
+  }
+  for (const file of files) {
+    const basicLanguage = getBasicLanguage(file);
+    // sort
+    const currentLanguage = ksort(basicLanguage);
+    Object.keys(currentLanguage).forEach(k => {
+      // remove description
+      delete currentLanguage[k].description;
+    });
+    fs.writeFileSync(path.join(originalOutput, file), JSON.stringify(currentLanguage), {
+      encoding: "utf8"
+    });
+    console.log("[" + ORIGINAL_NAME + "/" + file + "] write ok");
   }
 }
 
