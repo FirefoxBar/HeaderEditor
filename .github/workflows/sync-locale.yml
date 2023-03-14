@@ -10,17 +10,27 @@ jobs:
     runs-on: ubuntu-latest
     strategy:
       matrix:
-        node-version: [14.x]
+        node-version: [16.x]
     steps:
-    - uses: actions/checkout@v2
+    - uses: actions/checkout@v3
     - name: Use Node.js ${{ matrix.node-version }}
       uses: actions/setup-node@v3
       with:
         node-version: ${{ matrix.node-version }}
     - name: Format output
       run: node ./locales.js
-    - name: Upload
-      uses: actions/upload-artifact@v3
+    - name: Checkout dev branch
+      uses: actions/checkout@v3
       with:
-        name: output
-        path: output
+        ref: 'dev'
+        path: 'dev'
+    - name: Copy new locale
+      run: |
+        rm -rf ./dev/public/_locales
+        cp -r ./output ./dev/public/_locales
+    - name: Deploy
+      uses: JamesIves/github-pages-deploy-action@4.1.4
+      with:
+        branch: dev-locale
+        folder: dev
+        commit-message: '[skip ci] sync locale'
