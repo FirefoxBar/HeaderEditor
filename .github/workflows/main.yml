@@ -48,7 +48,7 @@ jobs:
     - name: Sort
       run: node ./locale/sort-origin.js
     - name: Deploy
-      uses: JamesIves/github-pages-deploy-action@4
+      uses: JamesIves/github-pages-deploy-action@v4
       with:
         branch: sync-locale
         folder: locale
