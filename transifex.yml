@@ -3,5 +3,5 @@ git:
   - filter_type: file
     file_format: CHROME
     source_language: en
-    source_file: 'public/_locales/en/messages.json'
-    translation_files_expression: 'public/_locales/<lang>/messages.json'
+    source_file: 'original/messages.json'
+    translation_files_expression: 'output/<lang>/messages.json'
