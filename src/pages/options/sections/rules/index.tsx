@@ -11,8 +11,7 @@ import { getTableName, t } from '@/share/core/utils';
 import { InitdRule, Rule, TABLE_NAMES, TABLE_NAMES_TYPE } from '@/share/core/var';
 import { IconPlusCircle } from '@douyinfe/semi-icons';
 import { Button, ButtonGroup, Modal, Space, Spin, Typography } from '@douyinfe/semi-ui';
-import { css } from '@emotion/css';
-import classNames from 'classnames';
+import { cx, css } from '@emotion/css';
 import * as React from 'react';
 import Float from './float';
 import RuleCard from './rule-card';
@@ -449,7 +448,7 @@ export default class Rules extends React.Component<RulesProps, RulesState> {
 
     return (
       <section
-        className={classNames('section-rules', {
+        className={cx('section-rules', {
           visible: this.props.visible,
           'in-visible': !this.props.visible,
         })}

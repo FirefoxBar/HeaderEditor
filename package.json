@@ -26,7 +26,6 @@
     "@emotion/css": "^11.10.6",
     "@ice/runtime": "^0.1.2",
     "@monaco-editor/react": "^4.4.6",
-    "classnames": "^2.2.6",
     "create-app-shared": "^1.2.6",
     "dayjs": "^1.9.5",
     "eventemitter3": "^4.0.0",
@@ -48,7 +47,6 @@
   "devDependencies": {
     "@iceworks/spec": "^1.0.0",
     "@types/chrome": "^0.0.72",
-    "@types/classnames": "^2.2.11",
     "@types/lodash-es": "^4.17.6",
     "@types/prismjs": "^1.16.0",
     "@types/react": "^16.9.16",
