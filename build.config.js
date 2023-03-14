@@ -10,8 +10,12 @@ module.exports = {
   },
   mpa: true,
   vendor: false,
+  browserslist: {
+    chrome: 64,
+    firefox: 69,
+    edge: 79,
+  },
   plugins: [
-    'build-plugin-fusion',
     [
       'build-plugin-css-assets-local',
       {

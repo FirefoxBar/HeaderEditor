@@ -57,7 +57,6 @@
     "@types/webextension-polyfill": "^0.10.0",
     "babel-plugin-import": "^1.13.0",
     "build-plugin-css-assets-local": "^0.1.0",
-    "build-plugin-fusion": "^0.1.15",
     "copy-webpack-plugin": "^4.5.2",
     "cross-env": "^5.2.0",
     "eslint": "^7.30.0",
