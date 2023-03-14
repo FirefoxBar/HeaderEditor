@@ -5,6 +5,7 @@ const token = process.env.GITHUB_TOKEN;
 const baseURL = process.env.GITHUB_API_URL + '/repos/' + process.env.GITHUB_REPOSITORY;
 const request = axios.create({
   baseURL: baseURL,
+  validateStatus: () => true,
 });
 
 request.defaults.headers.common['Accept'] = 'application/vnd.github+json';
@@ -30,7 +31,7 @@ async function main() {
   if (pulls.data.length > 0) {
     // already has PR
     const item = pulls.data[0];
-    console.log("PR already exists: " + item.url);
+    console.log("PR already exists: " + item.html_url);
     return;
   }
 
@@ -43,7 +44,7 @@ async function main() {
   }));
 
   if (create.status === 201) {
-    console.log("PR created: " + create.data.url);
+    console.log("PR created: " + create.data.html_url);
   } else {
     console.log("PR created failed: " + create.status);
   }
