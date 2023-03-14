@@ -38,11 +38,10 @@ jobs:
     - name: Generate files
       run: |
         mkdir ./_SYNC_LOCALE_
-        cp -r ./src/locale ./_SYNC_LOCALE_
+        cp -r ./src/locale ./_SYNC_LOCALE_/original
         cp ./transifex.yml ./_SYNC_LOCALE_
     - name: Deploy
       uses: JamesIves/github-pages-deploy-action@4.1.4
       with:
         branch: sync-locale
         folder: _SYNC_LOCALE_
-        target-folder: original
