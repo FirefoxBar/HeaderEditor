@@ -64,7 +64,7 @@
         "description": "Dark mode select"
     },
     "dark_mode_help": {
-        "message": "深色模式為實驗性功能，請重新整理頁面確認效果",
+        "message": "深色模式為實驗性功能，重新整理頁面以確認效果",
         "description": "Dark help text"
     },
     "delete": {
