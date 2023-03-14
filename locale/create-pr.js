@@ -35,14 +35,12 @@ async function main() {
   }
 
   // Create new PR
-  const create = await request.post('/pulls', {
-    data: JSON.stringify({
-      title: '[locale] update locales',
-      body: '',
-      head: 'dev-locale',
-      base: 'dev',
-    })
-  });
+  const create = await request.post('/pulls', JSON.stringify({
+    title: '[locale] update locales',
+    body: '',
+    head: 'dev-locale',
+    base: 'dev',
+  }));
 
   if (create.status === 201) {
     console.log("PR created: " + create.data.url);
