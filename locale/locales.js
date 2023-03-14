@@ -1,7 +1,5 @@
 const fs = require('fs');
 const path = require('path');
-const request = require('request');
-const merge = require('merge');
 
 function ksort(obj) {
   let objKeys = Object.keys(obj);

@@ -6,8 +6,21 @@ on:
     - sync-locale
 
 jobs:
-  build:
+  locale:
     runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        node-version: [14.x]
+    steps:
     - uses: actions/checkout@v2
-    - name: Test
-      run: ls
+    - name: Use Node.js ${{ matrix.node-version }}
+      uses: actions/setup-node@v3
+      with:
+        node-version: ${{ matrix.node-version }}
+    - name: Format output
+      run: node ./locales.js
+    - name: Upload
+      uses: actions/upload-artifact@v3
+      with:
+        name: output
+        path: output
