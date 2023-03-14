@@ -7,14 +7,6 @@
 		"message": "Adicionar",
 		"description": "Button to add somethings"
 	},
-	"add_anti_hot_link": {
-		"message": "Adicione uma regra de link anti-roubo",
-		"description": "Right-click menu to add a rule"
-	},
-	"add_anti_hot_link_to_menu": {
-		"message": "Adicione \"Adicionar link anti-roubo\" ao botão direito no menu",
-		"description": "A option. if enabled, a menu item well add to the right-click menu, Hotlinking: https://en.wikipedia.org/wiki/Inline_linking"
-	},
 	"auto": {
 		"message": "Auto",
 		"description": "Auto detect dark mode"
