@@ -21,37 +21,57 @@ function ksort(obj) {
   return result;
 }
 
+function readJSON(filePath) {
+  return JSON.parse(fs.readFileSync(filePath, {
+    encoding: "utf8"
+  }));
+}
+
+let _basicLanguage = {};
+function getBasicLanguage(fileName) {
+  if (typeof _basicLanguage[fileName] === 'undefined') {
+    _basicLanguage[fileName] = readJSON(path.join(__dirname, 'original', fileName));
+  }
+  return _basicLanguage[fileName];
+}
+
 // Get default language
 function main() {
   const outputDir = path.join(__dirname, 'output');
   const dir = fs.readdirSync(outputDir);
 
-  // read basic language
-  const basicLanguage = JSON.parse(fs.readFileSync(path.join(__dirname, 'original/messages.json'), {
-    encoding: "utf8"
-  }));
-
   for (const lang of dir) {
     const langDir = path.join(outputDir, lang);
+    // skip not a dir
+    const stat = fs.statSync(langDir);
+    if (!stat.isDirectory()) {
+      console.log("[" + lang + "] skip");
+      continue;
+    }
+
+    // get detail messages
     const files = fs.readdirSync(outputDir);
     for (const file of files) {
       if (!file.endsWith('.json')) {
+        console.log("[" + file + "] skip file");
         continue;
       }
-      let currentLanguage = JSON.parse(fs.readFileSync(path.join(langDir, file), {
-        encoding: "utf8"
-      }));
 
+      console.log("[" + file + "] read file");
+      const basicLanguage = getBasicLanguage(file);
+      const orignalCurrentLanguage = readJSON(path.join(langDir, file));
       // sort
-      currentLanguage = ksort(currentLanguage);
+      const currentLanguage = ksort(orignalCurrentLanguage);
 
       Object.keys(basicLanguage).forEach(k => {
         // add not exists
         if (typeof currentLanguage[k] === 'undefined') {
+          console.log("[" + file + "] add default locale: " + k);
           currentLanguage[k] = basicLanguage[k];
         }
         // add placeholder
         if (basicLanguage[k].placeholders) {
+          console.log("[" + file + "] add placeholder: " + k);
           currentLanguage[k].placeholders = basicLanguage[k].placeholders;
         }
       });
@@ -64,6 +84,7 @@ function main() {
       fs.writeFileSync(path.join(langDir, file), JSON.stringify(currentLanguage), {
         encoding: "utf8"
       });
+      console.log("[" + file + "] write ok");
     }
   }
 }
