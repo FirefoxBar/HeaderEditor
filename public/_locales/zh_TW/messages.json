@@ -80,7 +80,7 @@
         "description": "Extension description"
     },
     "disable": {
-        "message": "Disable",
+        "message": "停用",
         "description": "disable"
     },
     "display_common_header": {
