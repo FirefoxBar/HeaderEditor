@@ -41,31 +41,6 @@ export default class Options extends React.Component<any, OptionsState> {
   }
 
   componentDidMount() {
-    // init anti-hot-link
-    const query = parse(window.location.search.substr(1));
-
-    if (query.action && query.action === 'add-anti-hot-link') {
-      this.setState({
-        editShow: true,
-        editRule: {
-          id: -1,
-          enable: true,
-          name: '',
-          ruleType: RULE_TYPE.MODIFY_SEND_HEADER,
-          matchType: RULE_MATCH_TYPE.DOMAIN,
-          pattern: getDomain(query.url as string) || '',
-          isFunction: false,
-          code: '',
-          exclude: '',
-          group: t('ungrouped'),
-          action: {
-            name: 'referer',
-            value: '',
-          },
-        },
-      });
-    }
-
     // Get dark mode setting
     prefs.ready(() => {
       const darkMode = prefs.get('dark-mode');

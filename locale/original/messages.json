@@ -7,14 +7,6 @@
     "message": "Add",
     "description": "Button to add somethings"
   },
-  "add_anti_hot_link": {
-    "message": "Add a anti-anti-hotlinking rule",
-    "description": "Right-click menu to add a rule"
-  },
-  "add_anti_hot_link_to_menu": {
-    "message": "Add \"Add anti-anti-hotlinking\" to right-click menu",
-    "description": "A option. if enabled, a menu item well add to the right-click menu, Hotlinking: https://en.wikipedia.org/wiki/Inline_linking"
-  },
   "auto": {
     "message": "Auto",
     "description": "Auto detect dark mode"

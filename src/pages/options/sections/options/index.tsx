@@ -18,7 +18,6 @@ interface OptionsState {
 const checkPrefs: { [key: string]: string } = {
   'manage-collapse-group': t('manage_collapse_group'),
   'exclude-he': t('rules_no_effect_for_he'),
-  'add-hot-link': t('add_anti_hot_link_to_menu'),
   'show-common-header': t('display_common_header'),
   'include-headers': t('include_header_in_custom_function'),
   'modify-body': t('modify_body'),

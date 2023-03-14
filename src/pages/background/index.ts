@@ -1,5 +1,4 @@
 import createApiHandler from './apiHandler';
-import initHotLinkMenu from './hotLinkMenu';
 import createLogHandler from './logHandler';
 import createRequestHandler from './requestHandler';
 import './upgrade';
@@ -10,4 +9,3 @@ window.IS_BACKGROUND = true;
 createLogHandler();
 createApiHandler();
 createRequestHandler();
-initHotLinkMenu();

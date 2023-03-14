@@ -26,13 +26,9 @@ Header Editor require those permissions:
 
 * webRequest, webRequestBlocking, _all_urls_: Modify the requests
 
-* contextMenus: Add anti-hot-link to right-click menu
-
 * storage, unlimitedStorage: Storage rules and settings
 
-* downloads: Export rules
-
-* unsafe-eval: Custom function require it, code at [src/options/App.vue#L657](https://github.com/FirefoxBar/HeaderEditor/blob/master/src/options/App.vue#L657) and [src/core/rules.js#L23](https://github.com/FirefoxBar/HeaderEditor/blob/master/src/core/rules.js#L23) (The location may change in the future, you can search for the newest location by `new Function`)
+* unsafe-eval: Custom function require it, code at [src/share/core/ruleUtils.ts#L8](https://github.com/FirefoxBar/HeaderEditor/blob/dev/src/share/core/ruleUtils.ts#L8) (The location may change in the future, you can search for the newest location by `new Function`)
 
 ## Contribution
 
@@ -45,27 +41,17 @@ Thanks to the following personnel for their contribution:
 
 ### Translation
 
-English: Please submit a issue or pull request for file `build/locales/original.json`
+English: Please submit a issue or pull request for file `locale/original/messages.json`
 
-Other: [Transifex](https://www.transifex.com/sytec/header-editor/)
+Other language: Please translate them on [Transifex](https://www.transifex.com/sytec/header-editor/)
 
-The following are language maintainers, Thanks for their contribution. If you have any advice on translations, please contact the maintainer(s) directly.
-
-* en: [ShuangYa](https://github.com/sylingd)
-
-* zh-CN: [ShuangYa](https://github.com/sylingd)
-
-* zh-TW: [zhtw2013](https://github.com/zhtw2013)
-
-* pt-BR: [Kassio Cruz](https://www.transifex.com/user/profile/kassiocs/)
-
-* pl: [Pabli](https://github.com/pabli24)
+Please note that some languages (such as zh-Hans) will not be translated on transifex because the browser does not support them, click [here](https://developer.chrome.com/docs/webstore/i18n/#choosing-locales-to-support) to view full list
 
 ## How to build
 
 #### Prepare
 
-* Install node and pnpm.
+* Install node (14+) and pnpm.
 
 * Clone this project, or download the source code and extract it.
 
@@ -85,6 +71,6 @@ The following are language maintainers, Thanks for their contribution. If you ha
 
 ## Licenses
 
-Copyright © 2017-2023 [FirefoxBar Team](http://team.firefoxcn.net)
+Copyright © 2017-2023 [FirefoxBar Team](https://team.firefoxcn.net)
 
 Open source licensed under [GPLv2](LICENSE).

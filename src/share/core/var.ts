@@ -65,7 +65,6 @@ export interface InitdRule extends Rule {
 export interface PrefValue {
   [key: string]: any;
   'disable-all': boolean;
-  'add-hot-link': boolean;
   'manage-collapse-group': boolean; // Collapse groups
   'exclude-he': boolean; // rules take no effect on HE or not
   'show-common-header': boolean;
@@ -77,7 +76,6 @@ export interface PrefValue {
 
 export const defaultPrefValue: PrefValue = {
   'disable-all': false,
-  'add-hot-link': true,
   'manage-collapse-group': true,
   'exclude-he': true,
   'show-common-header': true,
