@@ -32,7 +32,7 @@ jobs:
       run: |
         rm -rf ./dev/public/_locales
         cp -r ./output ./dev/public/_locales
-    - name: Deploy
+    - name: Deploy to dev-locale
       run: |
         cd ./dev
         git config user.name 'github-actions[bot]'
@@ -40,3 +40,9 @@ jobs:
         git add --all .
         git commit -m '[skip ci] sync locale' --quiet --no-verify
         git push --force origin dev:dev-locale
+    - name: Create PR
+      env:
+        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      run: |
+        npm i axios
+        node ./create-pr.js
