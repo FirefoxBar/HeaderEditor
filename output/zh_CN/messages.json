@@ -7,14 +7,6 @@
 		"message": "添加",
 		"description": "Button to add somethings"
 	},
-	"add_anti_hot_link": {
-		"message": "添加反-防盗链规则",
-		"description": "Right-click menu to add a rule"
-	},
-	"add_anti_hot_link_to_menu": {
-		"message": "添加“添加反防盗链”到右键菜单",
-		"description": "A option. if enabled, a menu item well add to the right-click menu, Hotlinking: https://en.wikipedia.org/wiki/Inline_linking"
-	},
 	"auto": {
 		"message": "自动",
 		"description": "Auto detect dark mode"
