@@ -54,11 +54,11 @@ function main() {
     const files = fs.readdirSync(langDir);
     for (const file of files) {
       if (!file.endsWith('.json')) {
-        console.log("[" + file + "] skip file");
+        console.log("[" + lang + "/" + file + "] skip file");
         continue;
       }
 
-      console.log("[" + file + "] read file");
+      console.log("[" + lang + "/" + file + "] read file");
       const basicLanguage = getBasicLanguage(file);
       const orignalCurrentLanguage = readJSON(path.join(langDir, file));
       // sort
@@ -67,12 +67,12 @@ function main() {
       Object.keys(basicLanguage).forEach(k => {
         // add not exists
         if (typeof currentLanguage[k] === 'undefined') {
-          console.log("[" + file + "] add default locale: " + k);
+          console.log("[" + lang + "/" + file + "] add default locale: " + k);
           currentLanguage[k] = basicLanguage[k];
         }
         // add placeholder
         if (basicLanguage[k].placeholders) {
-          console.log("[" + file + "] add placeholder: " + k);
+          console.log("[" + lang + "/" + file + "] add placeholder: " + k);
           currentLanguage[k].placeholders = basicLanguage[k].placeholders;
         }
       });
@@ -85,7 +85,7 @@ function main() {
       fs.writeFileSync(path.join(langDir, file), JSON.stringify(currentLanguage), {
         encoding: "utf8"
       });
-      console.log("[" + file + "] write ok");
+      console.log("[" + lang + "/" + file + "] write ok");
     }
   }
 
@@ -108,7 +108,7 @@ function main() {
     fs.writeFileSync(path.join(originalOutput, file), JSON.stringify(currentLanguage), {
       encoding: "utf8"
     });
-    console.log("[" + file + "] write ok");
+    console.log("[" + ORIGINAL_NAME + "/" + file + "] write ok");
   }
 }
 
