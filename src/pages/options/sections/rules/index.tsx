@@ -1,7 +1,6 @@
 /* eslint-disable max-lines */
 import { selectGroup } from '@/pages/options/lib/utils';
 import { getExportName } from '@/pages/options/utils';
-import Icon from '@/share/components/icon';
 import Api from '@/share/core/api';
 import emitter from '@/share/core/emitter';
 import file from '@/share/core/file';
@@ -9,7 +8,7 @@ import { convertToTinyRule, createExport } from '@/share/core/ruleUtils';
 import { prefs } from '@/share/core/storage';
 import { getTableName, t } from '@/share/core/utils';
 import { InitdRule, Rule, TABLE_NAMES, TABLE_NAMES_TYPE } from '@/share/core/var';
-import { IconPlusCircle } from '@douyinfe/semi-icons';
+import { IconCheckList, IconDelete, IconFavoriteList, IconList, IconPlusCircle, IconSend, IconUnlock } from '@douyinfe/semi-icons';
 import { Button, ButtonGroup, Modal, Space, Spin, Typography } from '@douyinfe/semi-ui';
 import { cx, css } from '@emotion/css';
 import * as React from 'react';
@@ -466,24 +465,24 @@ export default class Rules extends React.Component<RulesProps, RulesState> {
             <ButtonGroup>
               {this.state.isEnableSelect && (
               <React.Fragment>
-                <Button theme="light" type="tertiary" onClick={this.handleToggleSelectAll} icon={<Icon type="done-all" />}>
+                <Button theme="light" type="tertiary" onClick={this.handleToggleSelectAll} icon={<IconCheckList />}>
                   {t('select_all')}
                 </Button>
-                <Button theme="light" type="tertiary" onClick={this.handleBatchEnable} icon={<Icon type="touch-app" />}>
+                <Button theme="light" type="tertiary" onClick={this.handleBatchEnable} icon={<IconUnlock />}>
                   {t('enable')}
                 </Button>
-                <Button theme="light" type="tertiary" onClick={this.handleBatchMove} icon={<Icon type="playlist-add" />}>
+                <Button theme="light" type="tertiary" onClick={this.handleBatchMove} icon={<IconFavoriteList />}>
                   {t('group')}
                 </Button>
-                <Button theme="light" type="tertiary" onClick={this.handleBatchShare} icon={<Icon type="share" />}>
+                <Button theme="light" type="tertiary" onClick={this.handleBatchShare} icon={<IconSend />}>
                   {t('share')}
                 </Button>
-                <Button theme="light" type="tertiary" onClick={this.handleBatchDelete} icon={<Icon type="delete" />}>
+                <Button theme="light" type="tertiary" onClick={this.handleBatchDelete} icon={<IconDelete />}>
                   {t('delete')}
                 </Button>
               </React.Fragment>
               )}
-              <Button theme="light" type="tertiary" onClick={this.toggleSelect} icon={<Icon type="playlist-add-check" />}>
+              <Button theme="light" type="tertiary" onClick={this.toggleSelect} icon={<IconList />}>
                 {t('batch_mode')}
               </Button>
             </ButtonGroup>

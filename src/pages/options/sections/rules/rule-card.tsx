@@ -1,7 +1,6 @@
-import Icon from '@/share/components/icon';
 import { t } from '@/share/core/utils';
 import { InitdRule, Rule } from '@/share/core/var';
-import { IconEdit, IconDelete, IconChevronDown, IconMore, IconSend } from '@douyinfe/semi-icons';
+import { IconCopyAdd, IconChevronDown, IconDelete, IconEdit, IconFavoriteList, IconMore, IconSearch, IconSend } from '@douyinfe/semi-icons';
 import { Button, ButtonGroup, Card, Dropdown, Popover, Switch, Table, Tooltip } from '@douyinfe/semi-ui';
 import type { ColumnProps, RowSelectionProps } from '@douyinfe/semi-ui/lib/es/table';
 import { css } from '@emotion/css';
@@ -97,10 +96,10 @@ const RuleCard = (props: RuleCardProps) => {
       render: (v, item: InitdRule) => (
         <ButtonGroup>
           <Tooltip content={t('edit')}>
-            <Button theme="borderless" type="tertiary" onClick={() => onRuleEdit(item)} icon={<Icon type="edit" />} />
+            <Button theme="borderless" type="tertiary" onClick={() => onRuleEdit(item)} icon={<IconEdit />} />
           </Tooltip>
           <Tooltip content={t('view')}>
-            <Button theme="borderless" type="tertiary" onClick={() => onRulePreview(item)} icon={<Icon type="search" />} />
+            <Button theme="borderless" type="tertiary" onClick={() => onRulePreview(item)} icon={<IconSearch />} />
           </Tooltip>
           <Dropdown
             position="bottomRight"
@@ -109,13 +108,13 @@ const RuleCard = (props: RuleCardProps) => {
                 node: 'item',
                 name: t('group'),
                 onClick: () => onRuleChangeGroup(item),
-                icon: <Icon type="playlist-add" />,
+                icon: <IconFavoriteList />,
               },
               {
                 node: 'item',
                 name: t('clone'),
                 onClick: () => onRuleClone(item),
-                icon: <Icon type="content-copy" />,
+                icon: <IconCopyAdd />,
               },
               {
                 node: 'divider',

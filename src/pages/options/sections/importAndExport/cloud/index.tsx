@@ -1,9 +1,9 @@
-import Icon from '@/share/components/icon';
 import Api from '@/share/core/api';
 import browserSync from '@/share/core/browserSync';
 import { createExport } from '@/share/core/ruleUtils';
 import { t } from '@/share/core/utils';
 import { TinyRule } from '@/share/core/var';
+import { IconDownload, IconUpload, IconExternalOpen } from '@douyinfe/semi-icons';
 import { Button, Modal, Tag, Toast } from '@douyinfe/semi-ui';
 import { css } from '@emotion/css';
 import dayjs from 'dayjs';
@@ -95,13 +95,13 @@ export default class Cloud extends React.Component<CloudProps, CloudState> {
         title={t('cloud_backup')}
         footer={
           <div className="buttons">
-            <Button type="secondary" onClick={this.handleHelp} icon={<Icon type="open-in-new" />}>
+            <Button type="secondary" onClick={this.handleHelp} icon={<IconExternalOpen />}>
               {t('help')}
             </Button>
-            <Button theme="solid" type="primary" onClick={this.handleDownload} disabled={!this.state.has} icon={<Icon type="cloud-download" />}>
+            <Button theme="solid" type="primary" onClick={this.handleDownload} disabled={!this.state.has} icon={<IconDownload />}>
               {t('download')}
             </Button>
-            <Button theme="solid" type="primary" onClick={this.handleUpload} icon={<Icon type="cloud-upload" />}>
+            <Button theme="solid" type="primary" onClick={this.handleUpload} icon={<IconUpload />}>
               {t('upload')}
             </Button>
           </div>

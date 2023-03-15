@@ -1,6 +1,5 @@
 import { getExportName } from '@/pages/options/utils';
 import * as React from 'react';
-import Icon from '@/share/components/icon';
 import Api from '@/share/core/api';
 import file from '@/share/core/file';
 import { createExport } from '@/share/core/ruleUtils';
@@ -9,6 +8,7 @@ import { TinyRule } from '@/share/core/var';
 import Cloud from './cloud';
 import ImportDrawer from './importDrawer';
 import { Button, ButtonGroup, Card, Input, InputGroup, List, Space, Spin, Table, Toast } from '@douyinfe/semi-ui';
+import { IconCloud, IconDownload, IconFolderOpen, IconSave, IconSearch } from '@douyinfe/semi-icons';
 import { css } from '@emotion/css';
 import { getLocal } from '@/share/core/storage';
 import * as browser from 'webextension-polyfill';
@@ -119,13 +119,13 @@ export default class ImportAndExport extends React.Component<IEProps, IEState> {
       <section className={`section-ie ${this.props.visible ? 'visible' : 'in-visible'}`}>
         <Card title={t('export_and_import')}>
           <Space>
-            <Button onClick={this.handleExport} icon={<Icon type="save" />}>
+            <Button onClick={this.handleExport} icon={<IconSave />}>
               {t('export')}
             </Button>
-            <Button onClick={this.handleImport} icon={<Icon type="folder-open" />}>
+            <Button onClick={this.handleImport} icon={<IconFolderOpen />}>
               {t('import')}
             </Button>
-            <Button onClick={() => this.setState({ showCloud: true })} icon={<Icon type="cloud" />}>
+            <Button onClick={() => this.setState({ showCloud: true })} icon={<IconCloud />}>
               {t('cloud_backup')}
             </Button>
           </Space>
@@ -138,10 +138,10 @@ export default class ImportAndExport extends React.Component<IEProps, IEState> {
               showClear
               onChange={(downloadUrl) => this.setState({ downloadUrl })}
             />
-            <Button className="btn-icon" onClick={this.handleDownload} icon={<Icon type="file-download" />} loading={this.state.downloading}>
+            <Button className="btn-icon" onClick={this.handleDownload} icon={<IconDownload />} loading={this.state.downloading}>
               {t('download')}
             </Button>
-            <Button className="btn-icon" icon={<Icon type="search" />} onClick={this.handleOpenThird}>
+            <Button className="btn-icon" icon={<IconSearch />} onClick={this.handleOpenThird}>
               {t('third_party_rules')}
             </Button>
           </Space>
