@@ -2,9 +2,10 @@ import Icon from '@/share/components/icon';
 import { t } from '@/share/core/utils';
 import { InitdRule, Rule } from '@/share/core/var';
 import { IconEdit, IconDelete, IconChevronDown, IconMore, IconSend } from '@douyinfe/semi-icons';
-import { Button, ButtonGroup, Card, Dropdown, Popover, Space, Switch, Table, Tooltip } from '@douyinfe/semi-ui';
-import type { RowSelectionProps } from '@douyinfe/semi-ui/lib/es/table';
-import { css, cx } from '@emotion/css';
+import { Button, ButtonGroup, Card, Dropdown, Popover, Switch, Table, Tooltip } from '@douyinfe/semi-ui';
+import type { ColumnProps, RowSelectionProps } from '@douyinfe/semi-ui/lib/es/table';
+import { css } from '@emotion/css';
+import { useResponsive } from 'ahooks';
 import React from 'react';
 import RuleDetail from './rule-detail';
 
@@ -53,10 +54,92 @@ const RuleCard = (props: RuleCardProps) => {
     onRuleEnable,
   } = props;
 
+  const responsive = useResponsive();
+
   const rowSelection = isEnableSelect ? {
     onChange: onSelect,
     selectedRowKeys: selectedKeys,
   } : undefined;
+
+  const tableColumns: Array<ColumnProps<Rule>> = [
+    {
+      title: t('enable'),
+      className: 'cell-enable',
+      dataIndex: 'enable',
+      align: 'center',
+      width: 80,
+      render: (value: boolean, item: InitdRule) => (
+        <Switch size="small" checked={value} onChange={(checked) => onRuleEnable(item, checked)} />
+      ),
+    },
+    {
+      title: t('name'),
+      className: 'cell-name',
+      dataIndex: 'name',
+      render: (value: string, item: InitdRule) => (
+        <Popover showArrow position="top" content={<RuleDetail rule={item} />} style={{ maxWidth: '300px' }}>
+          <div>{value}</div>
+        </Popover>
+      ),
+    },
+    {
+      title: t('ruleType'),
+      className: 'cell-type',
+      dataIndex: 'ruleType',
+      width: 180,
+      render: (value: string) => t(`rule_${value}`),
+    },
+    {
+      title: t('action'),
+      className: 'cell-action',
+      dataIndex: 'action',
+      width: 128,
+      render: (v, item: InitdRule) => (
+        <ButtonGroup>
+          <Tooltip content={t('edit')}>
+            <Button theme="borderless" type="tertiary" onClick={() => onRuleEdit(item)} icon={<Icon type="edit" />} />
+          </Tooltip>
+          <Tooltip content={t('view')}>
+            <Button theme="borderless" type="tertiary" onClick={() => onRulePreview(item)} icon={<Icon type="search" />} />
+          </Tooltip>
+          <Dropdown
+            position="bottomRight"
+            menu={[
+              {
+                node: 'item',
+                name: t('group'),
+                onClick: () => onRuleChangeGroup(item),
+                icon: <Icon type="playlist-add" />,
+              },
+              {
+                node: 'item',
+                name: t('clone'),
+                onClick: () => onRuleClone(item),
+                icon: <Icon type="content-copy" />,
+              },
+              {
+                node: 'divider',
+              },
+              {
+                node: 'item',
+                name: t('delete'),
+                onClick: () => onRuleDelete(item),
+                type: 'danger',
+                icon: <IconDelete />,
+              },
+            ]}
+          >
+            <Button theme="borderless" type="tertiary" icon={<IconMore />} />
+          </Dropdown>
+        </ButtonGroup>
+      ),
+    },
+  ];
+
+  if (!responsive.lg) {
+    const index = tableColumns.findIndex((x) => x.dataIndex === 'ruleType');
+    tableColumns.splice(index, 1);
+  }
 
   return (
     <Card
@@ -118,7 +201,7 @@ const RuleCard = (props: RuleCardProps) => {
             icon={
               <IconChevronDown
                 style={{
-                  transform: collapsed ? 'rotateZ(180deg)' : 'rotateZ(0deg)'
+                  transform: collapsed ? 'rotateZ(180deg)' : 'rotateZ(0deg)',
                 }}
                 className={css`
                   display: inline-block;
@@ -138,80 +221,7 @@ const RuleCard = (props: RuleCardProps) => {
         size="small"
         pagination={false}
         rowSelection={rowSelection}
-        columns={[
-          {
-            title: t('enable'),
-            className: 'cell-enable',
-            dataIndex: 'enable',
-            align: 'center',
-            width: 80,
-            render: (value: boolean, item: InitdRule) => (
-              <Switch size="small" checked={value} onChange={(checked) => onRuleEnable(item, checked)} />
-            ),
-          },
-          {
-            title: t('name'),
-            className: 'cell-name',
-            dataIndex: 'name',
-            render: (value: string, item: InitdRule) => (
-              <Popover showArrow position="top" content={<RuleDetail rule={item} />} style={{ maxWidth: '300px' }}>
-                <div>{value}</div>
-              </Popover>
-            ),
-          },
-          {
-            title: t('ruleType'),
-            className: 'cell-type',
-            dataIndex: 'ruleType',
-            width: 180,
-            render: (value: string) => t(`rule_${value}`),
-          },
-          {
-            title: t('action'),
-            className: 'cell-action',
-            dataIndex: 'action',
-            width: 128,
-            render: (v, item: InitdRule) => (
-              <ButtonGroup>
-                <Tooltip content={t('edit')}>
-                  <Button theme="borderless" type="tertiary" onClick={() => onRuleEdit(item)} icon={<Icon type="edit" />} />
-                </Tooltip>
-                <Tooltip content={t('view')}>
-                  <Button theme="borderless" type="tertiary" onClick={() => onRulePreview(item)} icon={<Icon type="search" />} />
-                </Tooltip>
-                <Dropdown
-                  position="bottomRight"
-                  menu={[
-                    {
-                      node: 'item',
-                      name: t('group'),
-                      onClick: () => onRuleChangeGroup(item),
-                      icon: <Icon type="playlist-add" />,
-                    },
-                    {
-                      node: 'item',
-                      name: t('clone'),
-                      onClick: () => onRuleClone(item),
-                      icon: <Icon type="content-copy" />,
-                    },
-                    {
-                      node: 'divider',
-                    },
-                    {
-                      node: 'item',
-                      name: t('delete'),
-                      onClick: () => onRuleDelete(item),
-                      type: 'danger',
-                      icon: <IconDelete />,
-                    },
-                  ]}
-                >
-                  <Button theme="borderless" type="tertiary" icon={<IconMore />} />
-                </Dropdown>
-              </ButtonGroup>
-            ),
-          },
-        ]}
+        columns={tableColumns}
       />
     </Card>
   );

@@ -1,54 +1,38 @@
 import { convertToRule } from '@/share/core/ruleUtils';
-import { getDomain, t } from '@/share/core/utils';
+import { t } from '@/share/core/utils';
 import { prefs } from '@/share/core/storage';
-import { Rule, RULE_MATCH_TYPE, RULE_TYPE } from '@/share/core/var';
-import '@/share/global.less';
+import { Rule } from '@/share/core/var';
 import { Nav } from '@douyinfe/semi-ui';
-import * as React from 'react';
+import React, { useCallback, useEffect, useRef, useState } from 'react';
 import GroupSelect from './sections/groupSelect';
 import ImportAndExportSection from './sections/importAndExport';
 import OptionsSection from './sections/options';
 import RulesSection from './sections/rules';
 import Edit from './sections/rules/edit';
-import { parse } from 'querystring';
 import type { OnSelectedData } from '@douyinfe/semi-ui/lib/es/navigation';
 import { css } from '@emotion/css';
 import { IconFolderOpen, IconHelpCircle, IconMenu, IconSetting } from '@douyinfe/semi-icons';
 import SemiLocale from '@/share/components/semi-locale';
+import { useGetState, useResponsive } from 'ahooks';
 
-interface OptionsState {
-  active: string;
-  navCollapse: boolean;
-  editShow: boolean;
-  editRule?: Rule;
-}
-export default class Options extends React.Component<any, OptionsState> {
+const Options = () => {
+  const [editShow, setEditShow] = useState(false);
+  const [editRule, setEditRule] = useState<Rule>();
+  const [navCollapse, setNavCollapse, getNavCollapse] = useGetState(false);
+  const [active, setActive, getActive] = useGetState('rules');
   // 保存切换到帮助前是否为展开状态
-  private isCollapsed = true;
+  const isCollapsedRef = useRef(true);
 
-  constructor(props: any) {
-    super(props);
+  const responsive = useResponsive();
 
-    this.handleSwitch = this.handleSwitch.bind(this);
-    this.handleEdit = this.handleEdit.bind(this);
-    this.handleEditClose = this.handleEditClose.bind(this);
-
-    this.state = {
-      editShow: false,
-      navCollapse: false,
-      active: 'rules',
-    };
-  }
-
-  componentDidMount() {
-    // Get dark mode setting
+  useEffect(() => {
     prefs.ready(() => {
       const darkMode = prefs.get('dark-mode');
       switch (darkMode) {
         case 'auto':
           try {
             const mql = window.matchMedia('(prefers-color-scheme: dark)');
-            mql.addListener(e => {
+            mql.addEventListener('change', (e) => {
               if (e.matches) {
                 document.body.setAttribute('theme-mode', 'dark');
                 document.body.style.backgroundColor = '#000';
@@ -63,119 +47,119 @@ export default class Options extends React.Component<any, OptionsState> {
           document.body.style.backgroundColor = '#000';
           break;
         default:
-          return;
       }
     });
-  }
+  }, []);
 
-  handleSwitch(data: OnSelectedData) {
-    const active = data.itemKey as string;
-    if (active && active !== this.state.active) {
-      if (active === 'help') {
-        this.isCollapsed = this.state.navCollapse;
+  const handleSwitch = useCallback((data: OnSelectedData) => {
+    const newActive = data.itemKey as string;
+    if (newActive && newActive !== getActive()) {
+      if (newActive === 'help') {
+        isCollapsedRef.current = getNavCollapse();
       }
-      const newState = {
-        active,
-        navCollapse: this.state.navCollapse || active === 'help',
-      };
-      if (this.state.active === 'help') {
-        newState.navCollapse = this.isCollapsed;
+      if (getActive() === 'help') {
+        setNavCollapse(isCollapsedRef.current);
+      } else {
+        setNavCollapse(getNavCollapse() || active === 'help');
       }
-      this.setState(newState);
+      setActive(newActive);
       window.scrollTo(0, 0);
     }
-  }
+  }, []);
 
-  handleEditClose() {
-    this.setState({
-      editShow: false,
-      editRule: undefined,
-    });
-  }
+  const handleEditClose = useCallback(() => {
+    setEditShow(false);
+    setEditRule(undefined);
+  }, []);
 
-  handleEdit(rule?: Rule) {
-    this.setState({
-      editShow: true,
-      editRule: rule ? convertToRule(rule) : undefined,
-    });
-  }
+  const handleEdit = useCallback((rule?: Rule) => {
+    setEditShow(true);
+    setEditRule(rule ? convertToRule(rule) : undefined);
+  }, []);
 
-  render() {
-    return (
-      <SemiLocale>
-        <div className={css`
-          display: flex;
-          flex-direction: row;
+  useEffect(() => {
+    // 小屏幕主动收起侧边栏
+    if (!responsive.lg && getNavCollapse()) {
+      setNavCollapse(false);
+    }
+  }, [responsive.lg]);
+
+  return (
+    <SemiLocale>
+      <div className={css`
+        display: flex;
+        flex-direction: row;
+        height: 100vh;
+
+        > .navbar {
+          /* width: 240px; */
+          flex-grow: 0;
+          flex-shrink: 0;
           height: 100vh;
+        }
 
-          > .navbar {
-            /* width: 240px; */
-            flex-grow: 0;
-            flex-shrink: 0;
-            height: 100vh;
+        > .main-content {
+          flex-grow: 1;
+          flex-shrink: 1;
+          height: 100vh;
+          overflow: auto;
+          box-sizing: border-box;
+          padding: 16px;
+          background-color: var(--semi-color-fill-0);
+
+          > .in-visible {
+            display: none;
           }
 
-          > .main-content {
-            flex-grow: 1;
-            flex-shrink: 1;
-            height: 100vh;
-            overflow: auto;
-            box-sizing: border-box;
-            padding: 16px;
-            background-color: var(--semi-color-fill-0);
-
-            > .in-visible {
-              display: none;
-            }
-
-            > section {
-              > .semi-card {
-                margin-bottom: 16px;
-              }
+          > section {
+            > .semi-card {
+              margin-bottom: 16px;
             }
           }
-        `}
-        >
-          <Nav
-            className="navbar semi-always-dark"
-            selectedKeys={[this.state.active]}
-            onSelect={this.handleSwitch}
-            items={[
-              { itemKey: 'rules', text: t('rule_list'), icon: <IconMenu /> },
-              { itemKey: 'options', text: t('options'), icon: <IconSetting /> },
-              { itemKey: 'export_and_import', text: t('export_and_import'), icon: <IconFolderOpen /> },
-              { itemKey: 'help', text: t('help'), icon: <IconHelpCircle /> },
-            ]}
-            isCollapsed={this.state.navCollapse}
-            onCollapseChange={(v) => this.setState({ navCollapse: v })}
-            footer={{
-              collapseButton: true,
-            }}
-          />
-          <main className="main-content">
-            <RulesSection visible={this.state.active === 'rules'} onEdit={this.handleEdit} />
-            <OptionsSection visible={this.state.active === 'options'} />
-            <ImportAndExportSection visible={this.state.active === 'export_and_import'} />
-            {this.state.active === 'help' && (
-            <div className={css`
+        }
+      `}
+      >
+        <Nav
+          className="navbar semi-always-dark"
+          selectedKeys={[active]}
+          onSelect={handleSwitch}
+          items={[
+            { itemKey: 'rules', text: t('rule_list'), icon: <IconMenu /> },
+            { itemKey: 'options', text: t('options'), icon: <IconSetting /> },
+            { itemKey: 'export_and_import', text: t('export_and_import'), icon: <IconFolderOpen /> },
+            { itemKey: 'help', text: t('help'), icon: <IconHelpCircle /> },
+          ]}
+          isCollapsed={navCollapse}
+          onCollapseChange={setNavCollapse}
+          footer={{
+            collapseButton: true,
+          }}
+        />
+        <main className="main-content">
+          <RulesSection visible={active === 'rules'} onEdit={handleEdit} />
+          <OptionsSection visible={active === 'options'} />
+          <ImportAndExportSection visible={active === 'export_and_import'} />
+          {active === 'help' && (
+          <div className={css`
+            width: 100%;
+            height: 100%;
+
+            > iframe {
+              border: 0;
               width: 100%;
               height: 100%;
+            }
+          `}
+          >
+            <iframe src="https://he.firefoxcn.net/zh-CN/guide.html" />
+          </div>
+          )}
+        </main>
+        <GroupSelect />
+        <Edit visible={editShow} rule={editRule} onClose={handleEditClose} />
+      </div>
+    </SemiLocale>
+  );
+};
 
-              > iframe {
-                border: 0;
-                width: 100%;
-                height: 100%;
-              }
-            `}
-            >
-              <iframe src="https://he.firefoxcn.net/zh-CN/guide.html" />
-            </div>
-            )}
-          </main>
-          <GroupSelect />
-          <Edit visible={this.state.editShow} rule={this.state.editRule} onClose={this.handleEditClose} />
-        </div>
-      </SemiLocale>
-    );
-  }
-}
+export default Options;

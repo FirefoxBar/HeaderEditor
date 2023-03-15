@@ -2,7 +2,6 @@ import SemiLocale from '@/share/components/semi-locale';
 import Api from '@/share/core/api';
 import { prefs } from '@/share/core/storage';
 import { IS_ANDROID, t } from '@/share/core/utils';
-import '@/share/global.less';
 import { Button, Switch, Typography } from '@douyinfe/semi-ui';
 import { css, cx } from '@emotion/css';
 import * as React from 'react';
@@ -62,7 +61,7 @@ export default class Popup extends React.Component<any, PopupState> {
         case 'auto':
           try {
             const mql = window.matchMedia('(prefers-color-scheme: dark)');
-            mql.addListener(e => {
+            mql.addEventListener('change', (e) => {
               if (e.matches) {
                 document.body.setAttribute('theme-mode', 'dark');
                 document.body.style.backgroundColor = '#000';
@@ -77,7 +76,6 @@ export default class Popup extends React.Component<any, PopupState> {
           document.body.style.backgroundColor = '#000';
           break;
         default:
-          return;
       }
     });
   }

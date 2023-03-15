@@ -1,7 +1,6 @@
 lockfileVersion: 5.4
 
 specifiers:
-  '@alifd/next': ^1.18.17
   '@douyinfe/semi-icons': ^2.30.1
   '@douyinfe/semi-ui': ^2.30.1
   '@emotion/css': ^11.10.6
@@ -15,6 +14,7 @@ specifiers:
   '@types/react-dom': ^16.9.4
   '@types/text-encoding': ^0.0.35
   '@types/webextension-polyfill': ^0.10.0
+  ahooks: ^3.7.5
   babel-plugin-import: ^1.13.0
   build-plugin-css-assets-local: ^0.1.0
   copy-webpack-plugin: ^4.5.2
@@ -33,10 +33,8 @@ specifiers:
   node-fetch: ^2.6.0
   node-rsa: ^1.0.1
   prettier: ^1.19.1
-  prismjs: ^1.17.1
   publish-release: ^1.6.0
   query-string: ^8.1.0
-  querystring: ^0.2.1
   react: ^17.0.0
   react-app-renderer: ^3.1.0
   react-dom: ^17.0.0
@@ -51,21 +49,19 @@ specifiers:
   webpack-chrome-extension-reloader: ^0.8.3
 
 dependencies:
-  '@alifd/next': 1.26.14_sfoxds7t5ydpegc3knd667wn6m
   '@douyinfe/semi-icons': 2.30.1_react@17.0.2
   '@douyinfe/semi-ui': 2.30.1_sfoxds7t5ydpegc3knd667wn6m
   '@emotion/css': 11.10.6
   '@ice/runtime': 0.1.2
   '@monaco-editor/react': 4.4.6_nx4kslvowqur56lgatafzzm7n4
+  ahooks: 3.7.5_react@17.0.2
   create-app-shared: 1.2.6
   dayjs: 1.11.7
   eventemitter3: 4.0.7
   fast-deep-equal: 2.0.1
   lodash-es: 4.17.21
   monaco-editor: 0.36.1
-  prismjs: 1.29.0
   query-string: 8.1.0
-  querystring: 0.2.1
   react: 17.0.2
   react-app-renderer: 3.1.0_react@17.0.2
   react-dom: 17.0.2_react@17.0.2
@@ -113,49 +109,6 @@ packages:
       lodash.throttle: 4.1.1
       react: 17.0.2
     dev: true
-
-  /@alifd/field/1.5.8:
-    resolution: {integrity: sha512-RBbwEeex2lb9fFjsXU3wJp2FZGPS75svKzOcDb9ZtKHiVU3byD6zuB0/hzJ9Exb0DkOgykFc6gF76QoaYF4+Ug==}
-    dependencies:
-      '@alifd/validate': 1.2.3
-      prop-types: 15.8.1
-    dev: false
-
-  /@alifd/next/1.26.14_sfoxds7t5ydpegc3knd667wn6m:
-    resolution: {integrity: sha512-fBnmiG19gCV9VV5ZYqT6aozWMNkMeeqS7EqxSGAP2NVKIerNQGY6/AnpKXXD3K5ke5sJcvho/a1Zu/FERBBMdw==}
-    peerDependencies:
-      '@alifd/meet-react': ^2.0.0
-      moment: ^2.22.1
-      react: '>=16.0.0'
-      react-dom: '>=16.0.0'
-    dependencies:
-      '@alifd/field': 1.5.8
-      '@alifd/overlay': 0.2.12
-      '@alifd/validate': 1.2.3
-      babel-runtime: 6.26.0
-      big.js: 6.2.1
-      classnames: 2.3.2
-      dayjs: 1.11.7
-      hoist-non-react-statics: 3.3.2
-      lodash.clonedeep: 4.5.0
-      prop-types: 15.8.1
-      react: 17.0.2
-      react-dom: 17.0.2_react@17.0.2
-      react-lifecycles-compat: 3.0.4
-      react-transition-group: 2.9.0_sfoxds7t5ydpegc3knd667wn6m
-      resize-observer-polyfill: 1.5.1
-      shallow-element-equals: 1.0.1
-    dev: false
-
-  /@alifd/overlay/0.2.12:
-    resolution: {integrity: sha512-4IJGuuD7pJiF9YsUVIpDYXWg2YDNPIDXahld42pWwePcFMptO0thIG11XxfqvAULAIuR5Mqf4NdiK+jeSiVcGw==}
-    dependencies:
-      resize-observer-polyfill: 1.5.1
-    dev: false
-
-  /@alifd/validate/1.2.3:
-    resolution: {integrity: sha512-ggSBfpl3H8M2OEM95zC9NQc4cBvne/Eq4mTHZHWtqYI/6Vnz0k1fGx3hnYsdGu3c3hF4l6sUDPulactM6lSXtA==}
-    dev: false
 
   /@ampproject/remapping/2.2.0:
     resolution: {integrity: sha512-qRmjj8nj9qmLTQXXmaR1cck3UXSRMPrbsLJAasZpF+t3riI71BXed5ebIOYwQntykeZuhjsdweEc9BxH5Jc26w==}
@@ -1297,6 +1250,10 @@ packages:
       hoist-non-react-statics: 3.3.2
     dev: true
 
+  /@types/js-cookie/2.2.7:
+    resolution: {integrity: sha512-aLkWa0C0vO5b4Sr798E26QgOkss68Un0bLjs7u9qxzPT5CG+8DuNTffWES58YzJs3hrVAOs1wonycqEBqNJubA==}
+    dev: false
+
   /@types/json-schema/7.0.11:
     resolution: {integrity: sha512-wOuvG1SN4Us4rez+tylwwwCV1psiNVOkJeM3AUWUNWg/jDQY2+HE/444y5gc+jBmRqASOm2Oeh5c1axHobwRKQ==}
     dev: true
@@ -1595,6 +1552,28 @@ packages:
       clean-stack: 2.2.0
       indent-string: 4.0.0
     dev: true
+
+  /ahooks-v3-count/1.0.0:
+    resolution: {integrity: sha512-V7uUvAwnimu6eh/PED4mCDjE7tokeZQLKlxg9lCTMPhN+NjsSbtdacByVlR1oluXQzD3MOw55wylDmQo4+S9ZQ==}
+    dev: false
+
+  /ahooks/3.7.5_react@17.0.2:
+    resolution: {integrity: sha512-RWkJYK5xj9ZXROj9jABRDqdpTBimkY1tlyeJQ8Ci7MAl1sC5xzSzwO20ydk6BjtdbWt56DPCYZhq4lGu3O2Zwg==}
+    engines: {node: '>=8.0.0'}
+    peerDependencies:
+      react: ^16.8.0 || ^17.0.0 || ^18.0.0
+    dependencies:
+      '@types/js-cookie': 2.2.7
+      ahooks-v3-count: 1.0.0
+      dayjs: 1.11.7
+      intersection-observer: 0.12.2
+      js-cookie: 2.2.1
+      lodash: 4.17.21
+      react: 17.0.2
+      resize-observer-polyfill: 1.5.1
+      screenfull: 5.2.0
+      tslib: 2.5.0
+    dev: false
 
   /ajv-formats/2.1.1:
     resolution: {integrity: sha512-Wx0Kx52hxE7C18hkMEggYlEifqWZtYaRgouJor+WMdPnQyEK13vgEWyVNup7SoeeoLMsr4kf5h6dOW11I15MUA==}
@@ -1984,6 +1963,7 @@ packages:
     dependencies:
       core-js: 2.6.12
       regenerator-runtime: 0.11.1
+    dev: true
 
   /bail/1.0.5:
     resolution: {integrity: sha512-xFbRxM1tahm08yHBP16MMjVUAvDaBMD38zsM9EMAUN61omwLmKlOpB/Zku5QkjZ8TZ4vn53pj+t518cH0S03RQ==}
@@ -2009,10 +1989,6 @@ packages:
   /big.js/5.2.2:
     resolution: {integrity: sha512-vyL2OymJxmarO8gxMr0mhChsO9QGwhynfuu4+MHTAW6czfq9humCB7rKpUjDd9YUiDPU4mzpyupFSvOClAwbmQ==}
     dev: true
-
-  /big.js/6.2.1:
-    resolution: {integrity: sha512-bCtHMwL9LeDIozFn+oNhhFoq+yQ3BNdnsLSASUxLciOb1vgvpHsIO1dsENiGMgbb4SkP5TrzWzRiLddn8ahVOQ==}
-    dev: false
 
   /binary-extensions/2.2.0:
     resolution: {integrity: sha512-jDctJ/IVQbZoJykoeHbhXpOlNBqGNcwXJKJog42E5HDPUwQTSdjCHdihjj0DlnheQ7blbT6dHOafNAiS8ooQKA==}
@@ -2760,6 +2736,7 @@ packages:
     resolution: {integrity: sha512-Kb2wC0fvsWfQrgk8HU5lW6U/Lcs8+9aaYcy4ZFc6DDlo4nZ7n70dEgE5rtR0oG6ufKDUnrwfWL1mXR5ljDatrQ==}
     deprecated: core-js@<3.23.3 is no longer maintained and not recommended for usage due to the number of issues. Because of the V8 engine whims, feature detection in old core-js versions could cause a slowdown up to 100x even if nothing is polyfilled. Some versions have web compatibility issues. Please, upgrade your dependencies to the actual version of core-js.
     requiresBuild: true
+    dev: true
 
   /core-js/3.29.0:
     resolution: {integrity: sha512-VG23vuEisJNkGl6XQmFJd3rEG/so/CNatqeE+7uZAwTSwFeB/qaO0be8xZYUNWprJ/GIwL8aMt9cj1kvbpTZhg==}
@@ -3098,12 +3075,6 @@ packages:
     dependencies:
       esutils: 2.0.3
     dev: true
-
-  /dom-helpers/3.4.0:
-    resolution: {integrity: sha512-LnuPJ+dwqKDIyotW1VzmOZ5TONUN7CwkCR5hrgawTUbkBGYdeoNLZo6nNfGkCrjtE1nXXaj7iMMpDa8/d9WoIA==}
-    dependencies:
-      '@babel/runtime': 7.21.0
-    dev: false
 
   /dom-serializer/0.2.2:
     resolution: {integrity: sha512-2/xPb3ORsQ42nHYiSunXkDjPLBaEj/xTwUO4B7XCZQTRk7EBtTOPaygh10YAAh2OI1Qrp6NWfpAhzswj0ydt9g==}
@@ -4972,6 +4943,10 @@ packages:
       side-channel: 1.0.4
     dev: true
 
+  /intersection-observer/0.12.2:
+    resolution: {integrity: sha512-7m1vEcPCxXYI8HqnL8CKI6siDyD+eIWSwgB3DZA+ZTogxk9I4CDnj4wilt9x/+/QbHI4YG5YZNmC6458/e9Ktg==}
+    dev: false
+
   /invariant/2.2.4:
     resolution: {integrity: sha512-phJfQVBuaJM5raOpJjSfkiD6BpbCE4Ns//LaXl6wGYtUBY83nWS6Rf9tXm2e8VaK60JEjYldbPif/A2B1C2gNA==}
     dependencies:
@@ -5322,6 +5297,10 @@ packages:
       supports-color: 8.1.1
     dev: true
 
+  /js-cookie/2.2.1:
+    resolution: {integrity: sha512-HvdH2LzI/EAZcUwA8+0nKNtWHqS+ZmijLA30RwZA0bo7ToCckjK5MkGhjED9KoRcXO6BaGI3I9UIzSA1FKFPOQ==}
+    dev: false
+
   /js-tokens/4.0.0:
     resolution: {integrity: sha512-RdJUflcE3cUzKiMqQgsCu06FPu9UdIJO0beYbPhHN4k6apgJtifcoCtT9bcxOpYBtpD2kCM6Sbzg4CausW/PKQ==}
 
@@ -5640,10 +5619,6 @@ packages:
 
   /lodash-es/4.17.21:
     resolution: {integrity: sha512-mKnC+QJ9pWVzv+C4/U3rRsHapFfHvQFoFB92e52xeyGMcX6/OlIl78je1u8vePzYZSkkogMPJ2yjxxsb89cxyw==}
-    dev: false
-
-  /lodash.clonedeep/4.5.0:
-    resolution: {integrity: sha512-H5ZhCF25riFd9uB5UCkVKo61m3S/xZk1x4wA6yp/L3RFP6Z/eHH1ymQcGLo7J3GMPfm0V/7m1tryHuGVxpqEBQ==}
     dev: false
 
   /lodash.debounce/4.0.8:
@@ -6820,11 +6795,6 @@ packages:
       meow: 3.7.0
     dev: true
 
-  /prismjs/1.29.0:
-    resolution: {integrity: sha512-Kx/1w86q/epKcmte75LNrEoT+lX8pBpavuAbvJWRXar7Hz8jrtF+e3vY751p0R8H9HdArwaCTNDDzHg/ScJK1Q==}
-    engines: {node: '>=6'}
-    dev: false
-
   /process-nextick-args/2.0.1:
     resolution: {integrity: sha512-3ouUOpQhtgrbOa17J7+uxOTpITYWaGP7/AhoR3+A+/1e9skrzelGi/dXzEYyvbxubEF6Wn2ypscTKiKJFFn1ag==}
     dev: true
@@ -6977,12 +6947,6 @@ packages:
       split-on-first: 3.0.0
     dev: false
 
-  /querystring/0.2.1:
-    resolution: {integrity: sha512-wkvS7mL/JMugcup3/rMitHmd9ecIGd2lhFhK9N3UUQ450h66d1r3Y9nvXzQAW1Lq+wyx61k/1pfKS5KuKiyEbg==}
-    engines: {node: '>=0.4.x'}
-    deprecated: The querystring API is considered Legacy. new code should use the URLSearchParams API instead.
-    dev: false
-
   /queue-microtask/1.2.3:
     resolution: {integrity: sha512-NuaNSa6flKT5JaSYQzJok04JzTL1CA6aGhv5rfLW3PgqA+M2ChpZQnAC8h8i4ZFkBS8X5RqkDBHA7r4hej3K9A==}
     dev: true
@@ -7068,10 +7032,6 @@ packages:
   /react-is/17.0.2:
     resolution: {integrity: sha512-w2GsyukL62IJnlaff/nRegPQR94C/XXamvMWmSHRJ4y7Ts/4ocGRmTHvOs8PSE6pB3dWOrD/nueuU5sduBsQ4w==}
     dev: true
-
-  /react-lifecycles-compat/3.0.4:
-    resolution: {integrity: sha512-fBASbA6LnOU9dOU2eW7aQ8xmYBSXUIWr+UmF9b1efZBazGNO+rcXT/icdKnYm2pTwcRylVUYwW7H1PHfLekVzA==}
-    dev: false
 
   /react-redux/7.2.9_sfoxds7t5ydpegc3knd667wn6m:
     resolution: {integrity: sha512-Gx4L3uM182jEEayZfRbI/G11ZpYdNAnBs70lFVMNdHJI76XYtR+7m0MN+eAs7UHBPhWXcnFPaS+9owSCJQHNpQ==}
@@ -7210,20 +7170,6 @@ packages:
       prop-types: 15.8.1
       react: 17.0.2
       react-dom: 17.0.2_react@17.0.2
-    dev: false
-
-  /react-transition-group/2.9.0_sfoxds7t5ydpegc3knd667wn6m:
-    resolution: {integrity: sha512-+HzNTCHpeQyl4MJ/bdE0u6XRMe9+XG/+aL4mCxVN4DnPBQ0/5bfHWPDuOZUzYdMj94daZaZdCCc1Dzt9R/xSSg==}
-    peerDependencies:
-      react: '>=15.0.0'
-      react-dom: '>=15.0.0'
-    dependencies:
-      dom-helpers: 3.4.0
-      loose-envify: 1.4.0
-      prop-types: 15.8.1
-      react: 17.0.2
-      react-dom: 17.0.2_react@17.0.2
-      react-lifecycles-compat: 3.0.4
     dev: false
 
   /react-window/1.8.8_sfoxds7t5ydpegc3knd667wn6m:
@@ -7383,6 +7329,7 @@ packages:
 
   /regenerator-runtime/0.11.1:
     resolution: {integrity: sha512-MguG95oij0fC3QV3URf4V2SDYGJhJnJGqvIIgdECeODCT98wSWDAJ94SSuVpYQUoTcGUIL6L4yNB7j1DFFHSBg==}
+    dev: true
 
   /regenerator-runtime/0.13.11:
     resolution: {integrity: sha512-kY1AZVr2Ra+t+piVaJ4gxaFaReZVH40AKNo7UCX6W+dEwBo/2oZJzqfuN1qLq1oL45o56cPaTXELwrTh8Fpggg==}
@@ -7745,6 +7692,11 @@ packages:
       ajv-keywords: 5.1.0_ajv@8.12.0
     dev: true
 
+  /screenfull/5.2.0:
+    resolution: {integrity: sha512-9BakfsO2aUQN2K9Fdbj87RJIEZ82Q9IGim7FqM5OsebfoFC6ZHXgDq/KvniuLTPdeM8wY2o6Dj3WQ7KeQCj3cA==}
+    engines: {node: '>=0.10.0'}
+    dev: false
+
   /scroll-into-view-if-needed/2.2.31:
     resolution: {integrity: sha512-dGCXy99wZQivjmjIqihaBQNjryrz5rueJY7eHfTdyWEiR4ttYpsajb14rn9s5d4DY4EcY6+4+U/maARBXJedkA==}
     dependencies:
@@ -7791,12 +7743,6 @@ packages:
     dependencies:
       kind-of: 6.0.3
     dev: true
-
-  /shallow-element-equals/1.0.1:
-    resolution: {integrity: sha512-TwyvU5ZIISuZAmX7juTupVggTW9avkp+Swz0amKicADbQrnhP5kAPkPbL8gKSFv9QkkzhTg2u3Se6TjGhn1xlQ==}
-    dependencies:
-      style-equal: 1.0.0
-    dev: false
 
   /shebang-command/1.2.0:
     resolution: {integrity: sha512-EV3L1+UQWGor21OmnvojK36mhg+TyIKDh3iFBKBohr5xeXIhNBcx8oWdgkTEEQ+BEFFYdLRuqMfd5L84N1V5Vg==}
@@ -8208,10 +8154,6 @@ packages:
     resolution: {integrity: sha512-6fPc+R4ihwqP6N/aIv2f1gMH8lOVtWQHoqC4yK6oSDVVocumAsfCqjkXnqiYMhmMwS/mEHLp7Vehlt3ql6lEig==}
     engines: {node: '>=8'}
     dev: true
-
-  /style-equal/1.0.0:
-    resolution: {integrity: sha512-gf20kfwh7eXsgPcwvYqViCBHr+GXIlpXOZR1wQftNH4/ee2P/yolWUVA/MdMdmMp+0BMfvaMKSIR1DQlY64Btw==}
-    dev: false
 
   /style-search/0.1.0:
     resolution: {integrity: sha512-Dj1Okke1C3uKKwQcetra4jSuk0DqbzbYtXipzFlFMZtowbF1x7BKJwB9AayVMyFARvU8EDrZdcax4At/452cAg==}
