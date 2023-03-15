@@ -50,22 +50,10 @@ jobs:
         node-version: ${{ matrix.node-version }}
     - name: Sort
       run: node ./locale/sort-origin.js
-    - name: Checkout sync-locale branch
-      uses: actions/checkout@v3
+    - name: Deploy
+      uses: JamesIves/github-pages-deploy-action@v4
       with:
-        ref: 'sync-locale'
-        path: '_sync_locale_'
-    - name: Deploy to dev-locale
-      run: |
-        rsync -q -av --checksum --progress $GITHUB_WORKSPACE/locale/. $GITHUB_WORKSPACE/_sync_locale_ --exclude .git
-        cd ./_sync_locale_
-        git config user.name 'github-actions[bot]'
-        git config user.email 'github-actions[bot]@users.noreply.github.com'
-        GIT_STATUS=$(git status --porcelain)
-        if [[ $GIT_STATUS != "" ]]; then
-          git add --all .
-          git commit -m '[skip ci] sync locale' --quiet --no-verify
-          git push
-        else
-          echo "no content, skip commit"
-        fi
+        branch: sync-locale
+        folder: locale
+        clean: false
+        commit-message: '[skip ci] sync locale'
