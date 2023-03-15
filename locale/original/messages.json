@@ -68,6 +68,14 @@
     "message": "Dark mode is experimental, refresh this page to see the effect",
     "description": "Dark help text"
   },
+  "debug_mode_enable": {
+    "message": "Enable debug mode",
+    "description": "Enable debug mode"
+  },
+  "debug_mode_help": {
+    "message": "When debug mode is turned on, some logs will be printed in the background page",
+    "description": "Debug mode description"
+  },
   "delete": {
     "message": "Delete",
     "description": "Delete button"

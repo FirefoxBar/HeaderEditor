@@ -21,7 +21,7 @@ const checkPrefs: { [key: string]: string } = {
   'show-common-header': t('display_common_header'),
   'include-headers': t('include_header_in_custom_function'),
   'modify-body': t('modify_body'),
-  'is-debug': 'Enable debug',
+  'is-debug': t('debug_mode_enable'),
 };
 
 interface SelectItem {
@@ -132,7 +132,8 @@ export default class Options extends React.Component<OptionsProps, OptionsState>
               );
             })}
           </Row>
-          <Typography.Text type="tertiary">{t('dark_mode_help')}</Typography.Text>
+          <div><Typography.Text type="tertiary">{t('dark_mode_help')}</Typography.Text></div>
+          <div><Typography.Text type="tertiary">{t('debug_mode_help')}</Typography.Text></div>
         </Card>
       </section>
     );
