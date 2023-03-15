@@ -99,6 +99,9 @@ const RuleCard = (props: RuleCardProps) => {
                 icon: <IconEdit />,
               },
               {
+                node: 'divider',
+              },
+              {
                 node: 'item',
                 name: t('delete'),
                 onClick: onDelete,
