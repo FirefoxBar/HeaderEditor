@@ -68,6 +68,14 @@
 		"message": "暗黑模式为试验性特性，刷新页面查看效果",
 		"description": "Dark help text"
 	},
+	"debug_mode_enable": {
+		"message": "开启调试模式",
+		"description": "Enable debug mode"
+	},
+	"debug_mode_help": {
+		"message": "当调试模式开启时，一些日志将会打印在背景页",
+		"description": "Debug mode description"
+	},
 	"delete": {
 		"message": "删除",
 		"description": "Delete button"
