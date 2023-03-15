@@ -51,6 +51,7 @@ export default class Options extends React.Component<any, OptionsState> {
             mql.addListener(e => {
               if (e.matches) {
                 document.body.setAttribute('theme-mode', 'dark');
+                document.body.style.backgroundColor = '#000';
               }
             });
           } catch (e) {
@@ -59,6 +60,7 @@ export default class Options extends React.Component<any, OptionsState> {
           break;
         case 'on':
           document.body.setAttribute('theme-mode', 'dark');
+          document.body.style.backgroundColor = '#000';
           break;
         default:
           return;

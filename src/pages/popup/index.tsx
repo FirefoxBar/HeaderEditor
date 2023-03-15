@@ -56,6 +56,29 @@ export default class Popup extends React.Component<any, PopupState> {
       this.setState({
         enable: !prefs.get('disable-all'),
       });
+      // Get dark mode setting
+      const darkMode = prefs.get('dark-mode');
+      switch (darkMode) {
+        case 'auto':
+          try {
+            const mql = window.matchMedia('(prefers-color-scheme: dark)');
+            mql.addListener(e => {
+              if (e.matches) {
+                document.body.setAttribute('theme-mode', 'dark');
+                document.body.style.backgroundColor = '#000';
+              }
+            });
+          } catch (e) {
+            // ignore
+          }
+          break;
+        case 'on':
+          document.body.setAttribute('theme-mode', 'dark');
+          document.body.style.backgroundColor = '#000';
+          break;
+        default:
+          return;
+      }
     });
   }
 
