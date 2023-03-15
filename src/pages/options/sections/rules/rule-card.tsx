@@ -1,7 +1,7 @@
 import Icon from '@/share/components/icon';
 import { t } from '@/share/core/utils';
 import { InitdRule, Rule } from '@/share/core/var';
-import { IconChevronDown, IconMore, IconSend } from '@douyinfe/semi-icons';
+import { IconEdit, IconDelete, IconChevronDown, IconMore, IconSend } from '@douyinfe/semi-icons';
 import { Button, ButtonGroup, Card, Dropdown, Popover, Space, Switch, Table, Tooltip } from '@douyinfe/semi-ui';
 import type { RowSelectionProps } from '@douyinfe/semi-ui/lib/es/table';
 import { css, cx } from '@emotion/css';
@@ -81,36 +81,51 @@ const RuleCard = (props: RuleCardProps) => {
       key={name}
       title={name}
       headerExtraContent={
-        <ButtonGroup
-          className={cx(css`
-          display: flex;
-          flex-direction: row;
-
-          .collapse-icon {
-            display: inline-block;
-            transition: all .2s ease;
-            transform: rotateZ(180deg);
-          }
-        `, !collapsed ? css`
-            .collapse-icon {
-            transform: rotateZ(0deg);
-          }
-        ` : '')}
-        >
-          {name !== t('ungrouped') && (
-          <Tooltip content={t('rename')}>
-            <Button type="tertiary" theme="borderless" onClick={onRename} icon={<i className="iconfont icon-edit" />} />
-          </Tooltip>
-          )}
-          <Tooltip content={t('share')}>
-            <Button type="tertiary" theme="borderless" onClick={onShare} icon={<IconSend />} />
-          </Tooltip>
-          {name !== t('ungrouped') && (
-          <Tooltip content={t('delete')}>
-            <Button type="tertiary" theme="borderless" onClick={onDelete} icon={<i className="iconfont icon-delete" />} />
-          </Tooltip>
-          )}
-          <Button theme="borderless" icon={<IconChevronDown className="collapse-icon" />} type="tertiary" onClick={onCollapse} />
+        <ButtonGroup>
+          <Dropdown
+            position="bottomRight"
+            menu={[
+              {
+                node: 'item',
+                name: t('share'),
+                onClick: onShare,
+                icon: <IconSend />,
+              },
+              {
+                node: 'item',
+                name: t('rename'),
+                onClick: onRename,
+                disabled: name === t('ungrouped'),
+                icon: <IconEdit />,
+              },
+              {
+                node: 'item',
+                name: t('delete'),
+                onClick: onDelete,
+                type: 'danger',
+                disabled: name === t('ungrouped'),
+                icon: <IconDelete />,
+              },
+            ]}
+          >
+            <Button theme="borderless" type="tertiary" icon={<IconMore />} />
+          </Dropdown>
+          <Button
+            theme="borderless"
+            icon={
+              <IconChevronDown
+                style={{
+                  transform: collapsed ? 'rotateZ(180deg)' : 'rotateZ(0deg)'
+                }}
+                className={css`
+                  display: inline-block;
+                  transition: all .2s ease;
+                `}
+              />
+            }
+            type="tertiary"
+            onClick={onCollapse}
+          />
         </ButtonGroup>
     }
     >
@@ -137,7 +152,7 @@ const RuleCard = (props: RuleCardProps) => {
             dataIndex: 'name',
             render: (value: string, item: InitdRule) => (
               <Popover showArrow position="top" content={<RuleDetail rule={item} />} style={{ maxWidth: '300px' }}>
-                <span>{value}</span>
+                <div>{value}</div>
               </Popover>
             ),
           },
@@ -184,7 +199,7 @@ const RuleCard = (props: RuleCardProps) => {
                       name: t('delete'),
                       onClick: () => onRuleDelete(item),
                       type: 'danger',
-                      icon: <Icon type="delete" />,
+                      icon: <IconDelete />,
                     },
                   ]}
                 >

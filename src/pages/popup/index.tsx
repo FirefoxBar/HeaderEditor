@@ -3,7 +3,7 @@ import Api from '@/share/core/api';
 import { prefs } from '@/share/core/storage';
 import { IS_ANDROID, t } from '@/share/core/utils';
 import '@/share/global.less';
-import { Button, Switch } from '@douyinfe/semi-ui';
+import { Button, Switch, Typography } from '@douyinfe/semi-ui';
 import { css, cx } from '@emotion/css';
 import * as React from 'react';
 import browser from 'webextension-polyfill';
