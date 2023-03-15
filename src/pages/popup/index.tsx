@@ -104,7 +104,7 @@ export default class Popup extends React.Component<any, PopupState> {
         >
           <div className="switcher">
             <Switch checked={this.state.enable} onChange={this.handleChange} size="small" />
-            <span>{t('enable_he')}</span>
+            <Typography.Text>{t('enable_he')}</Typography.Text>
           </div>
           <div>
             <Button onClick={this.handleOpen} type="secondary">

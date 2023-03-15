@@ -3,7 +3,7 @@ import emitter from '@/share/core/emitter';
 import { prefs } from '@/share/core/storage';
 import { t } from '@/share/core/utils';
 import { defaultPrefValue, PrefValue } from '@/share/core/var';
-import { Card, Checkbox, Col, Row, Select, Typography } from '@douyinfe/semi-ui';
+import { Card, Checkbox, Col, Form, Row, Select, Typography } from '@douyinfe/semi-ui';
 import type { CheckboxEvent } from '@douyinfe/semi-ui/lib/es/checkbox';
 import * as React from 'react';
 
@@ -121,12 +121,13 @@ export default class Options extends React.Component<OptionsProps, OptionsState>
             {Object.entries(selectPrefs).map((it) => {
               return (
                 <Col xl={12} span={24} key={it[0]} style={{ marginBottom: '8px' }}>
-                  <Select
-                    insetLabel={it[1].title}
-                    optionList={it[1].options}
-                    onChange={v => this.handleChange(it[0], v)}
-                    value={this.state.prefs[it[0]]}
-                  />
+                  <Form.Slot label={it[1].title} labelPosition="left">
+                    <Select
+                      optionList={it[1].options}
+                      onChange={v => this.handleChange(it[0], v)}
+                      value={this.state.prefs[it[0]]}
+                    />
+                  </Form.Slot>
                 </Col>
               );
             })}
