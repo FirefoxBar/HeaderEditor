@@ -64,7 +64,6 @@ export default class Popup extends React.Component<any, PopupState> {
             mql.addEventListener('change', (e) => {
               if (e.matches) {
                 document.body.setAttribute('theme-mode', 'dark');
-                document.body.style.backgroundColor = '#000';
               }
             });
           } catch (e) {
@@ -73,7 +72,6 @@ export default class Popup extends React.Component<any, PopupState> {
           break;
         case 'on':
           document.body.setAttribute('theme-mode', 'dark');
-          document.body.style.backgroundColor = '#000';
           break;
         default:
       }

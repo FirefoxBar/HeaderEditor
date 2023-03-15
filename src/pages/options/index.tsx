@@ -35,7 +35,6 @@ const Options = () => {
             mql.addEventListener('change', (e) => {
               if (e.matches) {
                 document.body.setAttribute('theme-mode', 'dark');
-                document.body.style.backgroundColor = '#000';
               }
             });
           } catch (e) {
@@ -44,7 +43,6 @@ const Options = () => {
           break;
         case 'on':
           document.body.setAttribute('theme-mode', 'dark');
-          document.body.style.backgroundColor = '#000';
           break;
         default:
       }
