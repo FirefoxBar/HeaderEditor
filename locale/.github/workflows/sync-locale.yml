@@ -27,18 +27,23 @@ jobs:
       uses: actions/checkout@v3
       with:
         ref: 'dev'
-        path: 'dev'
+        path: '_dev_'
     - name: Copy new locale
       run: |
-        rm -rf ./dev/public/_locales
-        cp -r ./output ./dev/public/_locales
+        rm -rf ./_dev_/public/_locales
+        cp -r ./output ./_dev_/public/_locales
     - name: Deploy to dev-locale
       run: |
-        cd ./dev
+        cd ./_dev_
         git config user.name 'github-actions[bot]'
         git config user.email 'github-actions[bot]@users.noreply.github.com'
-        git add --all .
-        git commit -m '[skip ci] sync locale' --quiet --no-verify
+        GIT_STATUS=$(git status --porcelain)
+        if [[ $GIT_STATUS != "" ]]; then
+          git add --all .
+          git commit -m '[skip ci] sync locale' --quiet --no-verify
+        else
+          echo "no content, skip commit"
+        fi
         git push --force origin dev:dev-locale
     - name: Create PR
       env:
