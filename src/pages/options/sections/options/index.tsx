@@ -122,8 +122,8 @@ export default class Options extends React.Component<OptionsProps, OptionsState>
               return (
                 <Col xl={12} span={24} key={it[0]} style={{ marginBottom: '8px' }}>
                   <Select
-                    insetLabel={selectPrefs[1].title}
-                    optionList={selectPrefs[1].options}
+                    insetLabel={it[1].title}
+                    optionList={it[1].options}
                     onChange={v => this.handleChange(it[0], v)}
                     value={this.state.prefs[it[0]]}
                   />
