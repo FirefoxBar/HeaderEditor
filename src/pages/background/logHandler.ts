@@ -6,7 +6,7 @@ import { cloneDeep } from 'lodash-es';
 
 function handleMessage(it: LogItem) {
   console.log(
-    ['%cHeader Editor%c [', dayjs(it.time).format('YYYY-MM-DD HH:mm:ss:SSS'), ']%c', it.message].join(''),
+    ['%cHeader Editor%c [', dayjs(it.time).format('YYYY-MM-DD HH:mm:ss.SSS'), ']%c ', it.message].join(''),
     'color:#5584ff;',
     'color:#ff9300;',
     '',
