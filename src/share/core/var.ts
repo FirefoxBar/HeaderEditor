@@ -86,14 +86,14 @@ export const defaultPrefValue: PrefValue = {
 };
 
 export enum APIs {
-  HEALTH_CHECK,
-  OPEN_URL,
-  GET_RULES,
-  SAVE_RULE,
-  DELETE_RULE,
-  UPDATE_CACHE,
-  SET_PREFS,
-  ON_EVENT,
+  HEALTH_CHECK = 'check',
+  OPEN_URL = 'open_url',
+  GET_RULES = 'get_rules',
+  SAVE_RULE = 'save_rule',
+  DELETE_RULE = 'del_rule',
+  UPDATE_CACHE = 'update_cache',
+  SET_PREFS = 'set_pref',
+  ON_EVENT = 'event',
 }
 
 export enum IS_MATCH {
