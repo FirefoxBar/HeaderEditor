@@ -1,7 +1,9 @@
+import { cloneDeep } from 'lodash-es';
 import { convertToRule, convertToTinyRule, isMatchUrl, upgradeRuleFormat, initRule } from './ruleUtils';
 import { getDatabase } from './storage';
 import { getTableName } from './utils';
-import { InitdRule, IS_MATCH, Rule, TABLE_NAMES, TABLE_NAMES_TYPE } from './var';
+import { APIs, EVENTs, InitdRule, IS_MATCH, Rule, TABLE_NAMES, TABLE_NAMES_TYPE } from './var';
+import notify from './notify';
 
 const cache: { [key: string]: null | InitdRule[] } = {};
 TABLE_NAMES.forEach((t) => {
@@ -110,6 +112,7 @@ async function save(o: Rule) {
         const request = os.get(Number(rule.id));
         request.onsuccess = () => {
           const existsRule = request.result || {};
+          const originalRule = cloneDeep(existsRule);
           for (const prop in rule) {
             if (prop === 'id') {
               continue;
@@ -119,6 +122,7 @@ async function save(o: Rule) {
           const req = os.put(existsRule);
           req.onsuccess = () => {
             updateCache(tableName);
+            notify.other({ method: APIs.ON_EVENT, event: EVENTs.RULE_UPDATE, from: originalRule, target: existsRule });
             resolve(rule);
           };
         };
@@ -133,6 +137,7 @@ async function save(o: Rule) {
           // Give it the ID that was generated
           // @ts-ignore
           rule.id = event.target.result;
+          notify.other({ method: APIs.ON_EVENT, event: EVENTs.RULE_UPDATE, from: null, target: rule });
           resolve(rule);
         };
       }

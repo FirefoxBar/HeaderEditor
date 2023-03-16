@@ -1,5 +1,6 @@
 import * as storage from '@/share/core/storage';
 import { TABLE_NAMES } from '@/share/core/var';
+import notify from '@/share/core/notify';
 import browser from 'webextension-polyfill';
 
 // Upgrade
@@ -51,7 +52,7 @@ storage
                   }
                   cursor.continue();
                 } else {
-                  cacheQueue.push(browser.runtime.sendMessage({ method: 'updateCache', type: k }));
+                  cacheQueue.push(notify.other({ method: 'updateCache', type: k }));
                 }
               };
             });

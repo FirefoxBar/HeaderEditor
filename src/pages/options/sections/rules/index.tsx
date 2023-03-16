@@ -4,10 +4,11 @@ import { getExportName } from '@/pages/options/utils';
 import Api from '@/share/core/api';
 import emitter from '@/share/core/emitter';
 import file from '@/share/core/file';
+import notify from '@/share/core/notify';
 import { convertToTinyRule, createExport } from '@/share/core/ruleUtils';
 import { prefs } from '@/share/core/storage';
 import { getTableName, t } from '@/share/core/utils';
-import { InitdRule, Rule, TABLE_NAMES, TABLE_NAMES_TYPE } from '@/share/core/var';
+import { EVENTs, InitdRule, Rule, TABLE_NAMES, TABLE_NAMES_TYPE } from '@/share/core/var';
 import { IconCheckList, IconDelete, IconFavoriteList, IconList, IconPlusCircle, IconSend, IconUnlock } from '@douyinfe/semi-icons';
 import { Button, ButtonGroup, Modal, Space, Spin, Typography } from '@douyinfe/semi-ui';
 import { cx, css } from '@emotion/css';
@@ -46,6 +47,7 @@ export default class Rules extends React.Component<RulesProps, RulesState> {
 
     this.handleSelect = this.handleSelect.bind(this);
     this.handleRuleUpdate = this.handleRuleUpdate.bind(this);
+    this.handleRuleUpdateEvent = this.handleRuleUpdateEvent.bind(this);
     this.handleHasRuleUpdate = this.handleHasRuleUpdate.bind(this);
     this.toggleSelect = this.toggleSelect.bind(this);
     this.handleToggleSelectAll = this.handleToggleSelectAll.bind(this);
@@ -65,6 +67,7 @@ export default class Rules extends React.Component<RulesProps, RulesState> {
     });
     emitter.on(emitter.EVENT_RULE_UPDATE, this.handleRuleUpdate);
     emitter.on(emitter.EVENT_HAS_RULE_UPDATE, this.handleHasRuleUpdate);
+    notify.event.on(EVENTs.RULE_UPDATE, this.handleRuleUpdateEvent);
 
     this.state = {
       loading: false,
@@ -79,6 +82,12 @@ export default class Rules extends React.Component<RulesProps, RulesState> {
   componentWillUnmount() {
     emitter.off(emitter.EVENT_HAS_RULE_UPDATE, this.handleHasRuleUpdate);
     emitter.off(emitter.EVENT_RULE_UPDATE, this.handleRuleUpdate);
+    notify.event.off(EVENTs.RULE_UPDATE, this.handleRuleUpdateEvent);
+  }
+
+  // 事件响应 - 通知
+  handleRuleUpdateEvent(request: any) {
+    this.handleRuleUpdate(request.target);
   }
 
   // 事件响应

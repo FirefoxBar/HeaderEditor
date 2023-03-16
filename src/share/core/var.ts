@@ -93,10 +93,15 @@ export enum APIs {
   DELETE_RULE,
   UPDATE_CACHE,
   SET_PREFS,
+  ON_EVENT,
 }
 
 export enum IS_MATCH {
   MATCH,
   MATCH_BUT_EXCLUDE,
   NOT_MATCH,
+}
+
+export enum EVENTs {
+  RULE_UPDATE = 'rule_update',
 }
