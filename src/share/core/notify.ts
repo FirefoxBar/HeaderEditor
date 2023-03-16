@@ -10,6 +10,7 @@ class Notify {
     browser.runtime.onMessage.addListener((request, sender) => {
       if (request.method === 'notifyBackground') {
         request.method = request.reason;
+        delete request.reason;
       }
       if (request.method !== APIs.ON_EVENT) {
         return;

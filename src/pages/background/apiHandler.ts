@@ -9,6 +9,7 @@ export default function createApiHandler() {
   browser.runtime.onMessage.addListener((request, sender) => {
     if (request.method === 'notifyBackground') {
       request.method = request.reason;
+      delete request.reason;
     }
     logger.d('Background Receive Message', request);
     switch (request.method) {
