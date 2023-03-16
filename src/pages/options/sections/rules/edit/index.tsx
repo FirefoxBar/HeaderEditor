@@ -238,7 +238,6 @@ export default class Edit extends React.Component<EditProps, EditState> {
     }
 
     const res = await Api.saveRule(rule);
-    emitter.emit(emitter.EVENT_RULE_UPDATE, res);
     this.props.onClose();
   }
 

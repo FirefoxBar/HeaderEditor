@@ -46,8 +46,8 @@ export default class Rules extends React.Component<RulesProps, RulesState> {
     super(props);
 
     this.handleSelect = this.handleSelect.bind(this);
-    this.handleRuleUpdate = this.handleRuleUpdate.bind(this);
     this.handleRuleUpdateEvent = this.handleRuleUpdateEvent.bind(this);
+    this.handleRuleDeleteEvent = this.handleRuleDeleteEvent.bind(this);
     this.handleHasRuleUpdate = this.handleHasRuleUpdate.bind(this);
     this.toggleSelect = this.toggleSelect.bind(this);
     this.handleToggleSelectAll = this.handleToggleSelectAll.bind(this);
@@ -65,9 +65,8 @@ export default class Rules extends React.Component<RulesProps, RulesState> {
       this.isCollapse = prefs.get('manage-collapse-group');
       this.load();
     });
-    emitter.on(emitter.EVENT_RULE_UPDATE, this.handleRuleUpdate);
-    emitter.on(emitter.EVENT_HAS_RULE_UPDATE, this.handleHasRuleUpdate);
     notify.event.on(EVENTs.RULE_UPDATE, this.handleRuleUpdateEvent);
+    notify.event.on(EVENTs.RULE_DELETE, this.handleRuleDeleteEvent);
 
     this.state = {
       loading: false,
@@ -80,18 +79,13 @@ export default class Rules extends React.Component<RulesProps, RulesState> {
   }
 
   componentWillUnmount() {
-    emitter.off(emitter.EVENT_HAS_RULE_UPDATE, this.handleHasRuleUpdate);
-    emitter.off(emitter.EVENT_RULE_UPDATE, this.handleRuleUpdate);
     notify.event.off(EVENTs.RULE_UPDATE, this.handleRuleUpdateEvent);
+    notify.event.off(EVENTs.RULE_DELETE, this.handleRuleDeleteEvent);
   }
 
-  // 事件响应 - 通知
+  // 事件响应 - 通知 - 规则更新
   handleRuleUpdateEvent(request: any) {
-    this.handleRuleUpdate(request.target);
-  }
-
-  // 事件响应
-  handleRuleUpdate(rule: Rule) {
+    const rule: Rule = request.target;
     const tableName = getTableName(rule.ruleType);
     // 寻找ID相同的
     let sameItem: Rule | null = null;
@@ -121,6 +115,7 @@ export default class Rules extends React.Component<RulesProps, RulesState> {
         // 在同一个Group里面，直接替换掉就行了
         fromGroup.splice(fromGroup.indexOf(sameItem), 1, displayRule);
       } else {
+        // 不同的Group
         fromGroup.splice(fromGroup.indexOf(sameItem), 1);
         if (toGroup) {
           toGroup.push(displayRule);
@@ -144,6 +139,26 @@ export default class Rules extends React.Component<RulesProps, RulesState> {
     this.forceUpdate();
   }
 
+  // 事件响应 - 通知 - 规则删除
+  handleRuleDeleteEvent(request: any) {
+    const id: number = request.id;
+    // 寻找ID相同的
+    let sameItem: Rule | null = null;
+    let fromGroup: Rule[] | null = null;
+    const groups = Object.values(this.state.group);
+    for (const group of groups) {
+      for (const currentRule of group.rules) {
+        if (currentRule.id === rule.id) {
+          sameItem = currentRule;
+          fromGroup = group.rules;
+          break;
+        }
+      }
+    }
+    fromGroup.splice(fromGroup.indexOf(sameItem), 1);
+    this.forceUpdate();
+  }
+
   handleHasRuleUpdate() {
     this.load();
   }
@@ -157,7 +172,7 @@ export default class Rules extends React.Component<RulesProps, RulesState> {
 
   // 切换规则开关
   handleToggleEnable(item: InitdRule, checked: boolean) {
-    toggleRule(item, checked).then(() => this.forceUpdate());
+    toggleRule(item, checked);
   }
 
   // 更换分组
@@ -168,29 +183,14 @@ export default class Rules extends React.Component<RulesProps, RulesState> {
       return;
     }
     item.group = newGroup;
-    await Api.saveRule(item);
-    const oldGroupRules = this.state.group[oldGroup].rules;
-    oldGroupRules.splice(oldGroupRules.indexOf(item), 1);
-    if (typeof this.state.group[newGroup] === 'undefined') {
-      this.state.group[newGroup] = {
-        name: newGroup,
-        rules: [],
-      };
-    }
-    this.state.group[newGroup].rules.push(item);
-    this.forceUpdate();
+    Api.saveRule(item);
   }
 
   // 删除
   handleDelete(item: InitdRule) {
     Modal.warning({
       title: t('delete_confirm'),
-      onOk: async () => {
-        await remove(item);
-        const group = this.state.group[item.group];
-        group.rules.splice(group.rules.indexOf(item), 1);
-        this.forceUpdate();
-      },
+      onOk: () => remove(item),
     });
   }
 
@@ -198,10 +198,7 @@ export default class Rules extends React.Component<RulesProps, RulesState> {
   handleClone(item: InitdRule) {
     const newItem = convertToTinyRule(item);
     newItem.name += '_clone';
-    Api.saveRule(newItem).then((res) => {
-      this.state.group[item.group].rules.push(res);
-      this.forceUpdate();
-    });
+    Api.saveRule(newItem);
   }
 
   // 预览
@@ -271,15 +268,8 @@ export default class Rules extends React.Component<RulesProps, RulesState> {
         return;
       }
       rule.enable = setTo;
-      queue.push(Api.saveRule(rule));
-      const tableName = getTableName(rule.ruleType);
-      if (!table.includes(tableName)) {
-        table.push(tableName);
-      }
+      Api.saveRule(rule);
     });
-    await Promise.all(queue);
-    await Promise.all(table.map((tb) => Api.updateCache(tb)));
-    this.forceUpdate();
   }
   // 批量移动群组
   handleBatchMove() {
@@ -288,20 +278,8 @@ export default class Rules extends React.Component<RulesProps, RulesState> {
       batch.forEach((it) => {
         const oldGroup = it.group;
         it.group = newGroup;
-        const oldGroupRules = this.state.group[oldGroup].rules;
-        oldGroupRules.splice(oldGroupRules.indexOf(it), 1);
-        if (oldGroupRules.length === 0) {
-          delete this.state.group[newGroup];
-        }
-        if (typeof this.state.group[newGroup] === 'undefined') {
-          this.state.group[newGroup] = {
-            name: newGroup,
-            rules: [],
-          };
-        }
-        this.state.group[newGroup].rules.push(it);
+        Api.saveRule(it);
       });
-      Promise.all(batch.map((item) => Api.saveRule(item))).then(() => this.forceUpdate());
     });
   }
   // 批量分享
@@ -314,14 +292,7 @@ export default class Rules extends React.Component<RulesProps, RulesState> {
       title: t('delete_confirm'),
       onOk: async () => {
         const batch = this.getSelectedRules();
-        await Promise.all(
-          batch.map(async (item) => {
-            await remove(item);
-            const group = this.state.group[item.group];
-            group.rules.splice(group.rules.indexOf(item), 1);
-          }),
-        );
-        this.forceUpdate();
+        batch.forEach(item => remove(item));
       },
     });
   }

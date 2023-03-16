@@ -153,6 +153,7 @@ function remove(tableName: TABLE_NAMES_TYPE, id: number): Promise<void> {
       const request = os.delete(Number(id));
       request.onsuccess = () => {
         updateCache(tableName);
+        notify.other({ method: APIs.ON_EVENT, event: EVENTs.RULE_DELETE, id: Number(id) });
         resolve();
       };
     });

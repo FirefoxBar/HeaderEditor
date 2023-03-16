@@ -107,7 +107,6 @@ export default class ImportDrawer extends React.Component<ImportDrawerProps, Imp
     Promise.all(queue).then(() => {
       // this.imports.status = 0;
       Toast.success(t('import_success'));
-      setTimeout(() => emitter.emit(emitter.EVENT_HAS_RULE_UPDATE), 300);
       this.props.onSuccess?.();
     });
     this.setState({

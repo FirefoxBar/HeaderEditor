@@ -104,4 +104,5 @@ export enum IS_MATCH {
 
 export enum EVENTs {
   RULE_UPDATE = 'rule_update',
+  RULE_DELETE = 'rule_delete',
 }
