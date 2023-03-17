@@ -191,16 +191,18 @@ const RuleCard = (props: RuleCardProps) => {
               {
                 node: 'item',
                 name: t('rename'),
-                onClick: () => {
+                onClick: async () => {
                   const newGroup = await selectGroup(name);
                   if (name === newGroup) {
                     return;
                   }
                   // 更新规则
-                  for (const item of rules) {
-                    item.group = newGroup;
-                    await Api.saveRule(item);
-                  }
+                  return Promise.all(
+                    rules.map(item => {
+                      item.group = newGroup;
+                      return Api.saveRule(item);
+                    })
+                  );
                 },
                 disabled: name === t('ungrouped'),
                 icon: <IconEdit />,
