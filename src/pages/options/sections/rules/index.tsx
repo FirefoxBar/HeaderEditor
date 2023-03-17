@@ -113,7 +113,7 @@ export default class Rules extends React.Component<RulesProps, RulesState> {
         name: rule.group,
         rules: [],
       };
-      toGroup = this.state.group[rule.group];
+      toGroup = this.state.group[rule.group].rules;
     }
     // 新的规则，直接插入
     if (!sameItem) {
