@@ -1,6 +1,5 @@
 /* eslint-disable max-lines */
-import { selectGroup } from '@/pages/options/lib/utils';
-import { getExportName } from '@/pages/options/utils';
+import { selectGroup, getExportName } from '@/pages/options/utils';
 import Api from '@/share/core/api';
 import emitter from '@/share/core/emitter';
 import file from '@/share/core/file';
@@ -55,11 +54,7 @@ export default class Rules extends React.Component<RulesProps, RulesState> {
     this.handleBatchMove = this.handleBatchMove.bind(this);
     this.handleBatchShare = this.handleBatchShare.bind(this);
     this.handleBatchDelete = this.handleBatchDelete.bind(this);
-    this.handleClone = this.handleClone.bind(this);
-    this.handleToggleEnable = this.handleToggleEnable.bind(this);
     this.handlePreview = this.handlePreview.bind(this);
-    this.handleDelete = this.handleDelete.bind(this);
-    this.handleChangeGroup = this.handleChangeGroup.bind(this);
 
     prefs.ready(() => {
       this.isCollapse = prefs.get('manage-collapse-group');
@@ -89,10 +84,12 @@ export default class Rules extends React.Component<RulesProps, RulesState> {
     const tableName = getTableName(rule.ruleType);
     // 寻找ID相同的
     let sameItem: Rule | null = null;
+    let fromGroupKey = '';
     let fromGroup: Rule[] | null = null;
     let toGroup: Rule[] | null = null;
-    const groups = Object.values(this.state.group);
-    for (const group of groups) {
+    const groupKeys = Object.keys(this.state.group);
+    for (const key of groupKeys) {
+      const group = this.state.group[key];
       for (const currentRule of group.rules) {
         if (currentRule.id === rule.id) {
           sameItem = currentRule;
@@ -108,33 +105,32 @@ export default class Rules extends React.Component<RulesProps, RulesState> {
         break;
       }
     }
-    // 如果有找到，就替换掉，否则插入新的
     const displayRule = { ...rule, [V_KEY]: `${tableName}-${rule.id}` };
-    if (sameItem && fromGroup) {
+    // 新的分组
+    if (!toGroup) {
+      // 插入一个新的Group
+      this.state.group[rule.group] = {
+        name: rule.group,
+        rules: [],
+      };
+      toGroup = this.state.group[rule.group];
+    }
+    // 新的规则，直接插入
+    if (!sameItem) {
+      toGroup.push(displayRule);
+    } else {
+      // 在同一个Group里面，直接替换掉就行了
       if (fromGroup === toGroup) {
-        // 在同一个Group里面，直接替换掉就行了
         fromGroup.splice(fromGroup.indexOf(sameItem), 1, displayRule);
       } else {
         // 不同的Group
         fromGroup.splice(fromGroup.indexOf(sameItem), 1);
-        if (toGroup) {
-          toGroup.push(displayRule);
-        } else {
-          // 插入一个新的Group
-          this.state.group[rule.group] = {
-            name: rule.group,
-            rules: [displayRule],
-          };
-        }
+        toGroup.push(displayRule);
       }
-    } else if (toGroup) {
-      toGroup.push(displayRule);
-    } else {
-      // 插入一个新的Group
-      this.state.group[rule.group] = {
-        name: rule.group,
-        rules: [displayRule],
-      };
+    }
+    // 分组没了？
+    if (fromGroup && fromGroup.length === 0) {
+      delete this.state.group[fromGroupKey];
     }
     this.forceUpdate();
   }
@@ -144,18 +140,26 @@ export default class Rules extends React.Component<RulesProps, RulesState> {
     const id: number = request.id;
     // 寻找ID相同的
     let sameItem: Rule | null = null;
+    let fromGroupKey = '';
     let fromGroup: Rule[] | null = null;
-    const groups = Object.values(this.state.group);
-    for (const group of groups) {
-      for (const currentRule of group.rules) {
-        if (currentRule.id === rule.id) {
-          sameItem = currentRule;
-          fromGroup = group.rules;
-          break;
-        }
+    const groupKeys = Object.keys(this.state.group);
+    for (const key of groupKeys) {
+      const group = this.state.group[key];
+      const currentRule = group.rules.find(x => x.id === rule.id);
+      if (currentRule) {
+        sameItem = currentRule;
+        fromGroup = group.rules;
+        fromGroupKey = key;
+        break;
       }
     }
-    fromGroup.splice(fromGroup.indexOf(sameItem), 1);
+    if (fromGroup) {
+      fromGroup.splice(fromGroup.indexOf(sameItem), 1);
+      // 分组没了？
+      if (fromGroup.length === 0) {
+        delete this.state.group[fromGroupKey];
+      }
+    }
     this.forceUpdate();
   }
 
@@ -168,37 +172,6 @@ export default class Rules extends React.Component<RulesProps, RulesState> {
     this.setState({
       selectedKeys: selectedRowKeys,
     });
-  }
-
-  // 切换规则开关
-  handleToggleEnable(item: InitdRule, checked: boolean) {
-    toggleRule(item, checked);
-  }
-
-  // 更换分组
-  async handleChangeGroup(item: InitdRule) {
-    const newGroup = await selectGroup(item.group);
-    const oldGroup = item.group;
-    if (oldGroup === newGroup) {
-      return;
-    }
-    item.group = newGroup;
-    Api.saveRule(item);
-  }
-
-  // 删除
-  handleDelete(item: InitdRule) {
-    Modal.warning({
-      title: t('delete_confirm'),
-      onOk: () => remove(item),
-    });
-  }
-
-  // Clone
-  handleClone(item: InitdRule) {
-    const newItem = convertToTinyRule(item);
-    newItem.name += '_clone';
-    Api.saveRule(newItem);
   }
 
   // 预览
@@ -297,67 +270,6 @@ export default class Rules extends React.Component<RulesProps, RulesState> {
     });
   }
 
-  handleGroupShare(name: string) {
-    const { rules } = this.state.group[name];
-    const result: any = {};
-    TABLE_NAMES.forEach((tb) => {
-      result[tb] = [];
-    });
-    rules.forEach((e) => result[getTableName(e.ruleType)].push(e));
-    file.save(JSON.stringify(createExport(result), null, '\t'), getExportName());
-  }
-  async handleGroupRename(name: string) {
-    const newGroup = await selectGroup(name);
-    if (name === newGroup) {
-      return;
-    }
-    // 更新规则
-    const { rules } = this.state.group[name];
-    for (const item of rules) {
-      item.group = newGroup;
-      await Api.saveRule(item);
-    }
-    this.setState((prevState) => {
-      const result = { ...prevState, group: { ...prevState.group } };
-      if (typeof result.group[newGroup] === 'undefined') {
-        result.group[newGroup] = {
-          name: newGroup,
-          rules: result.group.group[name].rules,
-        };
-      } else {
-        for (const item of rules) {
-          result.group[newGroup].rules.push(item);
-        }
-      }
-      if (prevState.collapsed.includes(name)) {
-        const newCollapsed = [...prevState.collapsed];
-        newCollapsed.splice(newCollapsed.indexOf(name), 1);
-        newCollapsed.push(newGroup);
-        result.collapsed = newCollapsed;
-      }
-      delete result.group[name];
-      return result;
-    });
-  }
-  handleGroupDelete(name: string) {
-    Modal.confirm({
-      title: t('delete_confirm'),
-      onOk: async () => {
-        const { rules } = this.state.group[name];
-        await Promise.all(rules.map((item) => remove(item)));
-        this.setState((prevState) => {
-          const result = { ...prevState, group: { ...prevState.group } };
-          if (prevState.collapsed.includes(name)) {
-            const newCollapsed = [...prevState.collapsed];
-            newCollapsed.splice(newCollapsed.indexOf(name), 1);
-            result.collapsed = newCollapsed;
-          }
-          delete result.group[name];
-          return result;
-        });
-      },
-    });
-  }
   handleCollapse(name: string) {
     this.setState((prevState) => {
       const collapsed = [...prevState.collapsed];
@@ -489,15 +401,8 @@ export default class Rules extends React.Component<RulesProps, RulesState> {
                   isEnableSelect={this.state.isEnableSelect}
                   onSelect={this.handleSelect}
                   selectedKeys={this.state.selectedKeys}
-                  onRename={() => this.handleGroupRename(name)}
-                  onShare={() => this.handleGroupShare(name)}
-                  onDelete={() => this.handleGroupDelete(name)}
                   onCollapse={() => this.handleCollapse(name)}
-                  onRuleEnable={this.handleToggleEnable}
-                  onRuleChangeGroup={this.handleChangeGroup}
                   onRuleEdit={this.props.onEdit}
-                  onRuleClone={this.handleClone}
-                  onRuleDelete={this.handleDelete}
                   onRulePreview={this.handlePreview}
                 />
               );

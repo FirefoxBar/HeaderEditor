@@ -1,4 +1,4 @@
-import { selectGroup } from '@/pages/options/lib/utils';
+import { selectGroup } from '@/pages/options/utils';
 import * as React from 'react';
 import Api from '@/share/core/api';
 import emitter from '@/share/core/emitter';

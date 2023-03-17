@@ -1,5 +1,9 @@
-import { t } from '@/share/core/utils';
-import { InitdRule, Rule } from '@/share/core/var';
+import Api from '@/share/core/api';
+import file from '@/share/core/file';
+import { getTableName, t } from '@/share/core/utils';
+import { InitdRule, Rule, TABLE_NAMES } from '@/share/core/var';
+import { convertToTinyRule, createExport } from '@/share/core/ruleUtils';
+import { selectGroup, getExportName } from '@/pages/options/utils';
 import { IconCopyAdd, IconChevronDown, IconDelete, IconEdit, IconFavoriteList, IconMore, IconSearch, IconSend } from '@douyinfe/semi-icons';
 import { Button, ButtonGroup, Card, Dropdown, Popover, Switch, Table, Tooltip } from '@douyinfe/semi-ui';
 import type { ColumnProps, RowSelectionProps } from '@douyinfe/semi-ui/lib/es/table';
@@ -7,6 +11,7 @@ import { css } from '@emotion/css';
 import { useResponsive } from 'ahooks';
 import React from 'react';
 import RuleDetail from './rule-detail';
+import { batchShare, remove, toggleRule } from './utils';
 
 const V_KEY = '_v_key';
 
@@ -20,17 +25,10 @@ interface RuleCardProps {
   onSelect?: RowSelectionProps<Rule>['onChange'];
   selectedKeys: string[];
 
-  onRename: () => void;
-  onShare: () => void;
-  onDelete: () => void;
   onCollapse: () => void;
 
-  onRuleChangeGroup: (rule: Rule) => void;
-  onRuleEnable: (rule: Rule, enable: boolean) => void;
   onRuleEdit: (rule: Rule) => void;
-  onRuleClone: (rule: Rule) => void;
   onRulePreview: (rule: Rule) => void;
-  onRuleDelete: (rule: Rule) => void;
 }
 
 const RuleCard = (props: RuleCardProps) => {
@@ -40,17 +38,10 @@ const RuleCard = (props: RuleCardProps) => {
     rules,
     isEnableSelect,
     onCollapse,
-    onDelete,
-    onRename,
-    onRuleChangeGroup,
-    onRuleClone,
-    onRuleDelete,
     onRuleEdit,
     onRulePreview,
-    onShare,
     onSelect,
     selectedKeys,
-    onRuleEnable,
   } = props;
 
   const responsive = useResponsive();
@@ -68,7 +59,7 @@ const RuleCard = (props: RuleCardProps) => {
       align: 'center',
       width: 80,
       render: (value: boolean, item: InitdRule) => (
-        <Switch size="small" checked={value} onChange={(checked) => onRuleEnable(item, checked)} />
+        <Switch size="small" checked={value} onChange={(checked) => toggleRule(item, checked)} />
       ),
     },
     {
@@ -107,13 +98,25 @@ const RuleCard = (props: RuleCardProps) => {
               {
                 node: 'item',
                 name: t('group'),
-                onClick: () => onRuleChangeGroup(item),
+                onClick: async () => {
+                  const newGroup = await selectGroup(item.group);
+                  const oldGroup = item.group;
+                  if (oldGroup === newGroup) {
+                    return;
+                  }
+                  item.group = newGroup;
+                  return Api.saveRule(item);
+                },
                 icon: <IconFavoriteList />,
               },
               {
                 node: 'item',
                 name: t('clone'),
-                onClick: () => onRuleClone(item),
+                onClick: () => {
+                  const newItem = convertToTinyRule(item);
+                  newItem.name += '_clone';
+                  Api.saveRule(newItem);
+                },
                 icon: <IconCopyAdd />,
               },
               {
@@ -122,7 +125,12 @@ const RuleCard = (props: RuleCardProps) => {
               {
                 node: 'item',
                 name: t('delete'),
-                onClick: () => onRuleDelete(item),
+                onClick: () => {
+                  Modal.warning({
+                    title: t('delete_confirm'),
+                    onOk: () => remove(item),
+                  });
+                },
                 type: 'danger',
                 icon: <IconDelete />,
               },
@@ -170,13 +178,30 @@ const RuleCard = (props: RuleCardProps) => {
               {
                 node: 'item',
                 name: t('share'),
-                onClick: onShare,
+                onClick: () => {
+                  const result: any = {};
+                  TABLE_NAMES.forEach((tb) => {
+                    result[tb] = [];
+                  });
+                  rules.forEach((e) => result[getTableName(e.ruleType)].push(e));
+                  file.save(JSON.stringify(createExport(result), null, '\t'), getExportName());
+                },
                 icon: <IconSend />,
               },
               {
                 node: 'item',
                 name: t('rename'),
-                onClick: onRename,
+                onClick: () => {
+                  const newGroup = await selectGroup(name);
+                  if (name === newGroup) {
+                    return;
+                  }
+                  // 更新规则
+                  for (const item of rules) {
+                    item.group = newGroup;
+                    await Api.saveRule(item);
+                  }
+                },
                 disabled: name === t('ungrouped'),
                 icon: <IconEdit />,
               },
@@ -186,7 +211,12 @@ const RuleCard = (props: RuleCardProps) => {
               {
                 node: 'item',
                 name: t('delete'),
-                onClick: onDelete,
+                onClick: () => {
+                  Modal.confirm({
+                    title: t('delete_confirm'),
+                    onOk: () => Promise.all(rules.map((item) => remove(item))),
+                  });
+                },
                 type: 'danger',
                 disabled: name === t('ungrouped'),
                 icon: <IconDelete />,
