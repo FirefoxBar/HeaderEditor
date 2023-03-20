@@ -4,7 +4,7 @@ import { getTableName, t } from '@/share/core/utils';
 import { InitdRule, Rule, TABLE_NAMES } from '@/share/core/var';
 import { convertToTinyRule, createExport } from '@/share/core/ruleUtils';
 import { selectGroup, getExportName } from '@/pages/options/utils';
-import { IconCopyAdd, IconChevronDown, IconDelete, IconEdit, IconFavoriteList, IconMore, IconSearch, IconSend } from '@douyinfe/semi-icons';
+import { IconCopyAdd, IconChevronDown, IconDelete, IconEdit, IconFavoriteList, IconMore, IconSearch, IconSend, IconUnlock } from '@douyinfe/semi-icons';
 import { Button, ButtonGroup, Card, Dropdown, Popover, Switch, Table, Tooltip } from '@douyinfe/semi-ui';
 import type { ColumnProps, RowSelectionProps } from '@douyinfe/semi-ui/lib/es/table';
 import { css } from '@emotion/css';
@@ -148,6 +148,8 @@ const RuleCard = (props: RuleCardProps) => {
     tableColumns.splice(index, 1);
   }
 
+  const isGroupEnable = rules.findIndex(x => x.enable) !== -1;
+
   return (
     <Card
       className={css`
@@ -187,6 +189,15 @@ const RuleCard = (props: RuleCardProps) => {
                   file.save(JSON.stringify(createExport(result), null, '\t'), getExportName());
                 },
                 icon: <IconSend />,
+              },
+              {
+                node: 'item',
+                name: t(isGroupEnable ? 'disable' : 'enable'),
+                onClick: () => {
+                  const target = isGroupEnable ? false : true;
+                  rules.forEach(item => toggleRule(item, target));
+                },
+                icon: <IconUnlock />,
               },
               {
                 node: 'item',
