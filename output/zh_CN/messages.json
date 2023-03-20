@@ -60,6 +60,18 @@
 		"message": "代码不能为空",
 		"description": "Tips when a rule is custom function but code is empty"
 	},
+	"common_mark": {
+		"message": "设为常用",
+		"description": "Mark a rule/group as common, it will display at the popup panel"
+	},
+	"common_mark_tip": {
+		"message": "将任意规则或分组设为常用后，会在此处显示",
+		"description": "If user didn't mark anything as common, this message will display at the popup panel"
+	},
+	"common_unmark": {
+		"message": "取消常用",
+		"description": "Unmark a common rule/group"
+	},
 	"dark_mode": {
 		"message": "暗黑模式",
 		"description": "Dark mode select"
