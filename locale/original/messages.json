@@ -60,6 +60,18 @@
     "message": "Code can not be empty",
     "description": "Tips when a rule is custom function but code is empty"
   },
+  "common_mark": {
+    "message": "Mark as common",
+    "description": "Mark a rule/group as common, it will display at the popup panel"
+  },
+  "common_unmark": {
+    "message": "Unmark",
+    "description": "Unmark a common rule/group"
+  },
+  "common_mark_tip": {
+    "message": "When you mark any rule or group as common, you'll see it here",
+    "description": "If user didn't mark anything as common, this message will display at the popup panel"
+  },
   "dark_mode": {
     "message": "Dark mode",
     "description": "Dark mode select"
