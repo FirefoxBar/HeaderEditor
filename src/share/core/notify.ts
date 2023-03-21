@@ -42,6 +42,9 @@ class Notify {
       // 只要开始发了，就把timer设置成null
       this.messageTimer = null;
       if (currentQueue.length === 0) {
+        return;
+      }
+      if (currentQueue.length === 1) {
         const first = currentQueue[0];
         browser.runtime.sendMessage(first.request).then(first.resolve).catch(first.reject);
         return;
