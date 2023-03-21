@@ -44,17 +44,20 @@ const Rule = () => {
         {
           title: 'enable',
           dataIndex: 'enable',
+          className: 'cell-enable',
           align: 'center',
-          width: 80,
+          width: 30,
           render: (value: boolean, item: InitdRule) => (
-            <Switch
-              size="small"
-              checked={value}
-              onChange={(checked) => {
-                item.enable = enable;
-                return Api.saveRule(item);
-              }}
-            />
+            <div className="switch-container">
+              <Switch
+                size="small"
+                checked={value}
+                onChange={(checked) => {
+                  item.enable = enable;
+                  return Api.saveRule(item);
+                }}
+              />
+            </div>
           ),
         },
         {

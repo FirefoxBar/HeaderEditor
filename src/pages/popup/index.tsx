@@ -2,7 +2,7 @@ import SemiLocale from '@/share/components/semi-locale';
 import Api from '@/share/core/api';
 import { prefs } from '@/share/core/storage';
 import { IS_ANDROID, t } from '@/share/core/utils';
-import { Nav, Button, Switch, Tooltip } from '@douyinfe/semi-ui';
+import { Nav, Button, Switch, Tooltip, Typography } from '@douyinfe/semi-ui';
 import { IconMenu, IconSetting } from '@douyinfe/semi-icons';
 import { css, cx } from '@emotion/css';
 import React, { useCallback, useEffect, useState } from 'react';
@@ -29,6 +29,13 @@ const basicStyle = css`
     flex-shrink: 1;
     overflow: auto;
     background-color: var(--semi-color-fill-0);
+
+    .cell-enable {
+      .switch-container {
+        display: flex;
+        align-items: center;
+      }
+    }
   }
 `;
 
@@ -111,6 +118,8 @@ const Popup = () => {
         />
         <main className="main-content">
           <Rule />
+          <div style={{ flexGrow: 1, minHeight: '20px' }} />
+          <Typography.Text type="tertiary">{t('common_mark_tip')}</Typography.Text>
         </main>
       </div>
     </SemiLocale>

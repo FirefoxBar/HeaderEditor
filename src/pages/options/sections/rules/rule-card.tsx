@@ -60,7 +60,9 @@ const RuleCard = (props: RuleCardProps) => {
       align: 'center',
       width: 80,
       render: (value: boolean, item: InitdRule) => (
-        <Switch size="small" checked={value} onChange={(checked) => toggleRule(item, checked)} />
+        <div className="switch-container">
+          <Switch size="small" checked={value} onChange={(checked) => toggleRule(item, checked)} />
+        </div>
       ),
     },
     {
@@ -184,6 +186,11 @@ const RuleCard = (props: RuleCardProps) => {
       .semi-card-body {
         padding: 0;
         display: ${!collapsed ? 'none' : 'block'}
+      }
+
+      .switch-container {
+        display: flex;
+        align-items: center;
       }
     `}
       key={name}
