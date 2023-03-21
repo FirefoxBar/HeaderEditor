@@ -35,13 +35,13 @@
   "__amo__applications": {
     "gecko": {
       "id": "headereditor-amo@addon.firefoxcn.net",
-      "strict_min_version": "69.0"
+      "strict_min_version": "77.0"
     }
   },
   "__xpi__applications": {
     "gecko": {
       "id": "headereditor@addon.firefoxcn.net",
-      "strict_min_version": "69.0",
+      "strict_min_version": "77.0",
       "update": "https://ext.firefoxcn.net/headereditor/install/update.json"
     }
   }

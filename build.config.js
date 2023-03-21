@@ -11,9 +11,9 @@ module.exports = {
   mpa: true,
   vendor: false,
   browserslist: {
-    chrome: 64,
-    firefox: 69,
-    edge: 79,
+    chrome: 85,
+    firefox: 77,
+    edge: 85,
   },
   plugins: [
     [
