@@ -38,7 +38,6 @@ const Rule = () => {
       rowKey={VIRTUAL_KEY}
       loading={loading}
       dataSource={data}
-      size="small"
       showHeader={false}
       columns={[
         {

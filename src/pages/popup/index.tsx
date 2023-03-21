@@ -12,7 +12,7 @@ import type { OnSelectedData } from '@douyinfe/semi-ui/lib/es/navigation';
 
 const basicStyle = css`
   min-width: 340px;
-  min-height: 400px;
+  min-height: 420px;
   height: 100vh;
   width: 100vw;
   justify-content: stretch;
@@ -29,6 +29,8 @@ const basicStyle = css`
     flex-shrink: 1;
     overflow: auto;
     background-color: var(--semi-color-fill-0);
+    display: flex;
+    flex-direction: column;
 
     .cell-enable {
       .switch-container {
@@ -119,7 +121,7 @@ const Popup = () => {
         <main className="main-content">
           <Rule />
           <div style={{ flexGrow: 1, minHeight: '20px' }} />
-          <Typography.Text type="tertiary">{t('common_mark_tip')}</Typography.Text>
+          <Typography.Text type="tertiary" style={{ textAlign: 'center', padding: '12px' }}>{t('common_mark_tip')}</Typography.Text>
         </main>
       </div>
     </SemiLocale>
