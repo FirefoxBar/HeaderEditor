@@ -57,7 +57,7 @@ async function updateCache(type: string): Promise<void> {
   });
 }
 
-interface FilterOptions {
+export interface FilterOptions {
   enable?: boolean;
   url?: string;
   id?: number;

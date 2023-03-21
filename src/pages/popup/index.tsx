@@ -7,6 +7,7 @@ import { IconMenu, IconSetting } from '@douyinfe/semi-icons';
 import { css, cx } from '@emotion/css';
 import React, { useCallback, useEffect, useState } from 'react';
 import browser from 'webextension-polyfill';
+import Rule from './rule/rule';
 import type { OnSelectedData } from '@douyinfe/semi-ui/lib/es/navigation';
 
 const basicStyle = css`
@@ -109,7 +110,7 @@ const Popup = () => {
           }
         />
         <main className="main-content">
-          Main content
+          <Rule />
         </main>
       </div>
     </SemiLocale>

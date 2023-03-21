@@ -1,6 +1,7 @@
 import notify from '@/share/core/notify';
 import { convertToRule } from './ruleUtils';
 import { APIs, isTinyRule, Rule, TABLE_NAMES, TABLE_NAMES_TYPE, TinyRule } from './var';
+import type { FilterOptions } from './rules';
 
 /**
  * Background API封装
@@ -18,7 +19,7 @@ class BackgroundAPI {
       type,
     });
   }
-  getRules(type: TABLE_NAMES_TYPE, options?: any) {
+  getRules(type: TABLE_NAMES_TYPE, options?: FilterOptions) {
     return notify.background({
       method: APIs.GET_RULES,
       type,

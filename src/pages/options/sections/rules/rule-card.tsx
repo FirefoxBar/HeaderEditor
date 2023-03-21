@@ -11,7 +11,7 @@ import type { ColumnProps, RowSelectionProps } from '@douyinfe/semi-ui/lib/es/ta
 import { css } from '@emotion/css';
 import { useResponsive } from 'ahooks';
 import React from 'react';
-import RuleDetail from './rule-detail';
+import RuleDetail from '@/share/components/rule-detail';
 import { batchShare, remove, toggleRule } from './utils';
 
 interface RuleCardProps {
