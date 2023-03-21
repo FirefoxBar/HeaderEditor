@@ -1,5 +1,5 @@
 import { getLocal } from '@/share/core/storage';
-import { useRef, useState, useEffect } from 'react';
+import { useCallback, useRef, useState, useEffect } from 'react';
 
 const useMarkCommon = (type: 'rule' | 'group') => {
   const ready = useRef(false);
