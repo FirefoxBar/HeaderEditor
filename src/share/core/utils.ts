@@ -140,3 +140,17 @@ export function getDomain(url: string) {
   const d = /.*?:\/*([^/:]+)/.exec(url);
   return d ? d[1] : null;
 }
+
+export function getGlobal() {
+  if (typeof window !== 'undefined') {
+    return window;
+  }
+  return globalThis;
+}
+
+export function isBackground() {
+  if (typeof window === 'undefined') {
+    return true;
+  }
+  return typeof window.IS_BACKGROUND !== 'undefined';
+}

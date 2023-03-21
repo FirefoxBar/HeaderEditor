@@ -3,10 +3,11 @@ import browser from 'webextension-polyfill';
 import emitter from './emitter';
 import { upgradeRuleFormat } from './ruleUtils';
 import { defaultPrefValue, PrefValue, TABLE_NAMES } from './var';
+import { getGlobal } from './utils';
 
 export function getDatabase(): Promise<IDBDatabase> {
   return new Promise((resolve, reject) => {
-    const dbOpenRequest = window.indexedDB.open('headereditor', 4);
+    const dbOpenRequest = getGlobal().indexedDB.open('headereditor', 4);
     dbOpenRequest.onsuccess = (e) => {
       // @ts-ignore
       resolve(e.target.result);

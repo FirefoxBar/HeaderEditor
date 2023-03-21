@@ -1,4 +1,5 @@
 /* eslint-disable @typescript-eslint/member-ordering */
+import { getGlobal } from '@/share/core/utils';
 import emitter from '@/share/core/emitter';
 import logger from '@/share/core/logger';
 import rules from '@/share/core/rules';
@@ -283,8 +284,8 @@ class RequestHandler {
     let encoder = this.textEncoder.get(encoding);
     if (!encoder) {
       // UTF-8使用原生API，性能更好
-      if (encoding === 'UTF-8' && window.TextEncoder) {
-        encoder = new window.TextEncoder();
+      if (encoding === 'UTF-8' && getGlobal().TextEncoder) {
+        encoder = new getGlobal().TextEncoder();
       } else {
         encoder = new TextEncoder(encoding, { NONSTANDARD_allowLegacyEncoding: true });
       }
@@ -303,9 +304,9 @@ class RequestHandler {
     let encoder = this.textDecoder.get(encoding);
     if (!encoder) {
       // 如果原生支持的话，优先使用原生
-      if (window.TextDecoder) {
+      if (getGlobal().TextDecoder) {
         try {
-          encoder = new window.TextDecoder(encoding);
+          encoder = new getGlobal().TextDecoder(encoding);
         } catch (e) {
           encoder = new TextDecoder(encoding);
         }
@@ -395,7 +396,7 @@ class RequestHandler {
     if (this.deleteHeaderTimer !== null) {
       return;
     }
-    this.deleteHeaderTimer = window.setTimeout(() => {
+    this.deleteHeaderTimer = getGlobal().setTimeout(() => {
       // clear timeout
       if (this.deleteHeaderTimer) {
         clearTimeout(this.deleteHeaderTimer);
