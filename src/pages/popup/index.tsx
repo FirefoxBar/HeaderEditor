@@ -10,26 +10,23 @@ import browser from 'webextension-polyfill';
 import type { OnSelectedData } from '@douyinfe/semi-ui/lib/es/navigation';
 
 const basicStyle = css`
-  min-height: 500px;
-  min-width: 260px;
-  max-width: 380px;
-  padding: 15px 17px;
-  box-sizing: border-box;
+  min-width: 340px;
+  min-height: 400px;
+  height: 100vh;
+  width: 100vw;
+  justify-content: stretch;
   display: flex;
   flex-direction: row;
 
   > .navbar {
     flex-grow: 0;
     flex-shrink: 0;
-    height: 100vh;
   }
 
   > .main-content {
     flex-grow: 1;
     flex-shrink: 1;
-    height: 100vh;
     overflow: auto;
-    box-sizing: border-box;
     background-color: var(--semi-color-fill-0);
   }
 `;
@@ -37,9 +34,8 @@ const basicStyle = css`
 const mobileStyle = css`
   min-height: auto;
   min-width: auto;
+  min-width: auto;
   max-width: auto;
-  height: 100vh;
-  width: 100vw;
 `;
 
 const Popup = () => {
