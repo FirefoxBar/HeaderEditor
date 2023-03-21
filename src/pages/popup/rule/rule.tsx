@@ -18,7 +18,7 @@ const Rule = () => {
           id: item.id,
         });
         return {
-          ...result,
+          ...result[0],
           [VIRTUAL_KEY]: key,
         };
       })
@@ -67,6 +67,7 @@ const Rule = () => {
           ),
         },
       ]}
+      pagination={false}
     />
   );
 }
