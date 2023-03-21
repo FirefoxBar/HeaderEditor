@@ -3,6 +3,7 @@ import Api from '@/share/core/api';
 import { prefs } from '@/share/core/storage';
 import { IS_ANDROID, t } from '@/share/core/utils';
 import { Nav, Button, Switch, Tooltip } from '@douyinfe/semi-ui';
+import { IconMenu, IconSetting } from '@douyinfe/semi-icons';
 import { css, cx } from '@emotion/css';
 import React, { useCallback, useEffect, useState } from 'react';
 import browser from 'webextension-polyfill';
