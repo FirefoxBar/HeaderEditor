@@ -52,7 +52,7 @@ const Rule = () => {
                 size="small"
                 checked={value}
                 onChange={(checked) => {
-                  item.enable = enable;
+                  item.enable = checked;
                   return Api.saveRule(item);
                 }}
               />
