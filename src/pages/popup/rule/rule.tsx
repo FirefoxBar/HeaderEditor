@@ -1,6 +1,6 @@
 import React from 'react';
 import { useRequest } from 'ahooks';
-import { Switch, Table } from '@douyinfe/semi-ui';
+import { Popover, Switch, Table } from '@douyinfe/semi-ui';
 import Api from '@/share/core/api';
 import { parseVirtualKey } from '@/share/core/utils';
 import { VIRTUAL_KEY } from '@/share/core/var';
