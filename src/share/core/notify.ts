@@ -56,7 +56,7 @@ class Notify {
         if (item.status === 'rejected') {
           currentQueue[index].reject(item.reason);
         } else {
-          currentQueue[index].resolve(item.reason);
+          currentQueue[index].resolve(item.value);
         }
       });
     });
