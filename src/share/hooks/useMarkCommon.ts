@@ -21,7 +21,7 @@ const useMarkCommon = (type: 'rule' | 'group') => {
       if (typeof changes[storageKey] === 'undefined') {
         return;
       }
-      setKeys(changes[storageKey]);
+      setKeys(changes[storageKey].newValue);
     };
 
     if (local.onChange) {
