@@ -2,7 +2,7 @@ import SemiLocale from '@/share/components/semi-locale';
 import Api from '@/share/core/api';
 import { prefs } from '@/share/core/storage';
 import { IS_ANDROID, t } from '@/share/core/utils';
-import { Nav, Button, Switch, Typography } from '@douyinfe/semi-ui';
+import { Nav, Button, Switch, Tooltip } from '@douyinfe/semi-ui';
 import { css, cx } from '@emotion/css';
 import React, { useCallback, useEffect, useState } from 'react';
 import browser from 'webextension-polyfill';
@@ -118,3 +118,5 @@ const Popup = () => {
     </SemiLocale>
   );
 }
+
+export default Popup;
