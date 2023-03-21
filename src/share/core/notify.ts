@@ -52,13 +52,15 @@ class Notify {
         method: 'batchExecute',
         batch: messages,
       });
-      result.forEach((item, index) => {
-        if (item.status === 'rejected') {
-          currentQueue[index].reject(item.reason);
-        } else {
-          currentQueue[index].resolve(item.value);
-        }
-      });
+      if (Array.isArray(result)) {
+        result.forEach((item, index) => {
+          if (item.status === 'rejected') {
+            currentQueue[index].reject(item.reason);
+          } else {
+            currentQueue[index].resolve(item.value);
+          }
+        });
+      }
     });
   }
   sendMessage(request: any) {

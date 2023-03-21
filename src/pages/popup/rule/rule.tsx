@@ -70,3 +70,5 @@ const Rule = () => {
     />
   );
 }
+
+export default Rule;
