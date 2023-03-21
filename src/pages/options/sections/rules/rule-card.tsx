@@ -6,7 +6,7 @@ import { VIRTUAL_KEY, InitdRule, Rule, TABLE_NAMES } from '@/share/core/var';
 import { convertToTinyRule, createExport } from '@/share/core/ruleUtils';
 import { selectGroup, getExportName } from '@/pages/options/utils';
 import { IconCopyAdd, IconChevronDown, IconDelete, IconEdit, IconFavoriteList, IconMore, IconSearch, IconSend, IconStar, IconUnlock } from '@douyinfe/semi-icons';
-import { Button, ButtonGroup, Card, Dropdown, Popover, Switch, Table, Tooltip } from '@douyinfe/semi-ui';
+import { Button, ButtonGroup, Card, Dropdown, Modal, Popover, Switch, Table, Tooltip } from '@douyinfe/semi-ui';
 import type { ColumnProps, RowSelectionProps } from '@douyinfe/semi-ui/lib/es/table';
 import { css } from '@emotion/css';
 import { useResponsive } from 'ahooks';

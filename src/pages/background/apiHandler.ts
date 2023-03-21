@@ -11,7 +11,7 @@ export default function createApiHandler() {
       request.method = request.reason;
       delete request.reason;
     }
-    logger.d('Background Receive Message', request);
+    logger.debug('Background Receive Message', request);
     switch (request.method) {
       case APIs.HEALTH_CHECK:
         return new Promise((resolve) => {

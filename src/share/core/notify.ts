@@ -1,4 +1,5 @@
 import browser, { Tabs } from 'webextension-polyfill';
+import logger from './logger';
 import { canAccess, IS_ANDROID } from './utils';
 import { APIs, EVENTs } from './var';
 import EventEmitter from 'eventemitter3';
@@ -15,6 +16,7 @@ class Notify {
       if (request.method !== APIs.ON_EVENT) {
         return;
       }
+      logger.debug(`[nofity:event] ${request.event}`, request);
       this.event.emit(request.event, request);
     });
   }

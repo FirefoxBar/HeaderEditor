@@ -1,4 +1,5 @@
 import emitter from './emitter';
+import { prefs } from './storage';
 
 export interface LogItem {
   time: Date;
@@ -7,21 +8,19 @@ export interface LogItem {
 }
 
 class Logger {
-  d(message: string, ...data: any[]) {
-    const d: LogItem = {
-      time: new Date(),
-      message,
-      data,
-    };
-    emitter.emit(emitter.INNER_LOG, d);
-  }
-
-  on(handler: (it: LogItem) => void) {
-    emitter.on(emitter.INNER_LOG, handler);
-  }
-
-  off(handler: (it: LogItem) => void) {
-    emitter.off(emitter.INNER_LOG, handler);
+  debug(message: string, ...data: any[]) {
+    if (!prefs.get('is-debug')) {
+      return;
+    }
+    console.log(
+      ['%cHeader Editor%c [', dayjs().format('YYYY-MM-DD HH:mm:ss.SSS'), ']%c ', message].join(''),
+      'color:#5584ff;',
+      'color:#ff9300;',
+      '',
+    );
+    if (data && data.length > 0) {
+      console.log(data);
+    }
   }
 }
 
