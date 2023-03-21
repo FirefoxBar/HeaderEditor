@@ -4,6 +4,8 @@ export function isTableName(obj: any): obj is TABLE_NAMES_TYPE {
   return obj && TABLE_NAMES.includes(obj);
 }
 
+export const VIRTUAL_KEY = '_v_key';
+
 export enum RULE_TYPE {
   CANCEL = 'cancel',
   REDIRECT = 'redirect',

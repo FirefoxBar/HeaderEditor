@@ -2,7 +2,7 @@ import Api from '@/share/core/api';
 import file from '@/share/core/file';
 import useMarkCommon from '@/share/hooks/useMarkCommon';
 import { getTableName, t } from '@/share/core/utils';
-import { InitdRule, Rule, TABLE_NAMES } from '@/share/core/var';
+import { VIRTUAL_KEY, InitdRule, Rule, TABLE_NAMES } from '@/share/core/var';
 import { convertToTinyRule, createExport } from '@/share/core/ruleUtils';
 import { selectGroup, getExportName } from '@/pages/options/utils';
 import { IconCopyAdd, IconChevronDown, IconDelete, IconEdit, IconFavoriteList, IconMore, IconSearch, IconSend, IconStar, IconUnlock } from '@douyinfe/semi-icons';
@@ -13,8 +13,6 @@ import { useResponsive } from 'ahooks';
 import React from 'react';
 import RuleDetail from './rule-detail';
 import { batchShare, remove, toggleRule } from './utils';
-
-const V_KEY = '_v_key';
 
 interface RuleCardProps {
   name: string;
@@ -88,7 +86,7 @@ const RuleCard = (props: RuleCardProps) => {
       dataIndex: 'action',
       width: 128,
       render: (v, item: InitdRule) => {
-        const isMarked = commonRuleKeys.includes(V_KEY);
+        const isMarked = commonRuleKeys.includes(item[VIRTUAL_KEY]);
         return (
           <ButtonGroup>
             <Tooltip content={t('edit')}>
@@ -105,9 +103,9 @@ const RuleCard = (props: RuleCardProps) => {
                   name: t(isMarked ? 'common_unmark' : 'common_mark'),
                   onClick: () => {
                     if (isMarked) {
-                      removeCommonRule(V_KEY);
+                      removeCommonRule(item[VIRTUAL_KEY]);
                     } else {
-                      addCommonRule(V_KEY);
+                      addCommonRule(item[VIRTUAL_KEY]);
                     }
                   },
                   icon: <IconStar style={isMarked ? { color: 'rgb(var(--semi-amber-5))' } : {}} />,
@@ -276,7 +274,7 @@ const RuleCard = (props: RuleCardProps) => {
     }
     >
       <Table
-        rowKey={V_KEY}
+        rowKey={VIRTUAL_KEY}
         dataSource={rules}
         size="small"
         pagination={false}

@@ -7,7 +7,7 @@ import notify from '@/share/core/notify';
 import { convertToTinyRule, createExport } from '@/share/core/ruleUtils';
 import { prefs } from '@/share/core/storage';
 import { getTableName, t } from '@/share/core/utils';
-import { EVENTs, InitdRule, Rule, TABLE_NAMES, TABLE_NAMES_TYPE } from '@/share/core/var';
+import { VIRTUAL_KEY, EVENTs, InitdRule, Rule, TABLE_NAMES, TABLE_NAMES_TYPE } from '@/share/core/var';
 import { IconCheckList, IconDelete, IconFavoriteList, IconList, IconPlusCircle, IconSend, IconUnlock } from '@douyinfe/semi-icons';
 import { Button, ButtonGroup, Modal, Space, Spin, Typography } from '@douyinfe/semi-ui';
 import { cx, css } from '@emotion/css';
@@ -15,8 +15,6 @@ import * as React from 'react';
 import Float from './float';
 import RuleCard from './rule-card';
 import { batchShare, remove, toggleRule } from './utils';
-
-const V_KEY = '_v_key';
 
 interface RulesProps {
   visible: boolean;
@@ -105,7 +103,7 @@ export default class Rules extends React.Component<RulesProps, RulesState> {
         break;
       }
     }
-    const displayRule = { ...rule, [V_KEY]: `${tableName}-${rule.id}` };
+    const displayRule = { ...rule, [VIRTUAL_KEY]: `${tableName}-${rule.id}` };
     // 新的分组
     if (!toGroup) {
       // 插入一个新的Group
@@ -201,10 +199,10 @@ export default class Rules extends React.Component<RulesProps, RulesState> {
     if (selectedKeys.length === 0) {
       return [];
     }
-    // 通过 V_KEY 筛选出所需要的
+    // 通过 VIRTUAL_KEY 筛选出所需要的
     const batch = ([] as Rule[])
       .concat(...Object.values(group).map((it) => it.rules))
-      .filter((it) => selectedKeys.includes(it[V_KEY]));
+      .filter((it) => selectedKeys.includes(it[VIRTUAL_KEY]));
     return batch;
   }
 
@@ -218,7 +216,7 @@ export default class Rules extends React.Component<RulesProps, RulesState> {
       const keys: string[] = [];
       Object.values(this.state.group).forEach((g) => {
         g.rules.forEach((it) => {
-          keys.push(it[V_KEY]);
+          keys.push(it[VIRTUAL_KEY]);
         });
       });
       this.setState({
@@ -311,7 +309,7 @@ export default class Rules extends React.Component<RulesProps, RulesState> {
             rules: [],
           };
         }
-        item[V_KEY] = `${table}-${item.id}`;
+        item[VIRTUAL_KEY] = `${table}-${item.id}`;
         result[item.group].rules.push(item);
       });
       // 加载完成啦
@@ -410,7 +408,7 @@ export default class Rules extends React.Component<RulesProps, RulesState> {
           </div>
         </Spin>
         {this.state.float.map((it) => (
-          <Float key={it[V_KEY]} rule={it} onClose={() => this.handlePreview(it)} />
+          <Float key={it[VIRTUAL_KEY]} rule={it} onClose={() => this.handlePreview(it)} />
         ))}
       </section>
     );
