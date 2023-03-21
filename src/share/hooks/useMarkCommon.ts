@@ -11,8 +11,8 @@ const useMarkCommon = (type: 'rule' | 'group') => {
 
     local.get(storageKey)
       .then(result => {
-        if (Array.isArray(result)) {
-          setKeys(result);
+        if (Array.isArray(result[storageKey])) {
+          setKeys(result[storageKey]);
         }
         ready.current = true;
       });
