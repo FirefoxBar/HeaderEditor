@@ -1,14 +1,16 @@
 import browser, { Tabs } from 'webextension-polyfill';
 import logger from './logger';
-import { canAccess, IS_ANDROID } from './utils';
+import { canAccess, getGlobal, IS_ANDROID } from './utils';
 import { APIs, EVENTs } from './var';
 import EventEmitter from 'eventemitter3';
 
 class Notify {
   public event = new EventEmitter();
+  private messageQueue = [];
+  private messageTimer = null;
 
   constructor() {
-    browser.runtime.onMessage.addListener((request, sender) => {
+    const handleMessage = (request: any, sender) => {
       if (request.method === 'notifyBackground') {
         request.method = request.reason;
         delete request.reason;
@@ -18,9 +20,62 @@ class Notify {
       }
       logger.debug(`[nofity:event] ${request.event}`, request);
       this.event.emit(request.event, request);
+    };
+
+    browser.runtime.onMessage.addListener((request, sender) => {
+      // 批量消息
+      if (request.method === 'batchExecute') {
+        request.batch.forEach(item => handleMessage(item));
+        return;
+      }
+      handleMessage(request);
     });
   }
 
+  private startSendMessage() {
+    if (this.messageTimer !== null) {
+      return;
+    }
+    this.messageTimer = getGlobal().setTimeout(async () => {
+      const currentQueue = this.messageQueue;
+      this.messageQueue = [];
+      // 只要开始发了，就把timer设置成null
+      this.messageTimer = null;
+      if (currentQueue.length === 0) {
+        const first = currentQueue[0];
+        browser.runtime.sendMessage(first.request).then(first.resolve).catch(first.reject);
+        return;
+      }
+      // 有多条并行执行
+      const messages = currentQueue.map(x => x.request);
+      const result = await browser.runtime.sendMessage({
+        method: 'batchExecute',
+        batch: messages,
+      });
+      result.forEach((item, index) => {
+        if (item.status === 'rejected') {
+          currentQueue[index].reject(item.reason);
+        } else {
+          currentQueue[index].resolve(item.reason);
+        }
+      });
+    });
+  }
+  sendMessage(request: any) {
+    return new Promise((resolve, reject) => {
+      this.messageQueue.push({ request, resolve, reject });
+      this.startSendMessage();
+    });
+  }
+
+  other(request: any) {
+    return this.sendMessage(request);
+  }
+
+  background(request: any) {
+    return this.sendMessage({ ...request, method: 'notifyBackground', reason: request.method });
+  }
+  
   async tabs(request: any, filterTab?: (tab: Tabs.Tab) => boolean) {
     if (IS_ANDROID) {
       const tabs = await browser.tabs.query({});
@@ -60,13 +115,6 @@ class Notify {
     );
   }
 
-  other(request: any) {
-    return browser.runtime.sendMessage(request);
-  }
-
-  background(request: any) {
-    return browser.runtime.sendMessage({ ...request, method: 'notifyBackground', reason: request.method });
-  }
 }
 
 const notify = new Notify();

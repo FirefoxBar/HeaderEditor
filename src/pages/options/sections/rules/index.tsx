@@ -6,7 +6,7 @@ import file from '@/share/core/file';
 import notify from '@/share/core/notify';
 import { convertToTinyRule, createExport } from '@/share/core/ruleUtils';
 import { prefs } from '@/share/core/storage';
-import { getTableName, t } from '@/share/core/utils';
+import { getTableName, getVirtualKey, t } from '@/share/core/utils';
 import { VIRTUAL_KEY, EVENTs, InitdRule, Rule, TABLE_NAMES, TABLE_NAMES_TYPE } from '@/share/core/var';
 import { IconCheckList, IconDelete, IconFavoriteList, IconList, IconPlusCircle, IconSend, IconUnlock } from '@douyinfe/semi-icons';
 import { Button, ButtonGroup, Modal, Space, Spin, Typography } from '@douyinfe/semi-ui';
@@ -103,7 +103,7 @@ export default class Rules extends React.Component<RulesProps, RulesState> {
         break;
       }
     }
-    const displayRule = { ...rule, [VIRTUAL_KEY]: `${tableName}-${rule.id}` };
+    const displayRule = { ...rule, [VIRTUAL_KEY]: getVirtualKey(rule) };
     // 新的分组
     if (!toGroup) {
       // 插入一个新的Group
@@ -309,7 +309,7 @@ export default class Rules extends React.Component<RulesProps, RulesState> {
             rules: [],
           };
         }
-        item[VIRTUAL_KEY] = `${table}-${item.id}`;
+        item[VIRTUAL_KEY] = getVirtualKey(item);
         result[item.group].rules.push(item);
       });
       // 加载完成啦

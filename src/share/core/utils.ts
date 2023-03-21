@@ -1,5 +1,5 @@
 import browser, { Tabs } from 'webextension-polyfill';
-import { RULE_TYPE, TABLE_NAMES_TYPE } from './var';
+import { Rule, RULE_TYPE, TABLE_NAMES_TYPE } from './var';
 
 export const IS_ANDROID = navigator.userAgent.includes('Android');
 export const IS_CHROME = /Chrome\/(\d+)\.(\d+)/.test(navigator.userAgent);
@@ -153,4 +153,16 @@ export function isBackground() {
     return true;
   }
   return typeof window.IS_BACKGROUND !== 'undefined';
+}
+
+export function getVirtualKey(rule: Rule) {
+  return `${getTableName(rule.ruleType)}-${rule.id}`
+}
+
+export function parseVirtualKey(key: string) {
+  const [table, id] = key.split('-');
+  return {
+    table,
+    id: Number(id)
+  };
 }
