@@ -64,6 +64,12 @@ const useMarkCommon = (type: 'rule' | 'group') => {
       return result;
     });
   }, []);
+
+  return {
+    keys,
+    add,
+    remove,
+  };
 }
 
 export default useMarkCommon;

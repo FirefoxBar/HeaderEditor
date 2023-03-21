@@ -1,10 +1,11 @@
 import Api from '@/share/core/api';
 import file from '@/share/core/file';
+import useMarkCommon from '@/share/hooks/useMarkCommon';
 import { getTableName, t } from '@/share/core/utils';
 import { InitdRule, Rule, TABLE_NAMES } from '@/share/core/var';
 import { convertToTinyRule, createExport } from '@/share/core/ruleUtils';
 import { selectGroup, getExportName } from '@/pages/options/utils';
-import { IconCopyAdd, IconChevronDown, IconDelete, IconEdit, IconFavoriteList, IconMore, IconSearch, IconSend, IconUnlock } from '@douyinfe/semi-icons';
+import { IconCopyAdd, IconChevronDown, IconDelete, IconEdit, IconFavoriteList, IconMore, IconSearch, IconSend, IconStar, IconUnlock } from '@douyinfe/semi-icons';
 import { Button, ButtonGroup, Card, Dropdown, Popover, Switch, Table, Tooltip } from '@douyinfe/semi-ui';
 import type { ColumnProps, RowSelectionProps } from '@douyinfe/semi-ui/lib/es/table';
 import { css } from '@emotion/css';
@@ -46,6 +47,8 @@ const RuleCard = (props: RuleCardProps) => {
 
   const responsive = useResponsive();
 
+  const { keys: commonRuleKeys, add: addCommonRule, remove: removeCommonRule } = useMarkCommon('rule');
+
   const rowSelection = isEnableSelect ? {
     onChange: onSelect,
     selectedRowKeys: selectedKeys,
@@ -84,62 +87,77 @@ const RuleCard = (props: RuleCardProps) => {
       className: 'cell-action',
       dataIndex: 'action',
       width: 128,
-      render: (v, item: InitdRule) => (
-        <ButtonGroup>
-          <Tooltip content={t('edit')}>
-            <Button theme="borderless" type="tertiary" onClick={() => onRuleEdit(item)} icon={<IconEdit />} />
-          </Tooltip>
-          <Tooltip content={t('view')}>
-            <Button theme="borderless" type="tertiary" onClick={() => onRulePreview(item)} icon={<IconSearch />} />
-          </Tooltip>
-          <Dropdown
-            position="bottomRight"
-            menu={[
-              {
-                node: 'item',
-                name: t('group'),
-                onClick: async () => {
-                  const newGroup = await selectGroup(item.group);
-                  const oldGroup = item.group;
-                  if (oldGroup === newGroup) {
-                    return;
-                  }
-                  item.group = newGroup;
-                  return Api.saveRule(item);
+      render: (v, item: InitdRule) => {
+        const isMarked = commonRuleKeys.includes(V_KEY);
+        return (
+          <ButtonGroup>
+            <Tooltip content={t('edit')}>
+              <Button theme="borderless" type="tertiary" onClick={() => onRuleEdit(item)} icon={<IconEdit />} />
+            </Tooltip>
+            <Tooltip content={t('view')}>
+              <Button theme="borderless" type="tertiary" onClick={() => onRulePreview(item)} icon={<IconSearch />} />
+            </Tooltip>
+            <Dropdown
+              position="bottomRight"
+              menu={[
+                {
+                  node: 'item',
+                  name: t(isMarked ? 'common_unmark' : 'common_mark'),
+                  onClick: () => {
+                    if (isMarked) {
+                      removeCommonRule(V_KEY);
+                    } else {
+                      addCommonRule(V_KEY);
+                    }
+                  },
+                  icon: <IconStar style={isMarked ? { color: 'rgb(var(--semi-amber-5))' } : {}} />,
                 },
-                icon: <IconFavoriteList />,
-              },
-              {
-                node: 'item',
-                name: t('clone'),
-                onClick: () => {
-                  const newItem = convertToTinyRule(item);
-                  newItem.name += '_clone';
-                  Api.saveRule(newItem);
+                {
+                  node: 'item',
+                  name: t('group'),
+                  onClick: async () => {
+                    const newGroup = await selectGroup(item.group);
+                    const oldGroup = item.group;
+                    if (oldGroup === newGroup) {
+                      return;
+                    }
+                    item.group = newGroup;
+                    return Api.saveRule(item);
+                  },
+                  icon: <IconFavoriteList />,
                 },
-                icon: <IconCopyAdd />,
-              },
-              {
-                node: 'divider',
-              },
-              {
-                node: 'item',
-                name: t('delete'),
-                onClick: () => {
-                  Modal.warning({
-                    title: t('delete_confirm'),
-                    onOk: () => remove(item),
-                  });
+                {
+                  node: 'item',
+                  name: t('clone'),
+                  onClick: () => {
+                    const newItem = convertToTinyRule(item);
+                    newItem.name += '_clone';
+                    Api.saveRule(newItem);
+                  },
+                  icon: <IconCopyAdd />,
                 },
-                type: 'danger',
-                icon: <IconDelete />,
-              },
-            ]}
-          >
-            <Button theme="borderless" type="tertiary" icon={<IconMore />} />
-          </Dropdown>
-        </ButtonGroup>
-      ),
+                {
+                  node: 'divider',
+                },
+                {
+                  node: 'item',
+                  name: t('delete'),
+                  onClick: () => {
+                    Modal.warning({
+                      title: t('delete_confirm'),
+                      onOk: () => remove(item),
+                    });
+                  },
+                  type: 'danger',
+                  icon: <IconDelete />,
+                },
+              ]}
+            >
+              <Button theme="borderless" type="tertiary" icon={<IconMore />} />
+            </Dropdown>
+          </ButtonGroup>
+        );
+      }
     },
   ];
 
