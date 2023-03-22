@@ -2,9 +2,9 @@ const fs = require('fs');
 const fetch = require('node-fetch');
 const config = require('../config');
 
-const webStoreId = config.extension.chrome.store.id;
-const webStoreToken = process.env[config.extension.chrome.store.token];
-const webStoreSecret = process.env[config.extension.chrome.store.secret];
+const webStoreId = process.env.CWS_CLIENT_ID;
+const webStoreToken = process.env.CWS_TOKEN;
+const webStoreSecret = process.env.CWS_CLIENT_SECRET;
 
 let _webStoreToken = null;
 async function getToken() {
@@ -59,6 +59,16 @@ async function publish(target = 'default', token) {
 }
 
 async function packCws(zipPath) {
+  if (!process.env.CWS_CLIENT_ID) {
+    return Promise.reject(new Error('CWS_CLIENT_ID not found'));
+  }
+  if (!process.env.CWS_CLIENT_SECRET) {
+    return Promise.reject(new Error('CWS_CLIENT_SECRET not found'));
+  }
+  if (!process.env.CWS_TOKEN) {
+    return Promise.reject(new Error('CWS_TOKEN not found'));
+  }
+
   const distStream = fs.createReadStream(zipPath);
   const token = await getToken();
   await upload(distStream, token);

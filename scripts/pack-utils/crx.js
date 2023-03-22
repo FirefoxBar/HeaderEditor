@@ -3,15 +3,16 @@ const RSA = require('node-rsa');
 const fse = require('fs-extra');
 const config = require('../config');
 
-const privKey = config.encrypt('crx.pem');
-
 function generatePublicKey(privateKey) {
   const key = new RSA(privateKey);
   return key.exportKey('pkcs8-public-der');
 }
 
 async function createCrx(fileContent) {
-  const keyContent = await fse.readFile(privKey);
+  const keyContent = process.env.CRX_PRIV_KEY;
+  if (!keyContent) {
+    throw new Error('CRX_PRIV_KEY not found');
+  }
   const publicKey = generatePublicKey(keyContent);
   const keyLength = publicKey.length;
   const signature = Buffer.from(

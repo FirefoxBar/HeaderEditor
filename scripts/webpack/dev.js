@@ -16,7 +16,7 @@ module.exports = function (config, context) {
 
   config.plugin('bundle-analyzer').use(new BundleAnalyzerPlugin({
     analyzerMode: 'static',
-    reportFilename: '../bundle-analyze.html',
+    reportFilename: '../temp/bundle-analyze.html',
   }))
 
   return config;

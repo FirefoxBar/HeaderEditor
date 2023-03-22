@@ -1,18 +1,19 @@
 const path = require('path');
-const encrypt = path.resolve(root, 'encrypt');
-const extension = require(path.resolve(root, 'extension.json'));
-const package = require(path.resolve(root, 'package.json'));
-const root = path.resolve(__dirname, '..');
 
-const dist = path.resolve(root, 'dist');
-const pack = path.resolve(root, 'dist-pack');
-const release = path.resolve(pack, release);
+const root = path.join(__dirname, '..');
+const dist = path.join(root, 'dist');
+
+const extension = require(path.join(root, 'extension.json'));
+const package = require(path.join(root, 'package.json'));
+const manifest = require(path.join(dist, 'manifest.json'));
+
+const pack = path.join(root, 'temp/dist-pack');
+const release = path.join(root, 'temp/release');
 
 module.exports = {
-	version: package.version,
-	repository: package.repository ? package.repository.url : "",
-	extension,
-  resolve: path.resolve,
+  version: manifest.version,
+  repository: package.repository ? package.repository.url : "",
+  extension,
+  resolve: path.join,
   path: { root, dist, pack, release },
-	encrypt: (file) => path.resolve(encrypt, file)
 }

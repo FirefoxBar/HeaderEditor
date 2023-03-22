@@ -16,8 +16,8 @@ const processExec = require('child_process').exec;
 
 const packUtils = {
   xpi: require('./pack-utils/xpi'),
-  amo: require('./pack-utils/amo'),
-  cws: require('./pack-utils/cws'),
+  // amo: require('./pack-utils/amo'),
+  // cws: require('./pack-utils/cws'),
   crx: require('./pack-utils/crx'),
 };
 
@@ -43,19 +43,28 @@ function exec(commands) {
 }
 
 async function removeManifestKeys(manifest, name) {
+  console.log('start convert manifest(' + manifest + ') for ' + name);
   const wantKey = `__${name}__`;
-  try {
-    const content = await fse.readJSON(manifest);
-    Object.keys(content).forEach((it) => {
+  
+  const removeObjKeys = obj => {
+    Object.keys(obj).forEach((it) => {
       if (it.startsWith('__')) {
         if (it.startsWith(wantKey)) {
-          content[it.substr(wantKey.length)] = content[it];
+          const finalKey = it.substr(wantKey.length);
+          console.log('copy key ' + finalKey + ' from ' + it);
+          obj[finalKey] = obj[it];
         }
-        delete content[it];
-      } else if (typeof (content[it]) === 'object' && !Array.isArray(content[it])) {
-        removeManifestKeys(content[it]);
+        console.log('remove key ' + it);
+        delete obj[it];
+      } else if (typeof (obj[it]) === 'object' && !Array.isArray(obj[it])) {
+        removeObjKeys(obj[it]);
       }
     });
+  }
+
+  try {
+    const content = await fse.readJSON(manifest);
+    removeObjKeys(content);
     await fse.outputJSON(manifest, content);
   } catch (e) {
     console.log(e);
@@ -64,7 +73,7 @@ async function removeManifestKeys(manifest, name) {
 
 async function packOnePlatform(name) {
   if (typeof packUtils[name] === 'undefined') {
-    console.error(`${name.toUpperCase()} not found`);
+    console.error(`pack-utils for ${name} not found`);
     return;
   }
   const thisPack = config.resolve(config.path.pack, name);
@@ -73,7 +82,7 @@ async function packOnePlatform(name) {
     // 复制一份到dist下面
     await exec(`cp -r ${config.path.dist} ${thisPack}`);
     // 移除掉manifest中的非本平台key
-    await removeManifestKeys(path.resolve(thisPack, 'manifest.json'));
+    await removeManifestKeys(path.join(thisPack, 'manifest.json'), name);
     // 打包成zip
     await exec(`cd ${thisPack} && zip -r ${zipPath} ./*`);
     // 执行上传等操作
@@ -87,11 +96,14 @@ async function packOnePlatform(name) {
 
 async function main() {
   // 检查打包目录是否存在
-  if (fs.existsSync(config.path.pack)) {
-    await exec(`cd ${config.path.root} && rm -rf ./dist-pack`);
-  }
-  await fse.mkdir(config.path.pack);
-  await fse.mkdir(config.path.release);
+  await exec(`cd ${config.path.root} && rm -rf ./temp/dist-pack`);
+  await exec(`cd ${config.path.root} && rm -rf ./temp/release`);
+  await fse.mkdir(config.path.pack, {
+    recursive: true,
+  });
+  await fse.mkdir(config.path.release, {
+    recursive: true,
+  });
 
   if (!platform) {
     const queue = [];
@@ -106,7 +118,7 @@ async function main() {
   }
 
   if (typeof packUtils[platform] !== 'undefined') {
-    packOnePlatform(it);
+    packOnePlatform(platform);
     return;
   }
   console.log(`${platform} not found`);

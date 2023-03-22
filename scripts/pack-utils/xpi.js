@@ -3,11 +3,18 @@ const config = require('../config');
 const signAddon = require('sign-addon').default;
 
 async function packXpi(zipPath, outputDir) {
+  if (!process.env.AMO_KEY) {
+    return Promise.reject(new Error('AMO_KEY not found'));
+  }
+  if (!process.env.AMO_SECRET) {
+    return Promise.reject(new Error('AMO_SECRET not found'));
+  }
+
   const result = await signAddon({
     xpiPath: zipPath,
     version: config.version,
-    apiKey: config.extension.firefox.mozilla.key,
-    apiSecret: process.env[config.extension.firefox.mozilla.secret],
+    apiKey: process.env.AMO_KEY,
+    apiSecret: process.env.AMO_SECRET,
     id: config.extension.firefox.xpi,
     downloadDir: outputDir,
   });

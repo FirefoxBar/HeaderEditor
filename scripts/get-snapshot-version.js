@@ -23,7 +23,7 @@ async function main() {
   const text = await resp.text();
 
   if (/^(\d+)$/.test(text)) {
-    fs.writeFileSync(path.join(__dirname, '../snapshot-version.txt'), text, {
+    fs.writeFileSync(path.join(__dirname, '../temp/snapshot-version.txt'), text, {
       encoding: 'utf8',
     });
   }

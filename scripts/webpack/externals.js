@@ -20,7 +20,7 @@ module.exports = function (config) {
 
   // 添加 snapshot 版本号
   let versionText = version;
-  const snapshotFile = path.join(__dirname, '../../snapshot-version.txt');
+  const snapshotFile = path.join(__dirname, '../../temp/snapshot-version.txt');
   if (fs.existsSync(snapshotFile)) {
     const snapshotVersion = fs.readFileSync(snapshotFile, { encoding: 'utf8' }).trim();
     versionText += '.' + snapshotVersion;
