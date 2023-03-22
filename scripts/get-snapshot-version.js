@@ -22,16 +22,17 @@ async function main() {
   const resp = await fetch('https://ext.firefoxcn.net/snapshot.php?' + params.toString());
   const text = await resp.text();
 
+  const filePath = path.join(__dirname, '../temp/snapshot-version.txt');
   if (/^(\d+)$/.test(text)) {
     fs.mkdirSync(path.join(__dirname, '../temp/'), {
       recursive: true,
     });
-    fs.writeFileSync(path.join(__dirname, '../temp/snapshot-version.txt'), text, {
+    fs.writeFileSync(filePath, text, {
       encoding: 'utf8',
     });
   }
 
-  console.log('Got version: ', text);
+  console.log('Got version: ' + text + ', wrote to: ' + filePath);
 }
 
 main();

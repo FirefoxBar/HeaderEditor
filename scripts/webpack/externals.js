@@ -24,6 +24,9 @@ module.exports = function (config) {
   if (fs.existsSync(snapshotFile)) {
     const snapshotVersion = fs.readFileSync(snapshotFile, { encoding: 'utf8' }).trim();
     versionText += '.' + snapshotVersion;
+    console.log('Got snapshot version: ' + snapshotVersion);
+  } else {
+    console.log('No snapshot version ' + snapshotFile);
   }
 
   // dev 环境复制 development 的 react 资源
