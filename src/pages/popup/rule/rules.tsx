@@ -11,7 +11,7 @@ import notify from '@/share/core/notify';
 const Rules = () => {
   const { keys } = useMarkCommon('rule');
   const keysRef = useLatest(keys);
-  const { data = [], loading, refresh } = useRequest(() =>
+  const { data = [], loading, mutate } = useRequest(() =>
     Promise.all(
       keys.map(async (key) => {
         const item = parseVirtualKey(key);
@@ -34,7 +34,21 @@ const Rules = () => {
       const rule: Rule = request.target;
       const key = getVirtualKey(rule);
       if (keysRef.current.includes(key)) {
-        refresh();
+        mutate((currentData) => {
+          if (!currentData) {
+            return;
+          }
+          const index = currentData.findIndex((x) => x[VIRTUAL_KEY] === key);
+          if (index === -1) {
+            return currentData;
+          }
+          const result = [...currentData];
+          result.splice(index, 1, {
+            ...rule,
+            [VIRTUAL_KEY]: key,
+          });
+          return result;
+        });
       }
     };
 
