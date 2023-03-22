@@ -23,6 +23,9 @@ async function main() {
   const text = await resp.text();
 
   if (/^(\d+)$/.test(text)) {
+    fs.mkdirSync(path.join(__dirname, '../temp/'), {
+      recursive: true,
+    });
     fs.writeFileSync(path.join(__dirname, '../temp/snapshot-version.txt'), text, {
       encoding: 'utf8',
     });
