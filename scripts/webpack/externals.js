@@ -43,10 +43,18 @@ module.exports = function (config) {
 
   // Add manaco into a standalone chunk
   config.optimization.splitChunks({
+    chunks: 'all',
+    minChunks: 100,
     cacheGroups: {
       monaco: {
         name: 'monaco',
         test: /monaco-editor/,
+        enforce: true,
+      },
+      semi: {
+        name: 'semi',
+        test: /@douyinfe[\/\+]semi-/,
+        enforce: true,
       },
     },
   });
