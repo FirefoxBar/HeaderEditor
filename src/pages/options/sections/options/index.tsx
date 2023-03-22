@@ -1,11 +1,11 @@
-import Api from '@/share/core/api';
-import emitter from '@/share/core/emitter';
-import { prefs } from '@/share/core/storage';
-import { t } from '@/share/core/utils';
-import { defaultPrefValue, PrefValue } from '@/share/core/var';
 import { Card, Checkbox, Col, Form, Row, Select, Typography } from '@douyinfe/semi-ui';
-import type { CheckboxEvent } from '@douyinfe/semi-ui/lib/es/checkbox';
 import * as React from 'react';
+import Api from '@/share/pages/api';
+import emitter from '@/share/core/emitter';
+import { prefs } from '@/share/core/prefs';
+import { t } from '@/share/core/utils';
+import type { PrefValue } from '@/share/core/types';
+import { defaultPrefValue } from '@/share/core/constant';
 
 interface OptionsProps {
   visible: boolean;
@@ -46,9 +46,9 @@ const selectPrefs: { [key: string]: SelectItem } = {
       {
         label: t('disable'),
         value: 'off',
-      }
-    ]
-  }
+      },
+    ],
+  },
 };
 
 export default class Options extends React.Component<OptionsProps, OptionsState> {
@@ -92,7 +92,7 @@ export default class Options extends React.Component<OptionsProps, OptionsState>
     }));
   }
 
-  handleChange(name: string, value: string) {
+  handleChange(name: string, value: any) {
     this.setState((prevState) => {
       const newPrefs = { ...prevState.prefs, [name]: value };
       Api.setPrefs(name, value);
@@ -110,7 +110,7 @@ export default class Options extends React.Component<OptionsProps, OptionsState>
               return (
                 <Col xl={12} span={24} key={it[0]} style={{ marginBottom: '8px' }}>
                   <Checkbox
-                    onChange={e => this.handleChange(it[0], Boolean(e.target.checked))}
+                    onChange={(e) => this.handleChange(it[0], Boolean(e.target.checked))}
                     checked={this.state.prefs[it[0]]}
                   >
                     {it[1]}
@@ -124,7 +124,7 @@ export default class Options extends React.Component<OptionsProps, OptionsState>
                   <Form.Slot label={it[1].title} labelPosition="left">
                     <Select
                       optionList={it[1].options}
-                      onChange={v => this.handleChange(it[0], v)}
+                      onChange={(v) => this.handleChange(it[0], v)}
                       value={this.state.prefs[it[0]]}
                     />
                   </Form.Slot>

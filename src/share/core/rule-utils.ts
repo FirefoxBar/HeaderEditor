@@ -1,5 +1,7 @@
 import { getDomain } from './utils';
-import { InitdRule, isTinyRule, IS_MATCH, Rule, TABLE_NAMES, TinyRule } from './var';
+import { isBasicRule } from './types';
+import { IS_MATCH, TABLE_NAMES_ARR } from './constant';
+import type { InitdRule, Rule, BasicRule } from './types';
 
 export function initRule(rule: Rule): InitdRule {
   const inited: any = { ...rule };
@@ -18,9 +20,9 @@ export function initRule(rule: Rule): InitdRule {
 }
 
 export function createExport(arr: { [key: string]: Array<Rule | InitdRule> }) {
-  const result: { [key: string]: TinyRule[] } = {};
+  const result: { [key: string]: BasicRule[] } = {};
   Object.keys(arr).forEach((k) => {
-    result[k] = arr[k].map((e) => convertToTinyRule(e));
+    result[k] = arr[k].map((e) => convertToBasicRule(e));
   });
   return result;
 }
@@ -33,8 +35,8 @@ export function convertToRule(rule: InitdRule | Rule): Rule {
   return item;
 }
 
-export function convertToTinyRule(rule: InitdRule | Rule | TinyRule): TinyRule {
-  if (isTinyRule(rule)) {
+export function convertToBasicRule(rule: InitdRule | Rule | BasicRule): BasicRule {
+  if (isBasicRule(rule)) {
     return rule;
   }
   const item = convertToRule(rule);
@@ -46,7 +48,7 @@ export function convertToTinyRule(rule: InitdRule | Rule | TinyRule): TinyRule {
 
 export function fromJson(str: string) {
   const list: { [key: string]: Rule[] } = JSON.parse(str);
-  TABLE_NAMES.forEach((e) => {
+  TABLE_NAMES_ARR.forEach((e) => {
     if (list[e]) {
       list[e].map((ee) => {
         // eslint-disable-next-line @typescript-eslint/ban-ts-comment

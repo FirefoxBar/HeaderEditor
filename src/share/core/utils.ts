@@ -1,5 +1,6 @@
 import browser, { Tabs } from 'webextension-polyfill';
-import { Rule, RULE_TYPE, TABLE_NAMES_TYPE } from './var';
+import { RULE_TYPE, TABLE_NAMES } from './constant';
+import { Rule } from './types';
 
 export const IS_ANDROID = navigator.userAgent.includes('Android');
 export const IS_CHROME = /Chrome\/(\d+)\.(\d+)/.test(navigator.userAgent);
@@ -85,19 +86,19 @@ export function fetchUrl(param: FetchUrlParam): Promise<string> {
   });
 }
 
-export function getTableName(ruleType: RULE_TYPE): TABLE_NAMES_TYPE {
+export function getTableName(ruleType: RULE_TYPE): TABLE_NAMES {
   switch (ruleType) {
     case 'cancel':
     case 'redirect':
-      return 'request';
+      return TABLE_NAMES.request;
     case 'modifySendHeader':
-      return 'sendHeader';
+      return TABLE_NAMES.sendHeader;
     case 'modifyReceiveHeader':
-      return 'receiveHeader';
+      return TABLE_NAMES.receiveHeader;
     case 'modifyReceiveBody':
-      return 'receiveBody';
+      return TABLE_NAMES.receiveBody;
     default:
-      return 'request';
+      return TABLE_NAMES.request;
   }
 }
 
@@ -156,13 +157,13 @@ export function isBackground() {
 }
 
 export function getVirtualKey(rule: Rule) {
-  return `${getTableName(rule.ruleType)}-${rule.id}`
+  return `${getTableName(rule.ruleType)}-${rule.id}`;
 }
 
 export function parseVirtualKey(key: string) {
   const [table, id] = key.split('-');
   return {
-    table,
-    id: Number(id)
+    table: table as TABLE_NAMES,
+    id: Number(id),
   };
 }

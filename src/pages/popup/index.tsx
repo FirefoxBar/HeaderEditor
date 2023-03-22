@@ -4,10 +4,10 @@ import { css, cx } from '@emotion/css';
 import React, { useCallback, useEffect, useState } from 'react';
 import browser from 'webextension-polyfill';
 import { IS_ANDROID, t } from '@/share/core/utils';
-import { prefs } from '@/share/core/storage';
-import Api from '@/share/core/api';
+import { prefs } from '@/share/core/prefs';
+import Api from '@/share/pages/api';
 import SemiLocale from '@/share/components/semi-locale';
-import isDarkMode from '@/share/components/is-dark-mode';
+import isDarkMode from '@/share/pages/is-dark-mode';
 import Rules from './rule/rules';
 import type { OnSelectedData } from '@douyinfe/semi-ui/lib/es/navigation';
 

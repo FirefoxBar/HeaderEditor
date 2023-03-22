@@ -1,10 +1,11 @@
 import React, { useEffect } from 'react';
 import { useLatest, useRequest } from 'ahooks';
 import { Popover, Switch, Table } from '@douyinfe/semi-ui';
-import Api from '@/share/core/api';
+import Api from '@/share/pages/api';
 import { getVirtualKey, parseVirtualKey } from '@/share/core/utils';
-import { Rule, VIRTUAL_KEY, TABLE_NAMES_TYPE, EVENTs } from '@/share/core/var';
-import useMarkCommon from '@/share/hooks/useMarkCommon';
+import type { Rule } from '@/share/core/types';
+import { VIRTUAL_KEY, EVENTs } from '@/share/core/constant';
+import useMarkCommon from '@/share/hooks/use-mark-common';
 import RuleDetail from '@/share/components/rule-detail';
 import notify from '@/share/core/notify';
 
@@ -15,7 +16,7 @@ const Rules = () => {
     Promise.all(
       keys.map(async (key) => {
         const item = parseVirtualKey(key);
-        const result = await Api.getRules(item.table as TABLE_NAMES_TYPE, {
+        const result = await Api.getRules(item.table, {
           id: item.id,
         });
         return {

@@ -28,7 +28,7 @@ Header Editor require those permissions:
 
 * storage, unlimitedStorage: Storage rules and settings
 
-* unsafe-eval: Custom function require it, code at [src/share/core/ruleUtils.ts#L8](https://github.com/FirefoxBar/HeaderEditor/blob/dev/src/share/core/ruleUtils.ts#L8) (The location may change in the future, you can search for the newest location by `new Function`)
+* unsafe-eval: Custom function require it, code at [src/share/core/rule-utils.ts#L8](https://github.com/FirefoxBar/HeaderEditor/blob/dev/src/share/core/rule-utils.ts#L8) (The location may change in the future, you can search for the newest location by `new Function`)
 
 ## Contribution
 

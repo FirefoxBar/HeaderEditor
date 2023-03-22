@@ -1,9 +1,10 @@
-import logger from '@/share/core/logger';
-import rules from '@/share/core/rules';
-import { getDatabase, prefs } from '@/share/core/storage';
-import { APIs } from '@/share/core/var';
 import browser from 'webextension-polyfill';
+import logger from '@/share/core/logger';
+import { APIs } from '@/share/core/constant';
+import { prefs } from '@/share/core/prefs';
+import rules from './core/rules';
 import { openURL } from './utils';
+import { getDatabase } from './core/db';
 
 function execute(request: any) {
   if (request.method === 'notifyBackground') {
@@ -41,16 +42,16 @@ function execute(request: any) {
     default:
       break;
   }
-  return false;
+  // return false;
 }
 
 export default function createApiHandler() {
-  browser.runtime.onMessage.addListener((request, sender) => {
+  browser.runtime.onMessage.addListener((request) => {
     logger.debug('Background Receive Message', request);
     if (request.method === 'batchExecute') {
-      const queue = request.batch.map(item => {
+      const queue = request.batch.map((item) => {
         const res = execute(item);
-        if (res !== false) {
+        if (res) {
           return res;
         }
         return Promise.resolve();

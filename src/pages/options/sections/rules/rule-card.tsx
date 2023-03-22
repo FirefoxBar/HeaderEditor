@@ -16,12 +16,13 @@ import { useResponsive } from 'ahooks';
 import React from 'react';
 import { getExportName, selectGroup } from '@/pages/options/utils';
 import RuleDetail from '@/share/components/rule-detail';
-import Api from '@/share/core/api';
-import file from '@/share/core/file';
-import { convertToTinyRule, createExport } from '@/share/core/ruleUtils';
+import Api from '@/share/pages/api';
+import file from '@/share/pages/file';
+import { convertToBasicRule, createExport } from '@/share/core/rule-utils';
 import { getTableName, t } from '@/share/core/utils';
-import { InitdRule, Rule, TABLE_NAMES, VIRTUAL_KEY } from '@/share/core/var';
-import useMarkCommon from '@/share/hooks/useMarkCommon';
+import type { InitdRule, Rule } from '@/share/core/types';
+import { VIRTUAL_KEY, TABLE_NAMES_ARR } from '@/share/core/constant';
+import useMarkCommon from '@/share/hooks/use-mark-common';
 import { remove, toggleRule } from './utils';
 import type { ColumnProps, RowSelectionProps } from '@douyinfe/semi-ui/lib/es/table';
 
@@ -141,7 +142,7 @@ const RuleCard = (props: RuleCardProps) => {
                   node: 'item',
                   name: t('clone'),
                   onClick: () => {
-                    const newItem = convertToTinyRule(item);
+                    const newItem = convertToBasicRule(item);
                     newItem.name += '_clone';
                     Api.saveRule(newItem);
                   },
@@ -216,7 +217,7 @@ const RuleCard = (props: RuleCardProps) => {
                 name: t('share'),
                 onClick: () => {
                   const result: any = {};
-                  TABLE_NAMES.forEach((tb) => {
+                  TABLE_NAMES_ARR.forEach((tb) => {
                     result[tb] = [];
                   });
                   rules.forEach((e) => result[getTableName(e.ruleType)].push(e));

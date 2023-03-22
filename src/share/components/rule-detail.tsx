@@ -1,7 +1,7 @@
 import React, { Fragment } from 'react';
-import { t } from '@/share/core/utils';
-import { Rule } from '@/share/core/var';
 import { css } from '@emotion/css';
+import { t } from '@/share/core/utils';
+import type { Rule } from '@/share/core/types';
 
 interface RuleDetailProps {
   rule: Rule;

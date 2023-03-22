@@ -1,7 +1,10 @@
 import notify from '@/share/core/notify';
-import { convertToRule } from './ruleUtils';
-import { APIs, isTinyRule, Rule, TABLE_NAMES, TABLE_NAMES_TYPE, TinyRule } from './var';
-import type { FilterOptions } from './rules';
+import type { Rule, BasicRule } from '@/share/core/types';
+import { isBasicRule } from '@/share/core/types';
+import { APIs } from '@/share/core/constant';
+import { convertToRule } from '../core/rule-utils';
+import { TABLE_NAMES, TABLE_NAMES_ARR } from '../core/constant';
+import type { RuleFilterOptions } from '../core/types';
 
 /**
  * Background API封装
@@ -19,7 +22,7 @@ class BackgroundAPI {
       type,
     });
   }
-  getRules(type: TABLE_NAMES_TYPE, options?: FilterOptions): Promise<Rule[]> {
+  getRules(type: TABLE_NAMES, options?: RuleFilterOptions): Promise<Rule[]> {
     return notify.background({
       method: APIs.GET_RULES,
       type,
@@ -27,21 +30,21 @@ class BackgroundAPI {
     });
   }
   getAllRules(): Promise<{ [x: string]: Rule[] }> {
-    return Promise.all(TABLE_NAMES.map((k) => this.getRules(k))).then((res) => {
+    return Promise.all(TABLE_NAMES_ARR.map((k) => this.getRules(k))).then((res) => {
       const result: any = {};
       res.forEach((it, index) => {
-        result[TABLE_NAMES[index]] = it;
+        result[TABLE_NAMES_ARR[index]] = it;
       });
       return result;
     });
   }
-  saveRule(rule: Rule | TinyRule) {
+  saveRule(rule: Rule | BasicRule) {
     return notify.background({
       method: APIs.SAVE_RULE,
-      rule: isTinyRule(rule) ? rule : convertToRule(rule),
+      rule: isBasicRule(rule) ? rule : convertToRule(rule),
     });
   }
-  removeRule(table: TABLE_NAMES_TYPE, id: number) {
+  removeRule(table: TABLE_NAMES, id: number) {
     return notify.background({
       method: APIs.DELETE_RULE,
       type: table,

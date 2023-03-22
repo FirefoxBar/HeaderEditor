@@ -1,7 +1,8 @@
-import * as storage from '@/share/core/storage';
-import { TABLE_NAMES } from '@/share/core/var';
-import notify from '@/share/core/notify';
 import browser from 'webextension-polyfill';
+import * as storage from '@/share/core/storage';
+import { TABLE_NAMES_ARR } from '@/share/core/constant';
+import notify from '@/share/core/notify';
+import { getDatabase } from './core/db';
 
 // Upgrade
 const downloadHistory = localStorage.getItem('dl_history');
@@ -34,8 +35,8 @@ storage
             }
             return result;
           }
-          TABLE_NAMES.forEach((k) => {
-            storage.getDatabase().then((db) => {
+          TABLE_NAMES_ARR.forEach((k) => {
+            getDatabase().then((db) => {
               const tx = db.transaction([k], 'readwrite');
               const os = tx.objectStore(k);
               os.openCursor().onsuccess = (e) => {

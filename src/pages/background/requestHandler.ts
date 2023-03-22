@@ -1,13 +1,13 @@
 /* eslint-disable @typescript-eslint/member-ordering */
-import { getGlobal } from '@/share/core/utils';
-import emitter from '@/share/core/emitter';
-import logger from '@/share/core/logger';
-import rules from '@/share/core/rules';
-import { prefs } from '@/share/core/storage';
-import { IS_CHROME, IS_SUPPORT_STREAM_FILTER } from '@/share/core/utils';
-import { Rule } from '@/share/core/var';
 import { TextDecoder, TextEncoder } from 'text-encoding';
 import browser, { WebRequest } from 'webextension-polyfill';
+import { getGlobal, IS_CHROME, IS_SUPPORT_STREAM_FILTER } from '@/share/core/utils';
+import emitter from '@/share/core/emitter';
+import logger from '@/share/core/logger';
+import type { Rule } from '@/share/core/types';
+import { TABLE_NAMES } from '@/share/core/constant';
+import { prefs } from '@/share/core/prefs';
+import rules from './core/rules';
 
 // 最大修改8MB的Body
 const MAX_BODY_SIZE = 8 * 1024 * 1024;
@@ -143,7 +143,7 @@ class RequestHandler {
     }
     logger.debug(`handle before request ${e.url}`, e);
     // 可用：重定向，阻止加载
-    const rule = rules.get('request', { url: e.url, enable: true });
+    const rule = rules.get(TABLE_NAMES.request, { url: e.url, enable: true });
     // Browser is starting up, pass all requests
     if (rule === null) {
       return;
@@ -199,7 +199,7 @@ class RequestHandler {
       return;
     }
     logger.debug(`handle before send ${e.url}`, e.requestHeaders);
-    const rule = rules.get('sendHeader', { url: e.url, enable: true });
+    const rule = rules.get(TABLE_NAMES.sendHeader, { url: e.url, enable: true });
     // Browser is starting up, pass all requests
     if (rule === null) {
       return;
@@ -243,7 +243,7 @@ class RequestHandler {
       return;
     }
     logger.debug(`handle received ${e.url}`, e.responseHeaders);
-    const rule = rules.get('receiveHeader', { url: e.url, enable: true });
+    const rule = rules.get(TABLE_NAMES.receiveHeader, { url: e.url, enable: true });
     // Browser is starting up, pass all requests
     if (rule) {
       this.modifyHeaders(e, REQUEST_TYPE.RESPONSE, rule, detail);
@@ -285,7 +285,7 @@ class RequestHandler {
     if (!encoder) {
       // UTF-8使用原生API，性能更好
       if (encoding === 'UTF-8' && getGlobal().TextEncoder) {
-        encoder = new getGlobal().TextEncoder();
+        encoder = new (getGlobal().TextEncoder)();
       } else {
         encoder = new TextEncoder(encoding, { NONSTANDARD_allowLegacyEncoding: true });
       }
@@ -306,7 +306,7 @@ class RequestHandler {
       // 如果原生支持的话，优先使用原生
       if (getGlobal().TextDecoder) {
         try {
-          encoder = new getGlobal().TextDecoder(encoding);
+          encoder = new (getGlobal().TextDecoder)(encoding);
         } catch (e) {
           encoder = new TextDecoder(encoding);
         }
@@ -423,7 +423,7 @@ class RequestHandler {
       return;
     }
 
-    let rule = rules.get('receiveBody', { url: e.url, enable: true });
+    let rule = rules.get(TABLE_NAMES.receiveBody, { url: e.url, enable: true });
     if (rule === null) {
       return;
     }

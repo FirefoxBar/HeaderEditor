@@ -4,12 +4,13 @@ import { Button, ButtonGroup, Modal, Space, Spin, Typography } from '@douyinfe/s
 import { cx, css } from '@emotion/css';
 import * as React from 'react';
 import { selectGroup } from '@/pages/options/utils';
-import Api from '@/share/core/api';
+import Api from '@/share/pages/api';
 import emitter from '@/share/core/emitter';
 import notify from '@/share/core/notify';
-import { prefs } from '@/share/core/storage';
+import { prefs } from '@/share/core/prefs';
 import { getVirtualKey, t } from '@/share/core/utils';
-import { VIRTUAL_KEY, EVENTs, Rule, TABLE_NAMES, TABLE_NAMES_TYPE } from '@/share/core/var';
+import type { Rule } from '@/share/core/types';
+import { VIRTUAL_KEY, EVENTs, TABLE_NAMES, TABLE_NAMES_ARR } from '@/share/core/constant';
 import Float from './float';
 import RuleCard from './rule-card';
 import { batchShare, remove } from './utils';
@@ -232,8 +233,6 @@ export default class Rules extends React.Component<RulesProps, RulesState> {
     if (batch.length === 0) {
       return;
     }
-    const queue: Array<Promise<any>> = [];
-    const table: TABLE_NAMES_TYPE[] = [];
     const setTo = !batch[0].enable;
     batch.forEach((rule) => {
       if (rule.enable === setTo) {
@@ -248,7 +247,6 @@ export default class Rules extends React.Component<RulesProps, RulesState> {
     selectGroup().then((newGroup) => {
       const batch = this.getSelectedRules().filter((it) => it.group !== newGroup);
       batch.forEach((it) => {
-        const oldGroup = it.group;
         it.group = newGroup;
         Api.saveRule(it);
       });
@@ -297,7 +295,7 @@ export default class Rules extends React.Component<RulesProps, RulesState> {
     };
     // 记录总数
     let finishCount = 0;
-    const checkResult = (table: TABLE_NAMES_TYPE, response: Rule[] | null) => {
+    const checkResult = (table: TABLE_NAMES, response: Rule[] | null) => {
       if (!response) {
         // Browser is starting up
         requestRules(table);
@@ -314,7 +312,7 @@ export default class Rules extends React.Component<RulesProps, RulesState> {
         result[item.group].rules.push(item);
       });
       // 加载完成啦
-      if (++finishCount >= TABLE_NAMES.length) {
+      if (++finishCount >= TABLE_NAMES_ARR.length) {
         // 默认是否展开
         const collapsed = this.isCollapse ? [] : Object.keys(result);
         this.setState({
@@ -325,12 +323,12 @@ export default class Rules extends React.Component<RulesProps, RulesState> {
         emitter.emit(emitter.EVENT_GROUP_UPDATE, Object.keys(result));
       }
     };
-    const requestRules = (table: TABLE_NAMES_TYPE) => {
+    const requestRules = (table: TABLE_NAMES) => {
       setTimeout(() => {
         Api.getRules(table).then((res) => checkResult(table, res));
       });
     };
-    TABLE_NAMES.forEach((table) => requestRules(table));
+    TABLE_NAMES_ARR.forEach((table) => requestRules(table));
   }
 
   render() {

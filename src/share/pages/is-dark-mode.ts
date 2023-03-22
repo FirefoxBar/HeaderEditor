@@ -1,4 +1,4 @@
-import { prefs } from '@/share/core/storage';
+import { prefs } from '@/share/core/prefs';
 
 const isDarkMode = () => {
   const darkMode = prefs.get('dark-mode');

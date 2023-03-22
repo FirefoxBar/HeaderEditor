@@ -1,12 +1,14 @@
 import { cloneDeep } from 'lodash-es';
-import { convertToRule, convertToTinyRule, isMatchUrl, upgradeRuleFormat, initRule } from './ruleUtils';
-import { getDatabase, getLocal } from './storage';
-import { getTableName } from './utils';
-import { APIs, EVENTs, InitdRule, IS_MATCH, Rule, TABLE_NAMES, TABLE_NAMES_TYPE } from './var';
-import notify from './notify';
+import { convertToRule, convertToBasicRule, isMatchUrl, upgradeRuleFormat, initRule } from '@/share/core/rule-utils';
+import { getLocal } from '@/share/core/storage';
+import { getTableName } from '@/share/core/utils';
+import { APIs, EVENTs, IS_MATCH, TABLE_NAMES, TABLE_NAMES_ARR } from '@/share/core/constant';
+import type { InitdRule, Rule, RuleFilterOptions } from '@/share/core/types';
+import notify from '@/share/core/notify';
+import { getDatabase } from './db';
 
 const cache: { [key: string]: null | InitdRule[] } = {};
-TABLE_NAMES.forEach((t) => {
+TABLE_NAMES_ARR.forEach((t) => {
   cache[t] = null;
 });
 
@@ -57,13 +59,7 @@ async function updateCache(type: string): Promise<void> {
   });
 }
 
-export interface FilterOptions {
-  enable?: boolean;
-  url?: string;
-  id?: number;
-  name?: string;
-}
-function filter(fromRules: InitdRule[], options: FilterOptions) {
+function filter(fromRules: InitdRule[], options: RuleFilterOptions) {
   let rules = Array.from(fromRules);
   if (options === null || typeof options !== 'object') {
     return rules;
@@ -145,7 +141,7 @@ async function save(o: Rule) {
   });
 }
 
-function remove(tableName: TABLE_NAMES_TYPE, id: number): Promise<void> {
+function remove(tableName: TABLE_NAMES, id: number): Promise<void> {
   return new Promise((resolve) => {
     getDatabase().then((db) => {
       const tx = db.transaction([tableName], 'readwrite');
@@ -171,7 +167,7 @@ function remove(tableName: TABLE_NAMES_TYPE, id: number): Promise<void> {
   });
 }
 
-function get(type: TABLE_NAMES_TYPE, options?: FilterOptions) {
+function get(type: TABLE_NAMES, options?: RuleFilterOptions) {
   // When browser is starting up, pass all requests
   const all = cache[type];
   if (!all) {
@@ -216,5 +212,5 @@ export default {
   save,
   remove,
   updateCache,
-  convertToTinyRule,
+  convertToBasicRule,
 };

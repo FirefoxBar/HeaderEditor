@@ -1,9 +1,9 @@
 import React from 'react';
-import { Rule } from '@/share/core/var';
-import RuleDetail from '@/share/components/rule-detail';
 import { Button, Typography } from '@douyinfe/semi-ui';
 import { IconClose } from '@douyinfe/semi-icons';
 import { css, cx } from '@emotion/css';
+import RuleDetail from '@/share/components/rule-detail';
+import type { Rule } from '@/share/core/types';
 
 function isTouchEvent(obj: Event): obj is TouchEvent {
   return typeof TouchEvent !== 'undefined' && obj instanceof TouchEvent;

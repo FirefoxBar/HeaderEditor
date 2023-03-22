@@ -2,7 +2,7 @@ import { withField } from '@douyinfe/semi-ui';
 import Editor, { loader } from '@monaco-editor/react';
 import React, { useEffect, useRef } from 'react';
 import * as monaco from 'monaco-editor';
-import isDarkMode from '@/share/components/is-dark-mode';
+import isDarkMode from '@/share/pages/is-dark-mode';
 
 loader.config({ monaco });
 

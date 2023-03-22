@@ -1,18 +1,18 @@
-import Api from '@/share/core/api';
-import browserSync from '@/share/core/browserSync';
-import { createExport } from '@/share/core/ruleUtils';
-import { t } from '@/share/core/utils';
-import { TinyRule } from '@/share/core/var';
 import { IconDownload, IconUpload, IconExternalOpen } from '@douyinfe/semi-icons';
 import { Button, Modal, Tag, Toast } from '@douyinfe/semi-ui';
 import { css } from '@emotion/css';
 import dayjs from 'dayjs';
 import * as React from 'react';
+import Api from '@/share/pages/api';
+import browserSync from '@/share/pages/browser-sync';
+import { createExport } from '@/share/core/rule-utils';
+import { t } from '@/share/core/utils';
+import type { BasicRule } from '@/share/core/types';
 
 interface CloudProps {
   visible: boolean;
   onClose: () => void;
-  onImport: (rules: { [key: string]: TinyRule[] }) => void;
+  onImport: (rules: { [key: string]: BasicRule[] }) => void;
 }
 
 interface CloudState {

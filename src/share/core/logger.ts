@@ -1,5 +1,5 @@
 import dayjs from 'dayjs';
-import { prefs } from './storage';
+import { prefs } from './prefs';
 
 export interface LogItem {
   time: Date;

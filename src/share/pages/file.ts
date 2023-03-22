@@ -41,4 +41,6 @@ class File {
   }
 }
 
-export default new File();
+const file = new File();
+
+export default file;

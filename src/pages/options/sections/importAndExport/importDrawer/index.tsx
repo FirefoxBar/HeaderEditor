@@ -1,14 +1,14 @@
-import { selectGroup } from '@/pages/options/utils';
 import * as React from 'react';
-import Api from '@/share/core/api';
-import emitter from '@/share/core/emitter';
-import { fromJson } from '@/share/core/ruleUtils';
-import { t } from '@/share/core/utils';
-import { ImportRule, TABLE_NAMES, TinyRule } from '@/share/core/var';
 import { SideSheet, Button, Table, Select, Toast } from '@douyinfe/semi-ui';
 import { css } from '@emotion/css';
-import BoolRadioGroup from '@/pages/options/components/bool-radio';
 import { IconSave } from '@douyinfe/semi-icons';
+import { selectGroup } from '@/pages/options/utils';
+import Api from '@/share/pages/api';
+import { fromJson } from '@/share/core/rule-utils';
+import { t } from '@/share/core/utils';
+import type { ImportRule, BasicRule } from '@/share/core/types';
+import BoolRadioGroup from '@/pages/options/components/bool-radio';
+import { TABLE_NAMES_ARR } from '@/share/core/constant';
 
 interface ImportDrawerProps {
   onCancel?: () => void;
@@ -39,7 +39,7 @@ export default class ImportDrawer extends React.Component<ImportDrawerProps, Imp
     };
   }
 
-  show(content: { [key: string]: TinyRule[] }) {
+  show(content: { [key: string]: BasicRule[] }) {
     this.setState({
       ...this.state,
       list: [],
@@ -50,7 +50,7 @@ export default class ImportDrawer extends React.Component<ImportDrawerProps, Imp
       let totalCount = 0;
       const importList: ImportRule[] = [];
       const list = typeof content === 'string' ? fromJson(content) : content;
-      TABLE_NAMES.forEach((tableName) => {
+      TABLE_NAMES_ARR.forEach((tableName) => {
         if (!list[tableName]) {
           return;
         }
@@ -84,7 +84,7 @@ export default class ImportDrawer extends React.Component<ImportDrawerProps, Imp
   handleConfirm() {
     // 确认导入
     const queue: any[] = [];
-    this.state.list.forEach((e: TinyRule) => {
+    this.state.list.forEach((e: BasicRule) => {
       // 不导入
       if (e.importAction === 3) {
         return;

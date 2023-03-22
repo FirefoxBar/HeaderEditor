@@ -1,18 +1,17 @@
-import { getExportName } from '@/pages/options/utils';
-import * as React from 'react';
-import Api from '@/share/core/api';
-import file from '@/share/core/file';
-import { createExport } from '@/share/core/ruleUtils';
-import { fetchUrl, t } from '@/share/core/utils';
-import { TinyRule } from '@/share/core/var';
-import Cloud from './cloud';
-import ImportDrawer from './importDrawer';
-import { Button, ButtonGroup, Card, Input, InputGroup, List, Space, Spin, Table, Toast } from '@douyinfe/semi-ui';
 import { IconCloud, IconDownload, IconFolderOpen, IconSave, IconSearch } from '@douyinfe/semi-icons';
-import { css } from '@emotion/css';
-import { getLocal } from '@/share/core/storage';
+import { Button, Card, Input, Space, Table, Toast } from '@douyinfe/semi-ui';
+import * as React from 'react';
 import * as browser from 'webextension-polyfill';
 import { openURL } from '@/pages/background/utils';
+import { getExportName } from '@/pages/options/utils';
+import file from '@/share/pages/file';
+import { createExport } from '@/share/core/rule-utils';
+import { getLocal } from '@/share/core/storage';
+import { fetchUrl, t } from '@/share/core/utils';
+import type { BasicRule } from '@/share/core/types';
+import Api from '@/share/pages/api';
+import Cloud from './cloud';
+import ImportDrawer from './importDrawer';
 
 interface IEProps {
   visible: boolean;
@@ -88,7 +87,7 @@ export default class ImportAndExport extends React.Component<IEProps, IEState> {
     this.setState({ downloading: false });
   }
 
-  handleCloudImport(res: { [key: string]: TinyRule[] }) {
+  handleCloudImport(res: { [key: string]: BasicRule[] }) {
     try {
       this.importRef.current!.show(res);
     } catch (e) {

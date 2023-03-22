@@ -2,7 +2,7 @@ import browser, { Tabs } from 'webextension-polyfill';
 import EventEmitter from 'eventemitter3';
 import logger from './logger';
 import { canAccess, getGlobal, IS_ANDROID } from './utils';
-import { APIs } from './var';
+import { APIs } from './constant';
 
 class Notify {
   event = new EventEmitter();
