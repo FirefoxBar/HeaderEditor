@@ -3,31 +3,29 @@ import { useRequest } from 'ahooks';
 import { Popover, Switch, Table } from '@douyinfe/semi-ui';
 import Api from '@/share/core/api';
 import { parseVirtualKey } from '@/share/core/utils';
-import { VIRTUAL_KEY } from '@/share/core/var';
+import { Rule, VIRTUAL_KEY, TABLE_NAMES_TYPE } from '@/share/core/var';
 import useMarkCommon from '@/share/hooks/useMarkCommon';
 import RuleDetail from '@/share/components/rule-detail';
-import { InitdRule } from '@/share/core/var';
 
-const Rule = () => {
+const Rules = () => {
   const { keys } = useMarkCommon('rule');
   const { data = [], loading, refresh } = useRequest(() =>
     Promise.all(
       keys.map(async (key) => {
         const item = parseVirtualKey(key);
-        const result = await Api.getRules(item.table, {
+        const result = await Api.getRules(item.table as TABLE_NAMES_TYPE, {
           id: item.id,
         });
         return {
           ...result[0],
           [VIRTUAL_KEY]: key,
         };
-      })
+      }),
     ),
-    {
-      manual: false,
-      refreshDeps: [keys],
-    }
-  );
+  {
+    manual: false,
+    refreshDeps: [keys],
+  });
 
   if (data.length === 0 && !loading) {
     return null;
@@ -46,7 +44,7 @@ const Rule = () => {
           className: 'cell-enable',
           align: 'center',
           width: 30,
-          render: (value: boolean, item: InitdRule) => (
+          render: (value: boolean, item: Rule) => (
             <div className="switch-container">
               <Switch
                 size="small"
@@ -62,7 +60,7 @@ const Rule = () => {
         {
           title: 'name',
           dataIndex: 'name',
-          render: (value: string, item: InitdRule) => (
+          render: (value: string, item: Rule) => (
             <Popover showArrow position="top" content={<RuleDetail rule={item} />} style={{ maxWidth: '300px' }}>
               <div>{value}</div>
             </Popover>
@@ -72,6 +70,6 @@ const Rule = () => {
       pagination={false}
     />
   );
-}
+};
 
-export default Rule;
+export default Rules;

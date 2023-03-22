@@ -19,7 +19,7 @@ class BackgroundAPI {
       type,
     });
   }
-  getRules(type: TABLE_NAMES_TYPE, options?: FilterOptions) {
+  getRules(type: TABLE_NAMES_TYPE, options?: FilterOptions): Promise<Rule[]> {
     return notify.background({
       method: APIs.GET_RULES,
       type,

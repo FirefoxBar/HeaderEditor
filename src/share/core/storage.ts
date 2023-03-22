@@ -181,9 +181,6 @@ export function getSync() {
   if (typeof localStorage !== 'undefined' && localStorage.getItem('storage') === 'local') {
     return browser.storage.local;
   }
-  if (typeof process !== 'undefined' && process.env.NODE_ENV === 'development') {
-    return browser.storage.local;
-  }
   try {
     if ('sync' in browser.storage) {
       return browser.storage.sync;

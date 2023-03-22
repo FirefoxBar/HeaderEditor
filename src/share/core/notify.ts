@@ -1,16 +1,20 @@
 import browser, { Tabs } from 'webextension-polyfill';
+import EventEmitter from 'eventemitter3';
 import logger from './logger';
 import { canAccess, getGlobal, IS_ANDROID } from './utils';
-import { APIs, EVENTs } from './var';
-import EventEmitter from 'eventemitter3';
+import { APIs } from './var';
 
 class Notify {
-  public event = new EventEmitter();
-  private messageQueue = [];
-  private messageTimer = null;
+  event = new EventEmitter();
+  private messageQueue: Array<{
+    request: any;
+    resolve: (v: any) => void;
+    reject: (e: any) => void;
+  }> = [];
+  private messageTimer: number | null = null;
 
   constructor() {
-    const handleMessage = (request: any, sender) => {
+    const handleMessage = (request: any, sender?: any) => {
       if (request.method === 'notifyBackground') {
         request.method = request.reason;
         delete request.reason;
@@ -25,7 +29,7 @@ class Notify {
     browser.runtime.onMessage.addListener((request, sender) => {
       // 批量消息
       if (request.method === 'batchExecute') {
-        request.batch.forEach(item => handleMessage(item));
+        request.batch.forEach((item) => handleMessage(item));
         return;
       }
       handleMessage(request);
@@ -50,7 +54,7 @@ class Notify {
         return;
       }
       // 有多条并行执行
-      const messages = currentQueue.map(x => x.request);
+      const messages = currentQueue.map((x) => x.request);
       const result = await browser.runtime.sendMessage({
         method: 'batchExecute',
         batch: messages,
@@ -66,7 +70,7 @@ class Notify {
       }
     });
   }
-  sendMessage(request: any) {
+  sendMessage(request: any): Promise<any> {
     return new Promise((resolve, reject) => {
       this.messageQueue.push({ request, resolve, reject });
       this.startSendMessage();
@@ -80,7 +84,7 @@ class Notify {
   background(request: any) {
     return this.sendMessage({ ...request, method: 'notifyBackground', reason: request.method });
   }
-  
+
   async tabs(request: any, filterTab?: (tab: Tabs.Tab) => boolean) {
     if (IS_ANDROID) {
       const tabs = await browser.tabs.query({});
@@ -94,7 +98,7 @@ class Notify {
             return Promise.resolve();
           }
           return browser.tabs.sendMessage(tab.id!, request);
-        })
+        }),
       );
     }
 
@@ -114,12 +118,11 @@ class Notify {
               return Promise.resolve();
             }
             return browser.tabs.sendMessage(tab.id!, request);
-          })
+          }),
         );
-      })
+      }),
     );
   }
-
 }
 
 const notify = new Notify();

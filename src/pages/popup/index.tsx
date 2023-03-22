@@ -1,13 +1,13 @@
-import SemiLocale from '@/share/components/semi-locale';
-import Api from '@/share/core/api';
-import { prefs } from '@/share/core/storage';
-import { IS_ANDROID, t } from '@/share/core/utils';
-import { Nav, Button, Switch, Tooltip, Typography } from '@douyinfe/semi-ui';
+import { Nav, Switch, Tooltip, Typography } from '@douyinfe/semi-ui';
 import { IconMenu, IconSetting } from '@douyinfe/semi-icons';
 import { css, cx } from '@emotion/css';
 import React, { useCallback, useEffect, useState } from 'react';
 import browser from 'webextension-polyfill';
-import Rule from './rule/rule';
+import { IS_ANDROID, t } from '@/share/core/utils';
+import { prefs } from '@/share/core/storage';
+import Api from '@/share/core/api';
+import SemiLocale from '@/share/components/semi-locale';
+import Rules from './rule/rules';
 import type { OnSelectedData } from '@douyinfe/semi-ui/lib/es/navigation';
 
 const basicStyle = css`
@@ -103,7 +103,7 @@ const Popup = () => {
           onSelect={handleNavSelect}
           header={{
             logo: <img src="/assets/images/128.png" style={{ width: '36px' }} />,
-            text: 'Header Editor'
+            text: 'Header Editor',
           }}
           items={[
             { itemKey: 'rules', text: t('rule_list'), icon: <IconMenu /> },
@@ -119,13 +119,13 @@ const Popup = () => {
           }
         />
         <main className="main-content">
-          <Rule />
+          <Rules />
           <div style={{ flexGrow: 1, minHeight: '20px' }} />
           <Typography.Text type="tertiary" style={{ textAlign: 'center', padding: '12px' }}>{t('common_mark_tip')}</Typography.Text>
         </main>
       </div>
     </SemiLocale>
   );
-}
+};
 
 export default Popup;

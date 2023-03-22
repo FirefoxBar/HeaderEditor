@@ -1,5 +1,5 @@
-import { getLocal } from '@/share/core/storage';
 import { useCallback, useRef, useState, useEffect } from 'react';
+import { getLocal } from '@/share/core/storage';
 
 const useMarkCommon = (type: 'rule' | 'group') => {
   const ready = useRef(false);
@@ -10,7 +10,7 @@ const useMarkCommon = (type: 'rule' | 'group') => {
     const local = getLocal();
 
     local.get(storageKey)
-      .then(result => {
+      .then((result) => {
         if (Array.isArray(result[storageKey])) {
           setKeys(result[storageKey]);
         }
@@ -24,14 +24,14 @@ const useMarkCommon = (type: 'rule' | 'group') => {
       setKeys(changes[storageKey].newValue);
     };
 
-    if (local.onChange) {
-      local.onChange.addListener(handleChange);
+    if (local.onChanged) {
+      local.onChanged.addListener(handleChange);
     }
 
     return () => {
       ready.current = false;
-      if (local.onChange) {
-        local.onChange.removeListener(handleChange);
+      if (local.onChanged) {
+        local.onChanged.removeListener(handleChange);
       }
     };
   }, []);
@@ -40,7 +40,7 @@ const useMarkCommon = (type: 'rule' | 'group') => {
     if (!ready.current) {
       return;
     }
-    setKeys(currentKeys => {
+    setKeys((currentKeys) => {
       if (currentKeys.includes(key)) {
         return currentKeys;
       }
@@ -54,7 +54,7 @@ const useMarkCommon = (type: 'rule' | 'group') => {
     if (!ready.current) {
       return;
     }
-    setKeys(currentKeys => {
+    setKeys((currentKeys) => {
       if (!currentKeys.includes(key)) {
         return currentKeys;
       }
@@ -70,6 +70,6 @@ const useMarkCommon = (type: 'rule' | 'group') => {
     add,
     remove,
   };
-}
+};
 
 export default useMarkCommon;
