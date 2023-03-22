@@ -1,4 +1,5 @@
 const path = require('path');
+const fs = require('fs');
 const CopyWebpackPlugin = require('copy-webpack-plugin');
 
 const copy = [
@@ -17,11 +18,13 @@ const root = path.join(__dirname, '../..');
 module.exports = function (config) {
   const { version } = require(path.join(root, 'package.json'));
 
-  // TODO: 添加 snapshot 版本号
-  // let versionText = version;
-  // if (process.env.IS_SNAPSHOT && process.env.GITHUB_RUN_ID) {
-  //   versionText += '.' + process.env.GITHUB_RUN_ID;
-  // }
+  // 添加 snapshot 版本号
+  let versionText = version;
+  const snapshotFile = path.join(__dirname, '../../snapshot-version.txt');
+  if (fs.existsSync(snapshotFile)) {
+    const snapshotVersion = fs.readFileSync(snapshotFile, { encoding: 'utf8' }).trim();
+    versionText += '.' + snapshotVersion;
+  }
 
   // dev 环境复制 development 的 react 资源
   if (config.get('mode') === 'development') {

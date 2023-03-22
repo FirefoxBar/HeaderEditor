@@ -27,9 +27,11 @@ jobs:
         cache: 'pnpm'
     - name: Install dependencies
       run: pnpm i --frozen-lockfile
-    - name: Build
+    - name: Get snapshot version
       env:
-        IS_SNAPSHOT: 1
+        TOKEN: ${{ secrets.SNAPSHOT_TOKEN }}
+      run: node ./scripts/get-snapshot-version.js
+    - name: Build
       run: npm run build
     - name: Upload bundles
       uses: actions/upload-artifact@v3
