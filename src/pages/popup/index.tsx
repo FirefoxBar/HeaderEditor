@@ -34,6 +34,7 @@ const basicStyle = css`
     flex-direction: column;
 
     .cell-enable {
+      padding-right: 0;
       .switch-container {
         display: flex;
         align-items: center;

@@ -1,18 +1,29 @@
-import Api from '@/share/core/api';
-import file from '@/share/core/file';
-import useMarkCommon from '@/share/hooks/useMarkCommon';
-import { getTableName, t } from '@/share/core/utils';
-import { VIRTUAL_KEY, InitdRule, Rule, TABLE_NAMES } from '@/share/core/var';
-import { convertToTinyRule, createExport } from '@/share/core/ruleUtils';
-import { selectGroup, getExportName } from '@/pages/options/utils';
-import { IconCopyAdd, IconChevronDown, IconDelete, IconEdit, IconFavoriteList, IconMore, IconSearch, IconSend, IconStar, IconUnlock } from '@douyinfe/semi-icons';
+import {
+  IconChevronDown,
+  IconCopyAdd,
+  IconDelete,
+  IconEdit,
+  IconFavoriteList,
+  IconMore,
+  IconSearch,
+  IconSend,
+  IconStar,
+  IconUnlock,
+} from '@douyinfe/semi-icons';
 import { Button, ButtonGroup, Card, Dropdown, Modal, Popover, Switch, Table, Tooltip } from '@douyinfe/semi-ui';
-import type { ColumnProps, RowSelectionProps } from '@douyinfe/semi-ui/lib/es/table';
 import { css } from '@emotion/css';
 import { useResponsive } from 'ahooks';
 import React from 'react';
+import { getExportName, selectGroup } from '@/pages/options/utils';
 import RuleDetail from '@/share/components/rule-detail';
-import { batchShare, remove, toggleRule } from './utils';
+import Api from '@/share/core/api';
+import file from '@/share/core/file';
+import { convertToTinyRule, createExport } from '@/share/core/ruleUtils';
+import { getTableName, t } from '@/share/core/utils';
+import { InitdRule, Rule, TABLE_NAMES, VIRTUAL_KEY } from '@/share/core/var';
+import useMarkCommon from '@/share/hooks/useMarkCommon';
+import { remove, toggleRule } from './utils';
+import type { ColumnProps, RowSelectionProps } from '@douyinfe/semi-ui/lib/es/table';
 
 interface RuleCardProps {
   name: string;
@@ -58,7 +69,7 @@ const RuleCard = (props: RuleCardProps) => {
       className: 'cell-enable',
       dataIndex: 'enable',
       align: 'center',
-      width: 80,
+      width: 60,
       render: (value: boolean, item: InitdRule) => (
         <div className="switch-container">
           <Switch size="small" checked={value} onChange={(checked) => toggleRule(item, checked)} />
@@ -157,7 +168,7 @@ const RuleCard = (props: RuleCardProps) => {
             </Dropdown>
           </ButtonGroup>
         );
-      }
+      },
     },
   ];
 
@@ -166,7 +177,7 @@ const RuleCard = (props: RuleCardProps) => {
     tableColumns.splice(index, 1);
   }
 
-  const isGroupEnable = rules.findIndex(x => x.enable) !== -1;
+  const isGroupEnable = rules.findIndex((x) => x.enable) !== -1;
 
   return (
     <Card
@@ -217,8 +228,8 @@ const RuleCard = (props: RuleCardProps) => {
                 node: 'item',
                 name: t(isGroupEnable ? 'disable' : 'enable'),
                 onClick: () => {
-                  const target = isGroupEnable ? false : true;
-                  rules.forEach(item => toggleRule(item, target));
+                  const target = !isGroupEnable;
+                  rules.forEach((item) => toggleRule(item, target));
                 },
                 icon: <IconUnlock />,
               },
@@ -232,10 +243,10 @@ const RuleCard = (props: RuleCardProps) => {
                   }
                   // 更新规则
                   return Promise.all(
-                    rules.map(item => {
+                    rules.map((item) => {
                       item.group = newGroup;
                       return Api.saveRule(item);
-                    })
+                    }),
                   );
                 },
                 disabled: name === t('ungrouped'),
