@@ -46,6 +46,7 @@ module.exports = function (config) {
     chunks: 'all',
     minChunks: 100,
     cacheGroups: {
+      default: false,
       monaco: {
         name: 'monaco',
         test: /monaco-editor/,
