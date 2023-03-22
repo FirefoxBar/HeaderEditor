@@ -28,7 +28,12 @@ jobs:
     - name: Install dependencies
       run: pnpm i --frozen-lockfile
     - name: Build
+      env:
+        IS_SNAPSHOT: 1
       run: npm run build
+
+  deploy-bundle
+    needs: build
     - name: Upload bundles
       uses: actions/upload-artifact@v3
       with:
@@ -39,6 +44,13 @@ jobs:
       with:
         name: bundle-analyze
         path: bundle-analyze.html
+
+  publish-snapshot
+    needs: build
+    runs-on: ubuntu-latest
+    - name: Test
+      run: echo 'Test'
+
   sync-locale:
     runs-on: ubuntu-latest
     strategy:
