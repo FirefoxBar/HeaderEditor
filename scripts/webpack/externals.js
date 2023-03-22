@@ -17,11 +17,11 @@ const root = path.join(__dirname, '../..');
 module.exports = function (config) {
   const { version } = require(path.join(root, 'package.json'));
 
-  // 添加 snapshot 版本号
-  let versionText = version;
-  if (process.env.IS_SNAPSHOT && process.env.GITHUB_RUN_ID) {
-    versionText += '.' + process.env.GITHUB_RUN_ID;
-  }
+  // TODO: 添加 snapshot 版本号
+  // let versionText = version;
+  // if (process.env.IS_SNAPSHOT && process.env.GITHUB_RUN_ID) {
+  //   versionText += '.' + process.env.GITHUB_RUN_ID;
+  // }
 
   // dev 环境复制 development 的 react 资源
   if (config.get('mode') === 'development') {
@@ -38,7 +38,7 @@ module.exports = function (config) {
     to: 'manifest.json',
     transform: (content) => {
       const jsonContent = JSON.parse(content);
-      jsonContent.version = versionText;
+      jsonContent.version = version;
 
       if (config.mode === 'development') {
         jsonContent['content_security_policy'] = "script-src 'self' 'unsafe-eval'; object-src 'self'";
@@ -64,7 +64,7 @@ module.exports = function (config) {
       },
       semi: {
         name: 'semi',
-        test: /@douyinfe[\/\+]semi-/,
+        test: /@douyinfe[/+]semi-/,
         enforce: true,
       },
     },
