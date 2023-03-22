@@ -26,6 +26,9 @@ let platform = null;
 for (const it of process.argv) {
   if (it.startsWith('--platform=')) {
     platform = it.substr(11);
+    if (platform.indexOf(',') > 0) {
+      platform = platform.trim().split(',');
+    }
     break;
   }
 }
@@ -105,23 +108,35 @@ async function main() {
     recursive: true,
   });
 
-  if (!platform) {
-    const queue = [];
-    Object.keys(extension.autobuild).forEach((it) => {
-      if (extension.autobuild[it]) {
-        queue.push(packOnePlatform(it));
-      } else {
-        console.log(`Skip ${it.toUpperCase()}`);
-      }
-    });
-    return;
-  }
+  if (platform) {
+    if (Array.isArray(platform)) {
+      platform.forEach((it) => {
+        if (typeof packUtils[it] !== 'undefined') {
+          packOnePlatform(it);
+        } else {
+          console.log(`${it} not found`);
+        }
+      });
+      return;
+    }
+      
+    if (typeof packUtils[platform] !== 'undefined') {
+      packOnePlatform(platform);
+      return;
+    }
+    console.log(`${platform} not found`);
 
-  if (typeof packUtils[platform] !== 'undefined') {
-    packOnePlatform(platform);
     return;
   }
-  console.log(`${platform} not found`);
+  
+  const queue = [];
+  Object.keys(extension.autobuild).forEach((it) => {
+    if (extension.autobuild[it]) {
+      queue.push(packOnePlatform(it));
+    } else {
+      console.log(`Skip ${it.toUpperCase()}`);
+    }
+  });
 }
 
 main();

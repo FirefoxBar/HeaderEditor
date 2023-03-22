@@ -4,7 +4,7 @@
 		"xpi": true,
 		"amo": true,
 		"cws": true,
-		"crx": false
+		"crx": true
 	},
   "firefox": {
     "xpi": "headereditor@addon.firefoxcn.net",
