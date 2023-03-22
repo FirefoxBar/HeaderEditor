@@ -40,4 +40,14 @@ module.exports = function (config) {
     },
   });
   config.plugin('copy').use(CopyWebpackPlugin, [copy]);
+
+  // Add manaco into a standalone chunk
+  config.optimization.splitChunks({
+    cacheGroups: {
+      monaco: {
+        name: 'monaco',
+        test: /monaco-editor/,
+      },
+    },
+  });
 };
