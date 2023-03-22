@@ -6,6 +6,10 @@
 		"cws": true,
 		"crx": false
 	},
+  "firefox": {
+    "xpi": "headereditor@addon.firefoxcn.net",
+    "amo": "headereditor-amo@addon.firefoxcn.net"
+  },
 	"chrome": {
 		"id": "eningockdidmgiojffjmkdblpjocbhgh"
 	},
