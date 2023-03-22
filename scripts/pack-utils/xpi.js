@@ -17,6 +17,7 @@ async function packXpi(zipPath, outputDir) {
     apiSecret: process.env.AMO_SECRET,
     id: config.extension.firefox.xpi,
     downloadDir: outputDir,
+    disableProgressBar: true,
   });
   if (!result.success) {
     throw new Error('Sign failed');

@@ -15,5 +15,6 @@ module.exports = function (zipPath) {
     apiKey: process.env.AMO_KEY,
     apiSecret: process.env.AMO_SECRET,
     id: config.extension.firefox.amo,
+    disableProgressBar: true,
   });
 };
