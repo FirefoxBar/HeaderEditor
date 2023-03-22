@@ -37,6 +37,7 @@ const Rules = () => {
       loading={loading}
       dataSource={data}
       showHeader={false}
+      size="small"
       columns={[
         {
           title: 'enable',

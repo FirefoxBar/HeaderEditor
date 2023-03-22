@@ -7,12 +7,13 @@ import { IS_ANDROID, t } from '@/share/core/utils';
 import { prefs } from '@/share/core/storage';
 import Api from '@/share/core/api';
 import SemiLocale from '@/share/components/semi-locale';
+import isDarkMode from '@/share/components/is-dark-mode';
 import Rules from './rule/rules';
 import type { OnSelectedData } from '@douyinfe/semi-ui/lib/es/navigation';
 
 const basicStyle = css`
   min-width: 340px;
-  min-height: 420px;
+  min-height: 440px;
   height: 100vh;
   width: 100vw;
   justify-content: stretch;
@@ -55,24 +56,8 @@ const Popup = () => {
     prefs.ready(() => {
       setEnable(!prefs.get('disable-all'));
       // Get dark mode setting
-      const darkMode = prefs.get('dark-mode');
-      switch (darkMode) {
-        case 'auto':
-          try {
-            const mql = window.matchMedia('(prefers-color-scheme: dark)');
-            mql.addEventListener('change', (e) => {
-              if (e.matches) {
-                document.body.setAttribute('theme-mode', 'dark');
-              }
-            });
-          } catch (e) {
-            // ignore
-          }
-          break;
-        case 'on':
-          document.body.setAttribute('theme-mode', 'dark');
-          break;
-        default:
+      if (isDarkMode()) {
+        document.body.setAttribute('theme-mode', 'dark');
       }
     });
   }, []);

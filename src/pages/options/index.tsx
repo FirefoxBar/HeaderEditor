@@ -1,19 +1,20 @@
+import { Nav } from '@douyinfe/semi-ui';
+import React, { useCallback, useEffect, useRef, useState } from 'react';
+import { css } from '@emotion/css';
+import { IconFolderOpen, IconHelpCircle, IconMenu, IconSetting } from '@douyinfe/semi-icons';
+import { useGetState, useResponsive } from 'ahooks';
 import { convertToRule } from '@/share/core/ruleUtils';
 import { t } from '@/share/core/utils';
 import { prefs } from '@/share/core/storage';
 import { Rule } from '@/share/core/var';
-import { Nav } from '@douyinfe/semi-ui';
-import React, { useCallback, useEffect, useRef, useState } from 'react';
+import SemiLocale from '@/share/components/semi-locale';
+import isDarkMode from '@/share/components/is-dark-mode';
 import GroupSelect from './sections/groupSelect';
 import ImportAndExportSection from './sections/importAndExport';
 import OptionsSection from './sections/options';
 import RulesSection from './sections/rules';
 import Edit from './sections/rules/edit';
 import type { OnSelectedData } from '@douyinfe/semi-ui/lib/es/navigation';
-import { css } from '@emotion/css';
-import { IconFolderOpen, IconHelpCircle, IconMenu, IconSetting } from '@douyinfe/semi-icons';
-import SemiLocale from '@/share/components/semi-locale';
-import { useGetState, useResponsive } from 'ahooks';
 
 const Options = () => {
   const [editShow, setEditShow] = useState(false);
@@ -27,24 +28,8 @@ const Options = () => {
 
   useEffect(() => {
     prefs.ready(() => {
-      const darkMode = prefs.get('dark-mode');
-      switch (darkMode) {
-        case 'auto':
-          try {
-            const mql = window.matchMedia('(prefers-color-scheme: dark)');
-            mql.addEventListener('change', (e) => {
-              if (e.matches) {
-                document.body.setAttribute('theme-mode', 'dark');
-              }
-            });
-          } catch (e) {
-            // ignore
-          }
-          break;
-        case 'on':
-          document.body.setAttribute('theme-mode', 'dark');
-          break;
-        default:
+      if (isDarkMode()) {
+        document.body.setAttribute('theme-mode', 'dark');
       }
     });
   }, []);

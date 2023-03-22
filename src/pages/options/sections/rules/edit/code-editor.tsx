@@ -2,6 +2,7 @@ import { withField } from '@douyinfe/semi-ui';
 import Editor, { loader } from '@monaco-editor/react';
 import React, { useEffect, useRef } from 'react';
 import * as monaco from 'monaco-editor';
+import isDarkMode from '@/share/components/is-dark-mode';
 
 loader.config({ monaco });
 
@@ -29,6 +30,7 @@ const CodeEditor = (props: CodeEditorProps) => {
       height={height}
       defaultLanguage="javascript"
       defaultValue=""
+      theme={isDarkMode() ? 'vs-dark' : 'vs'}
       options={{
         insertSpaces: true,
         tabSize: 2,
