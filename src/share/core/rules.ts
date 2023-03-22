@@ -1,6 +1,6 @@
 import { cloneDeep } from 'lodash-es';
 import { convertToRule, convertToTinyRule, isMatchUrl, upgradeRuleFormat, initRule } from './ruleUtils';
-import { getDatabase } from './storage';
+import { getDatabase, getLocal } from './storage';
 import { getTableName } from './utils';
 import { APIs, EVENTs, InitdRule, IS_MATCH, Rule, TABLE_NAMES, TABLE_NAMES_TYPE } from './var';
 import notify from './notify';
@@ -153,7 +153,18 @@ function remove(tableName: TABLE_NAMES_TYPE, id: number): Promise<void> {
       const request = os.delete(Number(id));
       request.onsuccess = () => {
         updateCache(tableName);
-        notify.other({ method: APIs.ON_EVENT, event: EVENTs.RULE_DELETE, id: Number(id) });
+        notify.other({ method: APIs.ON_EVENT, event: EVENTs.RULE_DELETE, table: tableName, id: Number(id) });
+        // check common mark
+        getLocal().get('common_rule').then((result) => {
+          const key = `${tableName}-${id}`;
+          if (Array.isArray(result.common_rule) && result.common_rule.includes(key)) {
+            const newKeys = [...result.common_rule];
+            newKeys.splice(newKeys.indexOf(key), 1);
+            getLocal().set({
+              common_rule: newKeys,
+            });
+          }
+        });
         resolve();
       };
     });

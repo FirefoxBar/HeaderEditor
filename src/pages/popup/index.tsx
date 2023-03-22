@@ -107,7 +107,7 @@ const Popup = () => {
         <main className="main-content">
           <Rules />
           <div style={{ flexGrow: 1, minHeight: '20px' }} />
-          <Typography.Text type="tertiary" style={{ textAlign: 'center', padding: '12px' }}>{t('common_mark_tip')}</Typography.Text>
+          <Typography.Text type="tertiary" style={{ textAlign: 'center', padding: '12px', fontSize: '12px' }}>{t('common_mark_tip')}</Typography.Text>
         </main>
       </div>
     </SemiLocale>

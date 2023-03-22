@@ -1,14 +1,16 @@
-import React from 'react';
-import { useRequest } from 'ahooks';
+import React, { useEffect } from 'react';
+import { useLatest, useRequest } from 'ahooks';
 import { Popover, Switch, Table } from '@douyinfe/semi-ui';
 import Api from '@/share/core/api';
-import { parseVirtualKey } from '@/share/core/utils';
-import { Rule, VIRTUAL_KEY, TABLE_NAMES_TYPE } from '@/share/core/var';
+import { getVirtualKey, parseVirtualKey } from '@/share/core/utils';
+import { Rule, VIRTUAL_KEY, TABLE_NAMES_TYPE, EVENTs } from '@/share/core/var';
 import useMarkCommon from '@/share/hooks/useMarkCommon';
 import RuleDetail from '@/share/components/rule-detail';
+import notify from '@/share/core/notify';
 
 const Rules = () => {
   const { keys } = useMarkCommon('rule');
+  const keysRef = useLatest(keys);
   const { data = [], loading, refresh } = useRequest(() =>
     Promise.all(
       keys.map(async (key) => {
@@ -26,6 +28,22 @@ const Rules = () => {
     manual: false,
     refreshDeps: [keys],
   });
+
+  useEffect(() => {
+    const handleRuleUpdate = (request: any) => {
+      const rule: Rule = request.target;
+      const key = getVirtualKey(rule);
+      if (keysRef.current.includes(key)) {
+        refresh();
+      }
+    };
+
+    notify.event.on(EVENTs.RULE_UPDATE, handleRuleUpdate);
+
+    return () => {
+      notify.event.off(EVENTs.RULE_UPDATE, handleRuleUpdate);
+    };
+  }, []);
 
   if (data.length === 0 && !loading) {
     return null;

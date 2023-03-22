@@ -1,20 +1,18 @@
 /* eslint-disable max-lines */
-import { selectGroup, getExportName } from '@/pages/options/utils';
-import Api from '@/share/core/api';
-import emitter from '@/share/core/emitter';
-import file from '@/share/core/file';
-import notify from '@/share/core/notify';
-import { convertToTinyRule, createExport } from '@/share/core/ruleUtils';
-import { prefs } from '@/share/core/storage';
-import { getTableName, getVirtualKey, t } from '@/share/core/utils';
-import { VIRTUAL_KEY, EVENTs, InitdRule, Rule, TABLE_NAMES, TABLE_NAMES_TYPE } from '@/share/core/var';
 import { IconCheckList, IconDelete, IconFavoriteList, IconList, IconPlusCircle, IconSend, IconUnlock } from '@douyinfe/semi-icons';
 import { Button, ButtonGroup, Modal, Space, Spin, Typography } from '@douyinfe/semi-ui';
 import { cx, css } from '@emotion/css';
 import * as React from 'react';
+import { selectGroup } from '@/pages/options/utils';
+import Api from '@/share/core/api';
+import emitter from '@/share/core/emitter';
+import notify from '@/share/core/notify';
+import { prefs } from '@/share/core/storage';
+import { getVirtualKey, t } from '@/share/core/utils';
+import { VIRTUAL_KEY, EVENTs, Rule, TABLE_NAMES, TABLE_NAMES_TYPE } from '@/share/core/var';
 import Float from './float';
 import RuleCard from './rule-card';
-import { batchShare, remove, toggleRule } from './utils';
+import { batchShare, remove } from './utils';
 
 interface RulesProps {
   visible: boolean;
@@ -79,10 +77,9 @@ export default class Rules extends React.Component<RulesProps, RulesState> {
   // 事件响应 - 通知 - 规则更新
   handleRuleUpdateEvent(request: any) {
     const rule: Rule = request.target;
-    const tableName = getTableName(rule.ruleType);
     // 寻找ID相同的
     let sameItem: Rule | null = null;
-    let fromGroupKey = '';
+    const fromGroupKey = '';
     let fromGroup: Rule[] | null = null;
     let toGroup: Rule[] | null = null;
     const groupKeys = Object.keys(this.state.group);
@@ -116,15 +113,15 @@ export default class Rules extends React.Component<RulesProps, RulesState> {
     // 新的规则，直接插入
     if (!sameItem) {
       toGroup.push(displayRule);
-    } else {
+    } else if (fromGroup === toGroup) {
       // 在同一个Group里面，直接替换掉就行了
-      if (fromGroup === toGroup) {
-        fromGroup.splice(fromGroup.indexOf(sameItem), 1, displayRule);
-      } else {
-        // 不同的Group
+      fromGroup.splice(fromGroup.indexOf(sameItem), 1, displayRule);
+    } else {
+      // 不同的Group
+      if (fromGroup) {
         fromGroup.splice(fromGroup.indexOf(sameItem), 1);
-        toGroup.push(displayRule);
       }
+      toGroup.push(displayRule);
     }
     // 分组没了？
     if (fromGroup && fromGroup.length === 0) {
@@ -135,15 +132,17 @@ export default class Rules extends React.Component<RulesProps, RulesState> {
 
   // 事件响应 - 通知 - 规则删除
   handleRuleDeleteEvent(request: any) {
-    const id: number = request.id;
-    // 寻找ID相同的
+    const { id } = request;
+    const { table } = request;
+    const virtualKey = `${table}-${id}`;
+    // 寻找key相同的
     let sameItem: Rule | null = null;
     let fromGroupKey = '';
     let fromGroup: Rule[] | null = null;
     const groupKeys = Object.keys(this.state.group);
     for (const key of groupKeys) {
       const group = this.state.group[key];
-      const currentRule = group.rules.find(x => x.id === rule.id);
+      const currentRule = group.rules.find((x) => x[VIRTUAL_KEY] === virtualKey);
       if (currentRule) {
         sameItem = currentRule;
         fromGroup = group.rules;
@@ -152,7 +151,9 @@ export default class Rules extends React.Component<RulesProps, RulesState> {
       }
     }
     if (fromGroup) {
-      fromGroup.splice(fromGroup.indexOf(sameItem), 1);
+      if (sameItem) {
+        fromGroup.splice(fromGroup.indexOf(sameItem), 1);
+      }
       // 分组没了？
       if (fromGroup.length === 0) {
         delete this.state.group[fromGroupKey];
@@ -263,7 +264,7 @@ export default class Rules extends React.Component<RulesProps, RulesState> {
       title: t('delete_confirm'),
       onOk: async () => {
         const batch = this.getSelectedRules();
-        batch.forEach(item => remove(item));
+        batch.forEach((item) => remove(item));
       },
     });
   }
@@ -296,7 +297,7 @@ export default class Rules extends React.Component<RulesProps, RulesState> {
     };
     // 记录总数
     let finishCount = 0;
-    const checkResult = (table: TABLE_NAMES_TYPE, response: InitdRule[] | null) => {
+    const checkResult = (table: TABLE_NAMES_TYPE, response: Rule[] | null) => {
       if (!response) {
         // Browser is starting up
         requestRules(table);
