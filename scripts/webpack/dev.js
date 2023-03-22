@@ -1,4 +1,5 @@
 const ChromeExtensionReloader = require('webpack-chrome-extension-reloader');
+const BundleAnalyzerPlugin = require('webpack-bundle-analyzer').BundleAnalyzerPlugin;
 
 module.exports = function (config, context) {
   // 调试模式下，开启自动重载和自动编译
@@ -12,5 +13,11 @@ module.exports = function (config, context) {
       writeToDisk: true,
     });
   }
+
+  config.plugin('bundle-analyzer').use(new BundleAnalyzerPlugin({
+    analyzerMode: 'static',
+    reportFilename: '../bundle-analyze.html',
+  }))
+
   return config;
 };

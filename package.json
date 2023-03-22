@@ -65,6 +65,7 @@
     "sign-addon": "^0.3.1",
     "stylelint": "^13.7.2",
     "typescript": "^3.7.3",
+    "webpack-bundle-analyzer": "^4.8.0",
     "webpack-chrome-extension-reloader": "^0.8.3"
   },
   "husky": {
