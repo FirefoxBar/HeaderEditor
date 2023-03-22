@@ -3,7 +3,7 @@ import type { RULE_MATCH_TYPE, RULE_TYPE } from './constant';
 export interface RuleFilterOptions {
   enable?: boolean;
   url?: string;
-  id?: number;
+  id?: number | number[];
   name?: string;
 }
 

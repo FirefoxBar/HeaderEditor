@@ -65,11 +65,13 @@ function filter(fromRules: InitdRule[], options: RuleFilterOptions) {
     return rules;
   }
   const url = typeof options.url !== 'undefined' ? options.url : null;
-  const id = typeof options.id !== 'undefined' ? Number(options.id) : null;
 
-  if (id !== null) {
+  if (typeof options.id !== 'undefined') {
     rules = rules.filter((rule) => {
-      return rule.id === id;
+      if (Array.isArray(options.id)) {
+        return options.id.includes(rule.id);
+      }
+      return rule.id === Number(options.id);
     });
   }
 
