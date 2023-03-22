@@ -31,11 +31,6 @@ jobs:
       env:
         IS_SNAPSHOT: 1
       run: npm run build
-
-  deploy-bundle:
-    needs: build
-    runs-on: ubuntu-latest
-    steps:
     - name: Upload bundles
       uses: actions/upload-artifact@v3
       with:
@@ -46,12 +41,7 @@ jobs:
       with:
         name: bundle-analyze
         path: bundle-analyze.html
-
-  publish-snapshot:
-    needs: build
-    runs-on: ubuntu-latest
-    steps:
-    - name: Test
+    - name: Publish snapshot
       run: echo 'Test'
 
   sync-locale:
