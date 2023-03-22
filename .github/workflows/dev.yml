@@ -32,7 +32,7 @@ jobs:
         IS_SNAPSHOT: 1
       run: npm run build
 
-  deploy-bundle
+  deploy-bundle:
     needs: build
     - name: Upload bundles
       uses: actions/upload-artifact@v3
@@ -45,7 +45,7 @@ jobs:
         name: bundle-analyze
         path: bundle-analyze.html
 
-  publish-snapshot
+  publish-snapshot:
     needs: build
     runs-on: ubuntu-latest
     - name: Test
