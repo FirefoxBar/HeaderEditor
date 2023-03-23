@@ -22,7 +22,11 @@ const Group = () => {
 
   const tableData = useMemo(() => keys.map((x) => ({
     name: x,
-  })), []);
+  })), [keys]);
+
+  if (!keys || keys.length === 0) {
+    return null;
+  }
 
   return (
     <Table
