@@ -15,8 +15,8 @@
     "eslint": "eslint --cache --ext .js,.jsx,.ts,.tsx ./",
     "eslint:fix": "npm run eslint -- --fix",
     "stylelint": "stylelint \"**/*.{css,scss,less}\"",
-    "release": "node ./scripts/release.js",
-    "pack": "node ./scripts/pack.js",
+    "release": "node ./scripts/release.mjs",
+    "pack": "node ./scripts/pack.mjs",
     "precommit": "lint-staged"
   },
   "dependencies": {
@@ -43,30 +43,31 @@
   },
   "devDependencies": {
     "@iceworks/spec": "^1.0.0",
+    "@plasmo-corp/ewu": "^0.6.0",
     "@types/chrome": "^0.0.72",
     "@types/lodash-es": "^4.17.6",
+    "@types/node": "^18.15.5",
     "@types/react": "^16.9.16",
     "@types/react-dom": "^16.9.4",
     "@types/text-encoding": "^0.0.35",
     "@types/webextension-polyfill": "^0.10.0",
     "build-plugin-css-assets-local": "^0.1.0",
-    "copy-webpack-plugin": "^4.5.2",
+    "copy-webpack-plugin": "^11.0.0",
     "eslint": "^7.30.0",
     "eslint-plugin-import": "^2.27.5",
     "eslint-plugin-unused-imports": "^2.0.0",
-    "fs-extra": "^11.1.0",
+    "fs-extra": "^11.1.1",
     "husky": "^3.1.0",
     "ice.js": "^2.0.0",
     "lint-staged": "^9.5.0",
-    "node-fetch": "^2.6.0",
+    "node-fetch": "^3.3.1",
     "node-rsa": "^1.0.1",
     "prettier": "^1.19.1",
     "publish-release": "^1.6.0",
     "sign-addon": "^6.0.0",
     "stylelint": "^13.7.2",
     "typescript": "^3.7.3",
-    "webpack-bundle-analyzer": "^4.8.0",
-    "webpack-chrome-extension-reloader": "^0.8.3"
+    "webpack-bundle-analyzer": "^4.8.0"
   },
   "husky": {
     "hooks": {

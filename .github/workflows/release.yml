@@ -1,0 +1,40 @@
+name: main
+
+on:
+  push:
+    tags:
+      - '[0-9].[0-9]+.[0-9]+'
+
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        node-version: [16.x]
+    steps:
+    - uses: actions/checkout@v3
+    - uses: pnpm/action-setup@v2
+      with:
+        version: 7
+    - name: Use Node.js ${{ matrix.node-version }}
+      uses: actions/setup-node@v3
+      with:
+        node-version: ${{ matrix.node-version }}
+        cache: 'pnpm'
+    - name: Install dependencies
+      run: pnpm i --frozen-lockfile
+    - name: Build
+      run: npm run build
+    - name: Upload bundles
+      uses: actions/upload-artifact@v3
+      with:
+        name: dist
+        path: dist
+    - name: Pack
+      run: npm run pack
+    - name: Release
+      run: npm run release

@@ -1,6 +1,6 @@
-const fs = require('fs');
-const config = require('../config');
-const signAddon = require('sign-addon').default;
+import { rename } from 'fs/promises';
+import { version as _version, extension, resolve } from '../config.mjs';
+import signAddon from 'sign-addon';
 
 async function packXpi(zipPath, outputDir) {
   if (!process.env.AMO_KEY) {
@@ -12,10 +12,10 @@ async function packXpi(zipPath, outputDir) {
 
   const result = await signAddon({
     xpiPath: zipPath,
-    version: config.version,
+    version: _version,
     apiKey: process.env.AMO_KEY,
     apiSecret: process.env.AMO_SECRET,
-    id: config.extension.firefox.xpi,
+    id: extension.firefox.xpi,
     downloadDir: outputDir,
     disableProgressBar: true,
   });
@@ -27,10 +27,10 @@ async function packXpi(zipPath, outputDir) {
     throw new Error('No signed addon found');
   }
   console.log(`Downloaded signed addon: ${res.join(', ')}`);
-  const out = config.resolve(outputDir, `${config.extension.dist.replace('{VER}', config.version)}.xpi`);
+  const out = resolve(outputDir, `${extension.dist.replace('{VER}', _version)}.xpi`);
   // Move download file to output dir
-  fs.renameSync(res[0], out);
+  await rename(res[0], out);
   return out;
 }
 
-module.exports = packXpi;
+export default packXpi;

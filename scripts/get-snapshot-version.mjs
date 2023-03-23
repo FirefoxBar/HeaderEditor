@@ -1,6 +1,10 @@
-const fetch = require('node-fetch');
-const fs = require('fs');
-const path = require('path');
+import fetch from 'node-fetch';
+import { readFile, mkdir, writeFile } from 'fs/promises';
+import { join, dirname } from 'path';
+import { fileURLToPath } from 'url';
+
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = dirname(__filename);
 
 async function main() {
   const token = process.env.TOKEN;
@@ -10,7 +14,7 @@ async function main() {
   }
 
   // read version from package.json
-  const pkg = JSON.parse(fs.readFileSync(path.join(__dirname, '../package.json'), {
+  const pkg = JSON.parse(await readFile(join(__dirname, '../package.json'), {
     encoding: 'utf-8',
   }));
 
@@ -22,12 +26,12 @@ async function main() {
   const resp = await fetch('https://ext.firefoxcn.net/snapshot.php?' + params.toString());
   const text = await resp.text();
 
-  const filePath = path.join(__dirname, '../temp/snapshot-version.txt');
+  const filePath = join(__dirname, '../temp/snapshot-version.txt');
   if (/^(\d+)$/.test(text)) {
-    fs.mkdirSync(path.join(__dirname, '../temp/'), {
+    await mkdir(join(__dirname, '../temp/'), {
       recursive: true,
     });
-    fs.writeFileSync(filePath, text, {
+    await writeFile(filePath, text, {
       encoding: 'utf8',
     });
   }

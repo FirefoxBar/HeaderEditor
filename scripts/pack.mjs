@@ -8,20 +8,13 @@
  * dist-pack/release：其他平台打包输出结果
  * 在这里，打包文件夹统一命名为pack
  */
-const fs = require('fs');
-const fse = require('fs-extra');
-const path = require('path');
-const config = require('./config');
-const processExec = require('child_process').exec;
+import { unlink, mkdir } from 'fs/promises';
+import { readJSON, outputJSON } from 'fs-extra/esm';
+import { join } from 'path';
+import { extension, resolve as _resolve, path as _path } from './config.mjs';
+import { exec as processExec } from 'child_process';
+import packUtils from './pack-utils/index.mjs';
 
-const packUtils = {
-  xpi: require('./pack-utils/xpi'),
-  // amo: require('./pack-utils/amo'),
-  // cws: require('./pack-utils/cws'),
-  crx: require('./pack-utils/crx'),
-};
-
-const { extension } = config;
 let platform = null;
 for (const it of process.argv) {
   if (it.startsWith('--platform=')) {
@@ -66,9 +59,9 @@ async function removeManifestKeys(manifest, name) {
   }
 
   try {
-    const content = await fse.readJSON(manifest);
+    const content = await readJSON(manifest);
     removeObjKeys(content);
-    await fse.outputJSON(manifest, content);
+    await outputJSON(manifest, content);
   } catch (e) {
     console.log(e);
   }
@@ -79,19 +72,19 @@ async function packOnePlatform(name) {
     console.error(`pack-utils for ${name} not found`);
     return;
   }
-  const thisPack = config.resolve(config.path.pack, name);
-  const zipPath = config.resolve(config.path.pack, `${name}.zip`);
+  const thisPack = _resolve(_path.pack, name);
+  const zipPath = _resolve(_path.pack, `${name}.zip`);
   try {
     // 复制一份到dist下面
-    await exec(`cp -r ${config.path.dist} ${thisPack}`);
+    await exec(`cp -r ${_path.dist} ${thisPack}`);
     // 移除掉manifest中的非本平台key
-    await removeManifestKeys(path.join(thisPack, 'manifest.json'), name);
+    await removeManifestKeys(join(thisPack, 'manifest.json'), name);
     // 打包成zip
     await exec(`cd ${thisPack} && zip -r ${zipPath} ./*`);
     // 执行上传等操作
-    const res = await packUtils[name](zipPath, config.path.release);
+    const res = await packUtils[name](zipPath, _path.release);
     console.log(`${name}: ${res}`);
-    await fse.unlink(zipPath);
+    await unlink(zipPath);
   } catch (e) {
     console.error(e);
   }
@@ -99,12 +92,12 @@ async function packOnePlatform(name) {
 
 async function main() {
   // 检查打包目录是否存在
-  await exec(`cd ${config.path.root} && rm -rf ./temp/dist-pack`);
-  await exec(`cd ${config.path.root} && rm -rf ./temp/release`);
-  await fse.mkdir(config.path.pack, {
+  await exec(`cd ${_path.root} && rm -rf ./temp/dist-pack`);
+  await exec(`cd ${_path.root} && rm -rf ./temp/release`);
+  await mkdir(_path.pack, {
     recursive: true,
   });
-  await fse.mkdir(config.path.release, {
+  await mkdir(_path.release, {
     recursive: true,
   });
 

@@ -1,4 +1,3 @@
-const ChromeExtensionReloader = require('webpack-chrome-extension-reloader');
 const BundleAnalyzerPlugin = require('webpack-bundle-analyzer').BundleAnalyzerPlugin;
 
 module.exports = function (config, context) {

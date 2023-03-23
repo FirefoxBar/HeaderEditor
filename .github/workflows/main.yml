@@ -50,12 +50,13 @@ jobs:
         node-version: ${{ matrix.node-version }}
     - name: Install dependencies
       run: |
-        cd ./docs
+        cd $GITHUB_WORKSPACE/docs
         pnpm i --frozen-lockfile
     - name: Build
       run: |
-        cd ./docs
+        cd $GITHUB_WORKSPACE/docs
         npm run build
+        cp $GITHUB_WORKSPACE/scripts/www/* $GITHUB_WORKSPACE/docs/.vuepress/dist/
     - name: Deploy
       uses: JamesIves/github-pages-deploy-action@v4
       with:

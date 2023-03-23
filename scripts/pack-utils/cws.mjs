@@ -1,6 +1,6 @@
-const fs = require('fs');
-const fetch = require('node-fetch');
-const config = require('../config');
+import { createReadStream } from 'fs';
+import fetch from 'node-fetch';
+import { extension } from '../config.mjs';
 
 const webStoreId = process.env.CWS_CLIENT_ID;
 const webStoreToken = process.env.CWS_TOKEN;
@@ -33,7 +33,7 @@ async function getToken() {
 }
 
 async function upload(readStream, token) {
-  const res = await fetch(`https://www.googleapis.com/upload/chromewebstore/v1.1/items/${config.extension.chrome.id}`, {
+  const res = await fetch(`https://www.googleapis.com/upload/chromewebstore/v1.1/items/${extension.chrome.id}`, {
     method: 'PUT',
     headers: {
       Authorization: `Bearer ${token}`,
@@ -46,7 +46,7 @@ async function upload(readStream, token) {
 }
 
 async function publish(target = 'default', token) {
-  const url = `https://www.googleapis.com/chromewebstore/v1.1/items/${config.extension.chrome.id}/publish?publishTarget=${target}`;
+  const url = `https://www.googleapis.com/chromewebstore/v1.1/items/${extension.chrome.id}/publish?publishTarget=${target}`;
   const res = await fetch(url, {
     method: 'POST',
     headers: {
@@ -69,10 +69,10 @@ async function packCws(zipPath) {
     return Promise.reject(new Error('CWS_TOKEN not found'));
   }
 
-  const distStream = fs.createReadStream(zipPath);
+  const distStream = createReadStream(zipPath);
   const token = await getToken();
   await upload(distStream, token);
   return publish('default', token);
 }
 
-module.exports = packCws;
+export default packCws;

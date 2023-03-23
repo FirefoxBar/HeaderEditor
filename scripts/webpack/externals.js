@@ -55,7 +55,9 @@ module.exports = function (config) {
   });
 
   // 复制其他静态文件
-  config.plugin('copy').use(CopyWebpackPlugin, [copy]);
+  config.plugin('copy').use(new CopyWebpackPlugin({
+    patterns: copy,
+  }));
 
   // Add manaco into a standalone chunk
   config.optimization.splitChunks({

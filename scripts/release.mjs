@@ -1,20 +1,17 @@
-const fs = require('fs');
-const path = require('path');
-const crypto = require('crypto');
-const publishRelease = require('publish-release');
+import { readFile, readdir, stat } from 'fs/promises';
+import { join } from 'path';
+import { createHash } from 'crypto';
+import publishRelease from 'publish-release';
+import { extension, path as _path, version } from './config.mjs';
 
-const config = require('./config');
-
-const { extension } = config;
-
-function hash(filePath) {
-  const buffer = fs.readFileSync(filePath);
-  const fsHash = crypto.createHash('sha256');
+async function hash(filePath) {
+  const buffer = await readFile(filePath);
+  const fsHash = createHash('sha256');
   fsHash.update(buffer);
   return fsHash.digest('hex');
 }
 
-function main() {
+async function main() {
   if (!extension.github.enable) {
     return;
   }
@@ -30,11 +27,12 @@ function main() {
   const assets = [];
   let content = '';
 
-  const files = fs.readdirSync(config.path.release);
+  const files = await readdir(_path.release);
 
   for (const file of files) {
-    const fullPath = path.join(config.path.release, file);
-    if (fs.statSync(fullPath).isFile()) {
+    const fullPath = join(_path.release, file);
+    const statResult = await stat(fullPath);
+    if (statResult.isFile()) {
       assets.push(fullPath);
       content += `> ${it} SHA256: ${hash(fullPath)} \n`;
     }
@@ -42,14 +40,14 @@ function main() {
   
   // Get git names
   const gitName = process.env.GITHUB_REPOSITORY.split('/');
-  const tagName = extension.github.tag.replace('{VER}', config.version);
+  const tagName = extension.github.tag.replace('{VER}', version);
   
   publishRelease({
     token: process.env.GITHUB_TOKEN,
-    owner: gitName[1],
-    repo: gitName[2],
+    owner: gitName[0],
+    repo: gitName[1],
     tag: tagName,
-    name: config.version,
+    name: version,
     notes: content,
     draft: false,
     prerelease: false,

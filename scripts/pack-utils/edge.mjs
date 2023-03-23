@@ -1,6 +1,6 @@
-const EdgeWebstoreClient = require('@plasmo-corp/ewu').EdgeWebstoreClient;
+import { EdgeWebstoreClient } from '@plasmo-corp/ewu';
 
-module.exports = function (zipPath) {
+export default function (zipPath) {
   if (!process.env.MS_PRODUCT_ID) {
     return Promise.reject(new Error('MS_PRODUCT_ID not found'));
   }

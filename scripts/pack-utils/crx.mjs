@@ -1,7 +1,7 @@
-const crypto = require('crypto');
-const RSA = require('node-rsa');
-const fse = require('fs-extra');
-const config = require('../config');
+import { createSign } from 'crypto';
+import RSA from 'node-rsa';
+import { readFile, writeFile } from 'fs/promises';
+import { resolve, extension, version } from '../config.mjs';
 
 function generatePublicKey(privateKey) {
   const key = new RSA(privateKey);
@@ -16,8 +16,7 @@ async function createCrx(fileContent) {
   const publicKey = generatePublicKey(keyContent);
   const keyLength = publicKey.length;
   const signature = Buffer.from(
-    crypto
-      .createSign('sha1')
+    createSign('sha1')
       .update(fileContent)
       .sign(keyContent),
     'binary',
@@ -38,11 +37,11 @@ async function createCrx(fileContent) {
 }
 
 async function packCrx(zipPath, outputDir) {
-  const fileContent = await fse.readFile(zipPath);
+  const fileContent = await readFile(zipPath);
   const content = await createCrx(fileContent);
-  const out = config.resolve(outputDir, `${config.extension.dist.replace('{VER}', config.version)}.crx`);
-  await fse.writeFile(out, content);
+  const out = resolve(outputDir, `${extension.dist.replace('{VER}', version)}.crx`);
+  await writeFile(out, content);
   return out;
 }
 
-module.exports = packCrx;
+export default packCrx;
