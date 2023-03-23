@@ -104,7 +104,16 @@ export default class Options extends React.Component<OptionsProps, OptionsState>
   render() {
     return (
       <section className={`section-options ${this.props.visible ? 'visible' : 'in-visible'}`}>
-        <Card title={t('options')}>
+        <Card
+          title={t('options')}
+          footerLine
+          footer={
+            <div>
+              <div><Typography.Text type="tertiary">* {t('dark_mode_help')}</Typography.Text></div>
+              <div><Typography.Text type="tertiary">* {t('debug_mode_help')}</Typography.Text></div>
+            </div>
+          }
+        >
           <Row gutter={8}>
             {Object.entries(checkPrefs).map((it) => {
               return (
@@ -132,8 +141,6 @@ export default class Options extends React.Component<OptionsProps, OptionsState>
               );
             })}
           </Row>
-          <div><Typography.Text type="tertiary">{t('dark_mode_help')}</Typography.Text></div>
-          <div><Typography.Text type="tertiary">{t('debug_mode_help')}</Typography.Text></div>
         </Card>
       </section>
     );

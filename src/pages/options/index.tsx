@@ -43,7 +43,7 @@ const Options = () => {
       if (getActive() === 'help') {
         setNavCollapse(isCollapsedRef.current);
       } else {
-        setNavCollapse(getNavCollapse() || active === 'help');
+        setNavCollapse(getNavCollapse() || newActive === 'help');
       }
       setActive(newActive);
       window.scrollTo(0, 0);
