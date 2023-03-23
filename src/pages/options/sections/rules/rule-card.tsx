@@ -58,6 +58,8 @@ const RuleCard = (props: RuleCardProps) => {
   const responsive = useResponsive();
 
   const { keys: commonRuleKeys, add: addCommonRule, remove: removeCommonRule } = useMarkCommon('rule');
+  const { keys: commonGroup, add: addCommonGroup, remove: removeCommonGroup } = useMarkCommon('group');
+  const isGroupMarked = commonGroup.includes(name);
 
   const rowSelection = isEnableSelect ? {
     onChange: onSelect,
@@ -212,6 +214,18 @@ const RuleCard = (props: RuleCardProps) => {
           <Dropdown
             position="bottomRight"
             menu={[
+              {
+                node: 'item',
+                name: t(isGroupMarked ? 'common_unmark' : 'common_mark'),
+                onClick: () => {
+                  if (isGroupMarked) {
+                    removeCommonGroup(name);
+                  } else {
+                    addCommonGroup(name);
+                  }
+                },
+                icon: <IconStar style={isGroupMarked ? { color: 'rgb(var(--semi-amber-5))' } : {}} />,
+              },
               {
                 node: 'item',
                 name: t('share'),
