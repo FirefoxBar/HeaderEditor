@@ -1,5 +1,5 @@
 import { version as _version, extension } from '../config.mjs';
-import signAddon from 'sign-addon';
+import { signAddon } from 'sign-addon';
 
 export default function (zipPath) {
   if (!process.env.AMO_KEY) {

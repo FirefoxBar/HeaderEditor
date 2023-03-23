@@ -1,6 +1,6 @@
 import { rename } from 'fs/promises';
 import { version as _version, extension, resolve } from '../config.mjs';
-import signAddon from 'sign-addon';
+import { signAddon } from 'sign-addon';
 
 async function packXpi(zipPath, outputDir) {
   if (!process.env.AMO_KEY) {
