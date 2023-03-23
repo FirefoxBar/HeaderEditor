@@ -43,8 +43,8 @@ const basicStyle = css`
     }
 
     .cell-action {
-      padding-top: 4px;
-      padding-bottom: 4px;
+      padding-top: 2 !important;
+      padding-bottom: 2px !important;
     }
   }
 `;

@@ -45,12 +45,12 @@ const Group = () => {
           className: 'cell-action',
           width: 96,
           render: (value: string) => (
-            <ButtonGroup size="small">
+            <ButtonGroup>
               <Tooltip content={t('enable')}>
-                <Button size="small" theme="borderless" type="tertiary" onClick={() => toggleGroup(value, true)} icon={<IconLock />} />
+                <Button theme="borderless" type="tertiary" onClick={() => toggleGroup(value, true)} icon={<IconLock />} />
               </Tooltip>
               <Tooltip content={t('disable')}>
-                <Button size="small" theme="borderless" type="tertiary" onClick={() => toggleGroup(value, false)} icon={<IconUnlock />} />
+                <Button theme="borderless" type="tertiary" onClick={() => toggleGroup(value, false)} icon={<IconUnlock />} />
               </Tooltip>
             </ButtonGroup>
           ),
