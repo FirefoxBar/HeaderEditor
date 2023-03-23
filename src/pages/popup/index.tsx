@@ -43,7 +43,7 @@ const basicStyle = css`
     }
 
     .cell-action {
-      padding-top: 2 !important;
+      padding-top: 2px !important;
       padding-bottom: 2px !important;
     }
   }
