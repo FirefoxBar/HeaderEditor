@@ -47,10 +47,10 @@ const Group = () => {
           render: (value: string) => (
             <ButtonGroup size="small">
               <Tooltip content={t('enable')}>
-                <Button theme="borderless" type="tertiary" onClick={() => toggleGroup(value, true)} icon={<IconLock />} />
+                <Button size="small" theme="borderless" type="tertiary" onClick={() => toggleGroup(value, true)} icon={<IconLock />} />
               </Tooltip>
               <Tooltip content={t('disable')}>
-                <Button theme="borderless" type="tertiary" onClick={() => toggleGroup(value, false)} icon={<IconUnlock />} />
+                <Button size="small" theme="borderless" type="tertiary" onClick={() => toggleGroup(value, false)} icon={<IconUnlock />} />
               </Tooltip>
             </ButtonGroup>
           ),

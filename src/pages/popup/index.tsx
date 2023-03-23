@@ -43,10 +43,8 @@ const basicStyle = css`
     }
 
     .cell-action {
-      .semi-button {
-        height: 20px;
-        width: 20px;
-      }
+      padding-top: 4px;
+      padding-bottom: 4px;
     }
   }
 `;
