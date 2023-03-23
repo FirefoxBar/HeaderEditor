@@ -121,7 +121,7 @@
 		"description": "Modal title for editing a rule"
 	},
 	"enable": {
-		"message": " 啟用",
+		"message": "啟用",
 		"description": "Switch one rule on/off in table title"
 	},
 	"enable_he": {
