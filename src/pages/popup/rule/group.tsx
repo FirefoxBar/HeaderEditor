@@ -42,7 +42,8 @@ const Group = () => {
         {
           title: 'action',
           dataIndex: 'name',
-          width: 48,
+          className: 'cell-action',
+          width: 96,
           render: (value: string) => (
             <ButtonGroup size="small">
               <Tooltip content={t('enable')}>

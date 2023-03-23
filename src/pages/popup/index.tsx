@@ -41,6 +41,13 @@ const basicStyle = css`
         align-items: center;
       }
     }
+
+    .cell-action {
+      .semi-button {
+        height: 20px;
+        width: 20px;
+      }
+    }
   }
 `;
 
