@@ -15,7 +15,6 @@
 	},
 	"github": {
 		"enable": true,
-		"token": "GITHUB_RELEASE_TOKEN",
 		"tag": "{VER}"
 	}
 }

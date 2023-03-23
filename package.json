@@ -62,7 +62,7 @@
     "node-rsa": "^1.0.1",
     "prettier": "^1.19.1",
     "publish-release": "^1.6.0",
-    "sign-addon": "^0.3.1",
+    "sign-addon": "^6.0.0",
     "stylelint": "^13.7.2",
     "typescript": "^3.7.3",
     "webpack-bundle-analyzer": "^4.8.0",
