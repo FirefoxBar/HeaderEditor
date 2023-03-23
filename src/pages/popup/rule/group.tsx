@@ -42,8 +42,9 @@ const Group = () => {
         {
           title: 'action',
           dataIndex: 'name',
+          width: 48,
           render: (value: string) => (
-            <ButtonGroup>
+            <ButtonGroup size="small">
               <Tooltip content={t('enable')}>
                 <Button theme="borderless" type="tertiary" onClick={() => toggleGroup(value, true)} icon={<IconLock />} />
               </Tooltip>
