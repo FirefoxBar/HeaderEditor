@@ -42,7 +42,7 @@
     "gecko": {
       "id": "headereditor@addon.firefoxcn.net",
       "strict_min_version": "77.0",
-      "update": "https://ext.firefoxcn.net/header-editor/install/update.json"
+      "update_url": "https://ext.firefoxcn.net/header-editor/install/update.json"
     }
   }
 }
