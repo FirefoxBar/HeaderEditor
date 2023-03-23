@@ -53,7 +53,9 @@ jobs:
       uses: actions/upload-artifact@v3
       with:
         name: release
-        path: temp/release
+        path: |
+          temp/release
+          !temp/release/*-id.txt
 
   sync-locale:
     runs-on: ubuntu-latest

@@ -19,7 +19,7 @@ export default function (zipPath) {
     clientId: process.env.MS_CLIENT_ID,
     clientSecret: process.env.MS_CLIENT_SECRET,
     accessTokenUrl: process.env.MS_ACCESS_TOKEN_URL,
-  })
+  });
   
   return client.submit({
     filePath: zipPath,

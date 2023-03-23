@@ -4,18 +4,44 @@ import { createHash } from 'crypto';
 import publishRelease from 'publish-release';
 import { extension, path as _path, version } from './config.mjs';
 
-async function hash(filePath) {
+async function hashFile(filePath) {
   const buffer = await readFile(filePath);
   const fsHash = createHash('sha256');
   fsHash.update(buffer);
   return fsHash.digest('hex');
 }
 
+function publishReleasePromise(options) {
+  return new Promise((resolve, reject) => {
+    publishRelease(options, (err, release) => {
+      if (err) {
+        reject(err);
+      } else {
+        resolve(release.html_url);
+      }
+    });
+  });
+}
+
+async function publishUpdate(params) {
+  const token = process.env.SERVER_TOKEN;
+  if (!token) {
+    return;
+  }
+  const query = new URLSearchParams(params);
+  query.append('name', 'header-editor');
+  query.append('token', token);
+
+  const resp = await fetch('https://ext.firefoxcn.net/api/update.php?' + query.toString());
+  return await resp.text();
+}
+
 async function main() {
   if (!extension.github.enable) {
     return;
   }
-  if (!process.env.GITHUB_REPOSITORY) {
+  const repo = process.env.GITHUB_REPOSITORY;
+  if (!repo) {
     console.log('GITHUB_REPOSITORY not found');
     return;
   }
@@ -25,30 +51,39 @@ async function main() {
   }
 
   const assets = [];
-  let content = '';
 
-  const files = await readdir(_path.release);
-
-  for (const file of files) {
+  const dirContent = await readdir(_path.release);
+  for (const file of dirContent) {
+    if (!file.endsWith('.xpi') && !file.endsWith('.crx')) {
+      continue;
+    }
     const fullPath = join(_path.release, file);
+    const idFilePath = join(_path.release, file + '-id.txt');
     const statResult = await stat(fullPath);
     if (statResult.isFile()) {
-      assets.push(fullPath);
-      content += `> ${it} SHA256: ${hash(fullPath)} \n`;
+      const fileHash = await hashFile(fullPath);
+      const id = await readFile(idFilePath, {
+        encoding: 'utf8',
+      });
+      assets.push({
+        id,
+        name: file,
+        path: fullPath,
+        hash: fileHash,
+      });
     }
   }
-  
+
   // Get git names
-  const gitName = process.env.GITHUB_REPOSITORY.split('/');
-  const tagName = extension.github.tag.replace('{VER}', version);
-  
-  publishRelease({
+  const gitName = repo.split('/');
+  const tagName = process.env.GITHUB_REF_NAME;
+  await publishReleasePromise({
     token: process.env.GITHUB_TOKEN,
     owner: gitName[0],
     repo: gitName[1],
     tag: tagName,
     name: version,
-    notes: content,
+    notes: assets.map(item => `> ${item.name} SHA256: ${item.hash} \n`).join('\n'),
     draft: false,
     prerelease: false,
     reuseRelease: false,
@@ -58,15 +93,22 @@ async function main() {
     skipIfPublished: true,
     editRelease: false,
     deleteEmptyTag: false,
-    assets,
-  }, (err, release) => {
-    if (err) {
-      console.error('release failed!');
-      console.error(err);
-    } else {
-      console.log(release.html_url);
-    }
+    assets: assets.map(item => item.path),
   });
+
+  // update "update info" file
+  for (const it of assets) {
+    const url = `https://github.com/${repo}/releases/download/${tagName}/${it.name}`;
+    const browser = it.name.endsWith('.xpi') ? 'gecko' : 'chrome';
+    const result = await publishUpdate({
+      id: it.id,
+      ver: version,
+      url,
+      browser,
+      hash: it.hash,
+    });
+    console.log('Publish update info ', it.name, result);
+  }
 }
 
 main();

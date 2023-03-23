@@ -32,17 +32,17 @@
 		"page": "options.html",
 		"open_in_tab": true
   },
-  "__amo__applications": {
+  "__amo__browser_specific_settings": {
     "gecko": {
       "id": "headereditor-amo@addon.firefoxcn.net",
       "strict_min_version": "77.0"
     }
   },
-  "__xpi__applications": {
+  "__xpi__browser_specific_settings": {
     "gecko": {
       "id": "headereditor@addon.firefoxcn.net",
       "strict_min_version": "77.0",
-      "update": "https://ext.firefoxcn.net/headereditor/install/update.json"
+      "update": "https://ext.firefoxcn.net/header-editor/install/update.json"
     }
   }
 }

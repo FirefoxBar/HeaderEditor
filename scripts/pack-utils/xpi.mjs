@@ -1,4 +1,4 @@
-import { rename } from 'fs/promises';
+import { rename, writeFile } from 'fs/promises';
 import { version as _version, extension, resolve } from '../config.mjs';
 import { signAddon } from 'sign-addon';
 
@@ -28,8 +28,10 @@ async function packXpi(zipPath, outputDir) {
   }
   console.log(`Downloaded signed addon: ${res.join(', ')}`);
   const out = resolve(outputDir, `${extension.dist.replace('{VER}', _version)}.xpi`);
+  const idFile = resolve(outputDir, `${extension.dist.replace('{VER}', _version)}.xpi-id.txt`);
   // Move download file to output dir
   await rename(res[0], out);
+  await writeFile(idFile, extension.firefox.xpi);
   return out;
 }
 

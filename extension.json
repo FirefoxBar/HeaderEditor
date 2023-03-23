@@ -11,10 +11,10 @@
     "amo": "headereditor-amo@addon.firefoxcn.net"
   },
 	"chrome": {
-		"id": "eningockdidmgiojffjmkdblpjocbhgh"
+		"id": "eningockdidmgiojffjmkdblpjocbhgh",
+		"crx": "jhigoaelcgmfbidkocglkcnhmfacajle"
 	},
 	"github": {
-		"enable": true,
-		"tag": "{VER}"
+		"enable": true
 	}
 }

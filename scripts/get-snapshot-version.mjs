@@ -23,7 +23,7 @@ async function main() {
   params.append('ver', pkg.version);
   params.append('token', token);
 
-  const resp = await fetch('https://ext.firefoxcn.net/snapshot.php?' + params.toString());
+  const resp = await fetch('https://ext.firefoxcn.net/api/snapshot.php?' + params.toString());
   const text = await resp.text();
 
   const filePath = join(__dirname, '../temp/snapshot-version.txt');
