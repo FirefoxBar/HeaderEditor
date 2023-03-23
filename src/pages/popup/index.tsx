@@ -9,6 +9,7 @@ import Api from '@/share/pages/api';
 import SemiLocale from '@/share/components/semi-locale';
 import isDarkMode from '@/share/pages/is-dark-mode';
 import Rules from './rule/rules';
+import Group from './rule/group';
 import type { OnSelectedData } from '@douyinfe/semi-ui/lib/es/navigation';
 
 const basicStyle = css`
@@ -106,6 +107,7 @@ const Popup = () => {
         />
         <main className="main-content">
           <Rules />
+          <Group />
           <div style={{ flexGrow: 1, minHeight: '20px' }} />
           <Typography.Text type="tertiary" style={{ textAlign: 'center', padding: '12px', fontSize: '12px' }}>{t('common_mark_tip')}</Typography.Text>
         </main>
