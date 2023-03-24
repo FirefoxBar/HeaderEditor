@@ -11,7 +11,9 @@ Header Editor
 
 An extension which can modify the request, include request headers, response headers, redirect requests, and cancel requests.
 
-For more documentations, Please visit [documentions](https://he.firefoxcn.net)
+It's 100% FREE, no ADs, no data collection.
+
+For more documentations, Please visit [he.firefoxcn.net](https://he.firefoxcn.net)
 
 ## Get this extension
 
