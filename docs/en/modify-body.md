@@ -14,7 +14,7 @@ If you enable this feature, you may have the following problems:
   * Regardless of whether you have written relevant rules, HE will intercept the request data.
 * Affects some content downloads
 
-## how to use
+## How to use
 
 > As of now, this feature only supports custom functions.
 

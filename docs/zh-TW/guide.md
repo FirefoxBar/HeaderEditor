@@ -19,3 +19,6 @@ lang: zh-TW
 * 在规则界面新建规则：点击右下角的添加按钮，填写规则内容后，保存即可。
 * 或者，您可以在“导入和导出”中下载他人的规则。
 
+## 從其他類似擴展遷移
+
+我們提供了一個小工具，可以協助你從一些類似的擴展，快速遷移到 Header Editor: [migrate-to-he.firefoxcn.net](https://migrate-to-he.firefoxcn.net/index_zh_tw.html)

@@ -18,3 +18,7 @@ Please choose a different installation method depending on your browser:
 * Click the HE icon in the upper right corner of your browser to open the HE Management Panel
 * Create a new rule: Click the Add button in the lower right corner, fill in the rules, and save.
 * Alternatively, you can download the rules of others in "Import and Export".
+
+## Migrate from other similar extensions
+
+We provide a small tool that can help you migrate from other similar extensions to Header Editor: [migrate-to-he.firefoxcn.net](https://migrate-to-he.firefoxcn.net/index_en.html)
