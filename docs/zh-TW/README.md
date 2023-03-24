@@ -12,5 +12,5 @@ features:
   details: 通过自定义函数，更精确的控制请求。
 - title: 导出和同步
   details: 规则可以自由导入和导出，并可使用云同步（需要浏览器支持）。
-footer: Copyright © 2019 FirefoxBar
+footer: Copyright © 2019 - 2023 FirefoxBar
 ---

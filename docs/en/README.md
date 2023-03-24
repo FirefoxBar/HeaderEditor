@@ -12,5 +12,5 @@ features:
   details: Use custom functions to achieve more flexible functionality.
 - title: Export and Sync
   details: Rules can import and export, and you can use cloud sync (require browser support).
-footer: Copyright © 2019 FirefoxBar
+footer: Copyright © 2019 - 2023 FirefoxBar
 ---
