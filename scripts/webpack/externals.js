@@ -65,9 +65,9 @@ module.exports = function (config) {
     minChunks: 100,
     cacheGroups: {
       default: false,
-      monaco: {
-        name: 'monaco',
-        test: /monaco-editor/,
+      codemirror: {
+        name: 'codemirror',
+        test: /codemirror/,
         enforce: true,
       },
       semi: {

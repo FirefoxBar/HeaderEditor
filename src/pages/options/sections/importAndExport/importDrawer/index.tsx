@@ -154,7 +154,7 @@ export default class ImportDrawer extends React.Component<ImportDrawerProps, Imp
   render() {
     return (
       <SideSheet
-        placement="left"
+        placement="right"
         visible={this.state.visible}
         onCancel={this.handleCancel}
         title={t('import')}
