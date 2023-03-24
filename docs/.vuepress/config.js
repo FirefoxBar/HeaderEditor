@@ -1,7 +1,7 @@
 module.exports = {
   base: "/",
   title: "Header Editor",
-  description: "Header Editor 官网",
+  description: "Header Editor 使用手册",
   markdown: {
     lineNumbers: true,
     toc: {
@@ -19,29 +19,29 @@ module.exports = {
     '/': {
       lang: 'zh-CN',
       title: 'Header Editor',
-      description: 'Header Editor 官网'
+      description: 'Header Editor 使用手册'
     },
     '/en/': {
       lang: 'en-US',
       title: 'Header Editor',
-      description: 'Header Editor offical website'
+      description: 'Header Editor official manual'
     },
     '/zh-TW/': {
       lang: 'zh-TW',
       title: 'Header Editor',
-      description: 'Header Editor 官网'
+      description: 'Header Editor 使用手册'
     }
   },
   themeConfig: {
     repo: "FirefoxBar/HeaderEditor",
     docsDir: 'docs',
-	editLinks: true,
-	sidebarDepth: 2,
-	searchMaxSuggestions: 10,
+    editLinks: true,
+    sidebarDepth: 2,
+    searchMaxSuggestions: 10,
     locales: {
       '/': require('./locales/zh-CN'),
-	  '/en/': require('./locales/en'),
-	  '/zh-TW/': require('./locales/zh-TW')
-	}
+      '/en/': require('./locales/en'),
+      '/zh-TW/': require('./locales/zh-TW')
+    }
   }
 };
