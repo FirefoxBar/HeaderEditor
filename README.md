@@ -1,8 +1,13 @@
-# Header Editor
+<h1 align="center">
+Header Editor
+</h1>
 
-[![Build Status](https://github.com/FirefoxBar/HeaderEditor/actions/workflows/main.yml/badge.svg)](https://github.com/FirefoxBar/HeaderEditor/actions/workflows/main.yml)
-[![GitHub release](https://img.shields.io/github/release/FirefoxBar/HeaderEditor.svg)](https://github.com/FirefoxBar/HeaderEditor/releases)
-[![license](https://img.shields.io/github/license/FirefoxBar/HeaderEditor.svg)](https://github.com/FirefoxBar/HeaderEditor/blob/master/LICENSE)
+[![Release](https://img.shields.io/github/release/FirefoxBar/HeaderEditor.svg?label=Release)](https://github.com/FirefoxBar/HeaderEditor/releases)
+[![Chrome Web Store](https://img.shields.io/chrome-web-store/users/eningockdidmgiojffjmkdblpjocbhgh?label=Chrome)](https://chrome.google.com/webstore/detail/header-editor/eningockdidmgiojffjmkdblpjocbhgh)
+[![Mozilla Addons](https://img.shields.io/amo/users/header-editor?label=Firefox)](https://addons.mozilla.org/en-US/firefox/addon/header-editor/)
+[![license](https://img.shields.io/github/license/FirefoxBar/HeaderEditor.svg?label=License)](https://github.com/FirefoxBar/HeaderEditor/blob/master/LICENSE)
+[![Discussions](https://img.shields.io/github/discussions/FirefoxBar/HeaderEditor?label=Discussions)](https://github.com/FirefoxBar/HeaderEditor/discussions)
+[![Build Status](https://github.com/FirefoxBar/HeaderEditor/actions/workflows/dev.yml/badge.svg)](https://github.com/FirefoxBar/HeaderEditor/actions/workflows/dev.yml)
 
 An extension which can modify the request, include request headers, response headers, redirect requests, and cancel requests.
 
@@ -22,22 +27,19 @@ For more documentations, Please visit [documentions](https://he.firefoxcn.net)
 
 Header Editor require those permissions:
 
-* tabs: Open links or switch to a tab
+* `tabs`: Open links (such as the options page) or switch to a tab
 
-* webRequest, webRequestBlocking, _all_urls_: Modify the requests
+* `webRequest`, `webRequestBlocking`, `_all_urls_`: Modify requests
 
-* storage, unlimitedStorage: Storage rules and settings
+* `storage`, `unlimitedStorage`: Storage rules and settings
 
-* unsafe-eval: Custom function require it, code at [src/share/core/rule-utils.ts#L8](https://github.com/FirefoxBar/HeaderEditor/blob/dev/src/share/core/rule-utils.ts#L8) (The location may change in the future, you can search for the newest location by `new Function`)
+* `unsafe-eval`: Execute custom function, code at [src/share/core/rule-utils.ts#L8](https://github.com/FirefoxBar/HeaderEditor/blob/dev/src/share/core/rule-utils.ts#L8) (may change in the future, you can search for the newest location by `new Function`)
 
 ## Contribution
 
-Contribute codes: [Submiting a pull request](https://github.com/FirefoxBar/HeaderEditor/compare)
+Contribute codes: [Submitting a pull request](https://github.com/FirefoxBar/HeaderEditor/compare)
 
-Thanks to the following personnel for their contribution:
-
-* [YFdyh000](https://github.com/yfdyh000)
-* [iNaru](https://github.com/Inaru)
+Thanks to them for their contribution: [YFdyh000](https://github.com/yfdyh000) [iNaru](https://github.com/Inaru)
 
 ### Translation
 
@@ -49,15 +51,13 @@ Please note that some languages (such as zh-Hans) will not be translated on tran
 
 ## How to build
 
-#### Prepare
+### Build
 
 * Install node (14+) and pnpm.
 
 * Clone this project, or download the source code and extract it.
 
 * Run `pnpm i`.
-
-#### Build
 
 * Run `npm run build`
 
