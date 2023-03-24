@@ -28,6 +28,13 @@ module.exports = function (config) {
   } else {
     console.log('No snapshot version ' + snapshotFile);
   }
+  // 如果是tag触发的CI，强制用tag的版本号
+  if (process.env.GITHUB_REF_TYPE && process.env.GITHUB_REF_TYPE === 'tag') {
+    const tagName = process.env.GITHUB_REF_NAME;
+    if (/^[0-9]\.[0-9]+\.[0-9]+$/.test(tagName)) {
+      versionText = tagName;
+    }
+  }
 
   // dev 环境复制 development 的 react 资源
   if (config.get('mode') === 'development') {
