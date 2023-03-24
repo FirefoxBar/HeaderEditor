@@ -4,6 +4,7 @@ import {
   IconDelete,
   IconEdit,
   IconFavoriteList,
+  IconLock,
   IconMore,
   IconSearch,
   IconSend,
@@ -180,8 +181,6 @@ const RuleGroupCard = (props: RuleCardProps) => {
     tableColumns.splice(index, 1);
   }
 
-  const isGroupEnable = rules.findIndex((x) => x.enable) !== -1;
-
   return (
     <Card
       className={css`
@@ -241,12 +240,15 @@ const RuleGroupCard = (props: RuleCardProps) => {
               },
               {
                 node: 'item',
-                name: t(isGroupEnable ? 'disable' : 'enable'),
-                onClick: () => {
-                  const target = !isGroupEnable;
-                  rules.forEach((item) => toggleRule(item, target));
-                },
+                name: t('enable'),
+                onClick: () => rules.forEach((item) => toggleRule(item, true)),
                 icon: <IconUnlock />,
+              },
+              {
+                node: 'item',
+                name: t('disable'),
+                onClick: () => rules.forEach((item) => toggleRule(item, false)),
+                icon: <IconLock />,
               },
               {
                 node: 'item',
