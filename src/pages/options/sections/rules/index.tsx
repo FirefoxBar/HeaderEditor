@@ -125,7 +125,7 @@ export default class Rules extends React.Component<RulesProps, RulesState> {
       toGroup.push(displayRule);
     }
     // 分组没了？
-    if (fromGroup && fromGroup.length === 0) {
+    if (fromGroup && fromGroup.length === 0 && fromGroupKey !== t('ungrouped')) {
       delete this.state.group[fromGroupKey];
     }
     this.forceUpdate();
@@ -156,7 +156,7 @@ export default class Rules extends React.Component<RulesProps, RulesState> {
         fromGroup.splice(fromGroup.indexOf(sameItem), 1);
       }
       // 分组没了？
-      if (fromGroup.length === 0) {
+      if (fromGroup.length === 0 && fromGroupKey !== t('ungrouped')) {
         delete this.state.group[fromGroupKey];
       }
     }
