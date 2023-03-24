@@ -11,7 +11,7 @@ import { fetchUrl, t } from '@/share/core/utils';
 import type { BasicRule } from '@/share/core/types';
 import Api from '@/share/pages/api';
 import Cloud from './cloud';
-import ImportDrawer from './importDrawer';
+import ImportDrawer from './import-drawer';
 
 interface IEProps {
   visible: boolean;

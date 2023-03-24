@@ -12,7 +12,7 @@ import { getVirtualKey, t } from '@/share/core/utils';
 import type { Rule } from '@/share/core/types';
 import { VIRTUAL_KEY, EVENTs, TABLE_NAMES, TABLE_NAMES_ARR } from '@/share/core/constant';
 import Float from './float';
-import RuleCard from './rule-card';
+import RuleGroupCard from './rule-group-card';
 import { batchShare, remove } from './utils';
 
 interface RulesProps {
@@ -390,7 +390,7 @@ export default class Rules extends React.Component<RulesProps, RulesState> {
             {Object.values(this.state.group).map((group) => {
               const { name } = group;
               return (
-                <RuleCard
+                <RuleGroupCard
                   key={name}
                   name={group.name}
                   collapsed={collapsed.includes(name)}

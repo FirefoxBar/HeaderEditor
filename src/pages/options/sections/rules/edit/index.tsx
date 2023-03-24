@@ -333,7 +333,7 @@ export default class Edit extends React.Component<EditProps, EditState> {
           )}
           {/* Custom function */}
           {this.state.rule.isFunction && (
-            <CodeEditorField field="code" label={t('code')} height={200} />
+            <CodeEditorField field="code" label={t('code')} height="200px" />
           )}
           <Form.Slot label={t('test_url')}>
             <Input value={this.state.testUrl} onChange={this.handleTestChange} />

@@ -42,7 +42,7 @@ interface RuleCardProps {
   onRulePreview: (rule: Rule) => void;
 }
 
-const RuleCard = (props: RuleCardProps) => {
+const RuleGroupCard = (props: RuleCardProps) => {
   const {
     name,
     collapsed,
@@ -318,4 +318,4 @@ const RuleCard = (props: RuleCardProps) => {
   );
 };
 
-export default RuleCard;
+export default RuleGroupCard;
