@@ -9,9 +9,9 @@ lang: zh-TW
 
 | 浏览器 | 安装 |
 | --- | --- |
-| ![Firefox Logo](https://cdn.staticfile.org/browser-logos/58.1.3/firefox/firefox_16x16.png) Firefox | [Mozilla Add-on](https://addons.mozilla.org/en-US/firefox/addon/header-editor/) 或 我们的[自分发版本](https://github.com/FirefoxBar/HeaderEditor/releases) |
-| ![Chrome Logo](https://cdn.staticfile.org/browser-logos/58.1.3/chrome/chrome_16x16.png) Chrome | [Chrome Web Store](https://chrome.google.com/webstore/detail/header-editor/eningockdidmgiojffjmkdblpjocbhgh) |
-| ![Edge Logo](https://cdn.staticfile.org/browser-logos/58.1.3/edge/edge_16x16.png) Edge(Chromium) | [Chrome Web Store](https://chrome.google.com/webstore/detail/header-editor/eningockdidmgiojffjmkdblpjocbhgh) |
+| ![Firefox Logo](https://cdnjs.cloudflare.com/ajax/libs/browser-logos/73.0.0/firefox/firefox_16x16.png) Firefox | [Mozilla Add-on](https://addons.mozilla.org/en-US/firefox/addon/header-editor/) 或 我们的[自分发版本](https://github.com/FirefoxBar/HeaderEditor/releases) |
+| ![Chrome Logo](https://cdnjs.cloudflare.com/ajax/libs/browser-logos/73.0.0/chrome/chrome_16x16.png) Chrome | [Chrome Web Store](https://chrome.google.com/webstore/detail/header-editor/eningockdidmgiojffjmkdblpjocbhgh) |
+| ![Edge Logo](https://cdnjs.cloudflare.com/ajax/libs/browser-logos/73.0.0/edge/edge_16x16.png) Edge(Chromium) | [Edge Addons](https://microsoftedge.microsoft.com/addons/detail/header-editor/afopnekiinpekooejpchnkgfffaeceko) |
 
 ## 基本使用
 
