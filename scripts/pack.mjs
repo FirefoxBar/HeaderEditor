@@ -52,7 +52,7 @@ async function removeManifestKeys(manifest, name) {
         }
         console.log('remove key ' + it);
         delete obj[it];
-      } else if (typeof (obj[it]) === 'object' && !Array.isArray(obj[it])) {
+      } else if (typeof obj[it] === 'object' && !Array.isArray(obj[it])) {
         removeObjKeys(obj[it]);
       }
     });

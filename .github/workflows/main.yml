@@ -56,9 +56,9 @@ jobs:
       run: |
         cd $GITHUB_WORKSPACE/docs
         npm run build
-        cp $GITHUB_WORKSPACE/scripts/www/* $GITHUB_WORKSPACE/docs/.vuepress/dist/
+        cp $GITHUB_WORKSPACE/scripts/www/* $GITHUB_WORKSPACE/docs/dist/
     - name: Deploy
       uses: JamesIves/github-pages-deploy-action@v4
       with:
         branch: gh-pages
-        folder: docs/.vuepress/dist
+        folder: docs/dist

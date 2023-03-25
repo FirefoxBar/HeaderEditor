@@ -1,14 +1,17 @@
 {
-  "name": "he-docs",
-  "version": "1.0.0",
-  "license": "Apache-2.0",
-  "devDependencies": {
-    "vuepress": "^1.0.0-alpha.48",
-    "vuepress-plugin-baidu-google-analytics": "^1.0.0",
-    "@vuepress/plugin-back-to-top": "^1.0.0-alpha.48"
-  },
+  "name": "header-editor-docs",
+  "version": "0.0.1",
+  "description": "Header Editor official manual",
   "scripts": {
-    "dev": "vuepress dev .",
-    "build": "vuepress build ."
+    "start": "npm run dev",
+    "dev": "dumi dev",
+    "build": "dumi build",
+    "prepare": "dumi setup"
+  },
+  "authors": [
+    "ShuangYa"
+  ],
+  "devDependencies": {
+    "dumi": "^2.0.2"
   }
 }
