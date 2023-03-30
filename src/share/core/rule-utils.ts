@@ -4,19 +4,19 @@ import { IS_MATCH, TABLE_NAMES_ARR } from './constant';
 import type { InitdRule, Rule, BasicRule } from './types';
 
 export function initRule(rule: Rule): InitdRule {
-  const inited: any = { ...rule };
-  if (inited.isFunction) {
+  const initd: any = { ...rule };
+  if (initd.isFunction) {
     // eslint-disable-next-line no-new-func
-    inited._func = new Function('val', 'detail', inited.code);
+    initd._func = new Function('val', 'detail', initd.code);
   }
   // Init regexp
-  if (inited.matchType === 'regexp') {
-    inited._reg = new RegExp(inited.pattern, 'g');
+  if (initd.matchType === 'regexp') {
+    initd._reg = new RegExp(initd.pattern, 'g');
   }
-  if (typeof inited.exclude === 'string' && inited.exclude.length > 0) {
-    inited._exclude = new RegExp(inited.exclude);
+  if (typeof initd.exclude === 'string' && initd.exclude.length > 0) {
+    initd._exclude = new RegExp(initd.exclude);
   }
-  return inited;
+  return initd;
 }
 
 export function createExport(arr: { [key: string]: Array<Rule | InitdRule> }) {
@@ -39,9 +39,7 @@ export function convertToBasicRule(rule: InitdRule | Rule | BasicRule): BasicRul
   if (isBasicRule(rule)) {
     return rule;
   }
-  const item = convertToRule(rule);
-  // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-  // @ts-ignore
+  const item = convertToRule(rule) as BasicRule;
   delete item.id;
   return item;
 }
@@ -50,9 +48,7 @@ export function fromJson(str: string) {
   const list: { [key: string]: Rule[] } = JSON.parse(str);
   TABLE_NAMES_ARR.forEach((e) => {
     if (list[e]) {
-      list[e].map((ee) => {
-        // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-        // @ts-ignore
+      list[e].map((ee: BasicRule) => {
         delete ee.id;
         return upgradeRuleFormat(ee);
       });
