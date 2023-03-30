@@ -1,7 +1,8 @@
 import { useCallback, useRef, useState, useEffect } from 'react';
 import { getLocal } from '@/share/core/storage';
 
-const useMarkCommon = (type: 'rule' | 'group') => {
+type CommonMarkType = 'rule' | 'group';
+const useMarkCommon = (type: CommonMarkType) => {
   const ready = useRef(false);
   const [keys, setKeys] = useState<string[]>([]);
   const storageKey = `common_${type}`;
