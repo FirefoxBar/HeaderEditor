@@ -43,7 +43,7 @@ class RequestHandler {
   private includeHeaders = false;
   private modifyBody = false;
   private savedRequestHeader = new Map();
-  private deleteHeaderTimer: number | null = null;
+  private deleteHeaderTimer: ReturnType<typeof setTimeout> | null = null;
   private deleteHeaderQueue = new Map();
   private textDecoder: Map<string, TextDecoder> = new Map();
   private textEncoder: Map<string, TextEncoder> = new Map();

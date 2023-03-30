@@ -14,7 +14,7 @@ TABLE_NAMES_ARR.forEach((t) => {
 
 const updateCacheQueue: { [x: string]: Array<{ resolve: () => void; reject: (error: any) => void }> } = {};
 
-async function updateCache(type: string): Promise<void> {
+async function updateCache(type: TABLE_NAMES): Promise<void> {
   return new Promise((resolve, reject) => {
     // 如果正在Update，则放到回调组里面
     if (typeof updateCacheQueue[type] !== 'undefined') {
@@ -180,26 +180,9 @@ function get(type: TABLE_NAMES, options?: RuleFilterOptions) {
 
 function init() {
   setTimeout(() => {
-    const queue: Array<Promise<void>> = [];
-    if (cache.request === null) {
-      queue.push(updateCache('request'));
-    }
-    if (cache.sendHeader === null) {
-      queue.push(updateCache('sendHeader'));
-    }
-    if (cache.receiveHeader === null) {
-      queue.push(updateCache('receiveHeader'));
-    }
-    if (cache.receiveBody === null) {
-      queue.push(updateCache('receiveBody'));
-    }
+    const queue: Array<Promise<void>> = TABLE_NAMES_ARR.map((tableName) => updateCache(tableName));
     Promise.all(queue).then(() => {
-      if (
-        cache.request === null ||
-        cache.sendHeader === null ||
-        cache.receiveHeader === null ||
-        cache.receiveBody === null
-      ) {
+      if (TABLE_NAMES_ARR.some((tableName) => cache[tableName] === null)) {
         init();
       }
     });

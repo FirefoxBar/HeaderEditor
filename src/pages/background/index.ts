@@ -1,5 +1,5 @@
-import createApiHandler from './apiHandler';
-import createRequestHandler from './requestHandler';
+import createApiHandler from './api-handler';
+import createRequestHandler from './request-handler';
 import './upgrade';
 
 if (typeof window !== 'undefined') {

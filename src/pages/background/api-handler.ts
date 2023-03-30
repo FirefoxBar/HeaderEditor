@@ -1,6 +1,6 @@
 import browser from 'webextension-polyfill';
 import logger from '@/share/core/logger';
-import { APIs } from '@/share/core/constant';
+import { APIs, TABLE_NAMES_ARR } from '@/share/core/constant';
 import { prefs } from '@/share/core/prefs';
 import rules from './core/rules';
 import { openURL } from './utils';
@@ -30,12 +30,7 @@ function execute(request: any) {
       return prefs.set(request.key, request.value);
     case APIs.UPDATE_CACHE:
       if (request.type === 'all') {
-        return Promise.all([
-          rules.updateCache('request'),
-          rules.updateCache('sendHeader'),
-          rules.updateCache('receiveHeader'),
-          rules.updateCache('receiveBody'),
-        ]);
+        return Promise.all(TABLE_NAMES_ARR.map((tableName) => rules.updateCache(tableName)));
       } else {
         return rules.updateCache(request.type);
       }
