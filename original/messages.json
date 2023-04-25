@@ -381,15 +381,15 @@
 		"description": "Upload button"
 	},
 	"url_cloud_backup": {
-		"message": "https://he.firefoxcn.net/en/cloud-backup.html",
+		"message": "https://he.firefoxcn.net/en-US/guide/cloud-backup",
 		"description": "URL of documentions, if not translated, please use english version"
 	},
 	"url_help": {
-		"message": "https://he.firefoxcn.net/en/guide.html",
+		"message": "https://he.firefoxcn.net/en-US/guide",
 		"description": "URL of documentions, if not translated, please use english version"
 	},
 	"url_third_party_rules": {
-		"message": "https://he.firefoxcn.net/en/third-party-rules.html",
+		"message": "https://he.firefoxcn.net/en-US/guide/third-party-rules",
 		"description": "URL of documentions, if not translated, please use english version"
 	},
 	"view": {
