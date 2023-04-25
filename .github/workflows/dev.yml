@@ -30,6 +30,7 @@ jobs:
     - name: Get snapshot version
       env:
         TOKEN: ${{ secrets.SNAPSHOT_TOKEN }}
+        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
       run: node ./scripts/get-snapshot-version.mjs
     - name: Build
       run: npm run build
