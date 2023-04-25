@@ -20,13 +20,12 @@ module.exports = function (config) {
 
   // 添加 snapshot 版本号
   let versionText = version;
-  const snapshotFile = path.join(__dirname, '../../temp/snapshot-version.txt');
-  if (fs.existsSync(snapshotFile)) {
-    const snapshotVersion = fs.readFileSync(snapshotFile, { encoding: 'utf8' }).trim();
-    versionText += '.' + snapshotVersion;
-    console.log('Got snapshot version: ' + snapshotVersion);
+  const forceVersionFile = path.join(__dirname, '../../temp/version.txt');
+  if (fs.existsSync(forceVersionFile)) {
+    versionText = fs.readFileSync(forceVersionFile, { encoding: 'utf8' }).trim();
+    console.log('Got force version: ' + versionText);
   } else {
-    console.log('No snapshot version ' + snapshotFile);
+    console.log('No force version ' + forceVersionFile);
   }
   // 如果是tag触发的CI，强制用tag的版本号
   if (process.env.GITHUB_REF_TYPE && process.env.GITHUB_REF_TYPE === 'tag') {
