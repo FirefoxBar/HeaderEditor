@@ -51,7 +51,7 @@ jobs:
     - name: Install dependencies
       run: |
         cd $GITHUB_WORKSPACE/docs
-        pnpm i --frozen-lockfile
+        pnpm i
     - name: Build
       run: |
         cd $GITHUB_WORKSPACE/docs
