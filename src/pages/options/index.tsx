@@ -134,7 +134,7 @@ const Options = () => {
             }
           `}
           >
-            <iframe src="https://he.firefoxcn.net/zh-CN/guide.html" />
+            <iframe src={t('url_help')} />
           </div>
           )}
         </main>

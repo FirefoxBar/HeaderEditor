@@ -1,7 +1,6 @@
 import { IconCloud, IconDownload, IconFolderOpen, IconSave, IconSearch } from '@douyinfe/semi-icons';
 import { Button, Card, Input, Space, Table, Toast } from '@douyinfe/semi-ui';
 import * as React from 'react';
-import * as browser from 'webextension-polyfill';
 import { openURL } from '@/pages/background/utils';
 import { getExportName } from '@/pages/options/utils';
 import file from '@/share/pages/file';
@@ -101,16 +100,9 @@ export default class ImportAndExport extends React.Component<IEProps, IEState> {
   }
 
   handleOpenThird() {
-    const lang = browser.i18n.getUILanguage();
-    if (['zh-CN', 'zh-TW'].includes(lang)) {
-      openURL({
-        url: `https://he.firefoxcn.net/${lang}/third-party-rules.html`,
-      });
-    } else {
-      openURL({
-        url: 'https://he.firefoxcn.net/en/third-party-rules.html',
-      });
-    }
+    openURL({
+      url: t('url_third_party_rules'),
+    });
   }
 
   render() {
