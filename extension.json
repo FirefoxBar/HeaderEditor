@@ -3,31 +3,18 @@
 	"autobuild": {
 		"xpi": true,
 		"amo": true,
-		"cwx": true,
-		"crx": false
+		"cws": true,
+		"crx": true
 	},
-	"firefox": {
-		"mozilla": {
-			"key": "user:12835504:478",
-			"secret": "AMO_SECRET"
-		},
-		"version": "52.0",
-		"xpi": "headereditor@addon.firefoxcn.net",
-		"amo": "headereditor-amo@addon.firefoxcn.net",
-		"update": "https://ext.firefoxcn.net/headereditor/install/update.json"
-	},
+  "firefox": {
+    "xpi": "headereditor@addon.firefoxcn.net",
+    "amo": "headereditor-amo@addon.firefoxcn.net"
+  },
 	"chrome": {
-		"store": {
-			"id": "532608894666-d0d7mq11u6oue4hqrtduu6rcid1sd8cb.apps.googleusercontent.com",
-			"token": "CWS_TOKEN",
-			"secret": "CWS_SECRET"
-		},
 		"id": "eningockdidmgiojffjmkdblpjocbhgh",
-		"update": "https://ext.firefoxcn.net/headereditor/install/update.xml"
+		"crx": "jhigoaelcgmfbidkocglkcnhmfacajle"
 	},
 	"github": {
-		"enable": true,
-		"token": "GITHUB_RELEASE_TOKEN",
-		"tag": "{VER}"
+		"enable": true
 	}
 }

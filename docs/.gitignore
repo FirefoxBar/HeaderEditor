@@ -1,0 +1,4 @@
+pnpm-lock.yaml
+.dumi/tmp
+.dumi/tmp-production
+dist

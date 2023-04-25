@@ -1,0 +1,79 @@
+name: dev
+
+on:
+  push:
+    branches:
+    - dev
+
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        node-version: [16.x]
+    steps:
+    - uses: actions/checkout@v3
+    - uses: pnpm/action-setup@v2
+      with:
+        version: 7
+    - name: Use Node.js ${{ matrix.node-version }}
+      uses: actions/setup-node@v3
+      with:
+        node-version: ${{ matrix.node-version }}
+        cache: 'pnpm'
+    - name: Install dependencies
+      run: pnpm i --frozen-lockfile
+    - name: Get snapshot version
+      env:
+        TOKEN: ${{ secrets.SNAPSHOT_TOKEN }}
+      run: node ./scripts/get-snapshot-version.mjs
+    - name: Build
+      run: npm run build
+    - name: Upload bundle
+      uses: actions/upload-artifact@v3
+      with:
+        name: dist
+        path: dist
+    - name: Upload bundle analyze
+      uses: actions/upload-artifact@v3
+      with:
+        name: bundle-analyze
+        path: temp/bundle-analyze.html
+    - name: Publish snapshot
+      env:
+        AMO_KEY: ${{ secrets.AMO_KEY }}
+        AMO_SECRET: ${{ secrets.AMO_SECRET }}
+        CRX_PRIV_KEY: ${{ secrets.CRX_PRIV_KEY }}
+      run: npm run pack -- --platform=xpi,crx
+    - name: Upload snapshot release
+      uses: actions/upload-artifact@v3
+      with:
+        name: release
+        path: |
+          temp/release
+          !temp/release/*-id.txt
+
+  sync-locale:
+    runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        node-version: [16.x]
+    steps:
+    - uses: actions/checkout@v3
+    - name: Use Node.js ${{ matrix.node-version }}
+      uses: actions/setup-node@v3
+      with:
+        node-version: ${{ matrix.node-version }}
+    - name: Sort
+      run: node ./locale/sort-origin.js
+    - name: Deploy
+      uses: JamesIves/github-pages-deploy-action@v4
+      with:
+        branch: sync-locale
+        folder: locale
+        clean: false
+        commit-message: '[skip ci] sync locale'

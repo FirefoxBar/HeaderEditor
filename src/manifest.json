@@ -3,7 +3,7 @@
 	"short_name": "__MSG_extName__",
 	"version": null,
 	"description": "__MSG_description__",
-	"homepage_url": "http://team.firefoxcn.net",
+	"homepage_url": "https://he.firefoxcn.net",
 	"manifest_version": 2,
 	"icons": {
 		"128": "assets/images/128.png"
@@ -12,26 +12,39 @@
 		"tabs",
 		"webRequest",
 		"webRequestBlocking",
-		"contextMenus",
 		"storage",
-		"downloads",
 		"*://*/*",
 		"unlimitedStorage"
 	],
 	"content_security_policy": "script-src 'self' 'unsafe-eval'; object-src 'self';",
 	"background": {
-		"scripts": ["background.js"]
+		"scripts": [
+      "assets/js/background.js"
+    ]
 	},
 	"browser_action": {
 		"default_icon": {
 			"128": "assets/images/128.png"
 		},
 		"default_title": "__MSG_extButtonTitle__",
-		"default_popup": "popup/popup.html"
+		"default_popup": "popup.html"
 	},
 	"default_locale": "en",
 	"options_ui": {
-		"page": "options/options.html",
+		"page": "options.html",
 		"open_in_tab": true
-	}
+  },
+  "__amo__browser_specific_settings": {
+    "gecko": {
+      "id": "headereditor-amo@addon.firefoxcn.net",
+      "strict_min_version": "77.0"
+    }
+  },
+  "__xpi__browser_specific_settings": {
+    "gecko": {
+      "id": "headereditor@addon.firefoxcn.net",
+      "strict_min_version": "77.0",
+      "update_url": "https://ext.firefoxcn.net/header-editor/install/update.json"
+    }
+  }
 }

@@ -1,64 +1,84 @@
 {
-	"name": "header-editor",
-	"version": "4.1.1",
-	"description": "Header Editor",
-	"author": "ShuangYa",
-	"license": "GPL-2.0",
-	"repository": {
-		"type": "git",
-		"url": "https://github.com/FirefoxBar/HeaderEditor.git"
-	},
-	"scripts": {
-		"lint": "eslint --ext .js,.vue src",
-		"build": "cross-env NODE_ENV=production webpack --config ./build/webpack/webpack.config.js --hide-modules",
-		"build:dev": "cross-env NODE_ENV=development webpack --config ./build/webpack/webpack.config.js --hide-modules",
-		"start": "cross-env HMR=true npm run build:dev -- --watch",
-		"release": "node ./build/release.js",
-		"pack": "node ./build/pack.js"
-	},
-	"dependencies": {
-		"dateformat": "^3.0.3",
-		"fast-deep-equal": "^2.0.1",
-		"merge": "^1.2.0",
-		"node-fetch": "^2.6.0",
-		"text-encoding": "^0.7.0",
-		"vue": "^2.5.17",
-		"vue-material": "^1.0.0-beta-10.2",
-		"webextension-polyfill": "^0.3.1"
-	},
-	"devDependencies": {
-		"@babel/core": "^7.0.0",
-		"@babel/plugin-proposal-class-properties": "^7.5.5",
-		"@babel/plugin-proposal-optional-chaining": "^7.0.0",
-		"@babel/preset-env": "^7.0.0",
-		"@types/chrome": "^0.0.72",
-		"arg": "^2.0.0",
-		"babel-eslint": "^9.0.0",
-		"babel-loader": "^8.0.2",
-		"copy-webpack-plugin": "^4.5.2",
-		"core-js": "2",
-		"cross-env": "^5.2.0",
-		"css-loader": "^0.28.11",
-		"eslint": "^5.6.0",
-		"eslint-config-standard": "^12.0.0",
-		"eslint-friendly-formatter": "^4.0.1",
-		"eslint-loader": "^2.1.0",
-		"eslint-plugin-import": "^2.14.0",
-		"eslint-plugin-node": "^7.0.1",
-		"eslint-plugin-promise": "^4.0.1",
-		"eslint-plugin-standard": "^4.0.0",
-		"eslint-plugin-vue": "^5.0.0-beta.3",
-		"file-loader": "^1.1.11",
-		"less": "^3.10.3",
-		"less-loader": "^5.0.0",
-		"mini-css-extract-plugin": "^0.4.1",
-		"node-rsa": "^1.0.1",
-		"publish-release": "^1.6.0",
-		"sign-addon": "^0.3.1",
-		"vue-loader": "^15.4.0",
-		"vue-template-compiler": "^2.5.17",
-		"webpack": "^4.16.5",
-		"webpack-chrome-extension-reloader": "^0.8.3",
-		"webpack-cli": "^3.1.0"
-	}
+  "name": "header-editor",
+  "version": "5.0.0",
+  "description": "Header Editor",
+  "author": "ShuangYa",
+  "license": "GPL-2.0",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/FirefoxBar/HeaderEditor.git"
+  },
+  "scripts": {
+    "start": "icejs start --disable-open --config build.config.js",
+    "build": "icejs build --config build.config.js",
+    "lint": "npm run eslint && npm run stylelint",
+    "eslint": "eslint --cache --ext .js,.jsx,.ts,.tsx ./",
+    "eslint:fix": "npm run eslint -- --fix",
+    "stylelint": "stylelint \"**/*.{css,scss,less}\"",
+    "release": "node ./scripts/release.mjs",
+    "pack": "node ./scripts/pack.mjs",
+    "precommit": "lint-staged"
+  },
+  "dependencies": {
+    "@codemirror/lang-javascript": "^6.1.4",
+    "@douyinfe/semi-icons": "^2.30.1",
+    "@douyinfe/semi-ui": "^2.30.1",
+    "@emotion/css": "^11.10.6",
+    "@ice/runtime": "^0.1.2",
+    "@uiw/codemirror-theme-github": "^4.19.9",
+    "@uiw/react-codemirror": "^4.19.9",
+    "ahooks": "^3.7.5",
+    "create-app-shared": "^1.2.6",
+    "dayjs": "^1.9.5",
+    "eventemitter3": "^4.0.0",
+    "fast-deep-equal": "^2.0.1",
+    "lodash-es": "^4.17.21",
+    "query-string": "^8.1.0",
+    "react": "^17.0.0",
+    "react-app-renderer": "^3.1.0",
+    "react-dom": "^17.0.0",
+    "regenerator-runtime": "^0.13.11",
+    "text-encoding": "^0.7.0",
+    "tslib": "^2.5.0",
+    "webextension-polyfill": "^0.10.0"
+  },
+  "devDependencies": {
+    "@iceworks/spec": "^1.0.0",
+    "@plasmo-corp/ewu": "^0.6.0",
+    "@types/chrome": "^0.0.72",
+    "@types/lodash-es": "^4.17.6",
+    "@types/node": "^18.15.5",
+    "@types/react": "^16.9.16",
+    "@types/react-dom": "^16.9.4",
+    "@types/text-encoding": "^0.0.35",
+    "@types/webextension-polyfill": "^0.10.0",
+    "build-plugin-css-assets-local": "^0.1.0",
+    "copy-webpack-plugin": "^11.0.0",
+    "crx": "^5.0.1",
+    "eslint": "^7.30.0",
+    "eslint-plugin-import": "^2.27.5",
+    "eslint-plugin-unused-imports": "^2.0.0",
+    "fs-extra": "^11.1.1",
+    "husky": "^3.1.0",
+    "ice.js": "^2.0.0",
+    "lint-staged": "^9.5.0",
+    "node-fetch": "^3.3.1",
+    "prettier": "^1.19.1",
+    "publish-release": "^1.6.0",
+    "sign-addon": "^6.0.0",
+    "stylelint": "^13.7.2",
+    "typescript": "^3.7.3",
+    "webpack-bundle-analyzer": "^4.8.0"
+  },
+  "husky": {
+    "hooks": {
+      "pre-commit": "npm run precommit"
+    }
+  },
+  "lint-staged": {
+    "./src/**/*.{ts,tsx}": [
+      "eslint --cache --fix",
+      "git add"
+    ]
+  }
 }

@@ -1,92 +1,78 @@
-# Header Editor
+<h1 align="center">
+Header Editor
+</h1>
 
-[![Build Status](
-https://img.shields.io/travis/FirefoxBar/HeaderEditor/master.svg?style=flat-square)](https://travis-ci.org/FirefoxBar/HeaderEditor)
-[![GitHub release](https://img.shields.io/github/release/FirefoxBar/HeaderEditor.svg?style=flat-square)](https://github.com/FirefoxBar/HeaderEditor/releases)
-[![license](https://img.shields.io/github/license/FirefoxBar/HeaderEditor.svg?style=flat-square)](https://github.com/FirefoxBar/HeaderEditor/blob/master/LICENSE)
-[![Gitter](https://img.shields.io/gitter/room/FirefoxBar/HeaderEditor.svg?style=flat-square)](https://gitter.im/FirefoxBar/HeaderEditor)
+[![Release](https://img.shields.io/github/release/FirefoxBar/HeaderEditor.svg?label=Release)](https://github.com/FirefoxBar/HeaderEditor/releases)
+[![Chrome Web Store](https://img.shields.io/chrome-web-store/users/eningockdidmgiojffjmkdblpjocbhgh?label=Chrome)](https://chrome.google.com/webstore/detail/header-editor/eningockdidmgiojffjmkdblpjocbhgh)
+[![Mozilla Addons](https://img.shields.io/amo/users/header-editor?label=Firefox)](https://addons.mozilla.org/en-US/firefox/addon/header-editor/)
+[![license](https://img.shields.io/github/license/FirefoxBar/HeaderEditor.svg?label=License)](https://github.com/FirefoxBar/HeaderEditor/blob/master/LICENSE)
+[![Discussions](https://img.shields.io/github/discussions/FirefoxBar/HeaderEditor?label=Discussions)](https://github.com/FirefoxBar/HeaderEditor/discussions)
+[![Build Status](https://github.com/FirefoxBar/HeaderEditor/actions/workflows/dev.yml/badge.svg)](https://github.com/FirefoxBar/HeaderEditor/actions/workflows/dev.yml)
 
 An extension which can modify the request, include request headers, response headers, redirect requests, and cancel requests.
 
-For more documentations, Please visit [documentions](https://he.firefoxcn.net)
+It's 100% FREE, no ADs, no data collection.
+
+For more documentations, Please visit [he.firefoxcn.net](https://he.firefoxcn.net)
 
 ## Get this extension
 
-![Firefox Logo](https://cdnjs.cloudflare.com/ajax/libs/browser-logos/42.8.0/firefox/firefox_16x16.png) [Mozilla Add-on](https://addons.mozilla.org/en-US/firefox/addon/header-editor/).
+![Firefox Logo](https://cdnjs.cloudflare.com/ajax/libs/browser-logos/73.0.0/firefox/firefox_16x16.png) [Mozilla Add-on](https://addons.mozilla.org/en-US/firefox/addon/header-editor/).
 
-![Chrome Logo](https://cdnjs.cloudflare.com/ajax/libs/browser-logos/42.8.0/chrome/chrome_16x16.png) [Chrome Web Store](https://chrome.google.com/webstore/detail/header-editor/eningockdidmgiojffjmkdblpjocbhgh).
+![Chrome Logo](https://cdnjs.cloudflare.com/ajax/libs/browser-logos/73.0.0/chrome/chrome_16x16.png) [Chrome Web Store](https://chrome.google.com/webstore/detail/header-editor/eningockdidmgiojffjmkdblpjocbhgh).
 
-![Edge Logo](https://cdnjs.cloudflare.com/ajax/libs/browser-logos/67.0.2/edge/edge_16x16.png) [Edge Add-ons](https://microsoftedge.microsoft.com/addons/detail/header-editor/afopnekiinpekooejpchnkgfffaeceko).
+![Edge Logo](https://cdnjs.cloudflare.com/ajax/libs/browser-logos/73.0.0/edge/edge_16x16.png) [Edge Add-ons](https://microsoftedge.microsoft.com/addons/detail/header-editor/afopnekiinpekooejpchnkgfffaeceko).
 
-![Firefox Logo](https://cdnjs.cloudflare.com/ajax/libs/browser-logos/42.8.0/firefox/firefox_16x16.png) Install our [self-distributed version](https://github.com/FirefoxBar/HeaderEditor/releases).
+![Firefox Logo](https://cdnjs.cloudflare.com/ajax/libs/browser-logos/73.0.0/firefox/firefox_16x16.png) Install our [self-distributed version](https://github.com/FirefoxBar/HeaderEditor/releases).
 
 ## About Permissions
 
 Header Editor require those permissions:
 
-* tabs: Open links or switch to a tab
+* `tabs`: Open links (such as the options page) or switch to a tab
 
-* webRequest, webRequestBlocking, _all_urls_: Modify the requests
+* `webRequest`, `webRequestBlocking`, `_all_urls_`: Modify requests
 
-* contextMenus: Add anti-hot-link to right-click menu
+* `storage`, `unlimitedStorage`: Storage rules and settings
 
-* storage, unlimitedStorage: Storage rules and settings
-
-* downloads: Export rules
-
-* unsafe-eval: Custom function require it, code at [src/options/App.vue#L657](https://github.com/FirefoxBar/HeaderEditor/blob/master/src/options/App.vue#L657) and [src/core/rules.js#L23](https://github.com/FirefoxBar/HeaderEditor/blob/master/src/core/rules.js#L23) (The location may change in the future, you can search for the newest location by `new Function`)
+* `unsafe-eval`: Execute custom function, code at [src/share/core/rule-utils.ts#L8](https://github.com/FirefoxBar/HeaderEditor/blob/dev/src/share/core/rule-utils.ts#L8) (may change in the future, you can search for the newest location by `new Function`)
 
 ## Contribution
 
-Contribute codes: [Submiting a pull request](https://github.com/FirefoxBar/HeaderEditor/compare)
+Contribute codes: [Submitting a pull request](https://github.com/FirefoxBar/HeaderEditor/compare)
 
-Thanks to the following personnel for their contribution:
-
-* [YFdyh000](https://github.com/yfdyh000)
-* [iNaru](https://github.com/Inaru)
+Thanks to them for their contribution: [YFdyh000](https://github.com/yfdyh000) [iNaru](https://github.com/Inaru)
 
 ### Translation
 
-English: Please submit a issue or pull request for file `build/locales/original.json`
+English: Please submit a issue or pull request for file `locale/original/messages.json`
 
-Other: [Transifex](https://www.transifex.com/sytec/header-editor/)
+Other language: Please translate them on [Transifex](https://www.transifex.com/sytec/header-editor/)
 
-The following are language maintainers, Thanks for their contribution. If you have any advice on translations, please contact the maintainer(s) directly.
-
-* en: [ShuangYa](https://github.com/sylingd)
-
-* zh-CN: [ShuangYa](https://github.com/sylingd)
-
-* zh-TW: [zhtw2013](https://github.com/zhtw2013)
-
-* pt-BR: [Kassio Cruz](https://www.transifex.com/user/profile/kassiocs/)
-
-* pl: [Pabli](https://github.com/pabli24)
+Please note that some languages (such as zh-Hans) will not be translated on transifex because the browser does not support them, click [here](https://developer.chrome.com/docs/webstore/i18n/#choosing-locales-to-support) to view full list
 
 ## How to build
 
-#### Prepare
+### Build
 
-* Install node, npm or yarn. (It is recommended to use yarn, or the build result may be inconsistent with the release version)
+* Install node (14+) and pnpm.
 
-* Clone this project, or download the source code and extract it
+* Clone this project, or download the source code and extract it.
 
-* Run `yarn` or `npm install`
+* Run `pnpm i`.
 
-#### Build
-
-* Run `yarn build` or `npm run build`
+* Run `npm run build`
 
 * Find build result at `/dist`
 
 #### Development
 
-* Run `yarn watch:dev` or `npm run watch:dev`
+* Run `npm run start`
 
 * Open browser, load extension from `/dist` directory or `/dist/manifest.json`
 
 ## Licenses
 
-Copyright © 2017-2019 [FirefoxBar Team](http://team.firefoxcn.net)
+Copyright © 2017-2023 [FirefoxBar Team](https://team.firefoxcn.net)
 
 Open source licensed under [GPLv2](LICENSE).

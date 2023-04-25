@@ -1,32 +1,42 @@
-// https://eslint.org/docs/user-guide/configuring
-// File taken from https://github.com/vuejs-templates/webpack/blob/1.3.1/template/.eslintrc.js, thanks.
+const { getESLintConfig } = require('@iceworks/spec');
 
-module.exports = {
-	root: true,
-	parserOptions: {
-		parser: 'babel-eslint'
-	},
-	env: {
-		browser: true,
-		webextensions: true,
-	},
-	extends: [
-		// https://github.com/vuejs/eslint-plugin-vue#priority-a-essential-error-prevention
-		// consider switching to `plugin:vue/strongly-recommended` or `plugin:vue/recommended` for stricter rules.
-		'plugin:vue/essential',
-		// https://github.com/standard/standard/blob/master/docs/RULES-en.md
-		'standard'	],
-	// required to lint *.vue files
-	plugins: [
-		'vue'
-	],
-	// add your custom rules here
-	rules: {
-		// allow async-await
-		'generator-star-spacing': 'off',
-		// allow debugger during development
-		'no-debugger': process.env.NODE_ENV === 'production' ? 'error' : 'off',
-		'indent': [4, 'tab'],
-		'no-tabs': 0
-	}
-}
+// https://www.npmjs.com/package/@iceworks/spec
+module.exports = getESLintConfig('react-ts', {
+  plugins: [
+    'eslint-plugin-unused-imports',
+    'eslint-plugin-import',
+  ],
+  rules: {
+    'react/jsx-filename-extension': 0,
+    'react/no-access-state-in-setstate': 0,
+    'react-hooks/exhaustive-deps': 0,
+    '@typescript-eslint/member-ordering': 0,
+    '@typescript-eslint/no-require-imports': 0,
+    '@typescript-eslint/explicit-function-return-type': 0,
+    '@typescript-eslint/ban-ts-comment': 0,
+    '@iceworks/best-practices/recommend-polyfill': 0,
+    '@iceworks/best-practices/no-js-in-ts-project': 0,
+    '@iceworks/best-practices/recommend-functional-component': 0,
+    'no-await-in-loop': 0,
+    'no-console': 0,
+    'no-prototype-builtins': 0,
+    'no-return-assign': 0,
+    'no-param-reassign': 0,
+    'unused-imports/no-unused-imports': 'warn',
+    'import/order': [
+      'warn',
+      {
+        'groups': ['builtin', 'external', 'internal', 'parent', 'sibling', 'index', 'object', 'type', 'unknown'],
+        'pathGroups': [
+          {
+            'pattern': '@/**',
+            'group': 'parent',
+            'position': 'before'
+          }
+        ],
+        'pathGroupsExcludedImportTypes': ['builtin'],
+        'newlines-between': 'never'
+      }
+    ]
+  },
+});

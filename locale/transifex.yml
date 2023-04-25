@@ -1,0 +1,7 @@
+git:
+  filters:
+  - filter_type: file
+    file_format: CHROME
+    source_language: en
+    source_file: 'original/messages.json'
+    translation_files_expression: 'output/<lang>/messages.json'
