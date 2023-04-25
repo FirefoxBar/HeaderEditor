@@ -3,6 +3,7 @@ title: Header Editor
 hero:
   title: Header Editor
   description: 管理浏览器请求，包括修改请求头和响应头、重定向请求、取消请求
+  actions:
     - text: 开始使用
       link: /guide
     - text: GitHub
