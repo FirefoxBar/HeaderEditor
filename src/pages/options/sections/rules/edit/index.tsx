@@ -4,12 +4,13 @@ import { FormApi } from '@douyinfe/semi-ui/lib/es/form';
 import { css } from '@emotion/css';
 import * as React from 'react';
 import { BoolRadioGroupField } from '@/pages/options/components/bool-radio';
-import Api from '@/share/pages/api';
-import { initRule, isMatchUrl } from '@/share/core/rule-utils';
-import { prefs } from '@/share/core/prefs';
-import { IS_SUPPORT_STREAM_FILTER, t } from '@/share/core/utils';
-import type { InitdRule, Rule } from '@/share/core/types';
 import { IS_MATCH, RULE_MATCH_TYPE, RULE_TYPE } from '@/share/core/constant';
+import { prefs } from '@/share/core/prefs';
+import { initRule, isMatchUrl } from '@/share/core/rule-utils';
+import type { InitdRule, Rule } from '@/share/core/types';
+import { IS_SUPPORT_STREAM_FILTER, t } from '@/share/core/utils';
+import Api from '@/share/pages/api';
+import { AutoCompleteField } from './auto-complete';
 import { CodeEditorField } from './code-editor';
 import ENCODING_LIST from './encoding';
 import COMMON_HEADERS from './headers';
@@ -257,6 +258,14 @@ export default class Edit extends React.Component<EditProps, EditState> {
           .semi-sidesheet-inner {
             width: 100vw;
             max-width: 800px;
+
+            .semi-form {
+              .semi-form-field-main {
+                > .semi-select {
+                  width: 100%;
+                }
+              }
+            }
           }
         `}
         footer={
@@ -321,11 +330,10 @@ export default class Edit extends React.Component<EditProps, EditState> {
           )}
           {/* Header modify */}
           {isHeader && !this.state.rule.isFunction && (
-            <Form.Select
-              filter
+            <AutoCompleteField
               field="headerName"
               label={t('headerName')}
-              optionList={(isHeaderSend ? COMMON_HEADERS.request : COMMON_HEADERS.response).map((x) => ({ label: x, value: x }))}
+              list={isHeaderSend ? COMMON_HEADERS.request : COMMON_HEADERS.response}
             />
           )}
           {isHeader && !this.state.rule.isFunction && (
