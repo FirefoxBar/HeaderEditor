@@ -261,6 +261,7 @@ export default class Edit extends React.Component<EditProps, EditState> {
 
             .semi-form {
               .semi-form-field-main {
+                > .semi-autocomplete,
                 > .semi-select {
                   width: 100%;
                 }
