@@ -1,4 +1,5 @@
 import {
+  IconBranch,
   IconChevronDown,
   IconCopyAdd,
   IconDelete,
@@ -20,10 +21,11 @@ import RuleDetail from '@/share/components/rule-detail';
 import Api from '@/share/pages/api';
 import file from '@/share/pages/file';
 import { convertToBasicRule, createExport } from '@/share/core/rule-utils';
-import { getTableName, t } from '@/share/core/utils';
+import { getTableName, getVirtualKey, t } from '@/share/core/utils';
 import type { InitdRule, Rule } from '@/share/core/types';
 import { VIRTUAL_KEY, TABLE_NAMES_ARR } from '@/share/core/constant';
 import useMarkCommon from '@/share/hooks/use-mark-common';
+import RuleContentSwitcher from '@/share/components/rule-content-switcher';
 import { remove, toggleRule } from './utils';
 import type { ColumnProps, RowSelectionProps } from '@douyinfe/semi-ui/lib/es/table';
 
@@ -112,6 +114,9 @@ const RuleGroupCard = (props: RuleCardProps) => {
             <Tooltip content={t('view')}>
               <Button theme="borderless" type="tertiary" onClick={() => onRulePreview(item)} icon={<IconSearch />} />
             </Tooltip>
+            <RuleContentSwitcher key={getVirtualKey(item)} rule={item} type={item.ruleType}>
+              <Button theme="borderless" type="tertiary" icon={<IconBranch />} />
+            </RuleContentSwitcher>
             <Dropdown
               position="bottomRight"
               menu={[

@@ -60,15 +60,16 @@ const RuleContentSwitcher: FC<RuleContentSwitcherProps> = (props) => {
   const { value, setValue } = useStorage<string[]>(`rule_switch_${key}`, []);
 
   const menu = useMemo(() => {
+    const updateRule = (k: string, v: any) => {
+      const newRule = { ...newestRule.current };
+      newRule[k] = v;
+      Api.saveRule(newRule);
+    };
+
     const result: DropdownProps['menu'] = value.map((x) => ({
       node: 'item',
       name: x,
       onClick: () => {
-        const updateRule = (k: string, v: any) => {
-          const newRule = { ...newestRule.current };
-          newRule[k] = v;
-          Api.saveRule(newRule);
-        };
         if (type === RULE_TYPE.MODIFY_RECV_HEADER || type === RULE_TYPE.MODIFY_SEND_HEADER) {
           updateRule('action', {
             name: (newestRule.current.action as RULE_ACTION_OBJ).name,

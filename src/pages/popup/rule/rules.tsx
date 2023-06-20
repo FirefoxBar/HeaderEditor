@@ -1,6 +1,7 @@
 import React, { useEffect } from 'react';
 import { useLatest, useRequest } from 'ahooks';
-import { Popover, Switch, Table } from '@douyinfe/semi-ui';
+import { Button, Popover, Switch, Table } from '@douyinfe/semi-ui';
+import { IconBranch } from '@douyinfe/semi-icons';
 import Api from '@/share/pages/api';
 import { getVirtualKey, parseVirtualKey } from '@/share/core/utils';
 import type { Rule } from '@/share/core/types';
@@ -8,6 +9,7 @@ import { VIRTUAL_KEY, EVENTs } from '@/share/core/constant';
 import useMarkCommon from '@/share/hooks/use-mark-common';
 import RuleDetail from '@/share/components/rule-detail';
 import notify from '@/share/core/notify';
+import RuleContentSwitcher from '@/share/components/rule-content-switcher';
 
 const Rules = () => {
   const { keys } = useMarkCommon('rule');
@@ -98,6 +100,17 @@ const Rules = () => {
             <Popover showArrow position="top" content={<RuleDetail rule={item} />} style={{ maxWidth: '300px' }}>
               <div>{value}</div>
             </Popover>
+          ),
+        },
+        {
+          title: 'action',
+          dataIndex: 'action',
+          className: 'cell-action',
+          width: 60,
+          render: (_, item: Rule) => (
+            <RuleContentSwitcher key={getVirtualKey(item)} rule={item} type={item.ruleType} add={false}>
+              <Button theme="borderless" type="tertiary" icon={<IconBranch />} />
+            </RuleContentSwitcher>
           ),
         },
       ]}
