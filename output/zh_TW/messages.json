@@ -118,7 +118,7 @@
 	},
 	"edit": {
 		"message": "編輯",
-		"description": "Modal title for editing a rule"
+		"description": "Edit something"
 	},
 	"enable": {
 		"message": "啟用",
@@ -347,6 +347,18 @@
 	"suggested_group": {
 		"message": "建議分組",
 		"description": "The suggested group name provided by the rule author"
+	},
+	"switch_empty": {
+		"message": "未設定快速切換",
+		"description": "Description text"
+	},
+	"switch_success": {
+		"message": "已切換",
+		"description": "Toast message when quick switch successfully"
+	},
+	"switch_title": {
+		"message": "快速切換",
+		"description": "Title of the quick switch feature"
 	},
 	"test_custom_code": {
 		"message": "暫不支援自訂函數",
