@@ -7,6 +7,7 @@ import { RULE_TYPE } from '@/share/core/constant';
 import type { RULE_ACTION_OBJ, Rule } from '@/share/core/types';
 import useStorage from '@/share/hooks/use-storage';
 import Api from '@/share/pages/api';
+import { getVirtualKey } from '../core/utils';
 import type { DropdownProps } from '@douyinfe/semi-ui/lib/es/dropdown';
 
 interface RuleContentSwitcherEditProps {
@@ -47,16 +48,16 @@ const RuleContentSwitcherEdit: FC<RuleContentSwitcherEditProps> = (props) => {
 
 interface RuleContentSwitcherProps {
   add?: boolean;
-  key: string;
   type: RULE_TYPE;
   children?: any;
   rule: Rule;
 }
 
 const RuleContentSwitcher: FC<RuleContentSwitcherProps> = (props) => {
-  const { add = false, key, type, children, rule } = props;
+  const { add = false, type, children, rule } = props;
 
   const newestRule = useLatest(rule);
+  const key = useMemo(() => getVirtualKey(rule), [rule]);
   const { value, setValue } = useStorage<string[]>(`rule_switch_${key}`, []);
 
   const menu = useMemo(() => {

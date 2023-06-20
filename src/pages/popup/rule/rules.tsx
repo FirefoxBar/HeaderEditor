@@ -110,7 +110,7 @@ const Rules = () => {
           className: 'cell-action',
           width: 60,
           render: (_, item: Rule) => (
-            <RuleContentSwitcher key={getVirtualKey(item)} rule={item} type={item.ruleType} add={false}>
+            <RuleContentSwitcher rule={item} type={item.ruleType} add={false}>
               <Button theme="borderless" type="tertiary" icon={<IconBranch />} />
             </RuleContentSwitcher>
           ),
