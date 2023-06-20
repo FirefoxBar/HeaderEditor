@@ -7,12 +7,12 @@ export interface RuleFilterOptions {
   name?: string;
 }
 
-export type RULE_ACTION =
-  | 'cancel'
-  | {
-    name: string;
-    value: string;
-  };
+export interface RULE_ACTION_OBJ {
+  name: string;
+  value: string;
+}
+
+export type RULE_ACTION = 'cancel' | RULE_ACTION_OBJ;
 
 export interface BasicRule {
   [key: string]: any;
