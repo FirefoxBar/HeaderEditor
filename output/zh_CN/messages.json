@@ -118,7 +118,7 @@
 	},
 	"edit": {
 		"message": "编辑",
-		"description": "Modal title for editing a rule"
+		"description": "Edit something"
 	},
 	"enable": {
 		"message": "启用",
@@ -317,7 +317,7 @@
 		"description": "Redirect option in modal"
 	},
 	"rules_no_effect_for_he": {
-		"message": "规则对Header Editor无效",
+		"message": "规则对 Header Editor 无效",
 		"description": "If checked, all rules will take no effect on pages in Header Editor"
 	},
 	"save": {
@@ -347,6 +347,18 @@
 	"suggested_group": {
 		"message": "建议分组",
 		"description": "The suggested group name provided by the rule author"
+	},
+	"switch_empty": {
+		"message": "未设置快速切换",
+		"description": "Description text"
+	},
+	"switch_success": {
+		"message": "已切换",
+		"description": "Toast message when quick switch successfully"
+	},
+	"switch_title": {
+		"message": "快速切换",
+		"description": "Title of the quick switch feature"
 	},
 	"test_custom_code": {
 		"message": "暂不支持自定义函数",
