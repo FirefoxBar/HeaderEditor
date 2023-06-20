@@ -27,6 +27,7 @@ const Options = () => {
   const responsive = useResponsive();
 
   useEffect(() => {
+    document.body.setAttribute('data-page-name', 'options');
     prefs.ready(() => {
       if (isDarkMode()) {
         document.body.setAttribute('theme-mode', 'dark');

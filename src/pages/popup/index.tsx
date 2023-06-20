@@ -60,6 +60,7 @@ const Popup = () => {
   const [enable, setEnable] = useState(true);
 
   useEffect(() => {
+    document.body.setAttribute('data-page-name', 'popup');
     prefs.ready(() => {
       setEnable(!prefs.get('disable-all'));
       // Get dark mode setting

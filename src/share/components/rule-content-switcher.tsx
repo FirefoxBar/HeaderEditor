@@ -1,4 +1,4 @@
-import { ArrayField, Button, Dropdown, Form, Modal, Space, Toast, ToastFactory } from '@douyinfe/semi-ui';
+import { ArrayField, Button, Dropdown, Form, Modal, Space } from '@douyinfe/semi-ui';
 import { IconDelete, IconPlus } from '@douyinfe/semi-icons';
 import { css } from '@emotion/css';
 import { useLatest } from 'ahooks';
@@ -8,6 +8,7 @@ import type { RULE_ACTION_OBJ, Rule } from '@/share/core/types';
 import useStorage from '@/share/hooks/use-storage';
 import Api from '@/share/pages/api';
 import { getVirtualKey, t } from '@/share/core/utils';
+import { Toast } from '@/share/pages/toast';
 import type { DropdownProps } from '@douyinfe/semi-ui/lib/es/dropdown';
 
 interface RuleContentSwitcherEditProps {
@@ -15,7 +16,7 @@ interface RuleContentSwitcherEditProps {
   onChange: (v: string[]) => void;
 }
 const RuleContentSwitcherEdit: FC<RuleContentSwitcherEditProps> = (props) => {
-  const { initValue, onChange } = props;
+  const { initValue = [''], onChange } = props;
 
   return (
     <Form
@@ -24,12 +25,17 @@ const RuleContentSwitcherEdit: FC<RuleContentSwitcherEditProps> = (props) => {
       }}
       onValueChange={(v) => onChange(v.value)}
     >
-      <ArrayField field="value" initValue={['']}>
+      <ArrayField field="value" initValue={initValue}>
         {({ add, arrayFields }) => (
           <div
             className={css`
               display: flex;
               flex-direction: column;
+
+              .semi-space > .semi-form-field {
+                flex-grow: 1;
+                flex-shrink: 1;
+              }
             `}
           >
             {arrayFields.map(({ key, field, remove }) => (
@@ -64,15 +70,11 @@ const RuleContentSwitcher: FC<RuleContentSwitcherProps> = (props) => {
     const updateRule = async (k: string, v: any) => {
       const newRule = { ...newestRule.current };
       newRule[k] = v;
-      const myToast = add ? Toast : ToastFactory.create({
-        top: 'auto',
-        bottom: 0,
-      });
       try {
         await Api.saveRule(newRule);
-        myToast.success(t('switch_success'));
+        Toast().success(t('switch_success'));
       } catch (e) {
-        myToast.error(e.message);
+        Toast().error(e.message);
       }
     };
 
