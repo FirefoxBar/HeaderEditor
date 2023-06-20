@@ -106,7 +106,7 @@ const RuleContentSwitcher: FC<RuleContentSwitcherProps> = (props) => {
     return result;
   }, [add, value]);
 
-  if (![RULE_TYPE.MODIFY_SEND_HEADER, RULE_TYPE.MODIFY_RECV_HEADER, RULE_TYPE.REDIRECT].includes(type)) {
+  if (![RULE_TYPE.MODIFY_SEND_HEADER, RULE_TYPE.MODIFY_RECV_HEADER, RULE_TYPE.REDIRECT].includes(type) || menu.length === 0) {
     return null;
   }
 

@@ -10,6 +10,7 @@ import useMarkCommon from '@/share/hooks/use-mark-common';
 import RuleDetail from '@/share/components/rule-detail';
 import notify from '@/share/core/notify';
 import RuleContentSwitcher from '@/share/components/rule-content-switcher';
+import { textEllipsis } from '@/share/pages/styles';
 
 const Rules = () => {
   const { keys } = useMarkCommon('rule');
@@ -73,6 +74,7 @@ const Rules = () => {
       dataSource={data}
       showHeader={false}
       size="small"
+      style={{ tableLayout: 'fixed' }}
       columns={[
         {
           title: 'enable',
@@ -98,7 +100,7 @@ const Rules = () => {
           dataIndex: 'name',
           render: (value: string, item: Rule) => (
             <Popover showArrow position="top" content={<RuleDetail rule={item} />} style={{ maxWidth: '300px' }}>
-              <div>{value}</div>
+              <div className={textEllipsis}>{value}</div>
             </Popover>
           ),
         },
