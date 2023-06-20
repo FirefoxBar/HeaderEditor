@@ -118,7 +118,7 @@
   },
   "edit": {
     "message": "Edit",
-    "description": "Modal title for editing a rule"
+    "description": "Edit something"
   },
   "enable": {
     "message": "Enable",
@@ -347,6 +347,18 @@
   "suggested_group": {
     "message": "Suggested group",
     "description": "The suggested group name provided by the rule author"
+  },
+  "switch_title": {
+    "message": "Quick switch",
+    "description": "Title of the quick switch feature"
+  },
+  "switch_empty": {
+    "message": "No quick switch rules",
+    "description": "Description text"
+  },
+  "switch_success": {
+    "message": "Switch successfully",
+    "description": "Toast message when quick switch successfully"
   },
   "test_custom_code": {
     "message": "Does not support testing custom code now",

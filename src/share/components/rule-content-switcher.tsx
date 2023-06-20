@@ -1,5 +1,5 @@
-import { ArrayField, Button, Dropdown, Form, Modal, Space } from '@douyinfe/semi-ui';
-import { IconDelete, IconEdit, IconPlus } from '@douyinfe/semi-icons';
+import { ArrayField, Button, Dropdown, Form, Modal, Space, Toast, ToastFactory } from '@douyinfe/semi-ui';
+import { IconDelete, IconPlus } from '@douyinfe/semi-icons';
 import { css } from '@emotion/css';
 import { useLatest } from 'ahooks';
 import React, { FC, useMemo } from 'react';
@@ -7,7 +7,7 @@ import { RULE_TYPE } from '@/share/core/constant';
 import type { RULE_ACTION_OBJ, Rule } from '@/share/core/types';
 import useStorage from '@/share/hooks/use-storage';
 import Api from '@/share/pages/api';
-import { getVirtualKey } from '../core/utils';
+import { getVirtualKey, t } from '@/share/core/utils';
 import type { DropdownProps } from '@douyinfe/semi-ui/lib/es/dropdown';
 
 interface RuleContentSwitcherEditProps {
@@ -34,11 +34,11 @@ const RuleContentSwitcherEdit: FC<RuleContentSwitcherEditProps> = (props) => {
           >
             {arrayFields.map(({ key, field, remove }) => (
               <Space key={key}>
-                <Form.Input field={field} />
+                <Form.Input field={field} noLabel />
                 <Button type="tertiary" icon={<IconDelete />} onClick={remove} />
               </Space>
             ))}
-            <Button icon={<IconPlus />} type="primary" theme="solid" onClick={() => add()} />
+            <Button icon={<IconPlus />} type="primary" theme="solid" onClick={() => add()}>{t('add')}</Button>
           </div>
         )}
       </ArrayField>
@@ -61,10 +61,19 @@ const RuleContentSwitcher: FC<RuleContentSwitcherProps> = (props) => {
   const { value, setValue } = useStorage<string[]>(`rule_switch_${key}`, []);
 
   const menu = useMemo(() => {
-    const updateRule = (k: string, v: any) => {
+    const updateRule = async (k: string, v: any) => {
       const newRule = { ...newestRule.current };
       newRule[k] = v;
-      Api.saveRule(newRule);
+      const myToast = add ? Toast : ToastFactory.create({
+        top: 'auto',
+        bottom: 0,
+      });
+      try {
+        await Api.saveRule(newRule);
+        myToast.success(t('switch_success'));
+      } catch (e) {
+        myToast.error(e.message);
+      }
     };
 
     const result: DropdownProps['menu'] = value.map((x) => ({
@@ -84,18 +93,23 @@ const RuleContentSwitcher: FC<RuleContentSwitcherProps> = (props) => {
     }));
 
     if (add) {
+      if (result.length === 0) {
+        result.push({
+          node: 'item',
+          disabled: true,
+          name: t('switch_empty'),
+        });
+      }
       result.push({
         node: 'divider',
       });
       result.push({
         node: 'item',
-        // @ts-ignore
-        name: <IconEdit />,
+        name: t('edit'),
         onClick: () => {
           let currentValue = [...value];
-          // TODO: 编辑
           Modal.info({
-            title: 'edit',
+            title: t('switch_title'),
             icon: null,
             content: <RuleContentSwitcherEdit initValue={currentValue} onChange={(v) => (currentValue = v)} />,
             onOk: () => setValue(currentValue.filter((x) => Boolean(x))),
