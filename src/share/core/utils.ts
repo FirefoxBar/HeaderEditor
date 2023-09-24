@@ -18,7 +18,15 @@ export const FIREFOX_VERSION = IS_FIREFOX
   })()
   : 0;
 
-export const IS_SUPPORT_STREAM_FILTER = typeof browser.webRequest.filterResponseData === 'function';
+let is_support = false;
+try {
+  is_support = typeof browser.webRequest.filterResponseData === 'function';
+} catch (e) {
+  // ignore
+}
+
+export const IS_SUPPORT_STREAM_FILTER = is_support;
+console.log('utils', IS_SUPPORT_STREAM_FILTER);
 
 // Get Active Tab
 export function getActiveTab(): Promise<Tabs.Tab> {

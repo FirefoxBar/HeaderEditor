@@ -1,10 +1,11 @@
 import browser from 'webextension-polyfill';
 import logger from '@/share/core/logger';
-import { APIs, TABLE_NAMES_ARR } from '@/share/core/constant';
+import { APIs, TABLE_NAMES_ARR, TABLE_NAMES } from '@/share/core/constant';
 import { prefs } from '@/share/core/prefs';
 import rules from './core/rules';
 import { openURL } from './utils';
 import { getDatabase } from './core/db';
+
 
 function execute(request: any) {
   if (request.method === 'notifyBackground') {
@@ -27,6 +28,14 @@ function execute(request: any) {
     case APIs.DELETE_RULE:
       return rules.remove(request.type, request.id);
     case APIs.SET_PREFS:
+      browser.tabs.query({ active: true, currentWindow: true }).then((tabs) => {
+        console.log('tabs', tabs);
+        tabs.forEach((tab) => {
+          if (tab.id) {
+            browser.tabs.sendMessage(tab.id, { method: APIs.SET_PREFS, key: request.key, value: request.value });
+          }
+        });
+      });
       return prefs.set(request.key, request.value);
     case APIs.UPDATE_CACHE:
       if (request.type === 'all') {
@@ -41,7 +50,23 @@ function execute(request: any) {
 }
 
 export default function createApiHandler() {
-  browser.runtime.onMessage.addListener((request) => {
+  browser.runtime.onMessage.addListener((request: any, sender, sendResponse) => {
+    console.log('createApiHandler-----', request, sender);
+
+    if (request.method === 'GetData') {
+      const response = {
+        rules: rules.get(TABLE_NAMES.sendHeader, { enable: true }),
+        enable: !prefs.get('disable-all'),
+      };
+
+      console.log('createApiHandler-----', response);
+      sendResponse(response);
+      // if (response.enable) {
+      //   sendResponse(response);
+      // }
+    }
+
+
     logger.debug('Background Receive Message', request);
     if (request.method === 'batchExecute') {
       const queue = request.batch.map((item) => {
