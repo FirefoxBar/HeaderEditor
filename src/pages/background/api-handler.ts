@@ -24,6 +24,14 @@ function execute(request: any) {
     case APIs.GET_RULES:
       return Promise.resolve(rules.get(request.type, request.options));
     case APIs.SAVE_RULE:
+      browser.tabs.query({ active: true, currentWindow: true }).then((tabs) => {
+        console.log('tabs', tabs);
+        tabs.forEach((tab) => {
+          if (tab.id) {
+            browser.tabs.sendMessage(tab.id, { method: APIs.SAVE_RULE, rule: request.rule });
+          }
+        });
+      });
       return rules.save(request.rule);
     case APIs.DELETE_RULE:
       return rules.remove(request.type, request.id);
@@ -59,11 +67,8 @@ export default function createApiHandler() {
         enable: !prefs.get('disable-all'),
       };
 
-      console.log('createApiHandler-----', response);
+      logger.debug('createApiHandler-----', response);
       sendResponse(response);
-      // if (response.enable) {
-      //   sendResponse(response);
-      // }
     }
 
 

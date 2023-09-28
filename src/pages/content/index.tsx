@@ -10,39 +10,56 @@ import type { Rule } from '@/share/core/types';
 import RuleDetail from '@/share/components/rule-detail';
 import { APIs } from '@/share/core/constant';
 
-
 let rules = [];
 let enable = false;
 // let loading = false;
 
-console.log('content load.......................');
+console.log('content-script load.......................');
 // contentScript.js
 browser.runtime.onMessage.addListener((message, sender, sendResponse) => {
   console.log('content-script收到的消息', message);
 
-  if (message.method === APIs.SET_PREFS) {
-    if (message.key === 'disable-all') {
-      enable = !message.value;
-    }
-    ReactDOM.render(<Content />, app);
+  switch (message.method) {
+    case APIs.SET_PREFS:
+      if (message.key === 'disable-all') {
+        enable = !message.value;
+      }
+      ReactDOM.render(<Content />, app);
+      break;
+    case APIs.SAVE_RULE:
+      setTimeout(() => {
+        getData();
+      }, 500);
+      break;
+    default:
+      break;
   }
 });
 
-browser.runtime.sendMessage({ greeting: '我是content-script呀，我主动发消息给后台！', method: 'GetData' }).then((response) => {
-  console.log('收到来自后台的回复', response);
-  if (response) {
-    rules = response.rules || [];
-    enable = response.enable || false;
-    console.log('收到来自后台的回复', rules);
-    ReactDOM.render(<Content />, app);
-  }
-});
+
+getData();
+
+
+function getData() {
+  browser.runtime.sendMessage({ greeting: '我是content-script呀，我主动发消息给后台！', method: 'GetData' }).then((response) => {
+    console.log('收到来自后台的回复', response);
+    if (response) {
+      rules = response.rules || [];
+      enable = response.enable || false;
+      console.log('收到来自后台的回复', rules);
+      ReactDOM.render(<Content />, app);
+    }
+  });
+}
+
 
 const basicStyle = css`
   position: fixed;
   top: 20px;
   right: 20px;
   z-index: 1000;
+  min-width: 300px;
+  user-select: none;
 
   .cell-enable {
     padding-right: 0;
@@ -53,40 +70,67 @@ const basicStyle = css`
   }
 `;
 
-const quickAndDirtyStyle = {
-  width: '200px',
-  height: '200px',
-  background: '#FF9900',
-  color: '#FFFFFF',
-  display: 'flex',
-  justifyContent: 'center',
-  alignItems: 'center',
-};
-
 
 function Content() {
-  console.log('content render.......................', rules);
   const { Meta } = Card;
 
   // 可拖动
-  const [pressed, setPressed] = useState(false);
-  const [position, setPosition] = useState({ x: 0, y: 0 });
-  const ref = useRef();
-  useEffect(() => {
-    if (ref.current) {
-      ref.current.style.transform = `translate(${position.x}px, ${position.y}px)`;
-    }
-  }, [position]);
+  const [isDragging, setIsDragging] = useState(false);
+  const divRef = useRef<HTMLDivElement>(null);
+  const offsetRef = useRef<{ x: number; y: number }>({ x: 0, y: 0 });
+  const [position, setPosition] = useState({ x: window.innerWidth - 400, y: 0 });
 
-  // Update the current position if mouse is down
-  const onMouseMove = (event) => {
-    if (pressed) {
-      setPosition({
-        x: position.x + event.movementX,
-        y: position.y + event.movementY,
-      });
+  const handleMouseDown = (e: React.MouseEvent) => {
+    if (e.button === 0) {
+      e.preventDefault(); // 阻止默认的文本选择行为
+      setIsDragging(true);
+      offsetRef.current = {
+        x: e.clientX - position.x,
+        y: e.clientY - position.y,
+      };
     }
   };
+
+  const handleMouseMove = (e: MouseEvent) => {
+    if (isDragging) {
+      const newX = e.clientX - offsetRef.current.x;
+      const newY = e.clientY - offsetRef.current.y;
+
+      // 限制拖动范围为窗口
+      const maxX = window.innerWidth - divRef.current!.offsetWidth;
+      const maxY = window.innerHeight - divRef.current!.offsetHeight;
+
+      const boundedX = Math.min(Math.max(newX, 0), maxX);
+      const boundedY = Math.min(Math.max(newY, 0), maxY);
+
+      setPosition({ x: boundedX, y: boundedY });
+    }
+  };
+
+  const handleMouseUp = () => {
+    setIsDragging(false);
+  };
+
+  const handleFocus = () => {
+    getData();
+  };
+
+  useEffect(() => {
+    if (isDragging) {
+      window.addEventListener('mousemove', handleMouseMove);
+      window.addEventListener('mouseup', handleMouseUp);
+    } else {
+      window.removeEventListener('mousemove', handleMouseMove);
+      window.removeEventListener('mouseup', handleMouseUp);
+    }
+    window.addEventListener('focus', handleFocus);
+
+    return () => {
+      window.removeEventListener('mousemove', handleMouseMove);
+      window.removeEventListener('mouseup', handleMouseUp);
+      window.removeEventListener('focus', handleFocus);
+    };
+  }, [isDragging]);
 
   const goToSetting = () => {
     browser.runtime.sendMessage({ url: browser.runtime.getURL('options.html'), method: APIs.OPEN_URL }).then((response) => {
@@ -105,11 +149,10 @@ function Content() {
 
   return enable ? (
     <div
-      ref={ref}
       className={cx(basicStyle)}
-      onMouseMove={onMouseMove}
-      onMouseDown={() => setPressed(true)}
-      onMouseUp={() => setPressed(false)}
+      ref={divRef}
+      style={{ left: `${position.x}px`, top: `${position.y}px` }}
+      onMouseDown={handleMouseDown}
     >
       <Card
         shadows="always"
