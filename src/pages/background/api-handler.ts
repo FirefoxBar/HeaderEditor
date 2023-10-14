@@ -57,20 +57,50 @@ function execute(request: any) {
   // return false;
 }
 
+const currentIP = {};
+
 export default function createApiHandler() {
+  // get IP using webRequest
+  browser.webRequest.onCompleted.addListener(
+    (info) => {
+      const u = new URL(info.url);
+      if (info.tabId in currentIP) {
+        currentIP[info.tabId][u.hostname] = info.ip;
+      } else {
+        currentIP[info.tabId] = { [u.hostname]: info.ip };
+      }
+    },
+    {
+      urls: [],
+      types: [],
+    },
+    [],
+  );
+
   browser.runtime.onMessage.addListener((request: any, sender, sendResponse) => {
     console.log('createApiHandler-----', request, sender);
 
     if (request.method === 'GetData') {
+      const currentIPList: Array<{ domain: string; ip: string }> = [];
+      const tabId = sender.tab?.id || 0;
+      if (tabId in currentIP) {
+        for (const key in currentIP[tabId]) {
+          if (Object.prototype.hasOwnProperty.call(currentIP[tabId], key)) {
+            currentIPList.push({ domain: key, ip: currentIP[tabId][key] });
+          }
+        }
+      }
+
       const response = {
-        rules: rules.get(TABLE_NAMES.sendHeader, { enable: true }),
+        rules: rules.get(TABLE_NAMES.sendHeader),
+        enableRules: rules.get(TABLE_NAMES.sendHeader, { enable: true }),
         enable: !prefs.get('disable-all'),
+        currentIPList,
       };
 
       logger.debug('createApiHandler-----', response);
       sendResponse(response);
     }
-
 
     logger.debug('Background Receive Message', request);
     if (request.method === 'batchExecute') {
