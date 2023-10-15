@@ -32,10 +32,11 @@ const basicStyle = css`
   }
 `;
 
-console.log('content-script load.......................');
+console.log('[Header Editor] content-script load.......................');
+
 // contentScript.js
 browser.runtime.onMessage.addListener((message, sender, sendResponse) => {
-  console.log('content-script收到的消息', message);
+  console.log('[Header Editor] content-script收到的消息', message);
 
   switch (message.method) {
     case APIs.SET_PREFS:
@@ -57,7 +58,7 @@ browser.runtime.onMessage.addListener((message, sender, sendResponse) => {
 
 function getData() {
   browser.runtime.sendMessage({ greeting: '我是content-script呀，我主动发消息给后台！', method: 'GetData' }).then((response) => {
-    console.log('收到来自后台的回复', response);
+    console.log('[Header Editor] getData 收到来自后台的回复', response);
     if (response) {
       rules = response.rules || [];
       enableRules = response.enableRules || [];
@@ -72,7 +73,6 @@ function getData() {
         titleColor = 'rgba(var(--semi-gray-3), 1)';
       }
 
-      console.log('收到来自后台的回复', rules, title);
       ReactDOM.render(<Content />, app);
     }
   });
@@ -147,9 +147,7 @@ function Content() {
   }, [isDragging]);
 
   const goToOptions = () => {
-    browser.runtime.sendMessage({ url: browser.runtime.getURL('options.html'), method: APIs.OPEN_URL }).then((response) => {
-      console.log('goToSetting收到来自后台的回复', response);
-    });
+    browser.runtime.sendMessage({ url: browser.runtime.getURL('options.html'), method: APIs.OPEN_URL }).then(() => {});
     window.close();
   };
 
@@ -160,14 +158,13 @@ function Content() {
 
   const handleEnableChange = () => {
     browser.runtime.sendMessage({ key: 'disable-all', value: enable, method: APIs.SET_PREFS }).then((response) => {
-      console.log('handleEnableChange收到来自后台的回复', response);
+      console.log('[Header Editor] handleEnableChange收到来自后台的回复', response);
       enable = !enable;
       ReactDOM.render(<Content />, app);
     });
   };
 
   const onEnableChange = (value) => {
-    console.log(value);
     value.rule.enable = true;
     browser.runtime.sendMessage({ rule: value.rule, method: APIs.SAVE_RULE }).then(() => {
       Toast.success({
@@ -289,7 +286,7 @@ function Content() {
                             onChange={(checked) => {
                               item.enable = checked;
                               browser.runtime.sendMessage({ rule: item, method: APIs.SAVE_RULE }).then((response) => {
-                                console.log('切换状态，收到来自后台的回复', response);
+                                console.log('[Header Editor] 切换状态，收到来自后台的回复', response);
                                 Toast.success({
                                   content: checked ? '启用成功' : '禁用成功',
                                 });
@@ -387,28 +384,6 @@ function Content() {
 const app = document.createElement('div');
 app.id = 'headerEditor-container';
 // app.setAttribute('class', 'semi-always-dark');
-
-// // 添加鼠标事件
-// let isDragging = false;
-// let mouseOffsetX = 0;
-// let mouseOffsetY = 0;
-
-// app.addEventListener('mousedown', (event) => {
-//   isDragging = true;
-//   mouseOffsetX = event.clientX - app.offsetLeft;
-//   mouseOffsetY = event.clientY - app.offsetTop;
-// });
-
-// document.addEventListener('mousemove', (event) => {
-//   if (isDragging) {
-//     app.style.left = `${event.clientX - mouseOffsetX}px`;
-//     app.style.top = `${event.clientY - mouseOffsetY}px`;
-//   }
-// });
-
-// document.addEventListener('mouseup', () => {
-//   isDragging = false;
-// });
 
 // 将刚创建的div插入body最后
 document.body.appendChild(app);

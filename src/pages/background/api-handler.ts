@@ -25,9 +25,9 @@ function execute(request: any) {
       return Promise.resolve(rules.get(request.type, request.options));
     case APIs.SAVE_RULE:
       browser.tabs.query({ active: true, currentWindow: true }).then((tabs) => {
-        console.log('tabs', tabs);
         tabs.forEach((tab) => {
           if (tab.id) {
+            console.log('[Header Editor] 向 content-script 发送消息', { tabId: tab.id, method: APIs.SAVE_RULE, rule: request.rule });
             browser.tabs.sendMessage(tab.id, { method: APIs.SAVE_RULE, rule: request.rule });
           }
         });
@@ -37,9 +37,9 @@ function execute(request: any) {
       return rules.remove(request.type, request.id);
     case APIs.SET_PREFS:
       browser.tabs.query({ active: true, currentWindow: true }).then((tabs) => {
-        console.log('tabs', tabs);
         tabs.forEach((tab) => {
           if (tab.id) {
+            console.log('[Header Editor] 向 content-script 发送消息', { tabId: tab.id, method: APIs.SET_PREFS, key: request.key, value: request.value });
             browser.tabs.sendMessage(tab.id, { method: APIs.SET_PREFS, key: request.key, value: request.value });
           }
         });
@@ -78,9 +78,8 @@ export default function createApiHandler() {
   );
 
   browser.runtime.onMessage.addListener((request: any, sender, sendResponse) => {
-    console.log('createApiHandler-----', request, sender);
-
     if (request.method === 'GetData') {
+      console.log('[Header Editor] 收到来自 content-script 的消息', { request, sender });
       const currentIPList: Array<{ domain: string; ip: string }> = [];
       const tabId = sender.tab?.id || 0;
       if (tabId in currentIP) {
@@ -98,7 +97,7 @@ export default function createApiHandler() {
         currentIPList,
       };
 
-      logger.debug('createApiHandler-----', response);
+      console.log('[Header Editor] 返回 content-script 的数据', response);
       sendResponse(response);
     }
 
