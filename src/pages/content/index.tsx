@@ -17,7 +17,7 @@ let titleColor = 'rgba(var(--semi-gray-3), 1)';
 
 const basicStyle = css`
   position: fixed;
-  top: 20px;
+  bottom: 20px;
   right: 20px;
   z-index: 1020;
   min-width: 300px;
@@ -83,9 +83,6 @@ setTimeout(() => {
   getData();
 }, 500);
 
-// chrome://net-internals/#dns
-// https://github.com/pmarks-net/ipvfoo/blob/master/src/background.js
-
 function Content() {
   const { Meta } = Card;
 
@@ -95,7 +92,7 @@ function Content() {
   const [isDragging, setIsDragging] = useState(false);
   const divRef = useRef<HTMLDivElement>(null);
   const offsetRef = useRef<{ x: number; y: number }>({ x: 0, y: 0 });
-  const [position, setPosition] = useState({ x: window.innerWidth - 280, y: 20 });
+  const [position, setPosition] = useState({ x: window.innerWidth - 300, y: window.innerHeight - 120 });
 
   const handleMouseDown = (e: React.MouseEvent) => {
     if (e.button === 0) {
@@ -117,8 +114,8 @@ function Content() {
       const maxX = window.innerWidth - divRef.current!.offsetWidth;
       const maxY = window.innerHeight - divRef.current!.offsetHeight;
 
-      const boundedX = Math.min(Math.max(newX, 0), maxX);
-      const boundedY = Math.min(Math.max(newY, 0), maxY);
+      const boundedX = Math.min(Math.max(newX, 10), maxX);
+      const boundedY = Math.min(Math.max(newY, 10), maxY);
 
       setPosition({ x: boundedX, y: boundedY });
     }
@@ -149,10 +146,15 @@ function Content() {
     };
   }, [isDragging]);
 
-  const goToSetting = () => {
+  const goToOptions = () => {
     browser.runtime.sendMessage({ url: browser.runtime.getURL('options.html'), method: APIs.OPEN_URL }).then((response) => {
       console.log('goToSetting收到来自后台的回复', response);
     });
+    window.close();
+  };
+
+  const goToDnsSetting = () => {
+    browser.runtime.sendMessage({ url: 'chrome://net-internals/#dns', method: APIs.OPEN_URL }).then(() => {});
     window.close();
   };
 
@@ -173,13 +175,6 @@ function Content() {
       });
       getData();
     });
-  };
-
-  const goToDnsSetting = () => {
-    browser.runtime.sendMessage({ url: 'chrome://net-internals/#dns', method: APIs.OPEN_URL }).then((response) => {
-      console.log('goToSetting收到来自后台的回复', response);
-    });
-    window.close();
   };
 
   return enable ? (
@@ -219,7 +214,7 @@ function Content() {
               </article>
           }
           >
-            <IconSetting onClick={goToSetting} style={{ color: 'var(--semi-color-primary)', paddingLeft: '6px' }} />
+            <IconSetting onClick={goToOptions} style={{ color: 'var(--semi-color-primary)', paddingLeft: '6px' }} />
           </Popover>
           <Popover
             position="top"
@@ -236,6 +231,8 @@ function Content() {
             position="bottom"
             showArrow
             visible={visible}
+            onClickOutSide={() => setVisible(false)}
+            onEscKeyDown={() => setVisible(false)}
             content={
               <div>
                 <Space
@@ -264,7 +261,12 @@ function Content() {
                   />
                 </Space>
                 { enableRules.length > 1 && <Banner
-                  type="info"
+                  style={
+                    {
+                      clear: 'left',
+                    }
+                  }
+                  type="warning"
                   description="相同的规则，后面的规则会覆盖前面的规则!"
                 />
                 }
@@ -320,7 +322,7 @@ function Content() {
                   pagination={false}
                 />
                 <Space
-                  style={{ paddingTop: 10, paddingBottom: 10, float: 'left' }}
+                  style={{ paddingTop: 15, paddingBottom: 10, float: 'left' }}
                   align="center"
                 >
                   <span style={{ fontWeight: 800 }}>当前页面的网络解析
@@ -363,6 +365,8 @@ function Content() {
                   ]}
                   pagination={
                       {
+                        formatPageText: false,
+                        hoverShowPageSelect: true,
                         size: 'small',
                       }
                   }
