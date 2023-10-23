@@ -156,6 +156,11 @@ function Content() {
     window.close();
   };
 
+  const goToclearBrowserData = () => {
+    browser.runtime.sendMessage({ url: 'chrome://settings/clearBrowserData', method: APIs.OPEN_URL }).then(() => {});
+    window.close();
+  };
+
   const handleEnableChange = () => {
     browser.runtime.sendMessage({ key: 'disable-all', value: enable, method: APIs.SET_PREFS }).then((response) => {
       console.log('[Header Editor] handleEnableChange收到来自后台的回复', response);
@@ -178,7 +183,7 @@ function Content() {
     <div
       className={cx(basicStyle)}
       ref={divRef}
-      style={{ left: `${position.x}px`, top: `${position.y}px` }}
+      style={{ left: `${position.x}px`, top: `${position.y}px`, right: 'auto', bottom: 'auto' }}
       onMouseDown={handleMouseDown}
     >
       <Card
@@ -327,11 +332,12 @@ function Content() {
                   <Typography.Text
                     link={{ href: '' }}
                     onClick={goToDnsSetting}
-                    style={{
-                      float: 'right',
-                      paddingRight: 6,
-                    }}
                   >清理dns缓存
+                  </Typography.Text>
+                  <Typography.Text
+                    link={{ href: '' }}
+                    onClick={goToclearBrowserData}
+                  >清理浏览器缓存
                   </Typography.Text>
 
                 </Space>
