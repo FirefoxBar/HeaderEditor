@@ -6,7 +6,7 @@ module.exports = function (config, context) {
       continue;
     }
     const pageName = item.name.substr(18);
-    if (pageName === 'background' || pageName.indexOf('inject-') === 0 || pageName.indexOf('worker-') === 0) {
+    if (pageName === 'content' || pageName === 'background' || pageName.indexOf('inject-') === 0 || pageName.indexOf('worker-') === 0) {
       config.plugins.delete(item.name);
       console.log('Remove html entry: ' + item.name);
     }

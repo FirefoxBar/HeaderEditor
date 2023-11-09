@@ -323,6 +323,7 @@ export default class Edit extends React.Component<EditProps, EditState> {
           {isHeader && !this.state.rule.isFunction && (
             <Form.Select
               filter
+              allowCreate
               field="headerName"
               label={t('headerName')}
               optionList={(isHeaderSend ? COMMON_HEADERS.request : COMMON_HEADERS.response).map((x) => ({ label: x, value: x }))}

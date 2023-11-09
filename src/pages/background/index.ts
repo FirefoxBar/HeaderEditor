@@ -6,6 +6,8 @@ if (typeof window !== 'undefined') {
   window.IS_BACKGROUND = true;
 }
 
+console.log('background/index.ts');
+
 // 开始初始化
 createApiHandler();
 createRequestHandler();
