@@ -36,7 +36,7 @@ console.log('[Header Editor] content-script load.......................');
 
 // contentScript.js
 browser.runtime.onMessage.addListener((message, sender, sendResponse) => {
-  console.log('[Header Editor] content-script收到的消息', message);
+  // console.log('[Header Editor] content-script收到的消息', message);
 
   switch (message.method) {
     case APIs.SET_PREFS:
@@ -58,7 +58,7 @@ browser.runtime.onMessage.addListener((message, sender, sendResponse) => {
 
 function getData() {
   browser.runtime.sendMessage({ greeting: '我是content-script呀，我主动发消息给后台！', method: 'GetData' }).then((response) => {
-    console.log('[Header Editor] getData 收到来自后台的回复', response);
+    // console.log('[Header Editor] getData 收到来自后台的回复', response);
     if (response) {
       rules = response.rules || [];
       enableRules = response.enableRules || [];
@@ -163,7 +163,7 @@ function Content() {
 
   const handleEnableChange = () => {
     browser.runtime.sendMessage({ key: 'disable-all', value: enable, method: APIs.SET_PREFS }).then((response) => {
-      console.log('[Header Editor] handleEnableChange收到来自后台的回复', response);
+      // console.log('[Header Editor] handleEnableChange收到来自后台的回复', response);
       enable = !enable;
       ReactDOM.render(<Content />, app);
     });
@@ -291,7 +291,7 @@ function Content() {
                             onChange={(checked) => {
                               item.enable = checked;
                               browser.runtime.sendMessage({ rule: item, method: APIs.SAVE_RULE }).then((response) => {
-                                console.log('[Header Editor] 切换状态，收到来自后台的回复', response);
+                                // console.log('[Header Editor] 切换状态，收到来自后台的回复', response);
                                 Toast.success({
                                   content: checked ? '启用成功' : '禁用成功',
                                 });
