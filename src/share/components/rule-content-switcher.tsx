@@ -1,6 +1,6 @@
 import { ArrayField, Button, Dropdown, Form, Modal, Space } from '@douyinfe/semi-ui';
 import { IconDelete, IconPlus } from '@douyinfe/semi-icons';
-import { css } from '@emotion/css';
+import { css, cx } from '@emotion/css';
 import { useLatest } from 'ahooks';
 import React, { FC, useMemo } from 'react';
 import { RULE_TYPE } from '@/share/core/constant';
@@ -45,7 +45,9 @@ const RuleContentSwitcherEdit: FC<RuleContentSwitcherEditProps> = (props) => {
                 <Button type="tertiary" icon={<IconDelete />} onClick={remove} />
               </Space>
             ))}
-            <Button icon={<IconPlus />} type="primary" theme="solid" onClick={() => add()}>{t('add')}</Button>
+            <Button icon={<IconPlus />} type="primary" theme="solid" onClick={() => add()}>
+              {t('add')}
+            </Button>
           </div>
         )}
       </ArrayField>
@@ -58,10 +60,18 @@ interface RuleContentSwitcherProps {
   type: RULE_TYPE;
   children?: any;
   rule: Rule;
+  size?: 'small' | 'default';
 }
 
+const smallStyle = css`
+  .semi-dropdown-item {
+    padding: 4px 8px;
+    font-size: 13px;
+  }
+`;
+
 const RuleContentSwitcher: FC<RuleContentSwitcherProps> = (props) => {
-  const { add = false, type, children, rule } = props;
+  const { add = false, type, children, rule, size } = props;
 
   const newestRule = useLatest(rule);
   const key = useMemo(() => getVirtualKey(rule), [rule]);
@@ -126,15 +136,27 @@ const RuleContentSwitcher: FC<RuleContentSwitcherProps> = (props) => {
     return result;
   }, [add, value]);
 
-  if (!isEnable) {
+  if (!isEnable || menu.length === 0) {
     return null;
   }
 
-  if (![RULE_TYPE.MODIFY_SEND_HEADER, RULE_TYPE.MODIFY_RECV_HEADER, RULE_TYPE.REDIRECT].includes(type) || menu.length === 0) {
+  if (
+    ![RULE_TYPE.MODIFY_SEND_HEADER, RULE_TYPE.MODIFY_RECV_HEADER, RULE_TYPE.REDIRECT].includes(type) || rule.isFunction
+  ) {
     return null;
   }
 
-  return <Dropdown menu={menu}>{children}</Dropdown>;
+  return (
+    <Dropdown
+      className={cx({
+        [smallStyle]: size === 'small',
+      })}
+      style={{ minWidth: '120px' }}
+      menu={menu}
+    >
+      {children}
+    </Dropdown>
+  );
 };
 
 export default RuleContentSwitcher;

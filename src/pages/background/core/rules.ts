@@ -123,7 +123,11 @@ async function save(o: Rule) {
             updateCache(tableName);
             notify.other({ method: APIs.ON_EVENT, event: EVENTs.RULE_UPDATE, from: originalRule, target: existsRule });
             // Write history
-            if (prefs.get('rule-history') && [RULE_TYPE.MODIFY_RECV_HEADER, RULE_TYPE.MODIFY_SEND_HEADER, RULE_TYPE.REDIRECT].includes(o.ruleType)) {
+            if (
+              prefs.get('rule-history') &&
+              !o.isFunction &&
+              [RULE_TYPE.MODIFY_RECV_HEADER, RULE_TYPE.MODIFY_SEND_HEADER, RULE_TYPE.REDIRECT].includes(o.ruleType)
+            ) {
               const writeValue = o.ruleType === RULE_TYPE.REDIRECT ? o.action : (o.action as RULE_ACTION_OBJ).value;
               const key = `rule_switch_${getVirtualKey(o)}`;
               const engine = getLocal();
@@ -167,16 +171,18 @@ function remove(tableName: TABLE_NAMES, id: number): Promise<void> {
         updateCache(tableName);
         notify.other({ method: APIs.ON_EVENT, event: EVENTs.RULE_DELETE, table: tableName, id: Number(id) });
         // check common mark
-        getLocal().get('common_rule').then((result) => {
-          const key = `${tableName}-${id}`;
-          if (Array.isArray(result.common_rule) && result.common_rule.includes(key)) {
-            const newKeys = [...result.common_rule];
-            newKeys.splice(newKeys.indexOf(key), 1);
-            getLocal().set({
-              common_rule: newKeys,
-            });
-          }
-        });
+        getLocal()
+          .get('common_rule')
+          .then((result) => {
+            const key = `${tableName}-${id}`;
+            if (Array.isArray(result.common_rule) && result.common_rule.includes(key)) {
+              const newKeys = [...result.common_rule];
+              newKeys.splice(newKeys.indexOf(key), 1);
+              getLocal().set({
+                common_rule: newKeys,
+              });
+            }
+          });
         resolve();
       };
     });

@@ -1,7 +1,8 @@
 import React, { useEffect } from 'react';
 import { useLatest, useRequest } from 'ahooks';
-import { Button, Popover, Switch, Table } from '@douyinfe/semi-ui';
+import { Button, Popover, Spin, Switch } from '@douyinfe/semi-ui';
 import { IconBranch } from '@douyinfe/semi-icons';
+import { css, cx } from '@emotion/css';
 import Api from '@/share/pages/api';
 import { getVirtualKey, parseVirtualKey } from '@/share/core/utils';
 import type { Rule } from '@/share/core/types';
@@ -68,56 +69,56 @@ const Rules = () => {
   }
 
   return (
-    <Table
-      rowKey={VIRTUAL_KEY}
-      loading={loading}
-      dataSource={data}
-      showHeader={false}
-      size="small"
-      style={{ tableLayout: 'fixed' }}
-      columns={[
-        {
-          title: 'enable',
-          dataIndex: 'enable',
-          className: 'cell-enable',
-          align: 'center',
-          width: 30,
-          render: (value: boolean, item: Rule) => (
-            <div className="switch-container">
-              <Switch
-                size="small"
-                checked={value}
-                onChange={(checked) => {
-                  item.enable = checked;
-                  return Api.saveRule(item);
-                }}
-              />
-            </div>
-          ),
-        },
-        {
-          title: 'name',
-          dataIndex: 'name',
-          render: (value: string, item: Rule) => (
+    <Spin spinning={loading}>
+      <div className={css`
+        display: flex;
+        flex-direction: column;
+
+        > .item {
+          display: flex;
+          flex-direction: row;
+          gap: 8px;
+          align-items: center;
+          background-color: #fff;
+          border-top: 1px solid var(--semi-color-border);
+          padding-left: 8px;
+          padding-right: 8px;
+
+          > * {
+            flex-grow: 0;
+            flex-shrink: 0;
+          }
+
+          > .name {
+            flex-grow: 1;
+            flex-shrink: 1;
+            font-size: 14px;
+            padding-top: 8px;
+            padding-bottom: 8px;
+          }
+        }
+      `}
+      >
+        {data.map((item) => (
+          <div className="item" key={item[VIRTUAL_KEY]}>
+            <Switch
+              size="small"
+              checked={item.enable}
+              onChange={(checked) => Api.saveRule({
+                ...item,
+                enable: checked,
+              })}
+            />
             <Popover showArrow position="top" content={<RuleDetail rule={item} />} style={{ maxWidth: '300px' }}>
-              <div className={textEllipsis}>{value}</div>
+              <div className={cx(textEllipsis, 'name')}>{item.name}</div>
             </Popover>
-          ),
-        },
-        {
-          title: 'action',
-          dataIndex: 'action',
-          className: 'cell-action',
-          width: 60,
-          render: (_, item: Rule) => (
-            <RuleContentSwitcher rule={item} type={item.ruleType} add={false}>
-              <Button theme="borderless" type="tertiary" icon={<IconBranch />} />
+            <RuleContentSwitcher rule={item} type={item.ruleType} size="small" add={false}>
+              <Button theme="borderless" type="tertiary" size="small" icon={<IconBranch />} />
             </RuleContentSwitcher>
-          ),
-        },
-      ]}
-      pagination={false}
-    />
+          </div>
+        ))}
+      </div>
+    </Spin>
   );
 };
 

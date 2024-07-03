@@ -62,11 +62,11 @@
     "ice.js": "^2.0.0",
     "lint-staged": "^13.2.2",
     "node-fetch": "^3.3.1",
-    "prettier": "^1.19.1",
+    "prettier": "^3.3.2",
     "publish-release": "^1.6.0",
     "sign-addon": "^6.0.0",
     "stylelint": "^13.7.2",
-    "typescript": "^3.7.3",
+    "typescript": "^4.9.5",
     "webpack-bundle-analyzer": "^4.8.0"
   },
   "husky": {
