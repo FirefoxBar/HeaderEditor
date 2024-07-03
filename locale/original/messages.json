@@ -320,6 +320,22 @@
     "message": "Rules take no effect on Header Editor",
     "description": "If checked, all rules will take no effect on pages in Header Editor"
   },
+  "rule-switch": {
+    "message": "Enable rule quick switching",
+    "description": "Switch rule content with a menu"
+  },
+  "rule-history": {
+    "message": "Automatically record rule history",
+    "description": "If checked, rule history will automatically record to the switch list"
+  },
+  "quick-edit": {
+    "message": "Quick edit (on popup panel)",
+    "description": "Display edit button on the popup panel"
+  },
+  "auto-enable-modify-body": {
+    "message": "Modify body has been automatically turned on, please turn it off manually if you don't need it",
+    "description": "A message"
+  },
   "save": {
     "message": "Save",
     "description": "Button to save a rule"

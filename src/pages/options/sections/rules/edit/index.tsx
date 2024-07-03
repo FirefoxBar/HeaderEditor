@@ -234,7 +234,7 @@ export default class Edit extends React.Component<EditProps, EditState> {
     if (rule.ruleType === RULE_TYPE.MODIFY_RECV_BODY) {
       if (!prefs.get('modify-body')) {
         prefs.set('modify-body', true);
-        Toast.info('已自动开启选项 - 修改响应体，若不需要请手动关闭');
+        Toast.info(t('auto-enable-modify-body'));
       }
     }
 
