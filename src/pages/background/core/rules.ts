@@ -1,10 +1,11 @@
 import { cloneDeep } from 'lodash-es';
 import { convertToRule, convertToBasicRule, isMatchUrl, upgradeRuleFormat, initRule } from '@/share/core/rule-utils';
 import { getLocal } from '@/share/core/storage';
-import { getTableName } from '@/share/core/utils';
-import { APIs, EVENTs, IS_MATCH, TABLE_NAMES, TABLE_NAMES_ARR } from '@/share/core/constant';
-import type { InitdRule, Rule, RuleFilterOptions } from '@/share/core/types';
+import { getTableName, getVirtualKey } from '@/share/core/utils';
+import { APIs, EVENTs, IS_MATCH, RULE_TYPE, TABLE_NAMES, TABLE_NAMES_ARR } from '@/share/core/constant';
+import type { InitdRule, RULE_ACTION_OBJ, Rule, RuleFilterOptions } from '@/share/core/types';
 import notify from '@/share/core/notify';
+import { prefs } from '@/share/core/prefs';
 import { getDatabase } from './db';
 
 const cache: { [key: string]: null | InitdRule[] } = {};
@@ -121,6 +122,19 @@ async function save(o: Rule) {
           req.onsuccess = () => {
             updateCache(tableName);
             notify.other({ method: APIs.ON_EVENT, event: EVENTs.RULE_UPDATE, from: originalRule, target: existsRule });
+            // Write history
+            if (prefs.get('rule-history') && [RULE_TYPE.MODIFY_RECV_HEADER, RULE_TYPE.MODIFY_SEND_HEADER, RULE_TYPE.REDIRECT].includes(o.ruleType)) {
+              const writeValue = o.ruleType === RULE_TYPE.REDIRECT ? o.action : (o.action as RULE_ACTION_OBJ).value;
+              const key = `rule_switch_${getVirtualKey(o)}`;
+              const engine = getLocal();
+              engine.get(key).then((result) => {
+                const arr = Array.isArray(result[key]) ? [...result[key]] : [];
+                if (!arr.includes(writeValue)) {
+                  arr.push(writeValue);
+                  engine.set({ [key]: arr });
+                }
+              });
+            }
             resolve(rule);
           };
         };

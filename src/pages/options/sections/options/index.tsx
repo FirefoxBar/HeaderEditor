@@ -22,6 +22,8 @@ const checkPrefs: { [key: string]: string } = {
   'include-headers': t('include_header_in_custom_function'),
   'modify-body': t('modify_body'),
   'is-debug': t('debug_mode_enable'),
+  'rule-switch': t('rule-switch'),
+  'rule-history': t('rule-history'),
 };
 
 interface SelectItem {

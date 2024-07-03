@@ -76,7 +76,7 @@ class Prefs {
       return value;
     }
   }
-  get(key: string, defaultValue?: any) {
+  get<T = any>(key: string, defaultValue?: T): T | undefined {
     if (key in this.boundMethods) {
       if (key in this.boundWrappers) {
         return this.boundWrappers[key];
@@ -95,6 +95,7 @@ class Prefs {
       return defaultPrefValue[key];
     }
     console.warn(`No default preference for ${key}`);
+    return defaultValue;
   }
   getAll() {
     return { ...this.values };

@@ -9,6 +9,7 @@ import useStorage from '@/share/hooks/use-storage';
 import Api from '@/share/pages/api';
 import { getVirtualKey, t } from '@/share/core/utils';
 import { Toast } from '@/share/pages/toast';
+import useOption from '../hooks/use-option';
 import type { DropdownProps } from '@douyinfe/semi-ui/lib/es/dropdown';
 
 interface RuleContentSwitcherEditProps {
@@ -66,6 +67,8 @@ const RuleContentSwitcher: FC<RuleContentSwitcherProps> = (props) => {
   const key = useMemo(() => getVirtualKey(rule), [rule]);
   const { value, setValue } = useStorage<string[]>(`rule_switch_${key}`, []);
 
+  const isEnable = useOption('rule-switch', false);
+
   const menu = useMemo(() => {
     const updateRule = async (k: string, v: any) => {
       const newRule = { ...newestRule.current };
@@ -122,6 +125,10 @@ const RuleContentSwitcher: FC<RuleContentSwitcherProps> = (props) => {
 
     return result;
   }, [add, value]);
+
+  if (!isEnable) {
+    return null;
+  }
 
   if (![RULE_TYPE.MODIFY_SEND_HEADER, RULE_TYPE.MODIFY_RECV_HEADER, RULE_TYPE.REDIRECT].includes(type) || menu.length === 0) {
     return null;
