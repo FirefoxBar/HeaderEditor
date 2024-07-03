@@ -38,6 +38,7 @@ export const defaultPrefValue: PrefValue = {
   'dark-mode': 'auto',
   'rule-switch': true,
   'rule-history': true,
+  'quick-edit': true,
 };
 
 export enum APIs {

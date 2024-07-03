@@ -24,6 +24,7 @@ const checkPrefs: { [key: string]: string } = {
   'is-debug': t('debug_mode_enable'),
   'rule-switch': t('rule-switch'),
   'rule-history': t('rule-history'),
+  'quick-edit': t('quick-edit'),
 };
 
 interface SelectItem {

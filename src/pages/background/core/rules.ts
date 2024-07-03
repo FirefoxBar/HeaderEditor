@@ -128,7 +128,7 @@ async function save(o: Rule) {
               !o.isFunction &&
               [RULE_TYPE.MODIFY_RECV_HEADER, RULE_TYPE.MODIFY_SEND_HEADER, RULE_TYPE.REDIRECT].includes(o.ruleType)
             ) {
-              const writeValue = o.ruleType === RULE_TYPE.REDIRECT ? o.action : (o.action as RULE_ACTION_OBJ).value;
+              const writeValue = o.ruleType === RULE_TYPE.REDIRECT ? o.to : (o.action as RULE_ACTION_OBJ).value;
               const key = `rule_switch_${getVirtualKey(o)}`;
               const engine = getLocal();
               engine.get(key).then((result) => {

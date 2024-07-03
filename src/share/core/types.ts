@@ -59,4 +59,7 @@ export interface PrefValue {
   'modify-body': boolean; // Enable modify received body feature
   'is-debug': boolean;
   'dark-mode': 'auto' | 'on' | 'off';
+  'rule-switch': boolean; // Enable rule quick switch
+  'rule-history': boolean; // Auto save rule history into quick switch
+  'quick-edit': boolean; // Quick edit rule in popup panel
 }

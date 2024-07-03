@@ -12,6 +12,7 @@ import RuleDetail from '@/share/components/rule-detail';
 import notify from '@/share/core/notify';
 import RuleContentSwitcher from '@/share/components/rule-content-switcher';
 import { textEllipsis } from '@/share/pages/styles';
+import QuickEdit from './quick-edit';
 
 const Rules = () => {
   const { keys } = useMarkCommon('rule');
@@ -112,9 +113,12 @@ const Rules = () => {
             <Popover showArrow position="top" content={<RuleDetail rule={item} />} style={{ maxWidth: '300px' }}>
               <div className={cx(textEllipsis, 'name')}>{item.name}</div>
             </Popover>
-            <RuleContentSwitcher rule={item} type={item.ruleType} size="small" add={false}>
-              <Button theme="borderless" type="tertiary" size="small" icon={<IconBranch />} />
-            </RuleContentSwitcher>
+            <div className="actions">
+              <QuickEdit rule={item} />
+              <RuleContentSwitcher rule={item} type={item.ruleType} size="small" add={false}>
+                <Button theme="borderless" type="tertiary" size="small" icon={<IconBranch />} />
+              </RuleContentSwitcher>
+            </div>
           </div>
         ))}
       </div>
