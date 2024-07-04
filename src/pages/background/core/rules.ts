@@ -94,6 +94,25 @@ function filter(fromRules: InitdRule[], options: RuleFilterOptions) {
   return rules;
 }
 
+function saveRuleHistory(rule: Rule) {
+  if (
+    prefs.get('rule-history') &&
+    !rule.isFunction &&
+    [RULE_TYPE.MODIFY_RECV_HEADER, RULE_TYPE.MODIFY_SEND_HEADER, RULE_TYPE.REDIRECT].includes(rule.ruleType)
+  ) {
+    const writeValue = rule.ruleType === RULE_TYPE.REDIRECT ? rule.to : (rule.action as RULE_ACTION_OBJ).value;
+    const key = `rule_switch_${getVirtualKey(rule)}`;
+    const engine = getLocal();
+    engine.get(key).then((result) => {
+      const arr = Array.isArray(result[key]) ? [...result[key]] : [];
+      if (!arr.includes(writeValue)) {
+        arr.push(writeValue);
+        engine.set({ [key]: arr });
+      }
+    });
+  }
+}
+
 async function save(o: Rule) {
   const tableName = getTableName(o.ruleType);
   if (!tableName) {
@@ -123,22 +142,7 @@ async function save(o: Rule) {
             updateCache(tableName);
             notify.other({ method: APIs.ON_EVENT, event: EVENTs.RULE_UPDATE, from: originalRule, target: existsRule });
             // Write history
-            if (
-              prefs.get('rule-history') &&
-              !o.isFunction &&
-              [RULE_TYPE.MODIFY_RECV_HEADER, RULE_TYPE.MODIFY_SEND_HEADER, RULE_TYPE.REDIRECT].includes(o.ruleType)
-            ) {
-              const writeValue = o.ruleType === RULE_TYPE.REDIRECT ? o.to : (o.action as RULE_ACTION_OBJ).value;
-              const key = `rule_switch_${getVirtualKey(o)}`;
-              const engine = getLocal();
-              engine.get(key).then((result) => {
-                const arr = Array.isArray(result[key]) ? [...result[key]] : [];
-                if (!arr.includes(writeValue)) {
-                  arr.push(writeValue);
-                  engine.set({ [key]: arr });
-                }
-              });
-            }
+            saveRuleHistory(originalRule);
             resolve(rule);
           };
         };
