@@ -88,7 +88,7 @@
 		"message": "Enable debug mode",
 		"description": "Enable debug mode"
 	},
-	"debug_mode_help": {
+	"debug_mode_enable_help": {
 		"message": "When debug mode is turned on, some logs will be printed in the background page",
 		"description": "Debug mode description"
 	},
@@ -111,6 +111,10 @@
 	"display_common_header": {
 		"message": "Display common header",
 		"description": "An option to enable header auto-complete when editing rules"
+	},
+	"display_common_header_help": {
+		"message": "When editing rules, display common request & response header names",
+		"description": "Help text for display_common_header_help option"
 	},
 	"download": {
 		"message": "Download",
