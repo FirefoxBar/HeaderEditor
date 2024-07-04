@@ -152,7 +152,7 @@ export default class Options extends React.Component<OptionsProps, OptionsState>
                   main={
                     <div>
                       <Typography.Text strong style={{ display: 'block' }}>{label}</Typography.Text>
-                      {help && <Typography.Text type="quaternary">{help}</Typography.Text>}
+                      {help && <Typography.Text type="quaternary" style={{ fontSize: '12px' }}>{help}</Typography.Text>}
                     </div>
                   }
                   extra={
