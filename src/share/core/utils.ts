@@ -129,9 +129,15 @@ export function canAccess(url?: string) {
   return true;
 }
 
-export function t(key: string, params?: any) {
+export function t(key: string, params?: any, defaultValue?: string) {
   const s = browser.i18n.getMessage(key, params);
-  return s || key;
+  if (s) {
+    return s;
+  }
+  if (typeof defaultValue !== 'undefined') {
+    return defaultValue;
+  }
+  return key;
 }
 
 export function getDomain(url: string) {

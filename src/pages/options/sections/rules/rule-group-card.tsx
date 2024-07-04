@@ -76,7 +76,7 @@ const RuleGroupCard = (props: RuleCardProps) => {
       className: 'cell-enable',
       dataIndex: 'enable',
       align: 'center',
-      width: 60,
+      width: 80,
       render: (value: boolean, item: InitdRule) => (
         <div className="switch-container">
           <Switch size="small" checked={value} onChange={(checked) => toggleRule(item, checked)} />
