@@ -11,7 +11,7 @@
 		"message": "Auto",
 		"description": "Auto detect dark mode"
 	},
-	"auto-enable-modify-body": {
+	"auto_enable_modify_body": {
 		"message": "Modify body has been automatically turned on, please turn it off manually if you don't need it",
 		"description": "A message"
 	},
@@ -214,7 +214,11 @@
 	},
 	"include_header_in_custom_function": {
 		"message": "Include request headers in custom function",
-		"description": "An option to enable this feature, for more info, see wiki in GitHub"
+		"description": "An option to enable this feature"
+	},
+	"include_header_in_custom_function_help": {
+		"message": "Pass the request header into the custom function that processes the response header, it may reduce some performance",
+		"description": "Help text for include_header_in_custom_function option"
 	},
 	"manage": {
 		"message": "Manage",
@@ -260,6 +264,10 @@
 		"message": "Modify response body (only supports Firefox)",
 		"description": "Option to enable/disable modify body"
 	},
+	"modify_body_help": {
+		"message": "Allow custom function modify response body, it may reduce some performance",
+		"description": "Help text for modify_body option"
+	},
 	"name": {
 		"message": "Name",
 		"description": "Label for name in modal"
@@ -280,9 +288,13 @@
 		"message": "Pack up or unfurl group",
 		"description": "Button to pack up or unfurl a group"
 	},
-	"quick-edit": {
-		"message": "Quick edit (on popup panel)",
+	"quick_edit": {
+		"message": "Quick edit",
 		"description": "Display edit button on the popup panel"
+	},
+	"quick_edit_help": {
+		"message": "Display edit button on the popup panel",
+		"description": "Help text for quick_edit option"
 	},
 	"redirectTo": {
 		"message": "Redirect to",
@@ -296,14 +308,6 @@
 		"message": "Rename",
 		"description": "Rename group"
 	},
-	"rule-history": {
-		"message": "Automatically record rule history",
-		"description": "If checked, rule history will automatically record to the switch list"
-	},
-	"rule-switch": {
-		"message": "Enable rule quick switching",
-		"description": "Switch rule content with a menu"
-	},
 	"ruleType": {
 		"message": "Rule type",
 		"description": "Label for rule type in modal"
@@ -311,6 +315,14 @@
 	"rule_cancel": {
 		"message": "Cancel request",
 		"description": "Cancel request option in modal"
+	},
+	"rule_history": {
+		"message": "Automatically record rule history",
+		"description": "If checked, rule history will automatically record to the switch list"
+	},
+	"rule_history_help": {
+		"message": "If checked, rule history will automatically record to the switch list",
+		"description": "Help text for rule_history option"
 	},
 	"rule_list": {
 		"message": "Rules list",
@@ -332,9 +344,21 @@
 		"message": "Redirect request",
 		"description": "Redirect option in modal"
 	},
+	"rule_switch": {
+		"message": "Enable rule quick switching",
+		"description": "Use the menu to switch rule content"
+	},
+	"rule_switch_help": {
+		"message": "Use the menu to switch rule content",
+		"description": "Help text for rule_switch option"
+	},
 	"rules_no_effect_for_he": {
 		"message": "Rules take no effect on Header Editor",
 		"description": "If checked, all rules will take no effect on pages in Header Editor"
+	},
+	"rules_no_effect_for_he_help": {
+		"message": "If checked, all rules will take no effect on pages in Header Editor",
+		"description": "Help text for rules_no_effect_for_he option"
 	},
 	"save": {
 		"message": "Save",
