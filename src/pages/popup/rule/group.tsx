@@ -5,16 +5,23 @@ import React from 'react';
 import Api from '@/share/pages/api';
 import useMarkCommon from '@/share/hooks/use-mark-common';
 import { t } from '@/share/core/utils';
+import { Toast } from '@/share/pages/toast';
 
 const toggleGroup = async (name: string, target: boolean) => {
   const rules = flatten(Object.values(await Api.getAllRules()));
   const toUpdate = rules.filter((x) => x.group === name);
-  return Promise.all(
-    toUpdate.map((x) => {
-      x.enable = target;
-      return Api.saveRule(x);
-    }),
-  );
+  try {
+    await Promise.all(
+      toUpdate.map((x) => {
+        x.enable = target;
+        return Api.saveRule(x);
+      }),
+    );
+    Toast().success(t('switch_success'));
+  } catch (e) {
+    console.error(e);
+    Toast().error(e.message);
+  }
 };
 
 const Group = () => {
