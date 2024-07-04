@@ -63,8 +63,8 @@ const Options = () => {
 
   useEffect(() => {
     // 小屏幕主动收起侧边栏
-    if (!responsive.lg && getNavCollapse()) {
-      setNavCollapse(false);
+    if (!responsive.lg && !getNavCollapse()) {
+      setNavCollapse(true);
     }
   }, [responsive.lg]);
 
