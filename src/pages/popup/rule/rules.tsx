@@ -2,7 +2,7 @@ import React, { useEffect } from 'react';
 import { useLatest, useRequest } from 'ahooks';
 import { Button, Popover, Spin, Switch } from '@douyinfe/semi-ui';
 import { IconBranch } from '@douyinfe/semi-icons';
-import { css, cx } from '@emotion/css';
+import { cx } from '@emotion/css';
 import Api from '@/share/pages/api';
 import { getVirtualKey, parseVirtualKey } from '@/share/core/utils';
 import type { Rule } from '@/share/core/types';
@@ -71,35 +71,7 @@ const Rules = () => {
 
   return (
     <Spin spinning={loading}>
-      <div className={css`
-        display: flex;
-        flex-direction: column;
-
-        > .item {
-          display: flex;
-          flex-direction: row;
-          gap: 8px;
-          align-items: center;
-          background-color: #fff;
-          border-top: 1px solid var(--semi-color-border);
-          padding-left: 8px;
-          padding-right: 8px;
-
-          > * {
-            flex-grow: 0;
-            flex-shrink: 0;
-          }
-
-          > .name {
-            flex-grow: 1;
-            flex-shrink: 1;
-            font-size: 14px;
-            padding-top: 8px;
-            padding-bottom: 8px;
-          }
-        }
-      `}
-      >
+      <div className="item-block">
         {data.map((item) => (
           <div className="item" key={item[VIRTUAL_KEY]}>
             <Switch

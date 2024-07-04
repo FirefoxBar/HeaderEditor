@@ -17,56 +17,46 @@ interface OptionsState {
 }
 
 const prefItems: {
-  [key: string]: { label: string; help: string; type: 'switch' | 'select'; optionList?: Array<{ label: string; value: string }> };
+  [key: string]: { langKey: string; type: 'switch' | 'select'; optionList?: Array<{ label: string; value: string }> };
 } = {
   'manage-collapse-group': {
-    label: t('manage_collapse_group'),
-    help: '',
+    langKey: 'manage_collapse_group',
     type: 'switch',
   },
   'exclude-he': {
-    label: t('rules_no_effect_for_he'),
-    help: '',
+    langKey: 'rules_no_effect_for_he',
     type: 'switch',
   },
   'show-common-header': {
-    label: t('display_common_header'),
-    help: '',
+    langKey: 'display_common_header',
     type: 'switch',
   },
   'include-headers': {
-    label: t('include_header_in_custom_function'),
-    help: t('include_header_in_custom_function_help'),
+    langKey: 'include_header_in_custom_function',
     type: 'switch',
   },
   'modify-body': {
-    label: t('modify_body'),
-    help: t('modify_body_help'),
+    langKey: 'modify_body',
     type: 'switch',
   },
   'is-debug': {
-    label: t('debug_mode_enable'),
-    help: t('debug_mode_enable_help'),
+    langKey: 'debug_mode_enable',
     type: 'switch',
   },
   'rule-switch': {
-    label: t('rule_switch'),
-    help: t('rule_switch_help'),
+    langKey: 'rule_switch',
     type: 'switch',
   },
   'rule-history': {
-    label: t('rule_history'),
-    help: t('rule_history_help'),
+    langKey: 'rule_history',
     type: 'switch',
   },
   'quick-edit': {
-    label: t('quick_edit'),
-    help: t('quick_edit_help'),
+    langKey: 'quick_edit',
     type: 'switch',
   },
   'dark-mode': {
-    label: t('dark_mode'),
-    help: t('dark_mode_help'),
+    langKey: 'dark_mode',
     type: 'select',
     optionList: [
       {
@@ -154,13 +144,15 @@ export default class Options extends React.Component<OptionsProps, OptionsState>
             dataSource={allPrefs}
             renderItem={(key) => {
               const item = prefItems[key];
+              const label = t(item.langKey);
+              const help = t(`${item.langKey}_help`, undefined, '');
               return (
                 <List.Item
                   key={key}
                   main={
                     <div>
-                      <Typography.Text strong style={{ display: 'block' }}>{item.label}</Typography.Text>
-                      {item.help && <Typography.Text type="quaternary">{item.help}</Typography.Text>}
+                      <Typography.Text strong style={{ display: 'block' }}>{label}</Typography.Text>
+                      {help && <Typography.Text type="quaternary">{help}</Typography.Text>}
                     </div>
                   }
                   extra={
