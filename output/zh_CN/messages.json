@@ -11,6 +11,10 @@
 		"message": "自动",
 		"description": "Auto detect dark mode"
 	},
+	"auto_enable_modify_body": {
+		"message": "已自动开启“修改响应体”，如不需要请手动关闭",
+		"description": "A message"
+	},
 	"batch_delete": {
 		"message": "批量删除",
 		"description": "Button to delete multiple rules"
@@ -84,8 +88,8 @@
 		"message": "开启调试模式",
 		"description": "Enable debug mode"
 	},
-	"debug_mode_help": {
-		"message": "当调试模式开启时，一些日志将会打印在背景页",
+	"debug_mode_enable_help": {
+		"message": "开启“调试模式”后，将会在背景页面打印一些日志",
 		"description": "Debug mode description"
 	},
 	"delete": {
@@ -107,6 +111,10 @@
 	"display_common_header": {
 		"message": "编辑时显示常用头",
 		"description": "An option to enable header auto-complete when editing rules"
+	},
+	"display_common_header_help": {
+		"message": "在编辑规则时，显示常用的请求头和响应头",
+		"description": "Help text for display_common_header_help option"
 	},
 	"download": {
 		"message": "下载",
@@ -210,7 +218,11 @@
 	},
 	"include_header_in_custom_function": {
 		"message": "在自定义函数中包含请求头",
-		"description": "An option to enable this feature, for more info, see wiki in GitHub"
+		"description": "An option to enable this feature"
+	},
+	"include_header_in_custom_function_help": {
+		"message": "向处理响应头的自定义函数中传入请求头，开启后可能会降低性能",
+		"description": "Help text for include_header_in_custom_function option"
 	},
 	"manage": {
 		"message": "管理",
@@ -256,6 +268,10 @@
 		"message": "修改响应体（仅支持Firefox）",
 		"description": "Option to enable/disable modify body"
 	},
+	"modify_body_help": {
+		"message": "允许自定义函数修改响应体，开启后可能会降低性能",
+		"description": "Help text for modify_body option"
+	},
 	"name": {
 		"message": "名称",
 		"description": "Label for name in modal"
@@ -275,6 +291,14 @@
 	"pack_up_or_unfurl": {
 		"message": "收起/展开分组",
 		"description": "Button to pack up or unfurl a group"
+	},
+	"quick_edit": {
+		"message": "快捷编辑",
+		"description": "Display edit button on the popup panel"
+	},
+	"quick_edit_help": {
+		"message": "在弹出面板上显示编辑按钮",
+		"description": "Help text for quick_edit option"
 	},
 	"redirectTo": {
 		"message": "重定向至",
@@ -296,6 +320,14 @@
 		"message": "阻止请求",
 		"description": "Cancel request option in modal"
 	},
+	"rule_history": {
+		"message": "自动记录规则历史",
+		"description": "If checked, rule history will automatically record to the switch list"
+	},
+	"rule_history_help": {
+		"message": "开启后，规则历史将会被自动记录于快捷切换列表中",
+		"description": "Help text for rule_history option"
+	},
 	"rule_list": {
 		"message": "规则列表",
 		"description": "Title of the rules list"
@@ -316,9 +348,21 @@
 		"message": "重定向请求",
 		"description": "Redirect option in modal"
 	},
+	"rule_switch": {
+		"message": "开启规则快捷切换",
+		"description": "Use the menu to switch rule content"
+	},
+	"rule_switch_help": {
+		"message": "通过菜单快捷切换规则内容",
+		"description": "Help text for rule_switch option"
+	},
 	"rules_no_effect_for_he": {
 		"message": "规则对 Header Editor 无效",
 		"description": "If checked, all rules will take no effect on pages in Header Editor"
+	},
+	"rules_no_effect_for_he_help": {
+		"message": "开启后，所有规则将不会对 Header Editor 自身的页面生效",
+		"description": "Help text for rules_no_effect_for_he option"
 	},
 	"save": {
 		"message": "保存",
