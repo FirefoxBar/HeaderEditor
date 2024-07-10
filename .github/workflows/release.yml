@@ -50,5 +50,5 @@ jobs:
     - name: Release
       env:
         GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-        SERVER_TOKEN: ${{ secrets.SNAPSHOT_TOKEN }}
+        TOKEN: ${{ secrets.SNAPSHOT_TOKEN }}
       run: npm run release
