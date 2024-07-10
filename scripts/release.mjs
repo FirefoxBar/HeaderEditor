@@ -1,4 +1,4 @@
-import { readFile, readdir, stat } from 'fs/promises';
+import { readFile, readdir, access, constants } from 'fs/promises';
 import { join } from 'path';
 import { createHash } from 'crypto';
 import { Blob } from 'buffer';
@@ -50,21 +50,24 @@ async function main() {
       continue;
     }
     const fullPath = join(_path.release, file);
-    const statResult = await stat(fullPath);
-    if (statResult.isFile()) {
-      const fileContent = await readFile(fullPath);
-      const id = await readFile(join(_path.release, file + '-id.txt'), {
-        encoding: 'utf8',
-      });
-      assets.push({
-        id,
-        name: file,
-        path: fullPath,
-        hash: hash(fileContent),
-        content: fileContent,
-        url: `https://github.com/${repo}/releases/download/${tagName}/${file}`
-      });
+    try {
+      await access(fullPath, constants.R_OK);
+    } catch (e) {
+      // access file failed, skip it
+      continue;
     }
+    const fileContent = await readFile(fullPath);
+    const id = await readFile(join(_path.release, file + '-id.txt'), {
+      encoding: 'utf8',
+    });
+    assets.push({
+      id,
+      name: file,
+      path: fullPath,
+      hash: hash(fileContent),
+      content: fileContent,
+      url: `https://github.com/${repo}/releases/download/${tagName}/${file}`
+    });
   }
 
   // Check if release is exists
