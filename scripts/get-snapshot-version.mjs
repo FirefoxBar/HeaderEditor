@@ -15,15 +15,14 @@ async function main() {
   // Get latest release version
   const gitHubToken = process.env.GITHUB_TOKEN;
   const gitHubBaseURL = process.env.GITHUB_API_URL + '/repos/' + process.env.GITHUB_REPOSITORY;
-  const latestReleaseResp = await axios.get(gitHubBaseURL + '/releases/latest', {
+  const latestRelease = await axios.get(gitHubBaseURL + '/releases/latest', {
     headers: {
       'Accept': 'application/vnd.github+json',
       'Authorization': 'Bearer ' + gitHubToken,
       'X-GitHub-Api-Version': '2022-11-28',
     }
   });
-  const latestRelease = await latestReleaseResp.json();
-  const versionPrefix = latestRelease.tag_name.replace(/^v/, '');
+  const versionPrefix = latestRelease.data.tag_name.replace(/^v/, '');
 
   // Get remote version
   const params = new URLSearchParams();
