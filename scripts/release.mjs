@@ -145,7 +145,7 @@ async function main() {
   await axios.post('https://ext.firefoxcn.net/api/?action=release&token=' + token, {
     name: 'header-editor',
     version,
-    assets: notifyAssets,
+    assets: JSON.stringify(notifyAssets),
   });
 }
 
