@@ -17,10 +17,11 @@ const dist = join(root, 'dist');
 const extension = readJSONSync(join(root, 'extension.json'));
 const manifest = readJSONSync(join(dist, 'manifest.json'));
 
-const pack = join(root, 'temp/dist-pack');
-const release = join(root, 'temp/release');
+const temp = join(root, 'temp');
+const pack = join(temp, 'dist-pack');
+const release = join(temp, 'release');
 
 export const version = manifest.version;
 export const resolve = join;
-export const path = { root, dist, pack, release };
+export const path = { temp, root, dist, pack, release };
 export { extension };

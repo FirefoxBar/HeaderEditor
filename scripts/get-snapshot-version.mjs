@@ -1,4 +1,4 @@
-import fetch from 'node-fetch';
+import axios from 'axios';
 import { readFile, mkdir, writeFile } from 'fs/promises';
 import { join, dirname } from 'path';
 import { fileURLToPath } from 'url';
@@ -8,7 +8,6 @@ const __dirname = dirname(__filename);
 
 async function main() {
   const token = process.env.TOKEN;
-
   if (!token) {
     return;
   }
@@ -16,7 +15,7 @@ async function main() {
   // Get latest release version
   const gitHubToken = process.env.GITHUB_TOKEN;
   const gitHubBaseURL = process.env.GITHUB_API_URL + '/repos/' + process.env.GITHUB_REPOSITORY;
-  const latestReleaseResp = await fetch(gitHubBaseURL + '/releases/latest', {
+  const latestReleaseResp = await axios.get(gitHubBaseURL + '/releases/latest', {
     headers: {
       'Accept': 'application/vnd.github+json',
       'Authorization': 'Bearer ' + gitHubToken,
@@ -28,12 +27,13 @@ async function main() {
 
   // Get remote version
   const params = new URLSearchParams();
+  params.append('action', 'snapshot');
   params.append('name', 'header-editor');
   params.append('ver', versionPrefix);
   params.append('token', token);
 
-  const resp = await fetch('https://ext.firefoxcn.net/api/snapshot.php?' + params.toString());
-  const text = await resp.text();
+  const resp = await axios.get('https://ext.firefoxcn.net/api/?' + params.toString());
+  const text = resp.data;
 
   const filePath = join(__dirname, '../temp/version.txt');
   if (/^(\d+)$/.test(text)) {
