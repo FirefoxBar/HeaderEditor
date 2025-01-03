@@ -6,6 +6,7 @@ import { APIs, EVENTs, IS_MATCH, RULE_TYPE, TABLE_NAMES, TABLE_NAMES_ARR } from 
 import type { InitdRule, RULE_ACTION_OBJ, Rule, RuleFilterOptions } from '@/share/core/types';
 import notify from '@/share/core/notify';
 import { prefs } from '@/share/core/prefs';
+import emitter from '@/share/core/emitter';
 import { getDatabase } from './db';
 
 const cache: { [key: string]: null | InitdRule[] } = {};
@@ -113,7 +114,7 @@ function saveRuleHistory(rule: Rule) {
   }
 }
 
-async function save(o: Rule) {
+async function save(o: Rule): Promise<Rule> {
   const tableName = getTableName(o.ruleType);
   if (!tableName) {
     throw new Error(`Unknown type ${o.ruleType}`);
@@ -143,6 +144,7 @@ async function save(o: Rule) {
             notify.other({ method: APIs.ON_EVENT, event: EVENTs.RULE_UPDATE, from: originalRule, target: existsRule });
             // Write history
             saveRuleHistory(originalRule);
+            emitter.emit(emitter.INNER_RULE_UPDATE, { from: originalRule, target: existsRule });
             resolve(rule);
           };
         };
@@ -158,6 +160,7 @@ async function save(o: Rule) {
           // @ts-ignore
           rule.id = event.target.result;
           notify.other({ method: APIs.ON_EVENT, event: EVENTs.RULE_UPDATE, from: null, target: rule });
+          emitter.emit(emitter.INNER_RULE_UPDATE, { from: null, target: rule });
           resolve(rule);
         };
       }
@@ -174,6 +177,7 @@ function remove(tableName: TABLE_NAMES, id: number): Promise<void> {
       request.onsuccess = () => {
         updateCache(tableName);
         notify.other({ method: APIs.ON_EVENT, event: EVENTs.RULE_DELETE, table: tableName, id: Number(id) });
+        emitter.emit(emitter.INNER_RULE_REMOVE, { table: tableName, id: Number(id) });
         // check common mark
         getLocal()
           .get('common_rule')
@@ -202,6 +206,10 @@ function get(type: TABLE_NAMES, options?: RuleFilterOptions) {
   return options ? filter(all, options) : all;
 }
 
+function getAll() {
+  return cache;
+}
+
 function init() {
   setTimeout(() => {
     const queue: Array<Promise<void>> = TABLE_NAMES_ARR.map((tableName) => updateCache(tableName));
@@ -217,6 +225,7 @@ init();
 
 export default {
   get,
+  getAll,
   filter,
   save,
   remove,

@@ -33,7 +33,7 @@ jobs:
       uses: actions/upload-artifact@v3
       with:
         name: dist
-        path: dist
+        path: dist_firefox_v3
   build-docs:
     runs-on: ubuntu-latest
     strategy:

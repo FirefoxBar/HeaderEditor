@@ -2,6 +2,7 @@ import browser from 'webextension-polyfill';
 import logger from '@/share/core/logger';
 import { APIs, TABLE_NAMES_ARR } from '@/share/core/constant';
 import { prefs } from '@/share/core/prefs';
+import emitter from '@/share/core/emitter';
 import rules from './core/rules';
 import { openURL } from './utils';
 import { getDatabase } from './core/db';
@@ -54,5 +55,24 @@ export default function createApiHandler() {
       return Promise.allSettled(queue);
     }
     return execute(request);
+  });
+
+  emitter.on(emitter.EVENT_PREFS_UPDATE, (key: string, val: any) => {
+    switch (key) {
+      case 'disable-all':
+        browser.browserAction.setIcon({
+          path: `/assets/images/128${val ? 'w' : ''}.png`,
+        });
+        break;
+      default:
+        break;
+    }
+  });
+
+  prefs.ready(() => {
+    const disableAll = Boolean(prefs.get('disable-all'));
+    browser.browserAction.setIcon({
+      path: `/assets/images/128${disableAll ? 'w' : ''}.png`,
+    });
   });
 }

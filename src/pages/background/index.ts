@@ -1,5 +1,6 @@
 import createApiHandler from './api-handler';
-import createRequestHandler from './request-handler';
+import { createDNRHandler } from './request-handler/dnr-handler';
+import { createWebRequestHandler } from './request-handler/web-request-handler';
 import './upgrade';
 
 if (typeof window !== 'undefined') {
@@ -8,4 +9,9 @@ if (typeof window !== 'undefined') {
 
 // 开始初始化
 createApiHandler();
-createRequestHandler();
+if (ENABLE_WEB_REQUEST) {
+  createWebRequestHandler();
+}
+if (ENABLE_DNR) {
+  createDNRHandler();
+}

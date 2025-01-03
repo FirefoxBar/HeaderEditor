@@ -27,13 +27,17 @@ jobs:
         cache: 'pnpm'
     - name: Install dependencies
       run: pnpm i --frozen-lockfile
-    - name: Build
-      run: npm run build
+    - name: Build Firefox
+      run: npm run build:firefox
+    - name: Build Chrome v2
+      run: npm run build:chrome_v2
+    - name: Build Chrome v3
+      run: npm run build:chrome_v3
     - name: Upload bundles
       uses: actions/upload-artifact@v3
       with:
         name: dist
-        path: dist
+        path: dist_firefox_v3
     - name: Pack
       env:
         AMO_KEY: ${{ secrets.AMO_KEY }}

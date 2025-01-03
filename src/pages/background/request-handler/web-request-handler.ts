@@ -7,7 +7,7 @@ import logger from '@/share/core/logger';
 import type { Rule } from '@/share/core/types';
 import { TABLE_NAMES } from '@/share/core/constant';
 import { prefs } from '@/share/core/prefs';
-import rules from './core/rules';
+import rules from '../core/rules';
 
 // 最大修改8MB的Body
 const MAX_BODY_SIZE = 8 * 1024 * 1024;
@@ -19,6 +19,7 @@ enum REQUEST_TYPE {
 
 type HeaderRequestDetails = WebRequest.OnHeadersReceivedDetailsType | WebRequest.OnBeforeSendHeadersDetailsType;
 type AnyRequestDetails = WebRequest.OnBeforeRequestDetailsType | HeaderRequestDetails;
+
 interface CustomFunctionDetail {
   id: string;
   url: string;
@@ -37,7 +38,8 @@ interface CustomFunctionDetail {
   statusCode?: number;
   statusLine?: string;
 }
-class RequestHandler {
+
+class WebRequestHandler {
   private _disableAll = false;
   private excludeHe = true;
   private includeHeaders = false;
@@ -60,9 +62,6 @@ class RequestHandler {
       return;
     }
     this._disableAll = to;
-    browser.browserAction.setIcon({
-      path: `/assets/images/128${to ? 'w' : ''}.png`,
-    });
   }
 
   private createHeaderListener(type: string): any {
@@ -115,10 +114,10 @@ class RequestHandler {
     });
 
     prefs.ready(() => {
-      this.excludeHe = prefs.get('exclude-he');
-      this.disableAll = prefs.get('disable-all');
-      this.includeHeaders = prefs.get('include-headers');
-      this.modifyBody = prefs.get('modify-body');
+      this.excludeHe = Boolean(prefs.get('exclude-he'));
+      this.disableAll = Boolean(prefs.get('disable-all'));
+      this.includeHeaders = Boolean(prefs.get('include-headers'));
+      this.modifyBody = Boolean(prefs.get('modify-body'));
     });
   }
 
@@ -487,6 +486,4 @@ class RequestHandler {
   }
 }
 
-export default function createRequestHandler() {
-  return new RequestHandler();
-}
+export const createWebRequestHandler = () => new WebRequestHandler();

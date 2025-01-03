@@ -44,6 +44,7 @@ export interface ImportRule extends Rule {
 }
 
 export interface InitdRule extends Rule {
+  _runner: 'web_request' | 'dnr';
   _reg: RegExp;
   _exclude?: RegExp;
   _func: (val: any, detail: any) => any;

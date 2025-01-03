@@ -2,6 +2,9 @@ const path = require('path');
 const fs = require('fs');
 const CopyWebpackPlugin = require('copy-webpack-plugin');
 
+const manifestVer = String(process.env.MANIFEST_VER) || 'v3';
+const targetBrowser = String(process.env.TARGET_BROWSER) || 'firefox';
+
 const copy = [
   {
     from: './node_modules/react/umd/react.production.min.js',
@@ -45,8 +48,9 @@ module.exports = function (config) {
   }
 
   // 复制 manifest
+  const manifestName = ['manifest', targetBrowser, manifestVer].join('_');
   copy.push({
-    from: './src/manifest.json',
+    from: './src/' + manifestName + '.json',
     to: 'manifest.json',
     transform: (content) => {
       const jsonContent = JSON.parse(content);

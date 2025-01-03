@@ -3,18 +3,33 @@ import { isBasicRule } from './types';
 import { IS_MATCH, TABLE_NAMES_ARR } from './constant';
 import type { InitdRule, Rule, BasicRule } from './types';
 
+export function detectRunner(rule: Rule): 'web_request' | 'dnr' {
+  if (rule.isFunction) {
+    return 'web_request';
+  }
+  if (rule.exclude) {
+    return 'web_request';
+  }
+
+  return 'dnr';
+}
+
 export function initRule(rule: Rule): InitdRule {
-  const initd: any = { ...rule };
-  if (initd.isFunction) {
-    // eslint-disable-next-line no-new-func
-    initd._func = new Function('val', 'detail', initd.code);
-  }
-  // Init regexp
-  if (initd.matchType === 'regexp') {
-    initd._reg = new RegExp(initd.pattern, 'g');
-  }
-  if (typeof initd.exclude === 'string' && initd.exclude.length > 0) {
-    initd._exclude = new RegExp(initd.exclude);
+  // eslint-disable-next-line @typescript-eslint/consistent-type-assertions
+  const initd: InitdRule = { ...rule } as InitdRule;
+  initd._runner = detectRunner(rule);
+  if (initd._runner === 'web_request') {
+    if (initd.isFunction && ENABLE_EVAL) {
+      // eslint-disable-next-line no-new-func
+      initd._func = new Function('val', 'detail', initd.code) as any;
+    }
+    // Init regexp
+    if (initd.matchType === 'regexp') {
+      initd._reg = new RegExp(initd.pattern, 'g');
+    }
+    if (typeof initd.exclude === 'string' && initd.exclude.length > 0) {
+      initd._exclude = new RegExp(initd.exclude);
+    }
   }
   return initd;
 }
