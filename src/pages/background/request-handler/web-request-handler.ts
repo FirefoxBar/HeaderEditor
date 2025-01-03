@@ -4,7 +4,7 @@ import browser, { WebRequest } from 'webextension-polyfill';
 import { getGlobal, IS_CHROME, IS_SUPPORT_STREAM_FILTER } from '@/share/core/utils';
 import emitter from '@/share/core/emitter';
 import logger from '@/share/core/logger';
-import type { Rule } from '@/share/core/types';
+import type { Rule, RULE_ACTION_OBJ } from '@/share/core/types';
 import { TABLE_NAMES } from '@/share/core/constant';
 import { prefs } from '@/share/core/prefs';
 import rules from '../core/rules';
@@ -150,9 +150,13 @@ class WebRequestHandler {
     let redirectTo = e.url;
     const detail = this.makeDetails(e);
     for (const item of rule) {
+      if (item._runner === 'dnr' && ENABLE_DNR) {
+        continue;
+      }
       if (item.action === 'cancel' && !item.isFunction) {
         return { cancel: true };
-      } else if (item.isFunction) {
+      }
+      if (item.isFunction) {
         try {
           const r = item._func(redirectTo, detail);
           if (typeof r === 'string') {
@@ -345,9 +349,13 @@ class WebRequestHandler {
     const newHeaders: { [key: string]: string } = {};
     let hasFunction = false;
     for (let i = 0; i < rule.length; i++) {
-      if (!rule[i].isFunction) {
-        // @ts-ignore
-        newHeaders[rule[i].action.name] = rule[i].action.value;
+      const item = rule[i];
+      if (item._runner === 'dnr' && ENABLE_DNR) {
+        continue;
+      }
+      if (!item.isFunction) {
+        const action = item.action as RULE_ACTION_OBJ;
+        newHeaders[action.name] = action.value;
         rule.splice(i, 1);
         i--;
       } else {

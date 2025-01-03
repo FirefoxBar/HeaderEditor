@@ -10,7 +10,6 @@ export function detectRunner(rule: Rule): 'web_request' | 'dnr' {
   if (rule.exclude) {
     return 'web_request';
   }
-
   return 'dnr';
 }
 
