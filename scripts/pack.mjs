@@ -86,10 +86,10 @@ async function packOnePlatform(name, browserConfig, itemConfig) {
     // 打包成zip
     await createZip(thisPack, zipPath);
     // 执行上传等操作
-    console.log('packUtils', name, thisPack, zipPath, _path.release, browserConfig, itemConfig);
-    // const res = await packUtils[name](thisPack, zipPath, _path.release, browserConfig, itemConfig);
-    // console.log(`${name}: ${res}`);
-    // await unlink(zipPath);
+    // console.log('packUtils', name, thisPack, zipPath, _path.release, browserConfig, itemConfig);
+    const res = await packUtils[name](thisPack, zipPath, _path.release, browserConfig, itemConfig);
+    console.log(`${name}: ${res}`);
+    await unlink(zipPath);
   } catch (e) {
     console.error(e);
   }
