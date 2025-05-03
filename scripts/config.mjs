@@ -1,27 +1,28 @@
-import { readFileSync } from 'fs';
+import { readJSON } from 'fs-extra/esm';
 import { join, dirname } from 'path';
 import { fileURLToPath } from 'url';
+import { getDistDir, getOutputFile } from './browser-config/get-path.js';
+import extension from '../extension.json' with { type: 'json' };
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = dirname(__filename);
 
-function readJSONSync(fullPath) {
-  return JSON.parse(readFileSync(fullPath, {
-    encoding: 'utf8'
-  }));
+const root = join(__dirname, '..');
+
+function getDistPath(browser) {
+  return join(root, getDistDir(browser));
 }
 
-const root = join(__dirname, '..');
-const dist = join(root, 'dist');
-
-const extension = readJSONSync(join(root, 'extension.json'));
-const manifest = readJSONSync(join(dist, 'manifest.json'));
+async function getVersion(path) {
+  const manifest = await readJSON(join(path, 'manifest.json'));
+  return manifest.version;
+}
 
 const temp = join(root, 'temp');
 const pack = join(temp, 'dist-pack');
 const release = join(temp, 'release');
 
-export const version = manifest.version;
+export const scriptRoot = __dirname;
 export const resolve = join;
-export const path = { temp, root, dist, pack, release };
-export { extension };
+export const path = { temp, root, pack, release };
+export { join, extension, getDistPath, getDistDir, getOutputFile, getVersion };

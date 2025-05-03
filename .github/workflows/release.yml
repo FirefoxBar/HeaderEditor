@@ -27,8 +27,10 @@ jobs:
         cache: 'pnpm'
     - name: Install dependencies
       run: pnpm i --frozen-lockfile
-    - name: Build Firefox
-      run: npm run build:firefox
+    - name: Build Firefox v2
+      run: npm run build:firefox_v2
+    - name: Build Firefox v3
+      run: npm run build:firefox_v3
     - name: Build Chrome v2
       run: npm run build:chrome_v2
     - name: Build Chrome v3
@@ -43,6 +45,7 @@ jobs:
         AMO_KEY: ${{ secrets.AMO_KEY }}
         AMO_SECRET: ${{ secrets.AMO_SECRET }}
         CRX_PRIV_KEY: ${{ secrets.CRX_PRIV_KEY }}
+        CRX_PRIV_KEY_V3: ${{ secrets.CRX_PRIV_KEY_V3 }}
         CWS_CLIENT_ID: ${{ secrets.CWS_CLIENT_ID }}
         CWS_CLIENT_SECRET: ${{ secrets.CWS_CLIENT_SECRET }}
         CWS_TOKEN: ${{ secrets.CWS_TOKEN }}

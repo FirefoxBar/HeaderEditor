@@ -1,7 +1,6 @@
 import axios from 'axios';
 import { readFile } from 'fs/promises';
 import { Blob } from 'buffer';
-import { extension } from '../config.mjs';
 
 const webStoreId = process.env.CWS_CLIENT_ID;
 const webStoreToken = process.env.CWS_TOKEN;
@@ -32,9 +31,9 @@ async function getToken() {
   }
 }
 
-async function upload(content, token) {
+async function upload(id, content, token) {
   const blob = new Blob(content);
-  const res = await axios.put(`https://www.googleapis.com/upload/chromewebstore/v1.1/items/${extension.chrome.id}`, blob, {
+  const res = await axios.put(`https://www.googleapis.com/upload/chromewebstore/v1.1/items/${id}`, blob, {
     headers: {
       Authorization: `Bearer ${token}`,
       'x-goog-api-version': '2',
@@ -44,8 +43,8 @@ async function upload(content, token) {
   return res.data;
 }
 
-async function publish(target = 'default', token) {
-  const url = `https://www.googleapis.com/chromewebstore/v1.1/items/${extension.chrome.id}/publish?publishTarget=${target}`;
+async function publish(id, target = 'default', token) {
+  const url = `https://www.googleapis.com/chromewebstore/v1.1/items/${id}/publish?publishTarget=${target}`;
   const res = await axios.post(url, '', {
     headers: {
       Authorization: `Bearer ${token}`,
@@ -56,7 +55,7 @@ async function publish(target = 'default', token) {
   return res.data;
 }
 
-async function packCws(zipPath) {
+async function packCws(sourcePath, zipPath, releasePath, browserConfig, itemConfig) {
   if (!process.env.CWS_CLIENT_ID) {
     return Promise.reject(new Error('CWS_CLIENT_ID not found'));
   }
@@ -69,8 +68,9 @@ async function packCws(zipPath) {
 
   const distContent = await readFile(zipPath);
   const token = await getToken();
-  await upload(distContent, token);
-  return publish('default', token);
+  const id = itemConfig.id;
+  await upload(id, distContent, token);
+  return publish(id, 'default', token);
 }
 
 export default packCws;

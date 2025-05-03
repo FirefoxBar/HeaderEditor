@@ -44,3 +44,6 @@ encrypt
 .eslintcache
 .vscode
 temp
+
+manifest.json
+dist_*

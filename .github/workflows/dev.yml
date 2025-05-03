@@ -32,8 +32,10 @@ jobs:
         TOKEN: ${{ secrets.SNAPSHOT_TOKEN }}
         GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
       run: node ./scripts/get-snapshot-version.mjs
-    - name: Build Firefox
-      run: npm run build:firefox
+    - name: Build Firefox v2
+      run: npm run build:firefox_v2
+    - name: Build Firefox v3
+      run: npm run build:firefox_v3
     - name: Build Chrome v2
       run: npm run build:chrome_v2
     - name: Build Chrome v3
@@ -53,7 +55,9 @@ jobs:
         AMO_KEY: ${{ secrets.AMO_KEY }}
         AMO_SECRET: ${{ secrets.AMO_SECRET }}
         CRX_PRIV_KEY: ${{ secrets.CRX_PRIV_KEY }}
-      run: npm run pack -- --platform=xpi,crx
+        CRX_PRIV_KEY_V3: ${{ secrets.CRX_PRIV_KEY_V3 }}
+        PACK_PLATFORM: xpi,crx
+      run: npm run pack
     - name: Upload snapshot release
       uses: actions/upload-artifact@v3
       with:

@@ -28,7 +28,7 @@ jobs:
     - name: Install dependencies
       run: pnpm i --frozen-lockfile
     - name: Build
-      run: npm run build
+      run: npm run build:firefox_v3
     - name: Upload bundles
       uses: actions/upload-artifact@v3
       with:

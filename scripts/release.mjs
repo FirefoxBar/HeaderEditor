@@ -1,14 +1,24 @@
 import { readFile, readdir, access, constants } from 'fs/promises';
-import { join } from 'path';
+import { dirname, join } from 'path';
 import { createHash } from 'crypto';
 import { Blob } from 'buffer';
-import { extension, path as _path, version } from './config.mjs';
+import { scriptRoot, extension, path as _path, getDistPath, getVersion } from './config.mjs';
 import axios from 'axios';
+import { readJSON } from 'fs-extra/esm';
 
 function hash(content) {
   const fsHash = createHash('sha256');
   fsHash.update(content);
   return fsHash.digest('hex');
+}
+
+async function exists(path) {
+  try {
+    await access(fullPath, constants.R_OK);
+    return true;
+  } catch (e) {
+    return false;
+  }
 }
 
 async function main() {
@@ -27,6 +37,23 @@ async function main() {
   }
   if (!process.env.GITHUB_TOKEN) {
     console.log('GITHUB_TOKEN not found');
+    return;
+  }
+
+  // Get version
+  let version = '';
+  const browserConfig = await readJSON(join(scriptRoot, 'browser-config/browser.config.json'));
+  const browserList = Object.keys(browserConfig);
+  for (const browser of browserList) {
+    const path = getDistPath(browser);
+    if (await exists(join(path, 'manifest.json'))) {
+      version = await getVersion(path);
+      console.log(`Get version from ${path}`);
+      break;
+    }
+  }
+  if (!version) {
+    console.log('version not found');
     return;
   }
 
@@ -50,10 +77,7 @@ async function main() {
       continue;
     }
     const fullPath = join(_path.release, file);
-    try {
-      await access(fullPath, constants.R_OK);
-    } catch (e) {
-      // access file failed, skip it
+    if (!(await exists(fullPath))) {
       continue;
     }
     const fileContent = await readFile(fullPath);

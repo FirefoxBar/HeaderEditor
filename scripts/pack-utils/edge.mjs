@@ -1,6 +1,6 @@
 import { EdgeWebstoreClient } from '@plasmo-corp/ewu';
 
-export default function (zipPath) {
+export default function (sourcePath, zipPath, releasePath, browserConfig, itemConfig) {
   if (!process.env.MS_PRODUCT_ID) {
     return Promise.reject(new Error('MS_PRODUCT_ID not found'));
   }

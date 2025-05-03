@@ -1,35 +1,9 @@
-const manifestVer = String(process.env.MANIFEST_VER) || 'v3';
-const targetBrowser = String(process.env.TARGET_BROWSER) || 'firefox';
+const targetBrowser = String(process.env.TARGET_BROWSER) || 'firefox_v3';
 
-const envConfigs = {
-  firefox_v2: {
-    MANIFEST_VER: 'v2',
-    ENABLE_DNR: true,
-    ENABLE_WEB_REQUEST: true,
-    ENABLE_EVAL: true,
-  },
-  firefox_v3: {
-    MANIFEST_VER: 'v3',
-    ENABLE_DNR: true,
-    ENABLE_WEB_REQUEST: true,
-    ENABLE_EVAL: false,
-  },
-  chrome_v2: {
-    MANIFEST_VER: 'v2',
-    ENABLE_DNR: true,
-    ENABLE_WEB_REQUEST: true,
-    ENABLE_EVAL: true,
-  },
-  chrome_v3: {
-    MANIFEST_VER: 'v3',
-    ENABLE_DNR: true,
-    ENABLE_WEB_REQUEST: false,
-    ENABLE_EVAL: false,
-  },
-};
+const envConfigs = require('./scripts/browser-config/browser.config.json');
+const { getDistDir } = require('./scripts/browser-config/get-path');
 
-const env = envConfigs[targetBrowser + '_' + manifestVer];
-const outputDir = ['dist', targetBrowser, manifestVer].join('_');
+const env = envConfigs[targetBrowser];
 
 module.exports = {
   externals: {
@@ -38,10 +12,9 @@ module.exports = {
   },
   define: {
     ...env,
-    MANIFEST_VER: manifestVer,
     TARGET_BROWSER: targetBrowser,
   },
-  outputDir: outputDir,
+  outputDir: getDistDir(targetBrowser),
   outputAssetsPath: {
     js: 'assets/js',
     css: 'assets/css',

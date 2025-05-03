@@ -1,19 +1,62 @@
 {
 	"dist": "HeaderEditor-{VER}",
-	"autobuild": {
+	"auto": {
 		"xpi": true,
 		"amo": true,
 		"cws": true,
-		"crx": true
+		"crx": true,
+    "edge": true
 	},
-  "firefox": {
-    "xpi": "headereditor@addon.firefoxcn.net",
-    "amo": "headereditor-amo@addon.firefoxcn.net"
-  },
-	"chrome": {
-		"id": "eningockdidmgiojffjmkdblpjocbhgh",
-		"crx": "jhigoaelcgmfbidkocglkcnhmfacajle"
-	},
+  "crx": [
+    {
+      "browser": "chrome_v2",
+      "id": "jhigoaelcgmfbidkocglkcnhmfacajle",
+      "crx": "jhigoaelcgmfbidkocglkcnhmfacajle",
+      "priv_key": "CRX_PRIV_KEY"
+    },
+    {
+      "browser": "chrome_v3",
+      "id": "jhigoaelcgmfbidkocglkcnhmfacajle",
+      "crx": "jhigoaelcgmfbidkocglkcnhmfacajle",
+      "priv_key": "CRX_PRIV_KEY_V3"
+    }
+  ],
+  "cws": [
+    {
+      "browser": "chrome_v2"
+    },
+    {
+      "browser": "chrome_v3"
+    }
+  ],
+  "edge": [
+    {
+      "browser": "chrome_v2"
+    },
+    {
+      "browser": "chrome_v3"
+    }
+  ],
+  "amo": [
+    {
+      "browser": "firefox_v2",
+      "id": "headereditor-amo@addon.firefoxcn.net"
+    },
+    {
+      "browser": "firefox_v3",
+      "id": "headereditor-amo-v3@addon.firefoxcn.net"
+    }
+  ],
+  "xpi": [
+    {
+      "browser": "firefox_v2",
+      "id": "headereditor@addon.firefoxcn.net"
+    },
+    {
+      "browser": "firefox_v3",
+      "id": "headereditor-v3@addon.firefoxcn.net"
+    }
+  ],
 	"github": {
 		"enable": true
 	}

@@ -9,82 +9,87 @@
  * 在这里，打包文件夹统一命名为pack
  */
 import { unlink, mkdir } from 'fs/promises';
-import { readJSON, outputJSON } from 'fs-extra/esm';
+import { outputJSON, readJSON } from 'fs-extra/esm';
 import { join } from 'path';
-import { extension, resolve as _resolve, path as _path } from './config.mjs';
-import { exec as processExec } from 'child_process';
-import packUtils from './pack-utils/index.mjs';
+import { join as _join, path as _path, getDistPath, scriptRoot, extension } from './config.mjs';
+import { zip } from 'cross-zip';
+import { rimraf } from 'rimraf';
+import cpr from 'cpr';
+import getManifest from './browser-config/get-manifest.js';
+import amo from './pack-utils/amo.mjs';
+import cws from './pack-utils/cws.mjs';
+import xpi from './pack-utils/xpi.mjs';
+import edge from './pack-utils/edge.mjs';
+import crx from './pack-utils/crx.mjs';
 
-let platform = null;
-for (const it of process.argv) {
-  if (it.startsWith('--platform=')) {
-    platform = it.substr(11);
-    if (platform.indexOf(',') > 0) {
-      platform = platform.trim().split(',');
-    }
-    break;
-  }
+const packUtils = {
+  amo,
+  cws,
+  xpi,
+  edge,
+  crx,
+};
+
+function copyDir(source, target) {
+  return new Promise((resolve, reject) => {
+    cpr(
+      source,
+      target,
+      {
+        deleteFirst: true,
+        overwrite: true,
+        confirm: false,
+      },
+      function (err, files) {
+        if (err) {
+          reject(err);
+        } else {
+          resolve(files);
+        }
+      },
+    );
+  });
 }
 
-function exec(commands) {
+function createZip(source, target) {
   return new Promise((resolve, reject) => {
-    processExec(commands, (error, stdout, stderr) => {
-      if (error) {
-        reject(error);
+    zip(source, target, (err) => {
+      console.log(`${source} -> ${target}`, err);
+      if (err) {
+        reject(err);
       } else {
-        resolve(stdout);
+        resolve();
       }
     });
   });
 }
 
-async function removeManifestKeys(manifest, name) {
-  console.log('start convert manifest(' + manifest + ') for ' + name);
-  const wantKey = `__${name}__`;
-  
-  const removeObjKeys = obj => {
-    Object.keys(obj).forEach((it) => {
-      if (it.startsWith('__')) {
-        if (it.startsWith(wantKey)) {
-          const finalKey = it.substr(wantKey.length);
-          console.log('copy key ' + finalKey + ' from ' + it);
-          obj[finalKey] = obj[it];
-        }
-        console.log('remove key ' + it);
-        delete obj[it];
-      } else if (typeof obj[it] === 'object' && !Array.isArray(obj[it])) {
-        removeObjKeys(obj[it]);
-      }
-    });
-  }
-
-  try {
-    const content = await readJSON(manifest);
-    removeObjKeys(content);
-    await outputJSON(manifest, content);
-  } catch (e) {
-    console.log(e);
-  }
-}
-
-async function packOnePlatform(name) {
+async function packOnePlatform(name, browserConfig, itemConfig) {
   if (typeof packUtils[name] === 'undefined') {
     console.error(`pack-utils for ${name} not found`);
     return;
   }
-  const thisPack = _resolve(_path.pack, name);
-  const zipPath = _resolve(_path.pack, `${name}.zip`);
+  const dirName = [name, itemConfig.browser].join('_');
+  const thisPack = _join(_path.pack, dirName);
+  const zipPath = _join(_path.pack, `${dirName}.zip`);
   try {
     // 复制一份到dist下面
-    await exec(`cp -r ${_path.dist} ${thisPack}`);
-    // 移除掉manifest中的非本平台key
-    await removeManifestKeys(join(thisPack, 'manifest.json'), name);
+    await copyDir(getDistPath(itemConfig.browser), thisPack);
+    // 重新生成manifest
+    await outputJSON(
+      _join(thisPack, 'manifest.json'),
+      getManifest(itemConfig.browser, {
+        amo: name === 'amo',
+        xpi: name === 'xpi',
+      }),
+    );
     // 打包成zip
-    await exec(`cd ${thisPack} && zip -r ${zipPath} ./*`);
+    await createZip(thisPack, zipPath);
     // 执行上传等操作
-    const res = await packUtils[name](zipPath, _path.release);
-    console.log(`${name}: ${res}`);
-    await unlink(zipPath);
+    console.log('packUtils', name, thisPack, zipPath, _path.release, browserConfig, itemConfig);
+    // const res = await packUtils[name](thisPack, zipPath, _path.release, browserConfig, itemConfig);
+    // console.log(`${name}: ${res}`);
+    // await unlink(zipPath);
   } catch (e) {
     console.error(e);
   }
@@ -92,8 +97,8 @@ async function packOnePlatform(name) {
 
 async function main() {
   // 检查打包目录是否存在
-  await exec(`cd ${_path.root} && rm -rf ./temp/dist-pack`);
-  await exec(`cd ${_path.root} && rm -rf ./temp/release`);
+  await rimraf(_path.pack);
+  await rimraf(_path.release);
   await mkdir(_path.pack, {
     recursive: true,
   });
@@ -101,35 +106,22 @@ async function main() {
     recursive: true,
   });
 
-  if (platform) {
-    if (Array.isArray(platform)) {
-      platform.forEach((it) => {
-        if (typeof packUtils[it] !== 'undefined') {
-          packOnePlatform(it);
-        } else {
-          console.log(`${it} not found`);
-        }
-      });
-      return;
-    }
-      
-    if (typeof packUtils[platform] !== 'undefined') {
-      packOnePlatform(platform);
-      return;
-    }
-    console.log(`${platform} not found`);
-
-    return;
+  let platform = [];
+  if (process.env.PACK_PLATFORM) {
+    platform = process.env.PACK_PLATFORM.split(',');
+  } else {
+    platform = Object.keys(extension.auto).filter((x) => Boolean(extension.auto[x]));
   }
-  
-  const queue = [];
-  Object.keys(extension.autobuild).forEach((it) => {
-    if (extension.autobuild[it]) {
-      queue.push(packOnePlatform(it));
-    } else {
-      console.log(`Skip ${it.toUpperCase()}`);
+
+  const browserConfig = await readJSON(join(scriptRoot, 'browser-config/browser.config.json'));
+
+  for (const name of platform) {
+    const platformConfig = extension[name];
+    for (const item of platformConfig) {
+      const browser = browserConfig[item.browser];
+      await packOnePlatform(name, browser, item);
     }
-  });
+  }
 }
 
 main();

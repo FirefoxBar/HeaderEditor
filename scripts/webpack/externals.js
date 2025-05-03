@@ -1,9 +1,9 @@
 const path = require('path');
 const fs = require('fs');
 const CopyWebpackPlugin = require('copy-webpack-plugin');
+const getManifest = require('../browser-config/get-manifest');
 
-const manifestVer = String(process.env.MANIFEST_VER) || 'v3';
-const targetBrowser = String(process.env.TARGET_BROWSER) || 'firefox';
+const targetBrowser = String(process.env.TARGET_BROWSER) || 'firefox_v3';
 
 const copy = [
   {
@@ -48,26 +48,29 @@ module.exports = function (config) {
   }
 
   // 复制 manifest
-  const manifestName = ['manifest', targetBrowser, manifestVer].join('_');
+  fs.writeFileSync(path.join(root, 'src/manifest.json'), JSON.stringify(getManifest(targetBrowser)), {
+    encoding: 'utf8',
+  });
   copy.push({
-    from: './src/' + manifestName + '.json',
+    from: './src/manifest.json',
     to: 'manifest.json',
-    transform: (content) => {
-      const jsonContent = JSON.parse(content);
-      jsonContent.version = versionText;
-
-      if (config.mode === 'development') {
-        jsonContent['content_security_policy'] = "script-src 'self' 'unsafe-eval'; object-src 'self'";
-      }
-
-      return JSON.stringify(jsonContent);
-    },
+    transform:
+      config.mode === 'development'
+        ? (content) => {
+            const jsonContent = JSON.parse(content);
+            jsonContent.version = versionText;
+            jsonContent['content_security_policy'] = "script-src 'self' 'unsafe-eval'; object-src 'self'";
+            return JSON.stringify(jsonContent);
+          }
+        : undefined,
   });
 
   // 复制其他静态文件
-  config.plugin('copy').use(new CopyWebpackPlugin({
-    patterns: copy,
-  }));
+  config.plugin('copy').use(
+    new CopyWebpackPlugin({
+      patterns: copy,
+    }),
+  );
 
   // Add manaco into a standalone chunk
   config.optimization.splitChunks({
