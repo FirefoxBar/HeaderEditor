@@ -141,6 +141,9 @@ importers:
       lint-staged:
         specifier: ^13.2.2
         version: 13.2.2(enquirer@2.3.6)
+      lodash:
+        specifier: ^4.17.21
+        version: 4.17.21
       prettier:
         specifier: ^3.3.2
         version: 3.3.2

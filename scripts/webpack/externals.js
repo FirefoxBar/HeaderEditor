@@ -1,42 +1,17 @@
-const path = require('path');
-const fs = require('fs');
 const CopyWebpackPlugin = require('copy-webpack-plugin');
-const getManifest = require('../browser-config/get-manifest');
-
-const targetBrowser = String(process.env.TARGET_BROWSER) || 'firefox_v3';
-
-const copy = [
-  {
-    from: './node_modules/react/umd/react.production.min.js',
-    to: 'external/react.min.js',
-  },
-  {
-    from: './node_modules/react-dom/umd/react-dom.production.min.js',
-    to: 'external/react-dom.min.js',
-  },
-];
-
-const root = path.join(__dirname, '../..');
+const ManifestPlugin = require('./manifest.plugin');
 
 module.exports = function (config) {
-  const { version } = require(path.join(root, 'package.json'));
-
-  // 添加 snapshot 版本号
-  let versionText = version;
-  const forceVersionFile = path.join(__dirname, '../../temp/version.txt');
-  if (fs.existsSync(forceVersionFile)) {
-    versionText = fs.readFileSync(forceVersionFile, { encoding: 'utf8' }).trim();
-    console.log('Got force version: ' + versionText);
-  } else {
-    console.log('No force version ' + forceVersionFile);
-  }
-  // 如果是tag触发的CI，强制用tag的版本号
-  if (process.env.GITHUB_REF_TYPE && process.env.GITHUB_REF_TYPE === 'tag') {
-    const tagName = process.env.GITHUB_REF_NAME;
-    if (/^[0-9]\.[0-9]+\.[0-9]+$/.test(tagName)) {
-      versionText = tagName;
-    }
-  }
+  const copy = [
+    {
+      from: './node_modules/react/umd/react.production.min.js',
+      to: 'external/react.min.js',
+    },
+    {
+      from: './node_modules/react-dom/umd/react-dom.production.min.js',
+      to: 'external/react-dom.min.js',
+    },
+  ];
 
   // dev 环境复制 development 的 react 资源
   if (config.get('mode') === 'development') {
@@ -47,24 +22,6 @@ module.exports = function (config) {
     });
   }
 
-  // 复制 manifest
-  fs.writeFileSync(path.join(root, 'src/manifest.json'), JSON.stringify(getManifest(targetBrowser)), {
-    encoding: 'utf8',
-  });
-  copy.push({
-    from: './src/manifest.json',
-    to: 'manifest.json',
-    transform:
-      config.mode === 'development'
-        ? (content) => {
-            const jsonContent = JSON.parse(content);
-            jsonContent.version = versionText;
-            jsonContent['content_security_policy'] = "script-src 'self' 'unsafe-eval'; object-src 'self'";
-            return JSON.stringify(jsonContent);
-          }
-        : undefined,
-  });
-
   // 复制其他静态文件
   config.plugin('copy').use(
     new CopyWebpackPlugin({
@@ -72,7 +29,7 @@ module.exports = function (config) {
     }),
   );
 
-  // Add manaco into a standalone chunk
+  // Add packages into a standalone chunk
   config.optimization.splitChunks({
     chunks: 'all',
     minChunks: 100,
@@ -90,4 +47,6 @@ module.exports = function (config) {
       },
     },
   });
+
+  config.plugin('browser-manifest').use(ManifestPlugin);
 };
