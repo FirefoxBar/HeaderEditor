@@ -26,11 +26,6 @@ class Prefs {
         for (const key in defaultPrefValue) {
           if (synced && key in synced) {
             this.set(key, synced[key], true);
-          } else {
-            const value = tryMigrating(key);
-            if (value !== undefined) {
-              this.set(key, value);
-            }
           }
         }
         this.isDefault = false;
@@ -52,29 +47,6 @@ class Prefs {
         }
       }
     });
-
-    function tryMigrating(key: string) {
-      if (!(key in localStorage)) {
-        return undefined;
-      }
-      const value = localStorage[key];
-      delete localStorage[key];
-      localStorage[`DEPRECATED: ${key}`] = value;
-      switch (typeof defaultPrefValue[key]) {
-        case 'boolean':
-          return value.toLowerCase() === 'true';
-        case 'number':
-          return Number(value);
-        case 'object':
-          try {
-            return JSON.parse(value);
-          } catch (e) {
-            console.error("Cannot migrate from localStorage %s = '%s': %o", key, value, e);
-            return undefined;
-          }
-      }
-      return value;
-    }
   }
   get<T = any>(key: string, defaultValue?: T): T | undefined {
     if (key in this.boundMethods) {

@@ -221,7 +221,14 @@ function init() {
   });
 }
 
-init();
+if (MANIFEST_VER === 'v3') {
+  // this is service worker
+  addEventListener('activate', () => {
+    init();
+  });
+} else {
+  init();
+}
 
 export default {
   get,
