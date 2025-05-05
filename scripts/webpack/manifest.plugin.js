@@ -61,7 +61,8 @@ function ManifestPlugin() {
           dev: isDev,
         });
         manifest.version = versionText;
-        if (isDev) {
+        // manifest v3 环境不要添加 CSP
+        if (isDev && manifest.manifest_version !== 3) {
           manifest['content_security_policy'] = "script-src'self' 'unsafe-eval'; object-src'self'";
         }
       };

@@ -11,18 +11,19 @@ const baseManifest = {
     128: 'assets/images/128.png',
   },
   permissions: ['tabs', 'storage', 'unlimitedStorage'],
-  browser_action: {
-    default_icon: {
-      128: 'assets/images/128.png',
-    },
-    default_title: '__MSG_extButtonTitle__',
-    default_popup: 'popup.html',
-  },
   default_locale: 'en',
   options_ui: {
     page: 'options.html',
     open_in_tab: true,
   },
+};
+
+const action = {
+  default_icon: {
+    128: 'assets/images/128.png',
+  },
+  default_title: '__MSG_extButtonTitle__',
+  default_popup: 'popup.html',
 };
 
 function getManifest(browser, options) {
@@ -35,11 +36,13 @@ function getManifest(browser, options) {
     manifest.background = {
       scripts: ['assets/js/background.js'],
     };
+    manifest.browser_action = action;
   } else {
     manifest.manifest_version = 3;
     manifest.background = {
       service_worker: 'assets/js/background.js',
     };
+    manifest.action = action;
   }
 
   if (config.ENABLE_EVAL) {
@@ -52,7 +55,7 @@ function getManifest(browser, options) {
 
   if (config.ENABLE_DNR) {
     manifest.permissions.push('declarativeNetRequest');
-    manifest.host_permissions = [''];
+    manifest.host_permissions = ['*://*/*'];
   }
 
   if (options && options.dev && browser.startsWith('chrome')) {

@@ -15,7 +15,7 @@ async function doUpgrade() {
   }
 
   // Put a version mark
-  const currentVersionMark = await storage.getLocal().get('version_mark');
+  const currentVersionMark: any = await storage.getLocal().get('version_mark');
   const version = currentVersionMark.version_mark ? parseInt(currentVersionMark.version_mark, 10) : 0;
   if (!(version >= 1)) {
     storage.getLocal().set({
@@ -88,6 +88,9 @@ async function doUpgrade() {
 
 if (MANIFEST_VER === 'v3') {
   browser.runtime.onInstalled.addListener((details) => {
+    if (IS_DEV) {
+      console.log('chrome onInstalled', details);
+    }
     if (details.reason !== 'install' && details.reason !== 'update') {
       return;
     }

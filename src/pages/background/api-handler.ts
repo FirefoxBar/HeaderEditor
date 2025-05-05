@@ -41,6 +41,18 @@ function execute(request: any) {
   // return false;
 }
 
+function updateIcon(disabled: boolean) {
+  if (MANIFEST_VER === 'v2') {
+    browser.browserAction.setIcon({
+      path: `/assets/images/128${disabled ? 'w' : ''}.png`,
+    });
+  } else {
+    browser.action.setIcon({
+      path: `/assets/images/128${disabled ? 'w' : ''}.png`,
+    });
+  }
+}
+
 export default function createApiHandler() {
   browser.runtime.onMessage.addListener((request) => {
     logger.debug('Background Receive Message', request);
@@ -60,9 +72,7 @@ export default function createApiHandler() {
   emitter.on(emitter.EVENT_PREFS_UPDATE, (key: string, val: any) => {
     switch (key) {
       case 'disable-all':
-        browser.browserAction.setIcon({
-          path: `/assets/images/128${val ? 'w' : ''}.png`,
-        });
+        updateIcon(val);
         break;
       default:
         break;
@@ -71,8 +81,6 @@ export default function createApiHandler() {
 
   prefs.ready(() => {
     const disableAll = Boolean(prefs.get('disable-all'));
-    browser.browserAction.setIcon({
-      path: `/assets/images/128${disableAll ? 'w' : ''}.png`,
-    });
+    updateIcon(disableAll);
   });
 }

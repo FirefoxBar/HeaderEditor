@@ -12,6 +12,7 @@ module.exports = {
   },
   define: {
     ...env,
+    IS_DEV: process.env.NODE_ENV === 'development',
     TARGET_BROWSER: targetBrowser,
   },
   outputDir: getDistDir(targetBrowser),

@@ -9,7 +9,7 @@
     "url": "https://github.com/FirefoxBar/HeaderEditor.git"
   },
   "scripts": {
-    "start": "cross-env TARGET_BROWSER=firefox_v3 icejs start --disable-open --config build.config.js",
+    "start": "cross-env TARGET_BROWSER=chrome_v3 icejs start --disable-open --config build.config.js",
     "build": "npm run build:firefox_v3",
     "build:firefox_v2": "cross-env TARGET_BROWSER=firefox_v2 icejs build --config build.config.js",
     "build:firefox_v3": "cross-env TARGET_BROWSER=firefox_v3 icejs build --config build.config.js",
@@ -43,7 +43,7 @@
     "regenerator-runtime": "^0.13.11",
     "text-encoding": "^0.7.0",
     "tslib": "^2.5.0",
-    "webextension-polyfill": "^0.10.0"
+    "webextension-polyfill": "^0.12.0"
   },
   "devDependencies": {
     "@iceworks/spec": "^1.0.0",
@@ -54,7 +54,7 @@
     "@types/react": "^16.9.16",
     "@types/react-dom": "^16.9.4",
     "@types/text-encoding": "^0.0.35",
-    "@types/webextension-polyfill": "^0.10.0",
+    "@types/webextension-polyfill": "^0.12.3",
     "axios": "^1.7.2",
     "build-plugin-css-assets-local": "^0.1.0",
     "copy-webpack-plugin": "^11.0.0",

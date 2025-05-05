@@ -22,7 +22,7 @@ class Prefs {
     getSync()
       .get('settings')
       .then((result) => {
-        const synced = result.settings;
+        const synced: any = result.settings;
         for (const key in defaultPrefValue) {
           if (synced && key in synced) {
             this.set(key, synced[key], true);
@@ -34,7 +34,7 @@ class Prefs {
 
     browser.storage.onChanged.addListener((changes, area) => {
       if (area === 'sync' && 'settings' in changes) {
-        const synced = changes.settings.newValue;
+        const synced: any = changes.settings.newValue;
         if (synced) {
           for (const key in defaultPrefValue) {
             if (key in synced) {
@@ -102,5 +102,14 @@ class Prefs {
 interface BackgroundWindow extends Window {
   prefs?: Prefs;
 }
-const backgroundWindow = browser.extension.getBackgroundPage() as BackgroundWindow;
-export const prefs = backgroundWindow && backgroundWindow.prefs ? backgroundWindow.prefs : new Prefs();
+
+function getPrefs() {
+  if (MANIFEST_VER === 'v2') {
+    const backgroundWindow = browser.extension.getBackgroundPage() as BackgroundWindow;
+    return backgroundWindow && backgroundWindow.prefs ? backgroundWindow.prefs : new Prefs();
+  } else {
+    return new Prefs();
+  }
+}
+
+export const prefs = getPrefs();

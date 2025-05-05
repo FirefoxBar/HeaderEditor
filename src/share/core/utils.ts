@@ -1,4 +1,4 @@
-import browser, { Tabs } from 'webextension-polyfill';
+import browser from 'webextension-polyfill';
 import { RULE_TYPE, TABLE_NAMES } from './constant';
 import { Rule } from './types';
 
@@ -18,16 +18,13 @@ export const FIREFOX_VERSION = IS_FIREFOX
   })()
   : 0;
 
-export const IS_SUPPORT_STREAM_FILTER = typeof browser.webRequest.filterResponseData === 'function';
+export const IS_SUPPORT_STREAM_FILTER =
+  ENABLE_WEB_REQUEST && typeof browser.webRequest?.filterResponseData === 'function';
 
 // Get Active Tab
-export function getActiveTab(): Promise<Tabs.Tab> {
-  return new Promise((resolve) => {
-    browser.tabs
-      .query({ currentWindow: true, active: true })
-      .then((tabs) => tabs[0])
-      .then(resolve);
-  });
+export async function getActiveTab() {
+  const tabs = await browser.tabs.query({ currentWindow: true, active: true });
+  return tabs[0];
 }
 export function trimNewLines(s: string) {
   return s.replace(/^[\s\n]+/, '').replace(/[\s\n]+$/, '');
@@ -39,51 +36,47 @@ interface FetchUrlParam {
   url: string;
   header?: { [key: string]: string };
 }
-export function fetchUrl(param: FetchUrlParam): Promise<string> {
-  return new Promise((resolve, reject) => {
-    const fetchParam: RequestInit = {
-      method: param.post ? 'POST' : 'GET',
-    };
-    const headers: Record<string, string> = {};
-    let { url } = param;
-    if (param.query) {
-      url += `?${new URLSearchParams(param.query).toString()}`;
+export async function fetchUrl(param: FetchUrlParam) {
+  const fetchParam: RequestInit = {
+    method: param.post ? 'POST' : 'GET',
+  };
+  const headers: Record<string, string> = {};
+  let { url } = param;
+  if (param.query) {
+    url += `?${new URLSearchParams(param.query).toString()}`;
+  }
+  if (fetchParam.method === 'POST') {
+    // 遍历一下，查找是否有File
+    let hasFile = false;
+    for (const name in param.post) {
+      if (param.post[name] instanceof File) {
+        hasFile = true;
+        break;
+      }
     }
-    if (fetchParam.method === 'POST') {
-      // 遍历一下，查找是否有File
-      let hasFile = false;
+    if (hasFile) {
+      const formBody = new FormData();
       for (const name in param.post) {
         if (param.post[name] instanceof File) {
-          hasFile = true;
-          break;
+          formBody.append(name, param.post[name], param.post[name].name);
+        } else {
+          formBody.append(name, param.post[name]);
         }
       }
-      if (hasFile) {
-        const formBody = new FormData();
-        for (const name in param.post) {
-          if (param.post[name] instanceof File) {
-            formBody.append(name, param.post[name], param.post[name].name);
-          } else {
-            formBody.append(name, param.post[name]);
-          }
-        }
-        fetchParam.body = formBody;
-      } else {
-        headers['Content-Type'] = 'application/x-www-form-urlencoded';
-        fetchParam.body = new URLSearchParams(param.post).toString();
-      }
+      fetchParam.body = formBody;
+    } else {
+      headers['Content-Type'] = 'application/x-www-form-urlencoded';
+      fetchParam.body = new URLSearchParams(param.post).toString();
     }
-    if (param.header) {
-      Object.keys(param.header).forEach((name) => {
-        headers[name] = param.header![name];
-      });
-    }
-    fetchParam.headers = headers;
-    fetch(url, fetchParam)
-      .then((r) => r.text())
-      .then(resolve)
-      .catch(reject);
-  });
+  }
+  if (param.header) {
+    Object.keys(param.header).forEach((name) => {
+      headers[name] = param.header![name];
+    });
+  }
+  fetchParam.headers = headers;
+  const res = await fetch(url, fetchParam);
+  return res.text();
 }
 
 export function getTableName(ruleType: RULE_TYPE): TABLE_NAMES {
