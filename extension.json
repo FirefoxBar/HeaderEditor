@@ -1,32 +1,34 @@
 {
-	"dist": "HeaderEditor-{VER}",
-	"auto": {
-		"xpi": true,
-		"amo": true,
-		"cws": true,
-		"crx": true,
+  "dist": "HeaderEditor-{VER}",
+  "auto": {
+    "xpi": true,
+    "amo": true,
+    "cws": true,
+    "crx": true,
     "edge": true
-	},
+  },
   "crx": [
     {
       "browser": "chrome_v2",
       "id": "jhigoaelcgmfbidkocglkcnhmfacajle",
-      "crx": "jhigoaelcgmfbidkocglkcnhmfacajle",
+      "public_key": "MIIBIjANBgkqhkiG9w0BAQEFAAOCAQ8AMIIBCgKCAQEA3WVywUi4v+NIFhkHO17QGQx6Js/qQmZYY5q1GGhAG0hPuiUm3QLb3HQAE38aYTHIRV4k1MpjR4ZcUs237FCz0Sry5NC7vaojN7VuCTF5J+4q1KResGAG014DPaPhuxvp6jy5XoGaNbIcO8DX3o+SygTVWgT9QI2MMb0RQCswQZ3KRJkACyBZwO7V/3Aq6qicm4NG8C4KhLx7laQ23rGUo3cU+k0SOCWDz7/SBkbZVp1EA3xv5031c/dmc1XPJSON02x90l7wjcSV2dLfagkCb8Gkxe9mDu+VeULczjmCKfiDnbh8ZCmOnh77y2rqz+8qGVmveOWU79CLLi/3cf4oOwIDAQAB",
       "priv_key": "CRX_PRIV_KEY"
     },
     {
       "browser": "chrome_v3",
       "id": "jhigoaelcgmfbidkocglkcnhmfacajle",
-      "crx": "jhigoaelcgmfbidkocglkcnhmfacajle",
+      "public_key": "MIIBIjANBgkqhkiG9w0BAQEFAAOCAQ8AMIIBCgKCAQEA5F5zPEePr0PPrPp1WKbZ20o/O/nMBnCbn4TYd73qlOJzG0mJJskPBKvDFXiTFc2yHfnqXioiPKbFlxlHhNCF92mtHIu7cVkxnZsVip41Yeej/RCsZt/Hp3+YwLlCwt6FXPlROxfZ+5elGabkT0+RM5S2HWSP3T7WWUrBm/G3nw9DEUCA58Xuwh8v+jJLVy3xkbXNIDHOc1ECqeIE2NHAsCuCJNawIq2m1eVEvpdpxDfhDMlqEN8tHXQZBNbMti+ixvewg2efDuNY5II13zWn3fjKds+xIqPE0v3/xK84fveCfpx5FzuMMjNHs7orIvtFXCQpx9qWKS9PLUTlkcyRcQIDAQAB",
       "priv_key": "CRX_PRIV_KEY_V3"
     }
   ],
   "cws": [
     {
-      "browser": "chrome_v2"
+      "browser": "chrome_v2",
+      "id": "njonnfajokpagdffnbehggdkcmgdchei"
     },
     {
-      "browser": "chrome_v3"
+      "browser": "chrome_v3",
+      "id": "eningockdidmgiojffjmkdblpjocbhgh"
     }
   ],
   "edge": [
@@ -57,7 +59,7 @@
       "id": "headereditor-v3@addon.firefoxcn.net"
     }
   ],
-	"github": {
-		"enable": true
-	}
+  "github": {
+    "enable": true
+  }
 }

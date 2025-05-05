@@ -38,7 +38,7 @@ function getManifest(browser, options) {
   } else {
     manifest.manifest_version = 3;
     manifest.background = {
-      service_worker: ['assets/js/background.js'],
+      service_worker: 'assets/js/background.js',
     };
   }
 
@@ -55,9 +55,16 @@ function getManifest(browser, options) {
     manifest.host_permissions = [''];
   }
 
+  if (options && options.dev && browser.startsWith('chrome')) {
+    const key = extensionConfig.crx.find((x) => x.browser === browser).public_key;
+    if (key) {
+      manifest.key = key;
+    }
+  }
+
   if (browser.startsWith('firefox')) {
     if (options && options.amo) {
-      const id = extensionConfig.amo.find(x => x.browser === browser).id;
+      const id = extensionConfig.amo.find((x) => x.browser === browser).id;
       manifest.browser_specific_settings = {
         gecko: {
           id,
@@ -65,7 +72,7 @@ function getManifest(browser, options) {
         },
       };
     } else {
-      const id = extensionConfig.xpi.find(x => x.browser === browser).id;
+      const id = extensionConfig.xpi.find((x) => x.browser === browser).id;
       manifest.browser_specific_settings = {
         gecko: {
           id,

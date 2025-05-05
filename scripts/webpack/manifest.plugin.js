@@ -56,9 +56,12 @@ function ManifestPlugin() {
           }
         }
 
-        manifest = getManifest(targetBrowser);
+        const isDev = _.get(compiler, 'options.mode') === 'development';
+        manifest = getManifest(targetBrowser, {
+          dev: isDev,
+        });
         manifest.version = versionText;
-        if (_.get(compiler, 'options.mode') === 'development') {
+        if (isDev) {
           manifest['content_security_policy'] = "script-src'self' 'unsafe-eval'; object-src'self'";
         }
       };

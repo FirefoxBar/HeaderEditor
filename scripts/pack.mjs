@@ -79,6 +79,7 @@ async function packOnePlatform(name, browserConfig, itemConfig) {
     await outputJSON(
       _join(thisPack, 'manifest.json'),
       getManifest(itemConfig.browser, {
+        dev: false,
         amo: name === 'amo',
         xpi: name === 'xpi',
       }),
