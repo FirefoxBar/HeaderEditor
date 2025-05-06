@@ -1,4 +1,3 @@
-/* eslint-disable @typescript-eslint/member-ordering */
 import { TextDecoder, TextEncoder } from 'text-encoding';
 import browser, { WebRequest } from 'webextension-polyfill';
 import { getGlobal, IS_CHROME, IS_SUPPORT_STREAM_FILTER } from '@/share/core/utils';

@@ -1,6 +1,9 @@
 const CopyWebpackPlugin = require('copy-webpack-plugin');
 const ManifestPlugin = require('./manifest.plugin');
 
+const browserConfig = require('../browser-config/browser.config.json');
+const targetBrowser = String(process.env.TARGET_BROWSER) || 'firefox_v3';
+
 module.exports = function (config) {
   const copy = [
     {
@@ -49,4 +52,23 @@ module.exports = function (config) {
   });
 
   config.plugin('browser-manifest').use(ManifestPlugin);
+
+  // remove some packages
+  const baseExternals = {
+    react: 'React',
+    'react-dom': 'ReactDOM',
+  };
+  if (browserConfig[targetBrowser].ENABLE_EVAL) {
+    config.externals(baseExternals);
+  } else {
+    config.externals([
+      function ({ context, request }, callback) {
+        if (['text-encoding'].includes(request)) {
+          return callback(null, '{}', 'var');
+        }
+        callback();
+      },
+      baseExternals,
+    ]);
+  }
 };

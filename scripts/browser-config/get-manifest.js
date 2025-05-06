@@ -55,14 +55,17 @@ function getManifest(browser, options) {
   }
 
   if (config.ENABLE_WEB_REQUEST) {
-    manifest.permissions.push('webRequest', 'webRequestBlocking', '*://*/*');
+    manifest.permissions.push('webRequest', 'webRequestBlocking');
   }
 
   if (config.ENABLE_DNR) {
     manifest.permissions.push('declarativeNetRequest');
+  }
+
+  if (config.ENABLE_DNR || config.ENABLE_WEB_REQUEST) {
     if (config.MANIFEST_VER === 'v3') {
       manifest.host_permissions = ['*://*/*'];
-    } else if (!manifest.permissions.includes('*://*/*')) {
+    } else {
       manifest.permissions.push('*://*/*');
     }
   }

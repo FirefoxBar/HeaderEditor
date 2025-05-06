@@ -6,10 +6,6 @@ const { getDistDir } = require('./scripts/browser-config/get-path');
 const env = envConfigs[targetBrowser];
 
 module.exports = {
-  externals: {
-    react: 'React',
-    'react-dom': 'ReactDOM',
-  },
   define: {
     ...env,
     IS_DEV: process.env.NODE_ENV === 'development',
