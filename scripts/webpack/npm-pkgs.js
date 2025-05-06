@@ -45,7 +45,7 @@ module.exports = function (config) {
       },
       semi: {
         name: 'semi',
-        test: /@douyinfe[/+]semi-/,
+        test: /(@douyinfe[/+]semi-|date-fns)/,
         enforce: true,
       },
     },
