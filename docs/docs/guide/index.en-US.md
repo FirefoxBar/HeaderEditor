@@ -19,6 +19,34 @@ Please choose a different installation method depending on your browser:
 | ![Chrome Logo](https://cdnjs.cloudflare.com/ajax/libs/browser-logos/73.0.0/chrome/chrome_16x16.png) Chrome | [Chrome Web Store](https://chrome.google.com/webstore/detail/header-editor/eningockdidmgiojffjmkdblpjocbhgh) |
 | ![Edge Logo](https://cdnjs.cloudflare.com/ajax/libs/browser-logos/73.0.0/edge/edge_16x16.png) Edge(Chromium) | [Edge Addons](https://microsoftedge.microsoft.com/addons/detail/header-editor/afopnekiinpekooejpchnkgfffaeceko) |
 
+## Features Comparison
+
+The features of the full version (Header Editor) and the lite version (Header Editor Lite) are different as follows:
+
+* Firefox browser
+
+| Feature | Full | Lite |
+| --- | --- | --- |
+| Basic functions | ✅ | ✅ |
+| DNR mode | ✅ | ✅ |
+| Rules - Exclude | ✅ | ✅ |
+| Custom functions | ✅ | ❌ |
+| Modify response body | ✅ | ❌ |
+
+* Chrome/Edge browser
+
+| Feature | Full | Lite |
+| --- | --- | --- |
+| Basic functions | ✅ | ✅ |
+| DNR mode | ❌ | ✅ |
+| Rules - Exclude | ✅ | ❌ |
+| Custom functions | ✅ | ❌ |
+| Modify response body | ❌ | ❌ |
+
+Notes:
+* The "exclude" for Chrome/Edge browser will be supported in other ways in subsequent versions, but they not be completely consistent with the current support methods, and manual migration may be required.
+* If the corresponding feature is not supported, the rules will not take effect, but will still be retained. You can wait for subsequent versions to support it, or manually migrate to other browsers through the "Import and Export".
+
 ## Basic usage
 
 * Click the HE icon in the upper right corner of your browser to open the HE Management Panel

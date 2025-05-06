@@ -1,6 +1,30 @@
 {
-  "firefox_v2": { "MANIFEST_VER": "v2", "ENABLE_DNR": false, "ENABLE_WEB_REQUEST": true, "ENABLE_EVAL": true },
-  "firefox_v3": { "MANIFEST_VER": "v3", "ENABLE_DNR": true, "ENABLE_WEB_REQUEST": true, "ENABLE_EVAL": false },
-  "chrome_v2": { "MANIFEST_VER": "v2", "ENABLE_DNR": false, "ENABLE_WEB_REQUEST": true, "ENABLE_EVAL": true },
-  "chrome_v3": { "MANIFEST_VER": "v3", "ENABLE_DNR": true, "ENABLE_WEB_REQUEST": false, "ENABLE_EVAL": false }
+  "firefox_v2": {
+    "MANIFEST_VER": "v2",
+    "ENABLE_DNR": true,
+    "ENABLE_WEB_REQUEST": true,
+    "ENABLE_EVAL": true,
+    "IS_LITE_VER": false
+  },
+  "firefox_v3": {
+    "MANIFEST_VER": "v3",
+    "ENABLE_DNR": true,
+    "ENABLE_WEB_REQUEST": true,
+    "ENABLE_EVAL": false,
+    "IS_LITE_VER": true
+  },
+  "chrome_v2": {
+    "MANIFEST_VER": "v2",
+    "ENABLE_DNR": false,
+    "ENABLE_WEB_REQUEST": true,
+    "ENABLE_EVAL": true,
+    "IS_LITE_VER": false
+  },
+  "chrome_v3": {
+    "MANIFEST_VER": "v3",
+    "ENABLE_DNR": true,
+    "ENABLE_WEB_REQUEST": false,
+    "ENABLE_EVAL": false,
+    "IS_LITE_VER": true
+  }
 }

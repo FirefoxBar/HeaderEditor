@@ -221,7 +221,7 @@ function init() {
   });
 }
 
-if (MANIFEST_VER === 'v3') {
+if (MANIFEST_VER === 'v3' && typeof window === 'undefined') {
   // this is service worker
   addEventListener('activate', () => {
     init();

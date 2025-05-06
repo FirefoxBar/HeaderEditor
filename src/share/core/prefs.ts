@@ -48,6 +48,7 @@ class Prefs {
       }
     });
   }
+
   get<T = any>(key: string, defaultValue?: T): T | undefined {
     if (key in this.boundMethods) {
       if (key in this.boundWrappers) {
@@ -69,9 +70,11 @@ class Prefs {
     console.warn(`No default preference for ${key}`);
     return defaultValue;
   }
+
   getAll() {
     return { ...this.values };
   }
+
   set(key: string, value: any, noSync = false) {
     const oldValue = this.values[key];
     if (!equal(value, oldValue)) {
@@ -84,12 +87,15 @@ class Prefs {
       }
     }
   }
+
   bindAPI(apiName: string, apiMethod: (value: any) => any) {
     this.boundMethods[apiName] = apiMethod;
   }
+
   remove(key: string) {
     this.set(key, undefined);
   }
+
   ready(cb: () => void) {
     if (!this.isDefault) {
       cb();
@@ -99,17 +105,4 @@ class Prefs {
   }
 }
 
-interface BackgroundWindow extends Window {
-  prefs?: Prefs;
-}
-
-function getPrefs() {
-  if (MANIFEST_VER === 'v2') {
-    const backgroundWindow = browser.extension.getBackgroundPage() as BackgroundWindow;
-    return backgroundWindow && backgroundWindow.prefs ? backgroundWindow.prefs : new Prefs();
-  } else {
-    return new Prefs();
-  }
-}
-
-export const prefs = getPrefs();
+export const prefs = new Prefs();

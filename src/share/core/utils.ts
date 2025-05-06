@@ -19,7 +19,7 @@ export const FIREFOX_VERSION = IS_FIREFOX
   : 0;
 
 export const IS_SUPPORT_STREAM_FILTER =
-  ENABLE_WEB_REQUEST && typeof browser.webRequest?.filterResponseData === 'function';
+  ENABLE_WEB_REQUEST && ENABLE_EVAL && typeof browser.webRequest?.filterResponseData === 'function';
 
 // Get Active Tab
 export async function getActiveTab() {

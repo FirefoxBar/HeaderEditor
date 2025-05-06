@@ -2,8 +2,8 @@ const browserConfig = require('./browser.config.json');
 const extensionConfig = require('../../extension.json');
 
 const baseManifest = {
-  name: '__MSG_extName__',
-  short_name: '__MSG_extName__',
+  name: '',
+  short_name: '',
   version: null,
   description: '__MSG_description__',
   homepage_url: 'https://he.firefoxcn.net',
@@ -33,16 +33,21 @@ function getManifest(browser, options) {
 
   if (config.MANIFEST_VER === 'v2') {
     manifest.manifest_version = 2;
-    manifest.background = {
-      scripts: ['assets/js/background.js'],
-    };
     manifest.browser_action = action;
   } else {
     manifest.manifest_version = 3;
+    manifest.action = action;
+  }
+
+  // background
+  if (config.MANIFEST_VER === 'v2' || browser.startsWith('firefox')) {
+    manifest.background = {
+      scripts: ['assets/js/background.js'],
+    };
+  } else {
     manifest.background = {
       service_worker: 'assets/js/background.js',
     };
-    manifest.action = action;
   }
 
   if (config.ENABLE_EVAL) {
@@ -55,7 +60,19 @@ function getManifest(browser, options) {
 
   if (config.ENABLE_DNR) {
     manifest.permissions.push('declarativeNetRequest');
-    manifest.host_permissions = ['*://*/*'];
+    if (config.MANIFEST_VER === 'v3') {
+      manifest.host_permissions = ['*://*/*'];
+    } else if (!manifest.permissions.includes('*://*/*')) {
+      manifest.permissions.push('*://*/*');
+    }
+  }
+
+  if (config.IS_LITE_VER) {
+    manifest.name = 'Header Editor Lite';
+    manifest.short_name = 'Header Editor Lite';
+  } else {
+    manifest.name = 'Header Editor';
+    manifest.short_name = 'Header Editor';
   }
 
   if (options && options.dev && browser.startsWith('chrome')) {
