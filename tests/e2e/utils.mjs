@@ -75,7 +75,7 @@ async function createBrowser(browserKey, pathToExtension) {
   } else {
     return puppeteer.launch({
       executablePath: getChrome(),
-      headless: false,
+      // headless: false,
       args: [`--disable-extensions-except=${pathToExtension}`, `--load-extension=${pathToExtension}`],
     });
   }

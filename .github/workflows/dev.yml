@@ -17,12 +17,12 @@ jobs:
       matrix:
         node-version: [18.x]
     steps:
-    - uses: actions/checkout@v3
+    - uses: actions/checkout@v4
     - uses: pnpm/action-setup@v4
       with:
         version: 9
     - name: Use Node.js ${{ matrix.node-version }}
-      uses: actions/setup-node@v3
+      uses: actions/setup-node@v4
       with:
         node-version: ${{ matrix.node-version }}
         cache: 'pnpm'
@@ -33,12 +33,12 @@ jobs:
         TOKEN: ${{ secrets.SNAPSHOT_TOKEN }}
         GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
       run: node ./scripts/get-snapshot-version.mjs
-    - name: Build Firefox v2
-      run: npm run build:firefox_v2
-    - name: Build Firefox v3
-      run: npm run build:firefox_v3
-    - name: Build Chrome v2
-      run: npm run build:chrome_v2
+    # - name: Build Firefox v2
+    #   run: npm run build:firefox_v2
+    # - name: Build Firefox v3
+    #   run: npm run build:firefox_v3
+    # - name: Build Chrome v2
+    #   run: npm run build:chrome_v2
     - name: Build Chrome v3
       run: npm run build:chrome_v3
     - name: Upload bundle
