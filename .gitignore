@@ -47,3 +47,4 @@ temp
 
 manifest.json
 dist_*
+tests/**/config.json

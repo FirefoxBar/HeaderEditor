@@ -1,3 +1,6 @@
 {
-  "preset": "jest-puppeteer"
+  "testMatch": [
+    "**/*.spec.mjs"
+  ],
+  "transform": {}
 }
