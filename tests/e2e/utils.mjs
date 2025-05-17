@@ -1,12 +1,15 @@
-import puppeteer from 'puppeteer-core';
-import { fileURLToPath } from 'url';
-import path from 'path';
-import { existsSync, readFileSync } from 'fs';
-import getPort from 'get-port';
-import { cmd } from 'web-ext';
 import axios from 'axios';
+import { existsSync, readFileSync } from 'fs';
+import { readFile } from 'fs/promises';
+import getPort from 'get-port';
+import path from 'path';
+import puppeteer from 'puppeteer-core';
+import resolve from 'resolve';
+import { fileURLToPath } from 'url';
+import { promisify } from 'util';
 
 export const testServer = 'http://127.0.0.1:8899/';
+export const fxAddonUUID = 'f492d714-700a-4402-8b96-4ec9e829332d';
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
@@ -56,22 +59,31 @@ async function createBrowser(browserKey, pathToExtension) {
   const browserType = browserKey.indexOf('firefox') === 0 ? 'firefox' : 'chrome';
 
   if (browserType === 'firefox') {
-    const port = await getPort();
-    const runner = await cmd.run(
-      {
-        sourceDir: pathToExtension,
-        firefox: getFirefox(),
-        args: [`--remote-debugging-port=${port}`],
+    const manifest = await readFile(path.join(pathToExtension, 'manifest.json'), 'utf8');
+    const addonID = JSON.parse(manifest).browser_specific_settings.gecko.id;
+    const pResolve = promisify(resolve);
+    const webExtRoot = await pResolve('web-ext');
+    const { connect } = await import('file://' + path.join(path.dirname(webExtRoot), 'lib/firefox/remote.js'));
+
+    const rppPort = await getPort();
+    const browser = await puppeteer.launch({
+      // headless: false,
+      browser: 'firefox',
+      executablePath: getFirefox(),
+      args: [
+        `--start-debugger-server=${rppPort}`,
+      ],
+      extraPrefsFirefox: {
+        'devtools.chrome.enabled': true,
+        'devtools.debugger.prompt-connection': false,
+        'devtools.debugger.remote-enabled': true,
+        'toolkit.telemetry.reportingpolicy.firstRun': false,
+        'extensions.webextensions.uuids': `{"${addonID}": "${fxAddonUUID}"}`,
       },
-      {
-        shouldExitProgram: false,
-      },
-    );
-    // const { debuggerPort } = runner.extensionRunners[0].runningInfo;
-    // console.log(debuggerPort);
-    return puppeteer.connect({
-      browserWSEndpoint: `ws://localhost:${port}`,
     });
+    const rdp = await connect(rppPort);
+    await rdp.installTemporaryAddon(pathToExtension);
+    return browser;
   } else {
     return puppeteer.launch({
       executablePath: getChrome(),
@@ -90,41 +102,61 @@ export async function startUp(browserKey) {
 
   const openPopup = async (baseTarget) => {
     await sleep(1000);
-    const url = await baseTarget.evaluate('chrome.runtime.getURL("popup.html")');
+    let url = `moz-extension://${fxAddonUUID}/popup.html`;
+    if (baseTarget) {
+      url = await baseTarget.evaluate('chrome.runtime.getURL("popup.html")');
+    }
     const page = await browser.newPage();
-    await page.goto(url);
+    if (url.startsWith('moz-extension://')) {
+      // Firefox will not resolve goto
+      page.goto(url);
+    } else {
+      await page.goto(url);
+    }
     await page.waitForSelector('#ice-container');
     return page;
   };
 
-  if (manifest.background.scripts) {
-    const backgroundPageTarget = await browser.waitForTarget((target) => target.type() === 'background_page');
-    const page = await backgroundPageTarget.page();
-    const popup = await openPopup(page);
+  if (!browserKey.startsWith('firefox')) {
+    // Chrome like
+    if (manifest.background.scripts) {
+      const backgroundPageTarget = await browser.waitForTarget((target) => target.type() === 'background_page');
+      const page = await backgroundPageTarget.page();
+      const popup = await openPopup(page);
+      return {
+        browserType: 'chrome',
+        type: 'page',
+        target: page,
+        browser,
+        popup,
+      };
+    }
+
+    if (manifest.background.service_worker) {
+      const workerTarget = await browser.waitForTarget(
+        // Assumes that there is only one service worker created by the extension and its URL ends with background.js.
+        (target) => target.type() === 'service_worker' && target.url().endsWith('background.js'),
+      );
+      const worker = await workerTarget.worker();
+      const popup = await openPopup(worker);
+      return {
+        browserType: 'chrome',
+        type: 'worker',
+        target: worker,
+        browser,
+        popup,
+      };
+    }
+  } else {
+    // Firefox has no 'background_page' target
+    const popup = await openPopup();
     return {
-      type: 'page',
-      target: page,
+      browserType: 'firefox',
+      type: 'none',
       browser,
       popup,
     };
   }
-
-  if (manifest.background.service_worker) {
-    const workerTarget = await browser.waitForTarget(
-      // Assumes that there is only one service worker created by the extension and its URL ends with background.js.
-      (target) => target.type() === 'service_worker' && target.url().endsWith('background.js'),
-    );
-    const worker = await workerTarget.worker();
-    const popup = await openPopup(worker);
-    return {
-      type: 'worker',
-      target: worker,
-      browser,
-      popup,
-    };
-  }
-
-  // await browser.close();
 }
 
 export async function waitTestServer() {

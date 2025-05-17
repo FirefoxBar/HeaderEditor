@@ -6,12 +6,13 @@ beforeAll(async () => {
   browser = await startUp('chrome_v3');
   // Check if test server is running
   await waitTestServer();
-  console.log('browser', browser);
+  // console.log('browser', browser);
 }, 20000);
 
-afterAll(() => {
+afterAll(async () => {
   if (browser) {
-    return browser.browser.close();
+    await browser.popup.close();
+    await browser.browser.close();
   }
 });
 

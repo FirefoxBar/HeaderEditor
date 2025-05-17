@@ -159,6 +159,9 @@ importers:
       puppeteer-core:
         specifier: 24.7.2
         version: 24.7.2
+      resolve:
+        specifier: ^1.22.10
+        version: 1.22.10
       rimraf:
         specifier: ^6.0.1
         version: 6.0.1
@@ -3147,6 +3150,9 @@ packages:
   function-bind@1.1.1:
     resolution: {integrity: sha512-yIovAzMX49sF8Yl58fSCWJ5svSLuaibPxXQJFLmBObTuCr0Mf1KiPopGM9NiFjiYBCbfaa2Fh6breQ6ANVTI0A==}
 
+  function-bind@1.1.2:
+    resolution: {integrity: sha512-7XHNxH7qX9xG5mIwxkhumTox/MIRNcOgDrxWsMt2pAr23WHp6MrRlN7FBSFpCpr+oVO0F744iUgR82nJMfG2SA==}
+
   function.prototype.name@1.1.5:
     resolution: {integrity: sha512-uN7m/BzVKQnCUF/iW8jYea67v++2u7m5UgENbHRtdDVclOUP+FMPlCNdmk0h/ysGyo2tavMJEDqJAkJdRa1vMA==}
     engines: {node: '>= 0.4'}
@@ -3362,6 +3368,10 @@ packages:
   has@1.0.3:
     resolution: {integrity: sha512-f2dvO0VU6Oej7RkWJGrehjbzMAjFp5/VKPp5tTpWIV4JHHZK1/BxbFRtf/siA2SWTe09caDmVtYYzWEIbBS4zw==}
     engines: {node: '>= 0.4.0'}
+
+  hasown@2.0.2:
+    resolution: {integrity: sha512-0hJU9SCPvmMzIBdZFqNPXWa6dqh7WdH0cII9y+CyS8rG3nL48Bclra9HmKhVVUHyPWNH5Y7xDwAB7bfgSjkUMQ==}
+    engines: {node: '>= 0.4'}
 
   he@1.2.0:
     resolution: {integrity: sha512-F/1DnUGPopORZi0ni+CvrCgHQ5FyEAHRLSApuYWMmrbSwoN2Mn/7k+Gl38gJnR7yyDZk6WLXwiGod1JOWNDKGw==}
@@ -3593,6 +3603,10 @@ packages:
 
   is-core-module@2.11.0:
     resolution: {integrity: sha512-RRjxlvLDkD1YJwDbroBHMb+cukurkDWNyHx7D3oNB5x9rb5ogcksMC5wHCadcXoo67gVr/+3GFySh3134zi6rw==}
+
+  is-core-module@2.16.1:
+    resolution: {integrity: sha512-UfoeMA6fIJ8wTYFEUjelnaGI67v6+N7qXJEvQuIGa99l4xsCruSYOVSQ0uPANn4dAzm8lkYPaKLrrijLq7x23w==}
+    engines: {node: '>= 0.4'}
 
   is-date-object@1.0.5:
     resolution: {integrity: sha512-9YQaSxsAiSwcvS33MBk3wTCVnWK+HhF8VZR2jRxehM16QcVOdHqPn4VPHmRK4lSr38n9JriurInLcP90xsYNfQ==}
@@ -5279,8 +5293,9 @@ packages:
     resolution: {integrity: sha512-OcXjMsGdhL4XnbShKpAcSqPMzQoYkYyhbEaeSko47MjRP9NfEQMhZkXL1DoFlt9LWQn4YttrdnV6X2OiyzBi+A==}
     engines: {node: '>=10'}
 
-  resolve@1.22.1:
-    resolution: {integrity: sha512-nBpuuYuY5jFsli/JIs1oldw6fOQCBioohqWZg/2hiaOybXOft4lonv85uDOKXdf8rhyK159cxU5cDcK/NKk8zw==}
+  resolve@1.22.10:
+    resolution: {integrity: sha512-NPRy+/ncIMeDlTAsuqwKIiferiawhefFJtkNSW0qZJEqMEb+qBt/77B/jGeeek+F0uOeN05CDa6HXbbIgtVX4w==}
+    engines: {node: '>= 0.4'}
     hasBin: true
 
   resolve@2.0.0-next.4:
@@ -6513,7 +6528,7 @@ snapshots:
       '@babel/helper-plugin-utils': 7.20.2
       debug: 4.3.4
       lodash.debounce: 4.0.8
-      resolve: 1.22.1
+      resolve: 1.22.10
       semver: 6.3.0
     transitivePeerDependencies:
       - supports-color
@@ -7988,7 +8003,7 @@ snapshots:
       '@babel/plugin-transform-react-jsx-source': 7.19.6(@babel/core@7.21.0)
       '@rollup/pluginutils': 4.2.1
       react-refresh: 0.13.0
-      resolve: 1.22.1
+      resolve: 1.22.10
     transitivePeerDependencies:
       - supports-color
 
@@ -8351,7 +8366,7 @@ snapshots:
     dependencies:
       '@babel/runtime': 7.21.0
       cosmiconfig: 7.1.0
-      resolve: 1.22.1
+      resolve: 1.22.10
 
   babel-plugin-polyfill-corejs2@0.3.3(@babel/core@7.27.1):
     dependencies:
@@ -9642,7 +9657,7 @@ snapshots:
     dependencies:
       debug: 3.2.7
       is-core-module: 2.11.0
-      resolve: 1.22.1
+      resolve: 1.22.10
     transitivePeerDependencies:
       - supports-color
 
@@ -9671,7 +9686,7 @@ snapshots:
       is-glob: 4.0.3
       minimatch: 3.1.2
       object.values: 1.1.6
-      resolve: 1.22.1
+      resolve: 1.22.10
       semver: 6.3.0
       tsconfig-paths: 3.14.2
     optionalDependencies:
@@ -10211,6 +10226,8 @@ snapshots:
 
   function-bind@1.1.1: {}
 
+  function-bind@1.1.2: {}
+
   function.prototype.name@1.1.5:
     dependencies:
       call-bind: 1.0.2
@@ -10446,6 +10463,10 @@ snapshots:
   has@1.0.3:
     dependencies:
       function-bind: 1.1.1
+
+  hasown@2.0.2:
+    dependencies:
+      function-bind: 1.1.2
 
   he@1.2.0: {}
 
@@ -10751,6 +10772,10 @@ snapshots:
   is-core-module@2.11.0:
     dependencies:
       has: 1.0.3
+
+  is-core-module@2.16.1:
+    dependencies:
+      hasown: 2.0.2
 
   is-date-object@1.0.5:
     dependencies:
@@ -11155,7 +11180,7 @@ snapshots:
       jest-pnp-resolver: 1.2.3(jest-resolve@29.7.0)
       jest-util: 29.7.0
       jest-validate: 29.7.0
-      resolve: 1.22.1
+      resolve: 1.22.10
       resolve.exports: 2.0.3
       slash: 3.0.0
 
@@ -11833,7 +11858,7 @@ snapshots:
   normalize-package-data@2.5.0:
     dependencies:
       hosted-git-info: 2.8.9
-      resolve: 1.22.1
+      resolve: 1.22.10
       semver: 5.7.1
       validate-npm-package-license: 3.0.4
 
@@ -12722,9 +12747,9 @@ snapshots:
 
   resolve.exports@2.0.3: {}
 
-  resolve@1.22.1:
+  resolve@1.22.10:
     dependencies:
-      is-core-module: 2.11.0
+      is-core-module: 2.16.1
       path-parse: 1.0.7
       supports-preserve-symlinks-flag: 1.0.0
 
@@ -13606,7 +13631,7 @@ snapshots:
     dependencies:
       esbuild: 0.14.54
       postcss: 8.4.21
-      resolve: 1.22.1
+      resolve: 1.22.10
       rollup: 2.77.3
     optionalDependencies:
       fsevents: 2.3.2
