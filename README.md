@@ -76,3 +76,9 @@ Please note that some languages (such as zh-Hans) will not be translated on tran
 Copyright © 2017-2023 [FirefoxBar Team](https://team.firefoxcn.net)
 
 Open source licensed under [GPLv2](LICENSE).
+
+## Technical Sponsorship
+
+CDN acceleration and security protection for this project are sponsored by Tencent EdgeOne.
+
+[![edgeone-logo](https://edgeone.ai/media/34fe3a45-492d-4ea4-ae5d-ea1087ca7b4b.png)](https://edgeone.ai/?from=github)
