@@ -1,6 +1,6 @@
 class File {
   save(text: string, fileName: string) {
-    const blob = new Blob([text]);
+    const blob = new Blob([text], { type: "application/json" });
     const fileUrl = URL.createObjectURL(blob);
     const link = document.createElement('a');
     link.href = fileUrl;
