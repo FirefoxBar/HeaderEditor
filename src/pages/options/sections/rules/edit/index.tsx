@@ -127,7 +127,7 @@ export default class Edit extends React.Component<EditProps, EditState> {
       // 初始化
       if (reInit || !this.initedRule) {
         try {
-          this.initedRule = initRule(this.state.rule);
+          this.initedRule = initRule(this.state.rule, true);
         } catch (e) {
           // 出错
           this.setState({
@@ -311,7 +311,7 @@ export default class Edit extends React.Component<EditProps, EditState> {
           {this.state.rule.matchType !== 'all' && (
             <Form.Input label={t('matchRule')} field="pattern" />
           )}
-          <Form.Input label={t('excludeRule')} field="exclude" />
+          <Form.Input label={t('excludeRule')} field="exclude" disabled={!ENABLE_WEB_REQUEST} />
           {/* Response body encoding */}
           {this.state.rule.ruleType === 'modifyReceiveBody' && (
             <Form.Select filter field="encoding" label={t('encoding')} optionList={ENCODING_LIST.map((x) => ({ label: x, value: x }))} />
@@ -322,7 +322,7 @@ export default class Edit extends React.Component<EditProps, EditState> {
             field="isFunction"
             options={[
               { label: t('exec_normal'), value: false },
-              { label: t('exec_function'), value: true },
+              { label: t('exec_function'), value: true, disabled: !ENABLE_EVAL },
             ]}
           />
           {/* Redirect */}

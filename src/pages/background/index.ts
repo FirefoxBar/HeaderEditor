@@ -30,15 +30,7 @@ if (ENABLE_DNR) {
   });
 }
 
-if (MANIFEST_VER === 'v3' && typeof window === 'undefined') {
-  // this is service worker
-  addEventListener('activate', () => {
-    if (IS_DEV) {
-      console.log('service worker activated');
-    }
-    init();
-  });
-} else {
+init();
+if (MANIFEST_VER !== 'v3' && typeof window !== 'undefined') {
   window.IS_BACKGROUND = true;
-  init();
 }

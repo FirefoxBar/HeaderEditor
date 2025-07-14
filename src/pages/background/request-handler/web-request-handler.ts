@@ -6,7 +6,7 @@ import logger from '@/share/core/logger';
 import type { Rule, RULE_ACTION_OBJ } from '@/share/core/types';
 import { TABLE_NAMES } from '@/share/core/constant';
 import { prefs } from '@/share/core/prefs';
-import rules from '../core/rules';
+import { get as getRules } from '../core/rules';
 
 // 最大修改8MB的Body
 const MAX_BODY_SIZE = 8 * 1024 * 1024;
@@ -141,7 +141,7 @@ class WebRequestHandler {
     }
     logger.debug(`handle before request ${e.url}`, e);
     // 可用：重定向，阻止加载
-    const rule = rules.get(TABLE_NAMES.request, { url: e.url, enable: true });
+    const rule = getRules(TABLE_NAMES.request, { url: e.url, enable: true });
     // Browser is starting up, pass all requests
     if (rule === null) {
       return;
@@ -201,7 +201,7 @@ class WebRequestHandler {
       return;
     }
     logger.debug(`handle before send ${e.url}`, e.requestHeaders);
-    const rule = rules.get(TABLE_NAMES.sendHeader, { url: e.url, enable: true });
+    const rule = getRules(TABLE_NAMES.sendHeader, { url: e.url, enable: true });
     // Browser is starting up, pass all requests
     if (rule === null) {
       return;
@@ -245,7 +245,7 @@ class WebRequestHandler {
       return;
     }
     logger.debug(`handle received ${e.url}`, e.responseHeaders);
-    const rule = rules.get(TABLE_NAMES.receiveHeader, { url: e.url, enable: true });
+    const rule = getRules(TABLE_NAMES.receiveHeader, { url: e.url, enable: true });
     // Browser is starting up, pass all requests
     if (rule) {
       this.modifyHeaders(e, REQUEST_TYPE.RESPONSE, rule, detail);
@@ -429,7 +429,7 @@ class WebRequestHandler {
       return;
     }
 
-    let rule = rules.get(TABLE_NAMES.receiveBody, { url: e.url, enable: true });
+    let rule = getRules(TABLE_NAMES.receiveBody, { url: e.url, enable: true });
     if (rule === null) {
       return;
     }

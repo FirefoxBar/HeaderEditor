@@ -3,7 +3,7 @@ import logger from '@/share/core/logger';
 import { APIs, TABLE_NAMES_ARR } from '@/share/core/constant';
 import { prefs } from '@/share/core/prefs';
 import emitter from '@/share/core/emitter';
-import rules from './core/rules';
+import * as rules from './core/rules';
 import { openURL } from './utils';
 import { getDatabase } from './core/db';
 
@@ -22,11 +22,11 @@ function execute(request: any) {
     case APIs.OPEN_URL:
       return openURL(request);
     case APIs.GET_RULES:
-      return Promise.resolve(rules.get(request.type, request.options));
+      return rules.waitLoad().then(() => rules.get(request.type, request.options));
     case APIs.SAVE_RULE:
-      return rules.save(request.rule);
+      return rules.waitLoad().then(() => rules.save(request.rule));
     case APIs.DELETE_RULE:
-      return rules.remove(request.type, request.id);
+      return rules.waitLoad().then(() => rules.remove(request.type, request.id));
     case APIs.SET_PREFS:
       return prefs.set(request.key, request.value);
     case APIs.UPDATE_CACHE:

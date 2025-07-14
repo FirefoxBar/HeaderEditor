@@ -13,11 +13,11 @@ export function detectRunner(rule: Rule): 'web_request' | 'dnr' {
   return 'dnr';
 }
 
-export function initRule(rule: Rule): InitdRule {
+export function initRule(rule: Rule, forceUseWebRequest = false): InitdRule {
   // eslint-disable-next-line @typescript-eslint/consistent-type-assertions
   const initd: InitdRule = { ...rule } as InitdRule;
   initd._runner = detectRunner(rule);
-  if (initd._runner === 'web_request') {
+  if (initd._runner === 'web_request' || forceUseWebRequest) {
     if (initd.isFunction && ENABLE_EVAL) {
       // eslint-disable-next-line no-new-func
       initd._func = new Function('val', 'detail', initd.code) as any;

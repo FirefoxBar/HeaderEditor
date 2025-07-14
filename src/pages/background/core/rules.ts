@@ -9,6 +9,8 @@ import { prefs } from '@/share/core/prefs';
 import emitter from '@/share/core/emitter';
 import { getDatabase } from './db';
 
+let isInit = false;
+
 const cache: { [key: string]: null | InitdRule[] } = {};
 TABLE_NAMES_ARR.forEach((t) => {
   cache[t] = null;
@@ -216,21 +218,27 @@ function init() {
     Promise.all(queue).then(() => {
       if (TABLE_NAMES_ARR.some((tableName) => cache[tableName] === null)) {
         init();
+      } else {
+        isInit = true;
+        emitter.emit(emitter.INNER_RULE_LOADED);
       }
     });
   });
 }
 
-if (MANIFEST_VER === 'v3' && typeof window === 'undefined') {
-  // this is service worker
-  addEventListener('activate', () => {
-    init();
+function waitLoad() {
+  return new Promise((resolve) => {
+    if (isInit) {
+      resolve(true);
+    } else {
+      emitter.once(emitter.INNER_RULE_LOADED, resolve);
+    }
   });
-} else {
-  init();
 }
 
-export default {
+init();
+
+export {
   get,
   getAll,
   filter,
@@ -238,4 +246,5 @@ export default {
   remove,
   updateCache,
   convertToBasicRule,
+  waitLoad,
 };

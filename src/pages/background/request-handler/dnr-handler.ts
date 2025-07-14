@@ -5,7 +5,7 @@ import { prefs } from '@/share/core/prefs';
 import { detectRunner } from '@/share/core/rule-utils';
 import type { Rule, RULE_ACTION_OBJ } from '@/share/core/types';
 import { getVirtualKey } from '@/share/core/utils';
-import rules from '../core/rules';
+import { getAll } from '../core/rules';
 import type { DeclarativeNetRequest } from 'webextension-polyfill/namespaces/declarativeNetRequest';
 
 type DNRRule = DeclarativeNetRequest.Rule;
@@ -134,7 +134,7 @@ class DNRRequestHandler {
   }
 
   private async initRules() {
-    const v = Object.values(rules.getAll());
+    const v = Object.values(getAll());
 
     if (v.some((x) => x === null)) {
       // rule not ready

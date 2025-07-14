@@ -8,6 +8,7 @@ class Emitter extends EventEmitter {
 
   EVENT_PREFS_UPDATE = 'b3';
   EVENT_PREFS_READY = 'b4';
+  INNER_RULE_LOADED = 'b5';
 
   INNER_RULE_UPDATE = 'c1';
   INNER_RULE_REMOVE = 'c2';
