@@ -4,25 +4,45 @@
 	"version": null,
 	"description": "__MSG_description__",
 	"homepage_url": "https://he.firefoxcn.net",
-	"manifest_version": 2,
+	"manifest_version": 3,
 	"icons": {
 		"128": "assets/images/128.png"
 	},
 	"permissions": [
 		"tabs",
-		"webRequest",
-		"webRequestBlocking",
 		"storage",
-		"*://*/*",
-		"unlimitedStorage"
+		"notifications",
+		"declarativeNetRequest",
+		"declarativeNetRequestFeedback",
+		"declarativeNetRequestWithHostAccess"
 	],
-	"content_security_policy": "script-src 'self' 'unsafe-eval'; object-src 'self';",
-	"background": {
-		"scripts": [
-      "assets/js/background.js"
-    ]
+	"host_permissions": [
+		"*://*/*"
+	],
+	"declarative_net_request": {
+		"rule_resources": []
 	},
-	"browser_action": {
+	"content_security_policy": {
+		"extension_pages": "script-src 'self' 'wasm-unsafe-eval'; object-src 'self';"
+	},
+	"background": {
+		"service_worker": "assets/js/background.js"
+	},
+	"content_scripts": [
+		{
+			"matches": ["<all_urls>"],
+			"css": [
+				"assets/css/content.css"
+			],
+			"js": [
+				"external/react.min.js",
+				"external/react-dom.min.js",
+				"assets/js/content.js"
+			],
+			"run_at": "document_end"
+		}
+	],
+	"action": {
 		"default_icon": {
 			"128": "assets/images/128.png"
 		},
@@ -33,18 +53,5 @@
 	"options_ui": {
 		"page": "options.html",
 		"open_in_tab": true
-  },
-  "__amo__browser_specific_settings": {
-    "gecko": {
-      "id": "headereditor-amo@addon.firefoxcn.net",
-      "strict_min_version": "77.0"
-    }
-  },
-  "__xpi__browser_specific_settings": {
-    "gecko": {
-      "id": "headereditor@addon.firefoxcn.net",
-      "strict_min_version": "77.0",
-      "update_url": "https://ext.firefoxcn.net/header-editor/install/update.json"
-    }
-  }
+	}
 }

@@ -18,7 +18,15 @@ export const FIREFOX_VERSION = IS_FIREFOX
   })()
   : 0;
 
-export const IS_SUPPORT_STREAM_FILTER = typeof browser.webRequest.filterResponseData === 'function';
+let is_support = false;
+try {
+  is_support = typeof browser.webRequest.filterResponseData === 'function';
+} catch (e) {
+  // ignore
+}
+
+export const IS_SUPPORT_STREAM_FILTER = is_support;
+console.log('utils', IS_SUPPORT_STREAM_FILTER);
 
 // Get Active Tab
 export function getActiveTab(): Promise<Tabs.Tab> {
@@ -150,10 +158,12 @@ export function getGlobal() {
 }
 
 export function isBackground() {
+  // Service Worker环境中window不存在，但我们是在后台运行
   if (typeof window === 'undefined') {
     return true;
   }
-  return typeof window.IS_BACKGROUND !== 'undefined';
+  // 检查window或globalThis中的IS_BACKGROUND标志
+  return typeof window.IS_BACKGROUND !== 'undefined' || typeof globalThis.IS_BACKGROUND !== 'undefined';
 }
 
 export function getVirtualKey(rule: Rule) {

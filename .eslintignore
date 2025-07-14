@@ -5,6 +5,7 @@ demo/
 .ice/
 scripts/
 locale/
+dist/
 
 # node 覆盖率文件
 coverage/
