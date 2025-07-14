@@ -31,12 +31,12 @@ module.exports = getESLintConfig('react-ts', {
           {
             'pattern': '@/**',
             'group': 'parent',
-            'position': 'before'
-          }
+            'position': 'before',
+          },
         ],
         'pathGroupsExcludedImportTypes': ['builtin'],
-        'newlines-between': 'never'
-      }
-    ]
+        'newlines-between': 'never',
+      },
+    ],
   },
 });

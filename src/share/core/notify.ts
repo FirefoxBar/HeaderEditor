@@ -11,10 +11,10 @@ class Notify {
     resolve: (v: any) => void;
     reject: (e: any) => void;
   }> = [];
-  private messageTimer: number | null = null;
+  private messageTimer: ReturnType<typeof setTimeout> | null = null;
 
   constructor() {
-    const handleMessage = (request: any, sender?: any) => {
+    const handleMessage = (request: any, _sender?: any) => {
       if (request.method === 'notifyBackground') {
         request.method = request.reason;
         delete request.reason;
@@ -26,7 +26,7 @@ class Notify {
       this.event.emit(request.event, request);
     };
 
-    browser.runtime.onMessage.addListener((request, sender) => {
+    browser.runtime.onMessage.addListener((request, _sender) => {
       // 批量消息
       if (request.method === 'batchExecute') {
         request.batch.forEach((item) => handleMessage(item));
