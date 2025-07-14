@@ -5,7 +5,7 @@ import { defaultPrefValue } from '@/share/core/constant';
 import emitter from '@/share/core/emitter';
 import { prefs } from '@/share/core/prefs';
 import type { PrefValue } from '@/share/core/types';
-import { t } from '@/share/core/utils';
+import { IS_SUPPORT_STREAM_FILTER, t } from '@/share/core/utils';
 import Api from '@/share/pages/api';
 
 interface OptionsProps {
@@ -17,14 +17,10 @@ interface OptionsState {
 }
 
 const prefItems: {
-  [key: string]: { langKey: string; type: 'switch' | 'select'; optionList?: Array<{ label: string; value: string }> };
+  [key: string]: { langKey: string; type: 'switch' | 'select'; optionList?: Array<{ label: string; value: string }>; disabled?: boolean };
 } = {
   'manage-collapse-group': {
     langKey: 'manage_collapse_group',
-    type: 'switch',
-  },
-  'exclude-he': {
-    langKey: 'rules_no_effect_for_he',
     type: 'switch',
   },
   'show-common-header': {
@@ -34,10 +30,12 @@ const prefItems: {
   'include-headers': {
     langKey: 'include_header_in_custom_function',
     type: 'switch',
+    disabled: !ENABLE_EVAL,
   },
   'modify-body': {
     langKey: 'modify_body',
     type: 'switch',
+    disabled: !IS_SUPPORT_STREAM_FILTER,
   },
   'is-debug': {
     langKey: 'debug_mode_enable',
@@ -161,9 +159,10 @@ export default class Options extends React.Component<OptionsProps, OptionsState>
                         optionList={item.optionList}
                         onChange={(v) => this.handleChange(key, v)}
                         value={this.state.prefs[key]}
+                        disabled={item.disabled}
                       />
                     ) : (
-                      <Switch checked={this.state.prefs[key]} onChange={(v) => this.handleChange(key, Boolean(v))} />
+                      <Switch checked={this.state.prefs[key]} onChange={(v) => this.handleChange(key, Boolean(v))} disabled={item.disabled} />
                     )
                   }
                 />

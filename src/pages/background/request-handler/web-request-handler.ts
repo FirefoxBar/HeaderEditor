@@ -95,9 +95,6 @@ class WebRequestHandler {
   private loadPrefs() {
     emitter.on(emitter.EVENT_PREFS_UPDATE, (key: string, val: any) => {
       switch (key) {
-        case 'exclude-he':
-          this.excludeHe = val;
-          break;
         case 'disable-all':
           this.disableAll = val;
           break;
@@ -113,7 +110,6 @@ class WebRequestHandler {
     });
 
     prefs.ready(() => {
-      this.excludeHe = Boolean(prefs.get('exclude-he'));
       this.disableAll = Boolean(prefs.get('disable-all'));
       this.includeHeaders = Boolean(prefs.get('include-headers'));
       this.modifyBody = Boolean(prefs.get('modify-body'));
