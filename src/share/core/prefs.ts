@@ -54,6 +54,11 @@ class Prefs {
     });
 
     function tryMigrating(key: string) {
+      // Service Worker环境中没有localStorage，跳过迁移
+      if (typeof localStorage === 'undefined' || typeof localStorage.getItem !== 'function') {
+        return undefined;
+      }
+
       if (!(key in localStorage)) {
         return undefined;
       }
@@ -72,8 +77,9 @@ class Prefs {
             console.error("Cannot migrate from localStorage %s = '%s': %o", key, value, e);
             return undefined;
           }
+        default:
+          return value;
       }
-      return value;
     }
   }
   get(key: string, defaultValue?: any) {
@@ -129,5 +135,22 @@ class Prefs {
 interface BackgroundWindow extends Window {
   prefs?: Prefs;
 }
-const backgroundWindow = browser.extension.getBackgroundPage() as BackgroundWindow;
-export const prefs = backgroundWindow && backgroundWindow.prefs ? backgroundWindow.prefs : new Prefs();
+
+// Service Worker环境中没有background page，直接创建新的Prefs实例
+function createPrefs() {
+  // 在Service Worker环境中，直接创建新实例
+  if (typeof window === 'undefined') {
+    return new Prefs();
+  }
+
+  // 在其他环境中，尝试从background page获取
+  try {
+    const backgroundWindow = browser.extension.getBackgroundPage() as BackgroundWindow;
+    return backgroundWindow && backgroundWindow.prefs ? backgroundWindow.prefs : new Prefs();
+  } catch (e) {
+    // 如果获取background page失败，创建新实例
+    return new Prefs();
+  }
+}
+
+export const prefs = createPrefs();

@@ -2,7 +2,7 @@ import browser from 'webextension-polyfill';
 
 export function getSync() {
   // For development mode
-  if (typeof localStorage !== 'undefined' && localStorage.getItem('storage') === 'local') {
+  if (typeof localStorage !== 'undefined' && typeof localStorage.getItem === 'function' && localStorage.getItem('storage') === 'local') {
     return browser.storage.local;
   }
   try {

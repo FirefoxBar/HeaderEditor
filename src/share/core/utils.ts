@@ -158,10 +158,12 @@ export function getGlobal() {
 }
 
 export function isBackground() {
+  // Service Worker环境中window不存在，但我们是在后台运行
   if (typeof window === 'undefined') {
     return true;
   }
-  return typeof window.IS_BACKGROUND !== 'undefined';
+  // 检查window或globalThis中的IS_BACKGROUND标志
+  return typeof window.IS_BACKGROUND !== 'undefined' || typeof globalThis.IS_BACKGROUND !== 'undefined';
 }
 
 export function getVirtualKey(rule: Rule) {

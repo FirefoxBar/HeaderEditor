@@ -5,10 +5,13 @@ import notify from '@/share/core/notify';
 import { getDatabase } from './core/db';
 
 // Upgrade
-const downloadHistory = localStorage.getItem('dl_history');
-if (downloadHistory) {
-  storage.getLocal().set({ dl_history: JSON.parse(downloadHistory) });
-  localStorage.removeItem('dl_history');
+// Service Worker环境中没有localStorage，跳过升级
+if (typeof localStorage !== 'undefined' && typeof localStorage.getItem === 'function') {
+  const downloadHistory = localStorage.getItem('dl_history');
+  if (downloadHistory) {
+    storage.getLocal().set({ dl_history: JSON.parse(downloadHistory) });
+    localStorage.removeItem('dl_history');
+  }
 }
 
 // Put a version mark
@@ -62,24 +65,29 @@ storage
         });
       };
 
-      const groups = localStorage.getItem('groups');
-      if (groups) {
-        const g = JSON.parse(groups);
-        localStorage.removeItem('groups');
-        rebindRuleWithGroup(g);
-      } else {
-        storage
-          .getLocal()
-          .get('groups')
-          .then((r) => {
-            if (r.groups !== undefined) {
-              rebindRuleWithGroup(r.groups).then(() => storage.getLocal().remove('groups'));
-            } else {
-              const g = {};
-              g[browser.i18n.getMessage('ungrouped')] = [];
-              rebindRuleWithGroup(g);
-            }
-          });
+      // Service Worker环境中没有localStorage，跳过groups迁移
+      if (typeof localStorage !== 'undefined' && typeof localStorage.getItem === 'function') {
+        const groups = localStorage.getItem('groups');
+        if (groups) {
+          const g = JSON.parse(groups);
+          localStorage.removeItem('groups');
+          rebindRuleWithGroup(g);
+          return;
+        }
       }
+
+      // 如果没有localStorage或没有groups数据，使用storage.local
+      storage
+        .getLocal()
+        .get('groups')
+        .then((r) => {
+          if (r.groups !== undefined) {
+            rebindRuleWithGroup(r.groups).then(() => storage.getLocal().remove('groups'));
+          } else {
+            const g = {};
+            g[browser.i18n.getMessage('ungrouped')] = [];
+            rebindRuleWithGroup(g);
+          }
+        });
     }
   });
