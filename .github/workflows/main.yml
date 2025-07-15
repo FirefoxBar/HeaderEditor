@@ -16,9 +16,12 @@ jobs:
       docs_changed: ${{ steps.filter.outputs.docs }}
     steps:
       - uses: actions/checkout@v4
+        with:
+          fetch-depth: 2
       - uses: dorny/paths-filter@v2
         id: filter
         with:
+          base: ${{ github.ref_name }}
           filters: |
             docs:
               - 'docs/​**​'
