@@ -45,7 +45,7 @@ The features of the full version (Header Editor) and the lite version (Header Ed
 
 Notes:
 * The "exclude" for Chrome/Edge browser will be supported in other ways in subsequent versions, but they not be completely consistent with the current support methods, and manual migration may be required.
-* If the corresponding feature is not supported, the rules will not take effect, but will still be retained. You can wait for subsequent versions to support it, or manually migrate to other browsers through the "Import and Export".
+* If the corresponding feature is not supported, **the entire rule** will not take effect, but will still be retained. You can wait for subsequent versions to support it, or manually migrate to other browsers through the "Import and Export".
 
 ## Basic usage
 
