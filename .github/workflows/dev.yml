@@ -10,8 +10,33 @@ concurrency:
   cancel-in-progress: true
 
 jobs:
-  build:
+  check_changes:
     runs-on: ubuntu-24.04
+    outputs:
+      locale_changed: ${{ steps.filter.outputs.locale }}
+      docs_changed: ${{ steps.filter.outputs.docs }}
+      src_changed: ${{ steps.filter.outputs.src }}
+    steps:
+      - uses: dorny/paths-filter@v2
+        id: filter
+        with:
+          filters: |
+            locale:
+              - 'locale/​**​'
+            docs:
+              - 'docs/​**​'
+            src:
+              - 'src/**'
+              - 'public/**'
+              - 'scripts/**'
+              - 'tests/**'
+              - 'build.config.js'
+              - 'pnpm-lock.yaml'
+
+  build:
+    needs: check_changes
+    runs-on: ubuntu-24.04
+    if: ${{ needs.check_changes.outputs.src_changed == 'true' }}
     strategy:
       matrix:
         node-version: [18.x]
@@ -76,12 +101,9 @@ jobs:
     #       !temp/release/*-id.txt
 
   sync-locale:
+    needs: check_changes
     runs-on: ubuntu-24.04
-    if: |
-      github.event_name == 'push' &&
-      contains(github.event.commits.*.added, 'locale') ||
-      contains(github.event.commits.*.modified, 'locale') ||
-      contains(github.event.commits.*.removed, 'locale')
+    if: ${{ needs.check_changes.outputs.locale_changed == 'true' }}
     strategy:
       matrix:
         node-version: [18.x]
@@ -102,12 +124,9 @@ jobs:
         commit-message: '[skip ci] sync locale'
 
   build-docs:
+    needs: check_changes
     runs-on: ubuntu-24.04
-    if: |
-      github.event_name == 'push' &&
-      contains(github.event.commits.*.added, 'docs') ||
-      contains(github.event.commits.*.modified, 'docs') ||
-      contains(github.event.commits.*.removed, 'docs')
+    if: ${{ needs.check_changes.outputs.docs_changed == 'true' }}
     strategy:
       matrix:
         node-version: [18.x]
