@@ -1,11 +1,11 @@
 import browser from 'webextension-polyfill';
-import { RULE_MATCH_TYPE, RULE_TYPE } from '@/share/core/constant';
+import { RULE_MATCH_TYPE, RULE_TYPE, TABLE_NAMES } from '@/share/core/constant';
 import emitter from '@/share/core/emitter';
 import { prefs } from '@/share/core/prefs';
 import { detectRunner } from '@/share/core/rule-utils';
 import type { Rule, RULE_ACTION_OBJ } from '@/share/core/types';
-import { getVirtualKey } from '@/share/core/utils';
-import { getAll } from '../core/rules';
+import { getTableName } from '@/share/core/utils';
+import { getAll, waitLoad } from '../core/rules';
 import type { DeclarativeNetRequest } from 'webextension-polyfill/namespaces/declarativeNetRequest';
 
 type DNRRule = DeclarativeNetRequest.Rule;
@@ -98,9 +98,20 @@ function createDNR(rule: Rule, id: number) {
   return res;
 }
 
+function getRuleId(id: number, table?: TABLE_NAMES, ruleType?: RULE_TYPE) {
+  const list = {
+    [TABLE_NAMES.request]: 0,
+    [TABLE_NAMES.sendHeader]: 10000,
+    [TABLE_NAMES.receiveHeader]: 20000,
+    [TABLE_NAMES.receiveBody]: 30000,
+  };
+
+  const t = table || getTableName(ruleType || RULE_TYPE.REDIRECT);
+
+  return Number(id) + list[t];
+}
+
 class DNRRequestHandler {
-  private lastRuleId = 1;
-  private ruleIdMap: Map<string, number> = new Map();
   private _disableAll = false;
 
   constructor() {
@@ -126,45 +137,31 @@ class DNRRequestHandler {
   }
 
   private async clearRules() {
-    const ids = Array.from(this.ruleIdMap.values());
+    const current = await browser.declarativeNetRequest.getSessionRules();
     await browser.declarativeNetRequest.updateSessionRules({
-      removeRuleIds: ids,
+      removeRuleIds: current.map((x) => x.id),
     });
-    this.ruleIdMap.clear();
   }
 
   private async initRules() {
+    await waitLoad();
+
     const v = Object.values(getAll());
 
-    if (v.some((x) => x === null)) {
-      // rule not ready
-      setTimeout(() => this.initRules());
-      return;
-    }
-
     // if service worker restart, get exists rules
-    if (MANIFEST_VER === 'v3') {
-      const data: any = (await browser.storage.session.get('dnr_handler')).dnr_handler;
-      if (data) {
-        this.lastRuleId = data.lastRuleId || 1;
-        Object.entries(data.ruleIdMap || {}).forEach(([key, val]) => {
-          this.ruleIdMap.set(key, Number(val));
-        });
-      } else {
-        // clear all exists rules
-        await this.clearRules();
-      }
-    }
-
+    const current = (await browser.declarativeNetRequest.getSessionRules()).map((x) => x.id);
     const allRules = v.reduce((a, b) => [...a!, ...b!], []) || [];
     const addRules: DNRRule[] = [];
     allRules.forEach((rule) => {
       if (rule._runner !== 'dnr') {
         return;
       }
-      const newRuleId = this.lastRuleId++;
-      this.ruleIdMap.set(getVirtualKey(rule), newRuleId);
-      addRules.push(createDNR(rule, newRuleId));
+      const ruleId = getRuleId(rule.id, undefined, rule.ruleType);
+      if (current.includes(ruleId)) {
+        // rule exists
+        return;
+      }
+      addRules.push(createDNR(rule, ruleId));
     });
     if (IS_DEV) {
       console.log('init dnr rules', addRules);
@@ -173,43 +170,33 @@ class DNRRequestHandler {
       browser.declarativeNetRequest.updateSessionRules({
         addRules,
       });
-      this.updateStorage();
     }
   }
 
   private initHook() {
     emitter.on(emitter.INNER_RULE_REMOVE, ({ table, id }) => {
-      const old = this.ruleIdMap.get(`${table}-${id}`);
-      if (typeof old === 'number') {
-        browser.declarativeNetRequest.updateSessionRules({
-          removeRuleIds: [old],
-        });
-        this.ruleIdMap.delete(`${table}-${id}`);
-        this.updateStorage();
-      }
+      const old = getRuleId(id, table);
+      browser.declarativeNetRequest.updateSessionRules({
+        removeRuleIds: [old],
+      });
     });
 
-    emitter.on(emitter.INNER_RULE_UPDATE, ({ from, target }) => {
+    emitter.on(emitter.INNER_RULE_UPDATE, ({ from, target }: { from: Rule; target: Rule }) => {
       const command: DeclarativeNetRequest.UpdateSessionRulesOptionsType = {
         removeRuleIds: [],
         addRules: [],
       };
       if (from) {
-        const old = this.ruleIdMap.get(getVirtualKey(from));
-        if (typeof old === 'number') {
-          command.removeRuleIds!.push(old);
-        }
+        const old = getRuleId(from.id, undefined, from.ruleType);
+        command.removeRuleIds!.push(old);
       }
       // detect new rule is DNR or not
       if (detectRunner(target) === 'dnr') {
-        const newRuleId = this.lastRuleId++;
-        this.ruleIdMap.set(getVirtualKey(target), newRuleId);
-        command.addRules!.push(createDNR(target, newRuleId));
+        command.addRules!.push(createDNR(target, getRuleId(target.id, undefined, target.ruleType)));
       }
       if (IS_DEV) {
         console.log('dnr rules update', command);
       }
-      this.updateStorage();
       browser.declarativeNetRequest.updateSessionRules(command);
     });
   }
@@ -228,17 +215,6 @@ class DNRRequestHandler {
     prefs.ready(() => {
       this.disableAll = Boolean(prefs.get('disable-all'));
     });
-  }
-
-  private updateStorage() {
-    if (MANIFEST_VER === 'v3') {
-      browser.storage.session.set({
-        dnr_handler: {
-          lastRuleId: this.lastRuleId,
-          ruleIdMap: Object.fromEntries(this.ruleIdMap),
-        },
-      });
-    }
   }
 }
 
