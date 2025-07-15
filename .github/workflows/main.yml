@@ -12,6 +12,11 @@ concurrency:
 jobs:
   build-docs:
     runs-on: ubuntu-24.04
+    if: |
+      github.event_name == 'push' &&
+      contains(github.event.commits.*.added, 'docs') ||
+      contains(github.event.commits.*.modified, 'docs') ||
+      contains(github.event.commits.*.removed, 'docs')
     strategy:
       matrix:
         node-version: [18.x]
@@ -33,8 +38,15 @@ jobs:
         cd $GITHUB_WORKSPACE/docs
         npm run build
         cp $GITHUB_WORKSPACE/scripts/www/* $GITHUB_WORKSPACE/docs/dist/
-    - name: Deploy
-      uses: JamesIves/github-pages-deploy-action@v4
+    - name: Deploy Cloudflare Pages
+      uses: cloudflare/wrangler-action@v3
       with:
-        branch: gh-pages
-        folder: docs/dist
+        apiToken: ${{ secrets.CF_API_TOKEN }}
+        accountId: ${{ secrets.CF_ACCOUNT_ID }}
+        command: pages deploy docs/dist --project-name=${{ vars.CF_PAGE_NAME }}
+    - name: Deploy EdgeOne Pages
+      env:
+        EO_PAGE_TOKEN: ${{ secrets.EO_PAGE_TOKEN }}
+      run: |
+        npm i -g edgeone
+        edgeone pages deploy $GITHUB_WORKSPACE/docs/dist -n ${{ vars.EO_PAGE_NAME }} -t $EO_PAGE_TOKEN

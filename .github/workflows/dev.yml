@@ -77,6 +77,11 @@ jobs:
 
   sync-locale:
     runs-on: ubuntu-24.04
+    if: |
+      github.event_name == 'push' &&
+      contains(github.event.commits.*.added, 'locale') ||
+      contains(github.event.commits.*.modified, 'locale') ||
+      contains(github.event.commits.*.removed, 'locale')
     strategy:
       matrix:
         node-version: [18.x]
@@ -95,3 +100,44 @@ jobs:
         folder: locale
         clean: false
         commit-message: '[skip ci] sync locale'
+
+  build-docs:
+    runs-on: ubuntu-24.04
+    if: |
+      github.event_name == 'push' &&
+      contains(github.event.commits.*.added, 'docs') ||
+      contains(github.event.commits.*.modified, 'docs') ||
+      contains(github.event.commits.*.removed, 'docs')
+    strategy:
+      matrix:
+        node-version: [18.x]
+    steps:
+    - uses: actions/checkout@v4
+    - uses: pnpm/action-setup@v4
+      with:
+        version: 9
+    - name: Use Node.js ${{ matrix.node-version }}
+      uses: actions/setup-node@v4
+      with:
+        node-version: ${{ matrix.node-version }}
+    - name: Install dependencies
+      run: |
+        cd $GITHUB_WORKSPACE/docs
+        pnpm i
+    - name: Build
+      run: |
+        cd $GITHUB_WORKSPACE/docs
+        npm run build
+        cp $GITHUB_WORKSPACE/scripts/www/* $GITHUB_WORKSPACE/docs/dist/
+    - name: Deploy Cloudflare Pages
+      uses: cloudflare/wrangler-action@v3
+      with:
+        apiToken: ${{ secrets.CF_API_TOKEN }}
+        accountId: ${{ secrets.CF_ACCOUNT_ID }}
+        command: pages deploy docs/dist --project-name=${{ vars.CF_PAGE_NAME }} --branch=dev
+    - name: Deploy EdgeOne Pages
+      env:
+        EO_PAGE_TOKEN: ${{ secrets.EO_PAGE_TOKEN }}
+      run: |
+        npm i -g edgeone
+        edgeone pages deploy $GITHUB_WORKSPACE/docs/dist -n ${{ vars.EO_PAGE_NAME }} -t $EO_PAGE_TOKEN -e preview
