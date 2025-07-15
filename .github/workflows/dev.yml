@@ -20,15 +20,15 @@ jobs:
       - uses: actions/checkout@v4
         with:
           fetch-depth: 2
-      - uses: dorny/paths-filter@v2
+      - uses: dorny/paths-filter@v3
         id: filter
         with:
           base: ${{ github.ref_name }}
           filters: |
             locale:
-              - 'locale/​**​'
+              - 'locale/**'
             docs:
-              - 'docs/​**​'
+              - 'docs/**'
             src:
               - 'src/**'
               - 'public/**'
