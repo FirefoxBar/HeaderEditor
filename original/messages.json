@@ -441,7 +441,7 @@
 		"description": "URL of documentations, if not translated, please use english version"
 	},
 	"url_help": {
-		"message": "https://he.firefoxcn.net/en-US/",
+		"message": "https://he.firefoxcn.net/en-US/guide",
 		"description": "URL of documentations, if not translated, please use english version"
 	},
 	"url_third_party_rules": {
