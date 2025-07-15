@@ -5,7 +5,7 @@ hero:
   description: 透過此附加元件，您可以變更要求標頭和回應標頭，取消要求、重新導向的要求
   actions:
     - text: 開始使用
-      link: /guide
+      link: /zh-TW/guide
     - text: GitHub
       link: https://github.com/FirefoxBar/HeaderEditor
 features:
