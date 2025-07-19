@@ -2,7 +2,8 @@ import browser from 'webextension-polyfill';
 import logger from '@/share/core/logger';
 import { APIs, TABLE_NAMES_ARR } from '@/share/core/constant';
 import { prefs } from '@/share/core/prefs';
-import rules from './core/rules';
+import emitter from '@/share/core/emitter';
+import * as rules from './core/rules';
 import { openURL } from './utils';
 import { getDatabase } from './core/db';
 
@@ -21,11 +22,11 @@ function execute(request: any) {
     case APIs.OPEN_URL:
       return openURL(request);
     case APIs.GET_RULES:
-      return Promise.resolve(rules.get(request.type, request.options));
+      return rules.waitLoad().then(() => rules.get(request.type, request.options));
     case APIs.SAVE_RULE:
-      return rules.save(request.rule);
+      return rules.waitLoad().then(() => rules.save(request.rule));
     case APIs.DELETE_RULE:
-      return rules.remove(request.type, request.id);
+      return rules.waitLoad().then(() => rules.remove(request.type, request.id));
     case APIs.SET_PREFS:
       return prefs.set(request.key, request.value);
     case APIs.UPDATE_CACHE:
@@ -38,6 +39,18 @@ function execute(request: any) {
       break;
   }
   // return false;
+}
+
+function updateIcon(disabled: boolean) {
+  if (MANIFEST_VER === 'v2') {
+    browser.browserAction.setIcon({
+      path: `/assets/images/128${disabled ? 'w' : ''}.png`,
+    });
+  } else {
+    browser.action.setIcon({
+      path: `/assets/images/128${disabled ? 'w' : ''}.png`,
+    });
+  }
 }
 
 export default function createApiHandler() {
@@ -54,5 +67,20 @@ export default function createApiHandler() {
       return Promise.allSettled(queue);
     }
     return execute(request);
+  });
+
+  emitter.on(emitter.EVENT_PREFS_UPDATE, (key: string, val: any) => {
+    switch (key) {
+      case 'disable-all':
+        updateIcon(val);
+        break;
+      default:
+        break;
+    }
+  });
+
+  prefs.ready(() => {
+    const disableAll = Boolean(prefs.get('disable-all'));
+    updateIcon(disableAll);
   });
 }

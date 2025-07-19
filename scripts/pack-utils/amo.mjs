@@ -1,7 +1,7 @@
-import { version as _version, extension } from '../config.mjs';
+import { getVersion } from '../config.mjs';
 import { signAddon } from 'sign-addon';
 
-export default function (zipPath) {
+export default async function (sourcePath, zipPath, releasePath, browserConfig, itemConfig) {
   if (!process.env.AMO_KEY) {
     return Promise.reject(new Error('AMO_KEY not found'));
   }
@@ -9,12 +9,15 @@ export default function (zipPath) {
     return Promise.reject(new Error('AMO_SECRET not found'));
   }
 
+  // console.log("AMO", sourcePath, zipPath, releasePath, browserConfig, itemConfig);
+
+  // return;
   return signAddon({
     xpiPath: zipPath,
-    version: _version,
+    version: await getVersion(sourcePath),
     apiKey: process.env.AMO_KEY,
     apiSecret: process.env.AMO_SECRET,
-    id: extension.firefox.amo,
+    id: itemConfig.id,
     disableProgressBar: true,
   });
 };

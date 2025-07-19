@@ -1,11 +1,10 @@
 import ChromeExtension from 'crx';
 import { readFile, writeFile } from 'fs/promises';
-import { resolve, extension, version } from '../config.mjs';
+import { join, getVersion, getOutputFile } from '../config.mjs';
 
-async function createCrx(fileContent) {
-  const keyContent = process.env.CRX_PRIV_KEY;
+async function createCrx(fileContent, keyContent) {
   if (!keyContent) {
-    throw new Error('CRX_PRIV_KEY not found');
+    throw new Error('No priv key');
   }
   const crx = new ChromeExtension({
     codebase: 'http://localhost:8000/myExtension.crx',
@@ -19,13 +18,17 @@ async function createCrx(fileContent) {
   return crxBuffer;
 }
 
-async function packCrx(zipPath, outputDir) {
+async function packCrx(sourcePath, zipPath, releasePath, browserConfig, itemConfig) {
   const fileContent = await readFile(zipPath);
-  const content = await createCrx(fileContent);
-  const out = resolve(outputDir, `${extension.dist.replace('{VER}', version)}.crx`);
+  if (typeof process.env[itemConfig.priv_key] === 'undefined') {
+    throw new Error(`${itemConfig.priv_key} not found`);
+  }
+  const content = await createCrx(fileContent, process.env[itemConfig.priv_key]);
+  const fileName = getOutputFile(itemConfig.browser, await getVersion(sourcePath), 'crx');
+  const out = join(releasePath, fileName);
   await writeFile(out, content);
-  const idFile = resolve(outputDir, `${extension.dist.replace('{VER}', version)}.crx-id.txt`);
-  await writeFile(idFile, extension.chrome.crx);
+  const idFile = join(outputDir, `${fileName}-id.txt`);
+  await writeFile(idFile, itemConfig.id);
   return out;
 }
 

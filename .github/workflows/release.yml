@@ -11,13 +11,13 @@ concurrency:
 
 jobs:
   build:
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-24.04
     strategy:
       matrix:
         node-version: [16.x]
     steps:
     - uses: actions/checkout@v3
-    - uses: pnpm/action-setup@v2
+    - uses: pnpm/action-setup@v4
       with:
         version: 7
     - name: Use Node.js ${{ matrix.node-version }}
@@ -27,18 +27,25 @@ jobs:
         cache: 'pnpm'
     - name: Install dependencies
       run: pnpm i --frozen-lockfile
-    - name: Build
-      run: npm run build
+    - name: Build Firefox v2
+      run: npm run build:firefox_v2
+    - name: Build Firefox v3
+      run: npm run build:firefox_v3
+    - name: Build Chrome v2
+      run: npm run build:chrome_v2
+    - name: Build Chrome v3
+      run: npm run build:chrome_v3
     - name: Upload bundles
       uses: actions/upload-artifact@v3
       with:
         name: dist
-        path: dist
+        path: dist_firefox_v3
     - name: Pack
       env:
         AMO_KEY: ${{ secrets.AMO_KEY }}
         AMO_SECRET: ${{ secrets.AMO_SECRET }}
         CRX_PRIV_KEY: ${{ secrets.CRX_PRIV_KEY }}
+        CRX_PRIV_KEY_V3: ${{ secrets.CRX_PRIV_KEY_V3 }}
         CWS_CLIENT_ID: ${{ secrets.CWS_CLIENT_ID }}
         CWS_CLIENT_SECRET: ${{ secrets.CWS_CLIENT_SECRET }}
         CWS_TOKEN: ${{ secrets.CWS_TOKEN }}
@@ -50,5 +57,5 @@ jobs:
     - name: Release
       env:
         GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-        SERVER_TOKEN: ${{ secrets.SNAPSHOT_TOKEN }}
+        TOKEN: ${{ secrets.SNAPSHOT_TOKEN }}
       run: npm run release

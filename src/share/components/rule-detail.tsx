@@ -1,32 +1,45 @@
 import React, { Fragment } from 'react';
-import { css } from '@emotion/css';
+import { css, cx } from '@emotion/css';
 import { t } from '@/share/core/utils';
 import type { Rule } from '@/share/core/types';
 
 interface RuleDetailProps {
   rule: Rule;
+  size?: 'small' | 'default';
 }
 
+const style = css`
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  font-size: 14px;
+  p {
+    margin: 0;
+    overflow: hidden;
+    word-break: break-all;
+    text-overflow: ellipsis;
+    display: box;
+    box-orient: vertical;
+    line-clamp: 3;
+  }
+`;
+
+const smallStyle = css`
+  gap: 4px;
+  font-size: 12px;
+`;
+
 const RuleDetail = (props: RuleDetailProps) => {
-  const { rule } = props;
+  const { rule, size } = props;
 
   const isModifyHeader =
     rule.ruleType === 'modifySendHeader' || (rule.ruleType === 'modifyReceiveHeader' && !rule.isFunction);
 
   return (
     <div
-      className={css`
-        p {
-          margin-top: 0;
-          font-size: 14px;
-          overflow: hidden;
-          word-break: break-all;
-          text-overflow: ellipsis;
-          display: box;
-          box-orient: vertical;
-          line-clamp: 3;
-        }
-      `}
+      className={cx(style, {
+        [smallStyle]: size === 'small',
+      })}
     >
       <p>
         {t('matchType')}: {t(`match_${rule.matchType}`)}

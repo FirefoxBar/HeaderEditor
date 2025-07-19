@@ -7,12 +7,12 @@ export interface RuleFilterOptions {
   name?: string;
 }
 
-export type RULE_ACTION =
-  | 'cancel'
-  | {
-    name: string;
-    value: string;
-  };
+export interface RULE_ACTION_OBJ {
+  name: string;
+  value: string;
+}
+
+export type RULE_ACTION = 'cancel' | RULE_ACTION_OBJ;
 
 export interface BasicRule {
   [key: string]: any;
@@ -44,6 +44,7 @@ export interface ImportRule extends Rule {
 }
 
 export interface InitdRule extends Rule {
+  _runner: 'web_request' | 'dnr';
   _reg: RegExp;
   _exclude?: RegExp;
   _func: (val: any, detail: any) => any;
@@ -59,4 +60,7 @@ export interface PrefValue {
   'modify-body': boolean; // Enable modify received body feature
   'is-debug': boolean;
   'dark-mode': 'auto' | 'on' | 'off';
+  'rule-switch': boolean; // Enable rule quick switch
+  'rule-history': boolean; // Auto save rule history into quick switch
+  'quick-edit': boolean; // Quick edit rule in popup panel
 }

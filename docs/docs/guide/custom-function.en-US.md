@@ -56,7 +56,7 @@ if (val.includes('utm_source')) {
 
 ## Modify the request headers and response headers
 
-The incoming parameter is an array containing all header information in the following format: `[{"name: "header name", "value": "header content"} ... ]`.
+The incoming parameter is an array containing all header information in the following format: `[{"name": "header name", "value": "header content"} ... ]`.
 
 Because JS pass the Object by reference, the custom function does not need any return value, only need to modify the incoming parameters to take effect. For example, this code will add ` HE/2.0.0` to the end of `User-Agent`:
 

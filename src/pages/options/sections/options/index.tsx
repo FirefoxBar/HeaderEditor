@@ -1,11 +1,12 @@
-import { Card, Checkbox, Col, Form, Row, Select, Typography } from '@douyinfe/semi-ui';
-import * as React from 'react';
-import Api from '@/share/pages/api';
+import { Card, List, Select, Switch, Typography } from '@douyinfe/semi-ui';
+import { css } from '@emotion/css';
+import React from 'react';
+import { defaultPrefValue } from '@/share/core/constant';
 import emitter from '@/share/core/emitter';
 import { prefs } from '@/share/core/prefs';
-import { t } from '@/share/core/utils';
 import type { PrefValue } from '@/share/core/types';
-import { defaultPrefValue } from '@/share/core/constant';
+import { IS_SUPPORT_STREAM_FILTER, t } from '@/share/core/utils';
+import Api from '@/share/pages/api';
 
 interface OptionsProps {
   visible: boolean;
@@ -15,26 +16,47 @@ interface OptionsState {
   prefs: PrefValue;
 }
 
-const checkPrefs: { [key: string]: string } = {
-  'manage-collapse-group': t('manage_collapse_group'),
-  'exclude-he': t('rules_no_effect_for_he'),
-  'show-common-header': t('display_common_header'),
-  'include-headers': t('include_header_in_custom_function'),
-  'modify-body': t('modify_body'),
-  'is-debug': t('debug_mode_enable'),
-};
-
-interface SelectItem {
-  title: string;
-  options: Array<{
-    label: string;
-    value: string;
-  }>;
-}
-const selectPrefs: { [key: string]: SelectItem } = {
+const prefItems: {
+  [key: string]: { langKey: string; type: 'switch' | 'select'; optionList?: Array<{ label: string; value: string }>; disabled?: boolean };
+} = {
+  'manage-collapse-group': {
+    langKey: 'manage_collapse_group',
+    type: 'switch',
+  },
+  'show-common-header': {
+    langKey: 'display_common_header',
+    type: 'switch',
+  },
+  'include-headers': {
+    langKey: 'include_header_in_custom_function',
+    type: 'switch',
+    disabled: !ENABLE_EVAL,
+  },
+  'modify-body': {
+    langKey: 'modify_body',
+    type: 'switch',
+    disabled: !IS_SUPPORT_STREAM_FILTER,
+  },
+  'is-debug': {
+    langKey: 'debug_mode_enable',
+    type: 'switch',
+  },
+  'rule-switch': {
+    langKey: 'rule_switch',
+    type: 'switch',
+  },
+  'rule-history': {
+    langKey: 'rule_history',
+    type: 'switch',
+  },
+  'quick-edit': {
+    langKey: 'quick_edit',
+    type: 'switch',
+  },
   'dark-mode': {
-    title: t('dark_mode'),
-    options: [
+    langKey: 'dark_mode',
+    type: 'select',
+    optionList: [
       {
         label: t('auto'),
         value: 'auto',
@@ -50,6 +72,17 @@ const selectPrefs: { [key: string]: SelectItem } = {
     ],
   },
 };
+
+const allPrefs = Object.keys(prefItems);
+
+const style = css`
+  width: 800px;
+  max-width: 100%;
+  margin: 0 auto;
+  .semi-card-body {
+    padding: 0;
+  }
+`;
 
 export default class Options extends React.Component<OptionsProps, OptionsState> {
   constructor(props: any) {
@@ -104,43 +137,38 @@ export default class Options extends React.Component<OptionsProps, OptionsState>
   render() {
     return (
       <section className={`section-options ${this.props.visible ? 'visible' : 'in-visible'}`}>
-        <Card
-          title={t('options')}
-          footerLine
-          footer={
-            <div>
-              <div><Typography.Text type="tertiary">* {t('dark_mode_help')}</Typography.Text></div>
-              <div><Typography.Text type="tertiary">* {t('debug_mode_help')}</Typography.Text></div>
-            </div>
-          }
-        >
-          <Row gutter={8}>
-            {Object.entries(checkPrefs).map((it) => {
+        <Card title={t('options')} className={style}>
+          <List
+            dataSource={allPrefs}
+            renderItem={(key) => {
+              const item = prefItems[key];
+              const label = t(item.langKey);
+              const help = t(`${item.langKey}_help`, undefined, '');
               return (
-                <Col xl={12} span={24} key={it[0]} style={{ marginBottom: '8px' }}>
-                  <Checkbox
-                    onChange={(e) => this.handleChange(it[0], Boolean(e.target.checked))}
-                    checked={this.state.prefs[it[0]]}
-                  >
-                    {it[1]}
-                  </Checkbox>
-                </Col>
+                <List.Item
+                  key={key}
+                  main={
+                    <div>
+                      <Typography.Text strong style={{ display: 'block' }}>{label}</Typography.Text>
+                      {help && <Typography.Text type="quaternary" style={{ fontSize: '12px' }}>{help}</Typography.Text>}
+                    </div>
+                  }
+                  extra={
+                    item.type === 'select' ? (
+                      <Select
+                        optionList={item.optionList}
+                        onChange={(v) => this.handleChange(key, v)}
+                        value={this.state.prefs[key]}
+                        disabled={item.disabled}
+                      />
+                    ) : (
+                      <Switch checked={this.state.prefs[key]} onChange={(v) => this.handleChange(key, Boolean(v))} disabled={item.disabled} />
+                    )
+                  }
+                />
               );
-            })}
-            {Object.entries(selectPrefs).map((it) => {
-              return (
-                <Col xl={12} span={24} key={it[0]} style={{ marginBottom: '8px' }}>
-                  <Form.Slot label={it[1].title} labelPosition="left">
-                    <Select
-                      optionList={it[1].options}
-                      onChange={(v) => this.handleChange(it[0], v)}
-                      value={this.state.prefs[it[0]]}
-                    />
-                  </Form.Slot>
-                </Col>
-              );
-            })}
-          </Row>
+            }}
+          />
         </Card>
       </section>
     );

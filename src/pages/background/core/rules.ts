@@ -1,11 +1,15 @@
 import { cloneDeep } from 'lodash-es';
 import { convertToRule, convertToBasicRule, isMatchUrl, upgradeRuleFormat, initRule } from '@/share/core/rule-utils';
 import { getLocal } from '@/share/core/storage';
-import { getTableName } from '@/share/core/utils';
-import { APIs, EVENTs, IS_MATCH, TABLE_NAMES, TABLE_NAMES_ARR } from '@/share/core/constant';
-import type { InitdRule, Rule, RuleFilterOptions } from '@/share/core/types';
+import { getTableName, getVirtualKey } from '@/share/core/utils';
+import { APIs, EVENTs, IS_MATCH, RULE_TYPE, TABLE_NAMES, TABLE_NAMES_ARR } from '@/share/core/constant';
+import type { InitdRule, RULE_ACTION_OBJ, Rule, RuleFilterOptions } from '@/share/core/types';
 import notify from '@/share/core/notify';
+import { prefs } from '@/share/core/prefs';
+import emitter from '@/share/core/emitter';
 import { getDatabase } from './db';
+
+let isInit = false;
 
 const cache: { [key: string]: null | InitdRule[] } = {};
 TABLE_NAMES_ARR.forEach((t) => {
@@ -93,7 +97,26 @@ function filter(fromRules: InitdRule[], options: RuleFilterOptions) {
   return rules;
 }
 
-async function save(o: Rule) {
+function saveRuleHistory(rule: Rule) {
+  if (
+    prefs.get('rule-history') &&
+    !rule.isFunction &&
+    [RULE_TYPE.MODIFY_RECV_HEADER, RULE_TYPE.MODIFY_SEND_HEADER, RULE_TYPE.REDIRECT].includes(rule.ruleType)
+  ) {
+    const writeValue = rule.ruleType === RULE_TYPE.REDIRECT ? rule.to : (rule.action as RULE_ACTION_OBJ).value;
+    const key = `rule_switch_${getVirtualKey(rule)}`;
+    const engine = getLocal();
+    engine.get(key).then((result) => {
+      const arr = Array.isArray(result[key]) ? [...result[key]] : [];
+      if (!arr.includes(writeValue)) {
+        arr.push(writeValue);
+        engine.set({ [key]: arr });
+      }
+    });
+  }
+}
+
+async function save(o: Rule): Promise<Rule> {
   const tableName = getTableName(o.ruleType);
   if (!tableName) {
     throw new Error(`Unknown type ${o.ruleType}`);
@@ -121,6 +144,9 @@ async function save(o: Rule) {
           req.onsuccess = () => {
             updateCache(tableName);
             notify.other({ method: APIs.ON_EVENT, event: EVENTs.RULE_UPDATE, from: originalRule, target: existsRule });
+            // Write history
+            saveRuleHistory(originalRule);
+            emitter.emit(emitter.INNER_RULE_UPDATE, { from: originalRule, target: existsRule });
             resolve(rule);
           };
         };
@@ -136,6 +162,7 @@ async function save(o: Rule) {
           // @ts-ignore
           rule.id = event.target.result;
           notify.other({ method: APIs.ON_EVENT, event: EVENTs.RULE_UPDATE, from: null, target: rule });
+          emitter.emit(emitter.INNER_RULE_UPDATE, { from: null, target: rule });
           resolve(rule);
         };
       }
@@ -152,17 +179,20 @@ function remove(tableName: TABLE_NAMES, id: number): Promise<void> {
       request.onsuccess = () => {
         updateCache(tableName);
         notify.other({ method: APIs.ON_EVENT, event: EVENTs.RULE_DELETE, table: tableName, id: Number(id) });
+        emitter.emit(emitter.INNER_RULE_REMOVE, { table: tableName, id: Number(id) });
         // check common mark
-        getLocal().get('common_rule').then((result) => {
-          const key = `${tableName}-${id}`;
-          if (Array.isArray(result.common_rule) && result.common_rule.includes(key)) {
-            const newKeys = [...result.common_rule];
-            newKeys.splice(newKeys.indexOf(key), 1);
-            getLocal().set({
-              common_rule: newKeys,
-            });
-          }
-        });
+        getLocal()
+          .get('common_rule')
+          .then((result) => {
+            const key = `${tableName}-${id}`;
+            if (Array.isArray(result.common_rule) && result.common_rule.includes(key)) {
+              const newKeys = [...result.common_rule];
+              newKeys.splice(newKeys.indexOf(key), 1);
+              getLocal().set({
+                common_rule: newKeys,
+              });
+            }
+          });
         resolve();
       };
     });
@@ -178,24 +208,43 @@ function get(type: TABLE_NAMES, options?: RuleFilterOptions) {
   return options ? filter(all, options) : all;
 }
 
+function getAll() {
+  return cache;
+}
+
 function init() {
   setTimeout(() => {
     const queue: Array<Promise<void>> = TABLE_NAMES_ARR.map((tableName) => updateCache(tableName));
     Promise.all(queue).then(() => {
       if (TABLE_NAMES_ARR.some((tableName) => cache[tableName] === null)) {
         init();
+      } else {
+        isInit = true;
+        emitter.emit(emitter.INNER_RULE_LOADED);
       }
     });
   });
 }
 
+function waitLoad() {
+  return new Promise((resolve) => {
+    if (isInit) {
+      resolve(true);
+    } else {
+      emitter.once(emitter.INNER_RULE_LOADED, resolve);
+    }
+  });
+}
+
 init();
 
-export default {
+export {
   get,
+  getAll,
   filter,
   save,
   remove,
   updateCache,
   convertToBasicRule,
+  waitLoad,
 };

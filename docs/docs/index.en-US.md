@@ -5,7 +5,7 @@ hero:
   description: Manage browser's requests, include modify the request headers and response headers, redirect requests, cancel requests
   actions:
     - text: Setup
-      link: /guide
+      link: /en-US/guide
     - text: GitHub
       link: https://github.com/FirefoxBar/HeaderEditor
 features:

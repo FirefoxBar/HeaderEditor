@@ -34,17 +34,33 @@ const basicStyle = css`
     display: flex;
     flex-direction: column;
 
-    .cell-enable {
-      padding-right: 0;
-      .switch-container {
-        display: flex;
-        align-items: center;
-      }
-    }
+    .item-block {
+      display: flex;
+      flex-direction: column;
 
-    .cell-action {
-      padding-top: 2px !important;
-      padding-bottom: 2px !important;
+      > .item {
+        display: flex;
+        flex-direction: row;
+        gap: 8px;
+        align-items: center;
+        background-color: #fff;
+        border-top: 1px solid var(--semi-color-border);
+        padding-left: 8px;
+        padding-right: 8px;
+
+        > * {
+          flex-grow: 0;
+          flex-shrink: 0;
+        }
+
+        > .name {
+          flex-grow: 1;
+          flex-shrink: 1;
+          font-size: 14px;
+          padding-top: 8px;
+          padding-bottom: 8px;
+        }
+      }
     }
   }
 `;
@@ -60,6 +76,7 @@ const Popup = () => {
   const [enable, setEnable] = useState(true);
 
   useEffect(() => {
+    document.body.setAttribute('data-page-name', 'popup');
     prefs.ready(() => {
       setEnable(!prefs.get('disable-all'));
       // Get dark mode setting

@@ -1,6 +1,8 @@
 import React, { useEffect } from 'react';
 import { useLatest, useRequest } from 'ahooks';
-import { Popover, Switch, Table } from '@douyinfe/semi-ui';
+import { Button, Popover, Spin, Switch } from '@douyinfe/semi-ui';
+import { IconBranch } from '@douyinfe/semi-icons';
+import { cx } from '@emotion/css';
 import Api from '@/share/pages/api';
 import { getVirtualKey, parseVirtualKey } from '@/share/core/utils';
 import type { Rule } from '@/share/core/types';
@@ -8,6 +10,9 @@ import { VIRTUAL_KEY, EVENTs } from '@/share/core/constant';
 import useMarkCommon from '@/share/hooks/use-mark-common';
 import RuleDetail from '@/share/components/rule-detail';
 import notify from '@/share/core/notify';
+import RuleContentSwitcher from '@/share/components/rule-content-switcher';
+import { textEllipsis } from '@/share/pages/styles';
+import QuickEdit from './quick-edit';
 
 const Rules = () => {
   const { keys } = useMarkCommon('rule');
@@ -65,44 +70,31 @@ const Rules = () => {
   }
 
   return (
-    <Table
-      rowKey={VIRTUAL_KEY}
-      loading={loading}
-      dataSource={data}
-      showHeader={false}
-      size="small"
-      columns={[
-        {
-          title: 'enable',
-          dataIndex: 'enable',
-          className: 'cell-enable',
-          align: 'center',
-          width: 30,
-          render: (value: boolean, item: Rule) => (
-            <div className="switch-container">
-              <Switch
-                size="small"
-                checked={value}
-                onChange={(checked) => {
-                  item.enable = checked;
-                  return Api.saveRule(item);
-                }}
-              />
-            </div>
-          ),
-        },
-        {
-          title: 'name',
-          dataIndex: 'name',
-          render: (value: string, item: Rule) => (
+    <Spin spinning={loading}>
+      <div className="item-block">
+        {data.map((item) => (
+          <div className="item" key={item[VIRTUAL_KEY]}>
+            <Switch
+              size="small"
+              checked={item.enable}
+              onChange={(checked) => Api.saveRule({
+                ...item,
+                enable: checked,
+              })}
+            />
             <Popover showArrow position="top" content={<RuleDetail rule={item} />} style={{ maxWidth: '300px' }}>
-              <div>{value}</div>
+              <div className={cx(textEllipsis, 'name')}>{item.name}</div>
             </Popover>
-          ),
-        },
-      ]}
-      pagination={false}
-    />
+            <div className="actions">
+              <QuickEdit rule={item} />
+              <RuleContentSwitcher rule={item} type={item.ruleType} size="small" add={false}>
+                <Button theme="borderless" type="tertiary" size="small" icon={<IconBranch />} />
+              </RuleContentSwitcher>
+            </div>
+          </div>
+        ))}
+      </div>
+    </Spin>
   );
 };
 

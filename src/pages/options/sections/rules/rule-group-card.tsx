@@ -1,4 +1,5 @@
 import {
+  IconBranch,
   IconChevronDown,
   IconCopyAdd,
   IconDelete,
@@ -24,6 +25,8 @@ import { getTableName, t } from '@/share/core/utils';
 import type { InitdRule, Rule } from '@/share/core/types';
 import { VIRTUAL_KEY, TABLE_NAMES_ARR } from '@/share/core/constant';
 import useMarkCommon from '@/share/hooks/use-mark-common';
+import RuleContentSwitcher from '@/share/components/rule-content-switcher';
+import { textEllipsis } from '@/share/pages/styles';
 import { remove, toggleRule } from './utils';
 import type { ColumnProps, RowSelectionProps } from '@douyinfe/semi-ui/lib/es/table';
 
@@ -73,7 +76,7 @@ const RuleGroupCard = (props: RuleCardProps) => {
       className: 'cell-enable',
       dataIndex: 'enable',
       align: 'center',
-      width: 60,
+      width: 80,
       render: (value: boolean, item: InitdRule) => (
         <div className="switch-container">
           <Switch size="small" checked={value} onChange={(checked) => toggleRule(item, checked)} />
@@ -86,7 +89,7 @@ const RuleGroupCard = (props: RuleCardProps) => {
       dataIndex: 'name',
       render: (value: string, item: InitdRule) => (
         <Popover showArrow position="top" content={<RuleDetail rule={item} />} style={{ maxWidth: '300px' }}>
-          <div>{value}</div>
+          <div className={textEllipsis}>{value}</div>
         </Popover>
       ),
     },
@@ -101,7 +104,7 @@ const RuleGroupCard = (props: RuleCardProps) => {
       title: t('action'),
       className: 'cell-action',
       dataIndex: 'action',
-      width: 128,
+      width: 160,
       render: (v, item: InitdRule) => {
         const isMarked = commonRuleKeys.includes(item[VIRTUAL_KEY]);
         return (
@@ -112,6 +115,9 @@ const RuleGroupCard = (props: RuleCardProps) => {
             <Tooltip content={t('view')}>
               <Button theme="borderless" type="tertiary" onClick={() => onRulePreview(item)} icon={<IconSearch />} />
             </Tooltip>
+            <RuleContentSwitcher rule={item} type={item.ruleType} add>
+              <Button theme="borderless" type="tertiary" icon={<IconBranch />} />
+            </RuleContentSwitcher>
             <Dropdown
               position="bottomRight"
               menu={[
@@ -315,6 +321,7 @@ const RuleGroupCard = (props: RuleCardProps) => {
         pagination={false}
         rowSelection={rowSelection}
         columns={tableColumns}
+        style={{ tableLayout: 'fixed' }}
       />
     </Card>
   );

@@ -10,18 +10,47 @@ concurrency:
   cancel-in-progress: true
 
 jobs:
+  check_changes:
+    runs-on: ubuntu-24.04
+    outputs:
+      locale_changed: ${{ steps.filter.outputs.locale }}
+      docs_changed: ${{ steps.filter.outputs.docs }}
+      src_changed: ${{ steps.filter.outputs.src }}
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 2
+      - uses: dorny/paths-filter@v3
+        id: filter
+        with:
+          base: ${{ github.ref_name }}
+          filters: |
+            locale:
+              - 'locale/**'
+            docs:
+              - 'docs/**'
+            src:
+              - 'src/**'
+              - 'public/**'
+              - 'scripts/**'
+              - 'tests/**'
+              - 'build.config.js'
+              - 'pnpm-lock.yaml'
+
   build:
-    runs-on: ubuntu-latest
+    needs: check_changes
+    runs-on: ubuntu-24.04
+    if: ${{ needs.check_changes.outputs.src_changed == 'true' }}
     strategy:
       matrix:
-        node-version: [16.x]
+        node-version: [18.x]
     steps:
-    - uses: actions/checkout@v3
-    - uses: pnpm/action-setup@v2
+    - uses: actions/checkout@v4
+    - uses: pnpm/action-setup@v4
       with:
-        version: 7
+        version: 9
     - name: Use Node.js ${{ matrix.node-version }}
-      uses: actions/setup-node@v3
+      uses: actions/setup-node@v4
       with:
         node-version: ${{ matrix.node-version }}
         cache: 'pnpm'
@@ -32,41 +61,60 @@ jobs:
         TOKEN: ${{ secrets.SNAPSHOT_TOKEN }}
         GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
       run: node ./scripts/get-snapshot-version.mjs
-    - name: Build
-      run: npm run build
+    - name: Build Firefox v2
+      run: npm run build:firefox_v2
+    - name: Build Firefox v3
+      run: npm run build:firefox_v3
+    - name: Build Chrome v2
+      run: npm run build:chrome_v2
+    - name: Build Chrome v3
+      run: npm run build:chrome_v3
     - name: Upload bundle
-      uses: actions/upload-artifact@v3
+      uses: actions/upload-artifact@v4
       with:
         name: dist
-        path: dist
+        path: |
+          dist_chrome_v2
+          dist_chrome_v3
+          dist_firefox_v2
+          dist_firefox_v3
     - name: Upload bundle analyze
-      uses: actions/upload-artifact@v3
+      uses: actions/upload-artifact@v4
       with:
         name: bundle-analyze
         path: temp/bundle-analyze.html
-    - name: Publish snapshot
-      env:
-        AMO_KEY: ${{ secrets.AMO_KEY }}
-        AMO_SECRET: ${{ secrets.AMO_SECRET }}
-        CRX_PRIV_KEY: ${{ secrets.CRX_PRIV_KEY }}
-      run: npm run pack -- --platform=xpi,crx
-    - name: Upload snapshot release
-      uses: actions/upload-artifact@v3
-      with:
-        name: release
-        path: |
-          temp/release
-          !temp/release/*-id.txt
+    - name: Test
+      run: |
+        php -S 0.0.0.0:8899 -t $GITHUB_WORKSPACE/tests/simple-server &
+        sleep 5
+        npm run test:e2e
+    # - name: Publish snapshot
+    #   env:
+    #     AMO_KEY: ${{ secrets.AMO_KEY }}
+    #     AMO_SECRET: ${{ secrets.AMO_SECRET }}
+    #     CRX_PRIV_KEY: ${{ secrets.CRX_PRIV_KEY }}
+    #     CRX_PRIV_KEY_V3: ${{ secrets.CRX_PRIV_KEY_V3 }}
+    #     PACK_PLATFORM: xpi,crx
+    #   run: npm run pack
+    # - name: Upload snapshot release
+    #   uses: actions/upload-artifact@v3
+    #   with:
+    #     name: release
+    #     path: |
+    #       temp/release
+    #       !temp/release/*-id.txt
 
   sync-locale:
-    runs-on: ubuntu-latest
+    needs: check_changes
+    runs-on: ubuntu-24.04
+    if: ${{ needs.check_changes.outputs.locale_changed == 'true' }}
     strategy:
       matrix:
-        node-version: [16.x]
+        node-version: [18.x]
     steps:
-    - uses: actions/checkout@v3
+    - uses: actions/checkout@v4
     - name: Use Node.js ${{ matrix.node-version }}
-      uses: actions/setup-node@v3
+      uses: actions/setup-node@v4
       with:
         node-version: ${{ matrix.node-version }}
     - name: Sort
@@ -78,3 +126,41 @@ jobs:
         folder: locale
         clean: false
         commit-message: '[skip ci] sync locale'
+
+  build-docs:
+    needs: check_changes
+    runs-on: ubuntu-24.04
+    if: ${{ needs.check_changes.outputs.docs_changed == 'true' }}
+    strategy:
+      matrix:
+        node-version: [18.x]
+    steps:
+    - uses: actions/checkout@v4
+    - uses: pnpm/action-setup@v4
+      with:
+        version: 9
+    - name: Use Node.js ${{ matrix.node-version }}
+      uses: actions/setup-node@v4
+      with:
+        node-version: ${{ matrix.node-version }}
+    - name: Install dependencies
+      run: |
+        cd $GITHUB_WORKSPACE/docs
+        pnpm i
+    - name: Build
+      run: |
+        cd $GITHUB_WORKSPACE/docs
+        npm run build
+        cp $GITHUB_WORKSPACE/scripts/www/* $GITHUB_WORKSPACE/docs/dist/
+    - name: Deploy Cloudflare Pages
+      uses: cloudflare/wrangler-action@v3
+      with:
+        apiToken: ${{ secrets.CF_API_TOKEN }}
+        accountId: ${{ secrets.CF_ACCOUNT_ID }}
+        command: pages deploy docs/dist --project-name=${{ vars.CF_PAGE_NAME }} --branch=dev
+    - name: Deploy EdgeOne Pages
+      env:
+        EO_PAGE_TOKEN: ${{ secrets.EO_PAGE_TOKEN }}
+      run: |
+        npm i -g edgeone
+        edgeone pages deploy $GITHUB_WORKSPACE/docs/dist -n ${{ vars.EO_PAGE_NAME }} -t $EO_PAGE_TOKEN -e preview

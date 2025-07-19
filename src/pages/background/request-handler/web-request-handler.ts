@@ -1,13 +1,12 @@
-/* eslint-disable @typescript-eslint/member-ordering */
 import { TextDecoder, TextEncoder } from 'text-encoding';
 import browser, { WebRequest } from 'webextension-polyfill';
 import { getGlobal, IS_CHROME, IS_SUPPORT_STREAM_FILTER } from '@/share/core/utils';
 import emitter from '@/share/core/emitter';
 import logger from '@/share/core/logger';
-import type { Rule } from '@/share/core/types';
+import type { Rule, RULE_ACTION_OBJ } from '@/share/core/types';
 import { TABLE_NAMES } from '@/share/core/constant';
 import { prefs } from '@/share/core/prefs';
-import rules from './core/rules';
+import { get as getRules } from '../core/rules';
 
 // 最大修改8MB的Body
 const MAX_BODY_SIZE = 8 * 1024 * 1024;
@@ -19,6 +18,7 @@ enum REQUEST_TYPE {
 
 type HeaderRequestDetails = WebRequest.OnHeadersReceivedDetailsType | WebRequest.OnBeforeSendHeadersDetailsType;
 type AnyRequestDetails = WebRequest.OnBeforeRequestDetailsType | HeaderRequestDetails;
+
 interface CustomFunctionDetail {
   id: string;
   url: string;
@@ -37,7 +37,8 @@ interface CustomFunctionDetail {
   statusCode?: number;
   statusLine?: string;
 }
-class RequestHandler {
+
+class WebRequestHandler {
   private _disableAll = false;
   private excludeHe = true;
   private includeHeaders = false;
@@ -60,9 +61,6 @@ class RequestHandler {
       return;
     }
     this._disableAll = to;
-    browser.browserAction.setIcon({
-      path: `/assets/images/128${to ? 'w' : ''}.png`,
-    });
   }
 
   private createHeaderListener(type: string): any {
@@ -97,9 +95,6 @@ class RequestHandler {
   private loadPrefs() {
     emitter.on(emitter.EVENT_PREFS_UPDATE, (key: string, val: any) => {
       switch (key) {
-        case 'exclude-he':
-          this.excludeHe = val;
-          break;
         case 'disable-all':
           this.disableAll = val;
           break;
@@ -115,10 +110,9 @@ class RequestHandler {
     });
 
     prefs.ready(() => {
-      this.excludeHe = prefs.get('exclude-he');
-      this.disableAll = prefs.get('disable-all');
-      this.includeHeaders = prefs.get('include-headers');
-      this.modifyBody = prefs.get('modify-body');
+      this.disableAll = Boolean(prefs.get('disable-all'));
+      this.includeHeaders = Boolean(prefs.get('include-headers'));
+      this.modifyBody = Boolean(prefs.get('modify-body'));
     });
   }
 
@@ -143,7 +137,7 @@ class RequestHandler {
     }
     logger.debug(`handle before request ${e.url}`, e);
     // 可用：重定向，阻止加载
-    const rule = rules.get(TABLE_NAMES.request, { url: e.url, enable: true });
+    const rule = getRules(TABLE_NAMES.request, { url: e.url, enable: true });
     // Browser is starting up, pass all requests
     if (rule === null) {
       return;
@@ -151,9 +145,13 @@ class RequestHandler {
     let redirectTo = e.url;
     const detail = this.makeDetails(e);
     for (const item of rule) {
+      if (item._runner === 'dnr' && ENABLE_DNR) {
+        continue;
+      }
       if (item.action === 'cancel' && !item.isFunction) {
         return { cancel: true };
-      } else if (item.isFunction) {
+      }
+      if (item.isFunction) {
         try {
           const r = item._func(redirectTo, detail);
           if (typeof r === 'string') {
@@ -199,7 +197,7 @@ class RequestHandler {
       return;
     }
     logger.debug(`handle before send ${e.url}`, e.requestHeaders);
-    const rule = rules.get(TABLE_NAMES.sendHeader, { url: e.url, enable: true });
+    const rule = getRules(TABLE_NAMES.sendHeader, { url: e.url, enable: true });
     // Browser is starting up, pass all requests
     if (rule === null) {
       return;
@@ -243,7 +241,7 @@ class RequestHandler {
       return;
     }
     logger.debug(`handle received ${e.url}`, e.responseHeaders);
-    const rule = rules.get(TABLE_NAMES.receiveHeader, { url: e.url, enable: true });
+    const rule = getRules(TABLE_NAMES.receiveHeader, { url: e.url, enable: true });
     // Browser is starting up, pass all requests
     if (rule) {
       this.modifyHeaders(e, REQUEST_TYPE.RESPONSE, rule, detail);
@@ -346,9 +344,13 @@ class RequestHandler {
     const newHeaders: { [key: string]: string } = {};
     let hasFunction = false;
     for (let i = 0; i < rule.length; i++) {
-      if (!rule[i].isFunction) {
-        // @ts-ignore
-        newHeaders[rule[i].action.name] = rule[i].action.value;
+      const item = rule[i];
+      if (item._runner === 'dnr' && ENABLE_DNR) {
+        continue;
+      }
+      if (!item.isFunction) {
+        const action = item.action as RULE_ACTION_OBJ;
+        newHeaders[action.name] = action.value;
         rule.splice(i, 1);
         i--;
       } else {
@@ -423,7 +425,7 @@ class RequestHandler {
       return;
     }
 
-    let rule = rules.get(TABLE_NAMES.receiveBody, { url: e.url, enable: true });
+    let rule = getRules(TABLE_NAMES.receiveBody, { url: e.url, enable: true });
     if (rule === null) {
       return;
     }
@@ -487,6 +489,4 @@ class RequestHandler {
   }
 }
 
-export default function createRequestHandler() {
-  return new RequestHandler();
-}
+export const createWebRequestHandler = () => new WebRequestHandler();

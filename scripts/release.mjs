@@ -1,39 +1,24 @@
-import { readFile, readdir, stat } from 'fs/promises';
-import { join } from 'path';
+import { readFile, readdir, access, constants } from 'fs/promises';
+import { dirname, join } from 'path';
 import { createHash } from 'crypto';
-import publishRelease from 'publish-release';
-import { extension, path as _path, version } from './config.mjs';
+import { Blob } from 'buffer';
+import { scriptRoot, extension, path as _path, getDistPath, getVersion } from './config.mjs';
+import axios from 'axios';
+import { readJSON } from 'fs-extra/esm';
 
-async function hashFile(filePath) {
-  const buffer = await readFile(filePath);
+function hash(content) {
   const fsHash = createHash('sha256');
-  fsHash.update(buffer);
+  fsHash.update(content);
   return fsHash.digest('hex');
 }
 
-function publishReleasePromise(options) {
-  return new Promise((resolve, reject) => {
-    publishRelease(options, (err, release) => {
-      if (err) {
-        reject(err);
-      } else {
-        resolve(release.html_url);
-      }
-    });
-  });
-}
-
-async function publishUpdate(params) {
-  const token = process.env.SERVER_TOKEN;
-  if (!token) {
-    return;
+async function exists(path) {
+  try {
+    await access(fullPath, constants.R_OK);
+    return true;
+  } catch (e) {
+    return false;
   }
-  const query = new URLSearchParams(params);
-  query.append('name', 'header-editor');
-  query.append('token', token);
-
-  const resp = await fetch('https://ext.firefoxcn.net/api/update.php?' + query.toString());
-  return await resp.text();
 }
 
 async function main() {
@@ -45,10 +30,44 @@ async function main() {
     console.log('GITHUB_REPOSITORY not found');
     return;
   }
+  const token = process.env.TOKEN;
+  if (!token) {
+    console.log('TOKEN not found');
+    return;
+  }
   if (!process.env.GITHUB_TOKEN) {
     console.log('GITHUB_TOKEN not found');
     return;
   }
+
+  // Get version
+  let version = '';
+  const browserConfig = await readJSON(join(scriptRoot, 'browser-config/browser.config.json'));
+  const browserList = Object.keys(browserConfig);
+  for (const browser of browserList) {
+    const path = getDistPath(browser);
+    if (await exists(join(path, 'manifest.json'))) {
+      version = await getVersion(path);
+      console.log(`Get version from ${path}`);
+      break;
+    }
+  }
+  if (!version) {
+    console.log('version not found');
+    return;
+  }
+
+  // Git basic infos
+  const gitName = repo.split('/');
+  const tagName = process.env.GITHUB_REF_NAME;
+  const gitHubBaseURL = process.env.GITHUB_API_URL + '/repos/' + process.env.GITHUB_REPOSITORY;
+  const gitHubToken = process.env.GITHUB_TOKEN;
+  const gitHubApiHeader = {
+    'Accept': 'application/vnd.github+json',
+    'Authorization': 'Bearer ' + gitHubToken,
+    'X-GitHub-Api-Version': '2022-11-28',
+    'Content-Type': 'application/json',
+  };
 
   const assets = [];
 
@@ -58,57 +77,103 @@ async function main() {
       continue;
     }
     const fullPath = join(_path.release, file);
-    const idFilePath = join(_path.release, file + '-id.txt');
-    const statResult = await stat(fullPath);
-    if (statResult.isFile()) {
-      const fileHash = await hashFile(fullPath);
-      const id = await readFile(idFilePath, {
-        encoding: 'utf8',
+    if (!(await exists(fullPath))) {
+      continue;
+    }
+    const fileContent = await readFile(fullPath);
+    const id = await readFile(join(_path.release, file + '-id.txt'), {
+      encoding: 'utf8',
+    });
+    assets.push({
+      id,
+      name: file,
+      path: fullPath,
+      hash: hash(fileContent),
+      content: fileContent,
+      url: `https://github.com/${repo}/releases/download/${tagName}/${file}`
+    });
+  }
+
+  // Check if release is exists
+  console.log('Get release info...', tagName);
+  const res = await axios.get(`${gitHubBaseURL}/releases`, {
+    headers: gitHubApiHeader,
+  });
+  let releaseInfo = res.data.find(x => x.tag_name === tagName);
+  if (!releaseInfo) {
+    console.log('Release not exists, creating...');
+    try {
+      const res = await axios.post(`${gitHubBaseURL}/releases`, {
+        owner: gitName[0],
+        repo: gitName[1],
+        tag_name: tagName,
+        name: version,
+        body: "",
+        draft: false,
+        prerelease: false,
+      }, {
+        headers: gitHubApiHeader,
       });
-      assets.push({
-        id,
-        name: file,
-        path: fullPath,
-        hash: fileHash,
+      console.log(`Release created: #${res.data.id}`);
+      releaseInfo = res.data;
+    } catch (e) {
+      console.log('fail: ', e.response.status, e.response.data);
+      return;
+    }
+  } else {
+    console.log(`Release exists: #${releaseInfo.id} ${releaseInfo.name}`);
+  }
+  const releaseId = releaseInfo.id;
+  const releaseUploadUrl = releaseInfo.upload_url.replace(/\/assets(.*)$/, '/assets');
+
+  // Upload all assets to release
+  for (const it of assets) {
+    const fileContent = await readFile(it.path);
+    const blob = new Blob([fileContent], {
+      type: 'application/octet-stream',
+    });
+    console.log('Upload file: ' + it.path);
+    try {
+      await axios.post(`${releaseUploadUrl}?name=${encodeURIComponent(it.name)}`, blob, {
+        headers: {
+          ...gitHubApiHeader,
+          'Content-Type': 'application/octet-stream',
+        }
       });
+      console.log('success');
+    } catch (e) {
+      console.log('fail: ', e.response.status, e.response.data);
     }
   }
 
-  // Get git names
-  const gitName = repo.split('/');
-  const tagName = process.env.GITHUB_REF_NAME;
-  await publishReleasePromise({
-    token: process.env.GITHUB_TOKEN,
-    owner: gitName[0],
-    repo: gitName[1],
-    tag: tagName,
-    name: version,
-    notes: assets.map(item => `> ${item.name} SHA256: ${item.hash} \n`).join('\n'),
-    draft: false,
-    prerelease: false,
-    reuseRelease: false,
-    reuseDraftOnly: false,
-    skipAssetsCheck: false,
-    skipDuplicatedAssets: false,
-    skipIfPublished: true,
-    editRelease: false,
-    deleteEmptyTag: false,
-    assets: assets.map(item => item.path),
-  });
-
-  // update "update info" file
-  for (const it of assets) {
-    const url = `https://github.com/${repo}/releases/download/${tagName}/${it.name}`;
-    const browser = it.name.endsWith('.xpi') ? 'gecko' : 'chrome';
-    const result = await publishUpdate({
-      id: it.id,
-      ver: version,
-      url,
-      browser,
-      hash: it.hash,
+  // Update release description
+  try {
+    console.log('Update release description...');
+    await axios.patch(`${gitHubBaseURL}/releases/${releaseId}`, {
+      owner: gitName[0],
+      repo: gitName[1],
+      release_id: tagName,
+      tag_name: tagName,
+      name: version,
+      body: assets.map(item => `> ${item.name} SHA256: ${item.hash} \n`).join('\n'),
+      draft: false,
+      prerelease: false,
+    }, {
+      headers: gitHubApiHeader,
     });
-    console.log('Publish update info ', it.name, result);
+    console.log('success');
+  } catch (e) {
+    console.log('fail: ', e.response.status, e.response.data);
   }
+
+  // notify the update server
+  const notifyAssets = assets.map(x => ({ ...x, content: '' }));
+  console.log('notify the update server', notifyAssets);
+  await axios.post('https://ext.firefoxcn.net/api/?action=release&token=' + token, {
+    name: 'header-editor',
+    version,
+    assets: JSON.stringify(notifyAssets),
+  });
 }
 
 main();

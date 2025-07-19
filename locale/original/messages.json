@@ -84,7 +84,7 @@
     "message": "Enable debug mode",
     "description": "Enable debug mode"
   },
-  "debug_mode_help": {
+  "debug_mode_enable_help": {
     "message": "When debug mode is turned on, some logs will be printed in the background page",
     "description": "Debug mode description"
   },
@@ -108,6 +108,10 @@
     "message": "Display common header",
     "description": "An option to enable header auto-complete when editing rules"
   },
+  "display_common_header_help": {
+    "message": "When editing rules, display common request & response header names",
+    "description": "Help text for display_common_header_help option"
+  },
   "download": {
     "message": "Download",
     "description": "Download button"
@@ -118,7 +122,7 @@
   },
   "edit": {
     "message": "Edit",
-    "description": "Modal title for editing a rule"
+    "description": "Edit something"
   },
   "enable": {
     "message": "Enable",
@@ -210,7 +214,11 @@
   },
   "include_header_in_custom_function": {
     "message": "Include request headers in custom function",
-    "description": "An option to enable this feature, for more info, see wiki in GitHub"
+    "description": "An option to enable this feature"
+  },
+  "include_header_in_custom_function_help": {
+    "message": "Pass the request header into the custom function that processes the response header, it may reduce some performance",
+    "description": "Help text for include_header_in_custom_function option"
   },
   "manage": {
     "message": "Manage",
@@ -255,6 +263,10 @@
   "modify_body": {
     "message": "Modify response body (only supports Firefox)",
     "description": "Option to enable/disable modify body"
+  },
+  "modify_body_help": {
+    "message": "Allow custom function modify response body, it may reduce some performance",
+    "description": "Help text for modify_body option"
   },
   "name": {
     "message": "Name",
@@ -320,6 +332,38 @@
     "message": "Rules take no effect on Header Editor",
     "description": "If checked, all rules will take no effect on pages in Header Editor"
   },
+  "rules_no_effect_for_he_help": {
+    "message": "If checked, all rules will take no effect on pages in Header Editor",
+    "description": "Help text for rules_no_effect_for_he option"
+  },
+  "rule_switch": {
+    "message": "Enable rule quick switching",
+    "description": "Use the menu to switch rule content"
+  },
+  "rule_switch_help": {
+    "message": "Use the menu to switch rule content",
+    "description": "Help text for rule_switch option"
+  },
+  "rule_history": {
+    "message": "Automatically record rule history",
+    "description": "If checked, rule history will automatically record to the switch list"
+  },
+  "rule_history_help": {
+    "message": "If checked, rule history will automatically record to the switch list",
+    "description": "Help text for rule_history option"
+  },
+  "quick_edit": {
+    "message": "Quick edit",
+    "description": "Display edit button on the popup panel"
+  },
+  "quick_edit_help": {
+    "message": "Display edit button on the popup panel",
+    "description": "Help text for quick_edit option"
+  },
+  "auto_enable_modify_body": {
+    "message": "Modify body has been automatically turned on, please turn it off manually if you don't need it",
+    "description": "A message"
+  },
   "save": {
     "message": "Save",
     "description": "Button to save a rule"
@@ -347,6 +391,18 @@
   "suggested_group": {
     "message": "Suggested group",
     "description": "The suggested group name provided by the rule author"
+  },
+  "switch_title": {
+    "message": "Quick switch",
+    "description": "Title of the quick switch feature"
+  },
+  "switch_empty": {
+    "message": "No quick switch rules",
+    "description": "Description text"
+  },
+  "switch_success": {
+    "message": "Switch successfully",
+    "description": "Toast message when quick switch successfully"
   },
   "test_custom_code": {
     "message": "Does not support testing custom code now",
@@ -385,7 +441,7 @@
     "description": "URL of documentations, if not translated, please use english version"
   },
   "url_help": {
-    "message": "https://he.firefoxcn.net/en-US/",
+    "message": "https://he.firefoxcn.net/en-US/guide",
     "description": "URL of documentations, if not translated, please use english version"
   },
   "url_third_party_rules": {
