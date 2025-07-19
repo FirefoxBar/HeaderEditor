@@ -101,9 +101,9 @@ function createDNR(rule: Rule, id: number) {
 function getRuleId(id: number, table?: TABLE_NAMES, ruleType?: RULE_TYPE) {
   const list = {
     [TABLE_NAMES.request]: 0,
-    [TABLE_NAMES.sendHeader]: 10000,
-    [TABLE_NAMES.receiveHeader]: 20000,
-    [TABLE_NAMES.receiveBody]: 30000,
+    [TABLE_NAMES.sendHeader]: 100000,
+    [TABLE_NAMES.receiveHeader]: 200000,
+    [TABLE_NAMES.receiveBody]: 300000,
   };
 
   const t = table || getTableName(ruleType || RULE_TYPE.REDIRECT);

@@ -26,12 +26,11 @@ async function main() {
 
   // Get remote version
   const params = new URLSearchParams();
-  params.append('action', 'snapshot');
   params.append('name', 'header-editor');
   params.append('ver', versionPrefix);
   params.append('token', token);
 
-  const resp = await axios.get('https://ext.firefoxcn.net/api/?' + params.toString());
+  const resp = await axios.get('https://server-api.sylibs.com/ext/snapshot.php?' + params.toString());
   const text = resp.data;
 
   const filePath = join(__dirname, '../temp/version.txt');
@@ -39,12 +38,14 @@ async function main() {
     await mkdir(join(__dirname, '../temp/'), {
       recursive: true,
     });
-    await writeFile(filePath, versionPrefix + '.' + text, {
+    const newVersion = `${versionPrefix}.${text}`;
+    await writeFile(filePath, newVersion, {
       encoding: 'utf8',
     });
+    console.log(`Got version: ${newVersion}, wrote to: ${filePath}`);
+  } else {
+    console.log(`Invalid version: ${text}`);
   }
-
-  console.log('Got version: ' + text + ', wrote to: ' + filePath);
 }
 
 main();

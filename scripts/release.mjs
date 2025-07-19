@@ -169,7 +169,8 @@ async function main() {
   // notify the update server
   const notifyAssets = assets.map(x => ({ ...x, content: '' }));
   console.log('notify the update server', notifyAssets);
-  await axios.post('https://ext.firefoxcn.net/api/?action=release&token=' + token, {
+  await axios.post('https://server-api.sylibs.com/ext/update.php', {
+    token: token,
     name: 'header-editor',
     version,
     assets: JSON.stringify(notifyAssets),
