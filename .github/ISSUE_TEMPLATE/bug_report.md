@@ -10,8 +10,11 @@ assignees: ''
 **Describe the bug**
 A clear and concise description of what the bug is, and describe what you expected to happen.
 
-**Rule and Test address**
-Please provide rule contents and a test address.
+**Rules and Test address**
+Please provide rules and a test address.
 
-**Extra informations**
+**Env**
+Please provide browser version and extension version.
+
+**Extra information**
 Other information that may be helpful, such as your attempts, related materials, etc.
