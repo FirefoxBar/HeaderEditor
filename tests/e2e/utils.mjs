@@ -70,9 +70,7 @@ async function createBrowser(browserKey, pathToExtension) {
       // headless: false,
       browser: 'firefox',
       executablePath: getFirefox(),
-      args: [
-        `--start-debugger-server=${rppPort}`,
-      ],
+      args: [`--start-debugger-server=${rppPort}`],
       extraPrefsFirefox: {
         'devtools.chrome.enabled': true,
         'devtools.debugger.prompt-connection': false,
@@ -178,7 +176,7 @@ export async function waitTestServer() {
   }
 }
 
-export async function addRule(popup, rule) {
+export async function saveRule(popup, rule) {
   const action = {
     method: 'save_rule',
     rule,
@@ -204,18 +202,20 @@ export async function addRule(popup, rule) {
       break;
   }
 
-  return () =>
-    popup.evaluate(
-      'chrome.runtime.sendMessage(' +
-        JSON.stringify({
-          method: 'del_rule',
-          id: resp.id,
-          type: tabName,
-        }) +
-        ')',
-    );
+  return {
+    id: resp.id,
+    remove: () =>
+      popup.evaluate(
+        'chrome.runtime.sendMessage(' +
+          JSON.stringify({
+            method: 'del_rule',
+            id: resp.id,
+            type: tabName,
+          }) +
+          ')',
+      ),
+  };
 }
-
 
 export async function getPageValue(browser, url) {
   const page = await browser.newPage();

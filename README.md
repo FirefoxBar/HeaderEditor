@@ -55,25 +55,27 @@ Please note that some languages (such as zh-Hans) will not be translated on tran
 
 ### Build
 
-* Install node (14+) and pnpm.
-
+* Install node (16+) and pnpm.
 * Clone this project, or download the source code and extract it.
-
-* Run `pnpm i`.
-
-* Run `npm run build`
-
-* Find build result at `/dist`
+* Run `pnpm i --frozen-lockfile`.
+* Run build command
+  * For chrome full version, run `npm run build:chrome_v2`
+  * For chrome lite version, run `npm run build:chrome_v3`
+  * For firefox full version, run `npm run build:firefox_v2`
+  * For firefox lite version, run `npm run build:firefox_v3`
+* Find build result at `/dist_*`
 
 #### Development
 
+* Modify `start` command's `TARGET_BROWSER` to the version you want to build
+
 * Run `npm run start`
 
-* Open browser, load extension from `/dist` directory or `/dist/manifest.json`
+* Open browser, load extension from `/dist_*` directory or `/dist_*/manifest.json`
 
 ## Licenses
 
-Copyright © 2017-2023 [FirefoxBar Team](https://team.firefoxcn.net)
+Copyright © 2017-2025 [FirefoxBar Team](https://team.firefoxcn.net)
 
 Open source licensed under [GPLv2](LICENSE).
 

@@ -1,5 +1,5 @@
-import { IconSave } from '@douyinfe/semi-icons';
-import { Button, Form, Input, SideSheet, Toast } from '@douyinfe/semi-ui';
+import { IconExternalOpen, IconSave } from '@douyinfe/semi-icons';
+import { Banner, Button, Form, Input, SideSheet, Space, Toast, Typography } from '@douyinfe/semi-ui';
 import { FormApi } from '@douyinfe/semi-ui/lib/es/form';
 import { css } from '@emotion/css';
 import * as React from 'react';
@@ -15,6 +15,8 @@ import { CodeEditorField } from './code-editor';
 import ENCODING_LIST from './encoding';
 import COMMON_HEADERS from './headers';
 
+const { Text } = Typography;
+
 interface EditProps {
   visible: boolean;
   rule?: Rule;
@@ -26,12 +28,6 @@ interface EditState {
   testUrl: string;
   testResult: string;
 }
-
-const formItemLayout = {
-  labelCol: {
-    fixedSpan: 6,
-  },
-};
 
 const EMPTY_RULE: Rule = {
   id: -1,
@@ -95,20 +91,22 @@ export default class Edit extends React.Component<EditProps, EditState> {
 
   handleChange(_: any, item: any) {
     // console.log('handleChange', item);
-    this.setState((prevState) => {
-      const rule = { ...prevState.rule };
-      Object.keys(item).forEach((k) => {
-        rule[k] = item[k];
-      });
-      if (item.name === 'ruleType' && item.value === 'modifyReceiveBody') {
-        rule.isFunction = true;
-      }
+    this.setState(
+      (prevState) => {
+        const rule = { ...prevState.rule };
+        Object.keys(item).forEach((k) => {
+          rule[k] = item[k];
+        });
+        if (item.name === 'ruleType' && item.value === 'modifyReceiveBody') {
+          rule.isFunction = true;
+        }
 
-      return { rule };
-    },
-    () => {
-      this.getTestResult(true);
-    });
+        return { rule };
+      },
+      () => {
+        this.getTestResult(true);
+      },
+    );
   }
 
   handleTestChange(value: string) {
@@ -190,12 +188,15 @@ export default class Edit extends React.Component<EditProps, EditState> {
     }
     if (this.props.rule !== prevProps.rule) {
       const newRule = getInput(this.props.rule ? this.props.rule : EMPTY_RULE);
-      this.setState({
-        rule: newRule,
-      }, () => {
-        this.formApi?.reset();
-        this.formApi?.setValues(newRule);
-      });
+      this.setState(
+        {
+          rule: newRule,
+        },
+        () => {
+          this.formApi?.reset();
+          this.formApi?.setValues(newRule);
+        },
+      );
     }
   }
 
@@ -238,7 +239,7 @@ export default class Edit extends React.Component<EditProps, EditState> {
       }
     }
 
-    const res = await Api.saveRule(rule);
+    await Api.saveRule(rule);
     this.props.onClose();
   }
 
@@ -271,13 +272,30 @@ export default class Edit extends React.Component<EditProps, EditState> {
         `}
         footer={
           <div style={{ display: 'flex', justifyContent: 'flex-end' }}>
-            <Button theme="solid" onClick={this.handleSubmit} icon={<IconSave />}>{t('save')}</Button>
+            <Button theme="solid" onClick={this.handleSubmit} icon={<IconSave />}>
+              {t('save')}
+            </Button>
           </div>
         }
       >
+        {MANIFEST_VER === 'v3' && (
+          <Banner
+            type="info"
+            description={
+              <Space>
+                {t('lite_edit_tip')}{' '}
+                <Text link={{ href: t('url_help'), target: '_blank' }} style={{ lineHeight: '14px' }}>
+                  <IconExternalOpen />
+                </Text>
+              </Space>
+            }
+          />
+        )}
         <Form
-          {...formItemLayout}
-          getFormApi={(api) => this.formApi = api}
+          labelCol={{
+            fixedSpan: 6,
+          }}
+          getFormApi={(api) => (this.formApi = api)}
           initValues={this.state.rule}
           onValueChange={this.handleChange}
           labelPosition="left"
@@ -308,13 +326,20 @@ export default class Edit extends React.Component<EditProps, EditState> {
               { label: t('match_url'), value: 'url' },
             ]}
           />
-          {this.state.rule.matchType !== 'all' && (
-            <Form.Input label={t('matchRule')} field="pattern" />
-          )}
-          <Form.Input label={t('excludeRule')} field="exclude" disabled={!ENABLE_WEB_REQUEST} />
+          {this.state.rule.matchType !== 'all' && <Form.Input label={t('matchRule')} field="pattern" />}
+          <Form.Input
+            label={t('excludeRule')}
+            field="exclude"
+            helpText={MANIFEST_VER === 'v3' ? <Text type="tertiary">{t('lite_not_supported')}</Text> : undefined}
+          />
           {/* Response body encoding */}
           {this.state.rule.ruleType === 'modifyReceiveBody' && (
-            <Form.Select filter field="encoding" label={t('encoding')} optionList={ENCODING_LIST.map((x) => ({ label: x, value: x }))} />
+            <Form.Select
+              filter
+              field="encoding"
+              label={t('encoding')}
+              optionList={ENCODING_LIST.map((x) => ({ label: x, value: x }))}
+            />
           )}
           {/* isFunction or not */}
           <BoolRadioGroupField
@@ -337,13 +362,9 @@ export default class Edit extends React.Component<EditProps, EditState> {
               list={isHeaderSend ? COMMON_HEADERS.request : COMMON_HEADERS.response}
             />
           )}
-          {isHeader && !this.state.rule.isFunction && (
-            <Form.Input label={t('headerValue')} field="headerValue" />
-          )}
+          {isHeader && !this.state.rule.isFunction && <Form.Input label={t('headerValue')} field="headerValue" />}
           {/* Custom function */}
-          {this.state.rule.isFunction && (
-            <CodeEditorField field="code" label={t('code')} height="200px" />
-          )}
+          {this.state.rule.isFunction && <CodeEditorField field="code" label={t('code')} height="200px" />}
           <Form.Slot label={t('test_url')}>
             <Input value={this.state.testUrl} onChange={this.handleTestChange} />
           </Form.Slot>

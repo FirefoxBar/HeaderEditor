@@ -451,5 +451,13 @@
   "view": {
     "message": "View",
     "description": "View rule or a link"
+  },
+  "lite_edit_tip": {
+    "message": "Some features are not supported in lite version",
+    "description": "Tip at the edit panel for lite version"
+  },
+  "lite_not_support": {
+    "message": "The lite version does not support this feature",
+    "description": "Message at the not support features"
   }
 }

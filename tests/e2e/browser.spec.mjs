@@ -1,4 +1,4 @@
-import { addRule, getHeader, getPageValue, getResponseHeader, startUp, testServer, waitTestServer } from './utils.mjs';
+import { saveRule, getHeader, getPageValue, getResponseHeader, startUp, testServer, waitTestServer } from './utils.mjs';
 
 let browser;
 
@@ -19,7 +19,7 @@ afterAll(async () => {
 test('Modify Request Header', async () => {
   const key = String(Math.random()).replace('.', '');
 
-  const rm = await addRule(browser.popup, {
+  const { remove } = await saveRule(browser.popup, {
     name: 'test modify request header',
     ruleType: 'modifySendHeader',
     pattern: '^' + testServer,
@@ -36,11 +36,34 @@ test('Modify Request Header', async () => {
 
   expect(header['X_TEST_HEADER']).toBe(key);
 
-  await rm();
+  await remove();
+});
+
+test('Disable rule', async () => {
+  const key = String(Math.random()).replace('.', '');
+
+  const { remove } = await saveRule(browser.popup, {
+    name: 'test disable rule',
+    ruleType: 'modifySendHeader',
+    pattern: '^' + testServer,
+    matchType: 'regexp',
+    isFunction: false,
+    enable: false,
+    action: {
+      name: 'X-Test-Header',
+      value: key,
+    },
+  });
+
+  const header = await getHeader(browser.browser);
+
+  expect(header['X_TEST_HEADER']).toBeUndefined();
+
+  await remove();
 });
 
 test('Remove Response Header', async () => {
-  const rm = await addRule(browser.popup, {
+  const { remove } = await saveRule(browser.popup, {
     name: 'test remove request header',
     ruleType: 'modifyReceiveHeader',
     pattern: '^' + testServer,
@@ -57,13 +80,13 @@ test('Remove Response Header', async () => {
 
   expect(value).toBe('Executed');
 
-  await rm();
+  await remove();
 });
 
 test('Modify Response Header', async () => {
   const key = String(Math.random()).replace('.', '');
 
-  const rm = await addRule(browser.popup, {
+  const { remove } = await saveRule(browser.popup, {
     name: 'test modify request header',
     ruleType: 'modifyReceiveHeader',
     pattern: '^' + testServer,
@@ -80,5 +103,5 @@ test('Modify Response Header', async () => {
 
   expect(value).toBe(key);
 
-  await rm();
+  await remove();
 });

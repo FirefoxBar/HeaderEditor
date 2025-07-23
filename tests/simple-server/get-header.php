@@ -8,4 +8,4 @@ foreach ($_SERVER as $key => $value) {
   }
 }
 
-echo '<input id="value" value=\'', json_encode($headers), '\'>';
+echo '<input id="value" style="width:100vw" value=\'', json_encode($headers), '\'>';

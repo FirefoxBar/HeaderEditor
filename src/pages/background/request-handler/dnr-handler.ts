@@ -4,6 +4,7 @@ import emitter from '@/share/core/emitter';
 import { prefs } from '@/share/core/prefs';
 import { detectRunner } from '@/share/core/rule-utils';
 import type { Rule, RULE_ACTION_OBJ } from '@/share/core/types';
+import logger from '@/share/core/logger';
 import { getTableName } from '@/share/core/utils';
 import { getAll, waitLoad } from '../core/rules';
 import type { DeclarativeNetRequest } from 'webextension-polyfill/namespaces/declarativeNetRequest';
@@ -161,6 +162,9 @@ class DNRRequestHandler {
         // rule exists
         return;
       }
+      if (!rule.enable) {
+        return;
+      }
       addRules.push(createDNR(rule, ruleId));
     });
     if (IS_DEV) {
@@ -182,6 +186,7 @@ class DNRRequestHandler {
     });
 
     emitter.on(emitter.INNER_RULE_UPDATE, ({ from, target }: { from: Rule; target: Rule }) => {
+      logger.debug('dnr rules update', from, target);
       const command: DeclarativeNetRequest.UpdateSessionRulesOptionsType = {
         removeRuleIds: [],
         addRules: [],
@@ -191,7 +196,7 @@ class DNRRequestHandler {
         command.removeRuleIds!.push(old);
       }
       // detect new rule is DNR or not
-      if (detectRunner(target) === 'dnr') {
+      if (detectRunner(target) === 'dnr' && target.enable) {
         command.addRules!.push(createDNR(target, getRuleId(target.id, undefined, target.ruleType)));
       }
       if (IS_DEV) {

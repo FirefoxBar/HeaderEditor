@@ -9,7 +9,7 @@ const root = path.join(__dirname, '../..');
 
 const { version } = require(path.join(root, 'package.json'));
 
-async function exists(path) {
+async function exists(fullPath) {
   try {
     await fs.access(fullPath, constants.R_OK);
     return true;
