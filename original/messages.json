@@ -224,6 +224,14 @@
 		"message": "Pass the request header into the custom function that processes the response header, it may reduce some performance",
 		"description": "Help text for include_header_in_custom_function option"
 	},
+	"lite_edit_tip": {
+		"message": "Some features are not supported in lite version",
+		"description": "Tip at the edit panel for lite version"
+	},
+	"lite_not_support": {
+		"message": "The lite version does not support this feature",
+		"description": "Message at the not support features"
+	},
 	"manage": {
 		"message": "Manage",
 		"description": "Manage rules, options and more"
