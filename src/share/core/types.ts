@@ -5,6 +5,7 @@ export interface RuleFilterOptions {
   url?: string;
   id?: number | number[];
   name?: string;
+  runner?: 'web_request' | 'dnr';
 }
 
 export interface RULE_ACTION_OBJ {

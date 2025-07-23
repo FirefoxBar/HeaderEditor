@@ -197,7 +197,7 @@ class WebRequestHandler {
       return;
     }
     logger.debug(`handle before send ${e.url}`, e.requestHeaders);
-    const rule = getRules(TABLE_NAMES.sendHeader, { url: e.url, enable: true });
+    const rule = getRules(TABLE_NAMES.sendHeader, { url: e.url, enable: true, runner: 'web_request' });
     // Browser is starting up, pass all requests
     if (rule === null) {
       return;
@@ -241,7 +241,7 @@ class WebRequestHandler {
       return;
     }
     logger.debug(`handle received ${e.url}`, e.responseHeaders);
-    const rule = getRules(TABLE_NAMES.receiveHeader, { url: e.url, enable: true });
+    const rule = getRules(TABLE_NAMES.receiveHeader, { url: e.url, enable: true, runner: 'web_request' });
     // Browser is starting up, pass all requests
     if (rule) {
       this.modifyHeaders(e, REQUEST_TYPE.RESPONSE, rule, detail);
@@ -425,7 +425,7 @@ class WebRequestHandler {
       return;
     }
 
-    let rule = getRules(TABLE_NAMES.receiveBody, { url: e.url, enable: true });
+    let rule = getRules(TABLE_NAMES.receiveBody, { url: e.url, enable: true, runner: 'web_request' });
     if (rule === null) {
       return;
     }

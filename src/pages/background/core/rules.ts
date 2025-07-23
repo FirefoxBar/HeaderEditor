@@ -70,6 +70,10 @@ function filter(fromRules: InitdRule[], options: RuleFilterOptions) {
   }
   const url = typeof options.url !== 'undefined' ? options.url : null;
 
+  if (options.runner) {
+    rules = rules.filter((rule) => rule._runner === options.runner);
+  }
+
   if (typeof options.id !== 'undefined') {
     rules = rules.filter((rule) => {
       if (Array.isArray(options.id)) {

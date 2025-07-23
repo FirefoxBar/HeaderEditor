@@ -11,7 +11,7 @@ const { version } = require(path.join(root, 'package.json'));
 
 async function exists(fullPath) {
   try {
-    await fs.access(fullPath, constants.R_OK);
+    await fs.access(fullPath, fs.constants.R_OK);
     return true;
   } catch (e) {
     return false;
