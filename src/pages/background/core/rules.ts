@@ -98,6 +98,7 @@ function filter(fromRules: InitdRule[], options: RuleFilterOptions) {
   if (url != null) {
     rules = rules.filter((rule) => isMatchUrl(rule, url) === IS_MATCH.MATCH);
   }
+
   return rules;
 }
 

@@ -17,6 +17,10 @@ export function initRule(rule: Rule, forceUseWebRequest = false): InitdRule {
   // eslint-disable-next-line @typescript-eslint/consistent-type-assertions
   const initd: InitdRule = { ...rule } as InitdRule;
   initd._runner = detectRunner(rule);
+  // DNR not enable, force to web_request
+  if (!ENABLE_DNR && initd._runner === 'dnr') {
+    initd._runner = 'web_request';
+  }
   if (initd._runner === 'web_request' || forceUseWebRequest) {
     if (initd.isFunction && ENABLE_EVAL) {
       // eslint-disable-next-line no-new-func
@@ -98,10 +102,12 @@ export function isMatchUrl(rule: InitdRule, url: string): IS_MATCH {
     case 'all':
       result = true;
       break;
-    case 'regexp':
-      rule._reg.lastIndex = 0;
-      result = rule._reg.test(url);
+    case 'regexp': {
+      const reg = rule._reg || new RegExp(rule.pattern, 'g');
+      reg.lastIndex = 0;
+      result = reg.test(url);
       break;
+    }
     case 'prefix':
       result = url.indexOf(rule.pattern) === 0;
       break;

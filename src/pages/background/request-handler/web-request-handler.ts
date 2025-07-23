@@ -137,7 +137,7 @@ class WebRequestHandler {
     }
     logger.debug(`handle before request ${e.url}`, e);
     // 可用：重定向，阻止加载
-    const rule = getRules(TABLE_NAMES.request, { url: e.url, enable: true });
+    const rule = getRules(TABLE_NAMES.request, { url: e.url, enable: true, runner: 'web_request' });
     // Browser is starting up, pass all requests
     if (rule === null) {
       return;
@@ -145,9 +145,6 @@ class WebRequestHandler {
     let redirectTo = e.url;
     const detail = this.makeDetails(e);
     for (const item of rule) {
-      if (item._runner === 'dnr' && ENABLE_DNR) {
-        continue;
-      }
       if (item.action === 'cancel' && !item.isFunction) {
         return { cancel: true };
       }
