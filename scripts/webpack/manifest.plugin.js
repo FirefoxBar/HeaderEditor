@@ -42,10 +42,10 @@ function ManifestPlugin() {
         const forceVersionFile = path.join(__dirname, '../../temp/version.txt');
         const hasForceVersionFile = await exists(forceVersionFile);
         if (hasForceVersionFile) {
-          versionText = await fs.readFile(forceVersionFile, { encoding: 'utf8' }).trim();
+          versionText = (await fs.readFile(forceVersionFile, { encoding: 'utf8' })).trim();
           console.log('Got force version: ' + versionText);
         } else {
-          console.log('No force version ' + forceVersionFile);
+          console.log('No force version at ' + forceVersionFile);
         }
 
         // 如果是tag触发的CI，强制用tag的版本号
