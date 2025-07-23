@@ -191,7 +191,7 @@ class DNRRequestHandler {
         command.removeRuleIds!.push(old);
       }
       // detect new rule is DNR or not
-      if (detectRunner(target) === 'dnr') {
+      if (detectRunner(target) === 'dnr' && target.enable) {
         command.addRules!.push(createDNR(target, getRuleId(target.id, undefined, target.ruleType)));
       }
       if (IS_DEV) {
