@@ -16,7 +16,7 @@ async function main() {
     encoding: 'utf8',
   });
 
-  const { version } = JSON.parse(pkgJson);
+  const { version: versionPrefix } = JSON.parse(pkgJson);
 
   // Get latest release version
   // const gitHubToken = process.env.GITHUB_TOKEN;
@@ -33,7 +33,7 @@ async function main() {
   // Get remote version
   const params = new URLSearchParams();
   params.append('name', 'header-editor');
-  params.append('ver', version);
+  params.append('ver', versionPrefix);
   params.append('token', token);
 
   const resp = await axios.get('https://server-api.sylibs.com/ext/snapshot.php?' + params.toString());
