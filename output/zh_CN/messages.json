@@ -224,6 +224,14 @@
 		"message": "向处理响应头的自定义函数中传入请求头，开启后可能会降低性能",
 		"description": "Help text for include_header_in_custom_function option"
 	},
+	"lite_edit_tip": {
+		"message": "Lite版本不支持部分功能",
+		"description": "Tip at the edit panel for lite version"
+	},
+	"lite_not_support": {
+		"message": "Lite版本不支持该功能",
+		"description": "Message at the not support features"
+	},
 	"manage": {
 		"message": "管理",
 		"description": "Manage rules, options and more"
