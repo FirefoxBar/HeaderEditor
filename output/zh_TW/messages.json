@@ -224,6 +224,14 @@
 		"message": "向處理回應標頭的自訂函數中傳入要求標頭，開啟後可能會降低性能",
 		"description": "Help text for include_header_in_custom_function option"
 	},
+	"lite_edit_tip": {
+		"message": "精簡版不支援某些功能",
+		"description": "Tip at the edit panel for lite version"
+	},
+	"lite_not_support": {
+		"message": "精簡版不支援此功能",
+		"description": "Message at the not support features"
+	},
 	"manage": {
 		"message": "管理",
 		"description": "Manage rules, options and more"
