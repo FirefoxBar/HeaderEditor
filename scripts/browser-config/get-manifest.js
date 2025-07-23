@@ -103,9 +103,13 @@ function getManifest(browser, options) {
           update_url:
             config.MANIFEST_VER === 'v2'
               ? 'https://ext.firefoxcn.net/header-editor/install/update.json'
-              : 'https://ext.firefoxcn.net/header-editor-v3/install/update.json',
+              : 'https://ext.firefoxcn.net/header-editor/install-v3/update.json',
         },
       };
+    }
+  } else {
+    if (config.MANIFEST_VER === 'v2') {
+      manifest.update_url = 'https://ext.firefoxcn.net/header-editor/install-v3/update.xml';
     }
   }
 
