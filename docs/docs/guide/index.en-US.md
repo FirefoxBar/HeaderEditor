@@ -53,6 +53,13 @@ Notes:
 * Create a new rule: Click the Add button in the lower right corner, fill in the rules, and save.
 * Alternatively, you can download the rules of others in "Import and Export".
 
+## Install the full version in Chrome
+
+* Download the latest installation package (crx format) from [this address](https://github.com/FirefoxBar/HeaderEditor/issues/286)
+* Open [chrome://extensions/](chrome://extensions/)
+* Enable "Developer Mode"
+* Drag the downloaded crx file to the extension page
+
 ## Migrate from other similar extensions
 
 We provide a small tool that can help you migrate from other similar extensions to Header Editor: [migrate-to-he.firefoxcn.net](https://migrate-to-he.firefoxcn.net/index_en.html)

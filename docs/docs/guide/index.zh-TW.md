@@ -53,6 +53,13 @@ order: 1
 * 在规则界面新建规则：点击右下角的添加按钮，填写规则内容后，保存即可。
 * 或者，您可以在“导入和导出”中下载他人的规则。
 
+## 在 Chrome 中安裝完整版本
+
+* 從 [此網址](https://github.com/FirefoxBar/HeaderEditor/issues/286) 下載最新安裝套件（crx 格式）
+* 開啟 [chrome://extensions/](chrome://extensions/)
+* 啟用“開發者模式”
+* 將下載的 crx 檔案拖曳到擴充功能頁面
+
 ## 從其他類似擴展遷移
 
 我們提供了一個小工具，可以協助你從一些類似的擴展，快速遷移到 Header Editor: [migrate-to-he.firefoxcn.net](https://migrate-to-he.firefoxcn.net/index_zh_tw.html)

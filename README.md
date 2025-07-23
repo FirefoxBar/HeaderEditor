@@ -55,7 +55,7 @@ Please note that some languages (such as zh-Hans) will not be translated on tran
 
 ### Build
 
-* Install node (16+) and pnpm.
+* Install node (18+) and pnpm.
 * Clone this project, or download the source code and extract it.
 * Run `pnpm i --frozen-lockfile`.
 * Run build command
