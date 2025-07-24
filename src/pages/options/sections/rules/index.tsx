@@ -54,7 +54,7 @@ export default class Rules extends React.Component<RulesProps, RulesState> {
     this.handlePreview = this.handlePreview.bind(this);
 
     prefs.ready(() => {
-      this.isCollapse = prefs.get('manage-collapse-group');
+      this.isCollapse = Boolean(prefs.get('manage-collapse-group'));
       this.load();
     });
     notify.event.on(EVENTs.RULE_UPDATE, this.handleRuleUpdateEvent);

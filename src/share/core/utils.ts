@@ -81,14 +81,14 @@ export async function fetchUrl(param: FetchUrlParam) {
 
 export function getTableName(ruleType: RULE_TYPE): TABLE_NAMES {
   switch (ruleType) {
-    case 'cancel':
-    case 'redirect':
+    case RULE_TYPE.CANCEL:
+    case RULE_TYPE.REDIRECT:
       return TABLE_NAMES.request;
-    case 'modifySendHeader':
+    case RULE_TYPE.MODIFY_SEND_HEADER:
       return TABLE_NAMES.sendHeader;
-    case 'modifyReceiveHeader':
+    case RULE_TYPE.MODIFY_RECV_HEADER:
       return TABLE_NAMES.receiveHeader;
-    case 'modifyReceiveBody':
+    case RULE_TYPE.MODIFY_RECV_BODY:
       return TABLE_NAMES.receiveBody;
     default:
       return TABLE_NAMES.request;

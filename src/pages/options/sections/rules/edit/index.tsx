@@ -43,8 +43,13 @@ const EMPTY_RULE: Rule = {
   action: 'cancel',
 };
 
+interface RuleInput extends Rule {
+  headerName?: string;
+  headerValue?: string;
+}
+
 function getInput(rule: Rule) {
-  const res = { ...rule };
+  const res: RuleInput = { ...rule };
   if (
     typeof res.action === 'object' &&
     (res.ruleType === 'modifySendHeader' || res.ruleType === 'modifyReceiveHeader')
@@ -55,12 +60,12 @@ function getInput(rule: Rule) {
   return res;
 }
 
-function getRuleFromInput(input: Rule): Rule {
+function getRuleFromInput(input: RuleInput): Rule {
   const res = { ...input };
   if (res.ruleType === 'modifySendHeader' || res.ruleType === 'modifyReceiveHeader') {
     res.action = {
-      name: res.headerName,
-      value: res.headerValue,
+      name: res.headerName || '',
+      value: res.headerValue || '',
     };
     delete res.headerName;
     delete res.headerValue;
@@ -97,7 +102,7 @@ export default class Edit extends React.Component<EditProps, EditState> {
         Object.keys(item).forEach((k) => {
           rule[k] = item[k];
         });
-        if (item.name === 'ruleType' && item.value === 'modifyReceiveBody') {
+        if (item.name === 'ruleType' && item.value === RULE_TYPE.MODIFY_RECV_BODY) {
           rule.isFunction = true;
         }
 
@@ -207,11 +212,11 @@ export default class Edit extends React.Component<EditProps, EditState> {
       Toast.error(t('name_empty'));
       return;
     }
-    if (rule.matchType !== 'all' && rule.matchRule === '') {
+    if (rule.matchType !== 'all' && rule.pattern === '') {
       Toast.error(t('match_rule_empty'));
       return;
     }
-    if (rule.ruleType !== 'modifyReceiveBody' && !rule.encoding) {
+    if (rule.ruleType !== RULE_TYPE.MODIFY_RECV_BODY && !rule.encoding) {
       rule.encoding = 'UTF-8';
     }
 
@@ -292,9 +297,7 @@ export default class Edit extends React.Component<EditProps, EditState> {
           />
         )}
         <Form
-          labelCol={{
-            fixedSpan: 6,
-          }}
+          labelCol={{ fixedSpan: 6 }}
           getFormApi={(api) => (this.formApi = api)}
           initValues={this.state.rule}
           onValueChange={this.handleChange}
@@ -308,32 +311,32 @@ export default class Edit extends React.Component<EditProps, EditState> {
             field="ruleType"
             disabled={this.isEdit}
             optionList={[
-              { label: t('rule_cancel'), value: 'cancel' },
-              { label: t('rule_redirect'), value: 'redirect' },
-              { label: t('rule_modifySendHeader'), value: 'modifySendHeader' },
-              { label: t('rule_modifyReceiveHeader'), value: 'modifyReceiveHeader' },
-              { label: t('rule_modifyReceiveBody'), value: 'modifyReceiveBody', disabled: !IS_SUPPORT_STREAM_FILTER },
+              { label: t('rule_cancel'), value: RULE_TYPE.CANCEL },
+              { label: t('rule_redirect'), value: RULE_TYPE.REDIRECT },
+              { label: t('rule_modifySendHeader'), value: RULE_TYPE.MODIFY_SEND_HEADER },
+              { label: t('rule_modifyReceiveHeader'), value: RULE_TYPE.MODIFY_RECV_HEADER },
+              { label: t('rule_modifyReceiveBody'), value: RULE_TYPE.MODIFY_RECV_BODY, disabled: !IS_SUPPORT_STREAM_FILTER },
             ]}
           />
           <Form.Select
             label={t('matchType')}
             field="matchType"
             optionList={[
-              { label: t('match_all'), value: 'all' },
-              { label: t('match_regexp'), value: 'regexp' },
-              { label: t('match_prefix'), value: 'prefix' },
-              { label: t('match_domain'), value: 'domain' },
-              { label: t('match_url'), value: 'url' },
+              { label: t('match_all'), value: RULE_MATCH_TYPE.ALL },
+              { label: t('match_regexp'), value: RULE_MATCH_TYPE.REGEXP },
+              { label: t('match_prefix'), value: RULE_MATCH_TYPE.PREFIX },
+              { label: t('match_domain'), value: RULE_MATCH_TYPE.DOMAIN },
+              { label: t('match_url'), value: RULE_MATCH_TYPE.URL },
             ]}
           />
-          {this.state.rule.matchType !== 'all' && <Form.Input label={t('matchRule')} field="pattern" />}
+          {this.state.rule.matchType !== RULE_MATCH_TYPE.ALL && <Form.Input label={t('matchRule')} field="pattern" />}
           <Form.Input
             label={t('excludeRule')}
             field="exclude"
             helpText={MANIFEST_VER === 'v3' ? <Text type="tertiary">{t('lite_not_supported')}</Text> : undefined}
           />
           {/* Response body encoding */}
-          {this.state.rule.ruleType === 'modifyReceiveBody' && (
+          {this.state.rule.ruleType === RULE_TYPE.MODIFY_RECV_BODY && (
             <Form.Select
               filter
               field="encoding"

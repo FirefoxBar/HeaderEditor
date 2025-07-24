@@ -46,7 +46,7 @@ export function createExport(arr: { [key: string]: Array<Rule | InitdRule> }) {
 }
 
 export function convertToRule(rule: InitdRule | Rule): Rule {
-  const item = { ...rule };
+  const item: any = { ...rule };
   delete item._reg;
   delete item._func;
   delete item._v_key;
@@ -58,8 +58,8 @@ export function convertToBasicRule(rule: InitdRule | Rule | BasicRule): BasicRul
   if (isBasicRule(rule)) {
     return rule;
   }
-  const item = convertToRule(rule) as BasicRule;
-  delete item.id;
+  const item = convertToRule(rule);
+  delete (item as any).id;
   return item;
 }
 
@@ -68,7 +68,7 @@ export function fromJson(str: string) {
   TABLE_NAMES_ARR.forEach((e) => {
     if (list[e]) {
       list[e].map((ee: BasicRule) => {
-        delete ee.id;
+        delete (ee as any).id;
         return upgradeRuleFormat(ee);
       });
     }

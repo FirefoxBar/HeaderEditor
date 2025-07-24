@@ -11,7 +11,7 @@ class Notify {
     resolve: (v: any) => void;
     reject: (e: any) => void;
   }> = [];
-  private messageTimer: number | null = null;
+  private messageTimer: ReturnType<typeof setTimeout> | null = null;
 
   constructor() {
     const handleMessage = (request: any, sender?: any) => {

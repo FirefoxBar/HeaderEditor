@@ -70,7 +70,7 @@ function filter(fromRules: InitdRule[], options: RuleFilterOptions) {
   }
   const url = typeof options.url !== 'undefined' ? options.url : null;
 
-  if (options.runner) {
+  if (typeof options.runner !== 'undefined') {
     rules = rules.filter((rule) => rule._runner === options.runner);
   }
 
@@ -93,6 +93,10 @@ function filter(fromRules: InitdRule[], options: RuleFilterOptions) {
     rules = rules.filter((rule) => {
       return rule.enable === options.enable;
     });
+  }
+
+  if (typeof options.type !== 'undefined') {
+    rules = rules.filter((rule) => rule.ruleType === options.type);
   }
 
   if (url != null) {
@@ -252,4 +256,5 @@ export {
   updateCache,
   convertToBasicRule,
   waitLoad,
+  isInit as loaded,
 };

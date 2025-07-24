@@ -3,8 +3,8 @@ import browser, { WebRequest } from 'webextension-polyfill';
 import { getGlobal, IS_CHROME, IS_SUPPORT_STREAM_FILTER } from '@/share/core/utils';
 import emitter from '@/share/core/emitter';
 import logger from '@/share/core/logger';
-import type { Rule, RULE_ACTION_OBJ } from '@/share/core/types';
-import { TABLE_NAMES } from '@/share/core/constant';
+import type { InitdRule, RULE_ACTION_OBJ } from '@/share/core/types';
+import { RULE_TYPE, TABLE_NAMES } from '@/share/core/constant';
 import { prefs } from '@/share/core/prefs';
 import { get as getRules } from '../core/rules';
 
@@ -194,7 +194,7 @@ class WebRequestHandler {
       return;
     }
     logger.debug(`handle before send ${e.url}`, e.requestHeaders);
-    const rule = getRules(TABLE_NAMES.sendHeader, { url: e.url, enable: true, runner: 'web_request' });
+    const rule = getRules(TABLE_NAMES.sendHeader, { url: e.url, enable: true, runner: 'web_request', type: RULE_TYPE.MODIFY_SEND_HEADER });
     // Browser is starting up, pass all requests
     if (rule === null) {
       return;
@@ -322,7 +322,7 @@ class WebRequestHandler {
   private modifyHeaders(
     request: HeaderRequestDetails,
     type: REQUEST_TYPE,
-    rule: Rule[],
+    rule: InitdRule[],
     presetDetail?: CustomFunctionDetail,
   ) {
     // @ts-ignore
@@ -422,7 +422,7 @@ class WebRequestHandler {
       return;
     }
 
-    let rule = getRules(TABLE_NAMES.receiveBody, { url: e.url, enable: true, runner: 'web_request' });
+    let rule = getRules(TABLE_NAMES.receiveBody, { url: e.url, enable: true, runner: 'web_request', type: RULE_TYPE.MODIFY_RECV_BODY });
     if (rule === null) {
       return;
     }

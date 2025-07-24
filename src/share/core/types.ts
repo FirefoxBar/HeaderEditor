@@ -6,6 +6,7 @@ export interface RuleFilterOptions {
   id?: number | number[];
   name?: string;
   runner?: 'web_request' | 'dnr';
+  type?: RULE_TYPE;
 }
 
 export interface RULE_ACTION_OBJ {
@@ -16,7 +17,6 @@ export interface RULE_ACTION_OBJ {
 export type RULE_ACTION = 'cancel' | RULE_ACTION_OBJ;
 
 export interface BasicRule {
-  [key: string]: any;
   enable: boolean;
   name: string;
   ruleType: RULE_TYPE;
