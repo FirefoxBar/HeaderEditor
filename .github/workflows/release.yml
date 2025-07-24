@@ -7,7 +7,7 @@ on:
   workflow_dispatch:
     inputs:
       platform:
-        description: 'Platform'
+        description: 'Platform(amo,cws,xpi,edge,crx)'
         required: true
         type: string
       version:
