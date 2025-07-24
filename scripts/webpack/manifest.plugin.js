@@ -49,11 +49,16 @@ function ManifestPlugin() {
         }
 
         // 如果是tag触发的CI，强制用tag的版本号
-        if (process.env.GITHUB_REF_TYPE && process.env.GITHUB_REF_TYPE === 'tag') {
+        if (process.env.GITHUB_REF_TYPE === 'tag') {
           const tagName = process.env.GITHUB_REF_NAME;
           if (/^[0-9]\.[0-9]+\.[0-9]+$/.test(tagName)) {
             versionText = tagName;
           }
+        }
+
+        // 自定义输入版本号的CI
+        if (process.env.INPUT_VERSION) {
+          versionText = process.env.INPUT_VERSION;
         }
 
         const isDev = _.get(compiler, 'options.mode') === 'development';

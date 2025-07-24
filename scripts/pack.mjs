@@ -110,6 +110,8 @@ async function main() {
   let platform = [];
   if (process.env.PACK_PLATFORM) {
     platform = process.env.PACK_PLATFORM.split(',');
+  } else if (process.env.INPUT_PLATFORM) {
+    platform = process.env.INPUT_PLATFORM.split(',');
   } else {
     platform = Object.keys(extension.auto).filter((x) => Boolean(extension.auto[x]));
   }

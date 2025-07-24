@@ -12,7 +12,7 @@ function hash(content) {
   return fsHash.digest('hex');
 }
 
-async function exists(path) {
+async function exists(fullPath) {
   try {
     await access(fullPath, constants.R_OK);
     return true;
