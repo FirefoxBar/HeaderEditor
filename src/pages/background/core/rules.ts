@@ -9,7 +9,7 @@ import { prefs } from '@/share/core/prefs';
 import emitter from '@/share/core/emitter';
 import { getDatabase } from './db';
 
-let isInit = false;
+let loaded = false;
 
 const cache: { [key: string]: null | InitdRule[] } = {};
 TABLE_NAMES_ARR.forEach((t) => {
@@ -63,47 +63,58 @@ async function updateCache(type: TABLE_NAMES): Promise<void> {
   });
 }
 
-function filter(fromRules: InitdRule[], options: RuleFilterOptions) {
-  let rules = Array.from(fromRules);
-  if (options === null || typeof options !== 'object') {
+function filter(fromRules: InitdRule[], options?: RuleFilterOptions) {
+  const rules = Array.from(fromRules);
+
+  if (!options || typeof options !== 'object') {
     return rules;
   }
+
   const url = typeof options.url !== 'undefined' ? options.url : null;
 
-  if (typeof options.runner !== 'undefined') {
-    rules = rules.filter((rule) => rule._runner === options.runner);
-  }
+  return rules.filter((rule) => {
+    if (typeof options.runner !== 'undefined' && rule._runner !== options.runner) {
+      return false;
+    }
 
-  if (typeof options.id !== 'undefined') {
-    rules = rules.filter((rule) => {
+    if (typeof options.id !== 'undefined') {
       if (Array.isArray(options.id)) {
-        return options.id.includes(rule.id);
+        if (!options.id.includes(rule.id)) {
+          return false;
+        }
+      } else if (rule.id !== Number(options.id)) {
+        return false;
       }
-      return rule.id === Number(options.id);
-    });
-  }
+    }
 
-  if (options.name) {
-    rules = rules.filter((rule) => {
-      return rule.name === options.name;
-    });
-  }
+    if (typeof options.id !== 'undefined') {
+      if (Array.isArray(options.id)) {
+        if (!options.id.includes(rule.id)) {
+          return false;
+        }
+      } else if (rule.id !== Number(options.id)) {
+        return false;
+      }
+    }
 
-  if (typeof options.enable !== 'undefined') {
-    rules = rules.filter((rule) => {
-      return rule.enable === options.enable;
-    });
-  }
+    if (options.name && rule.name !== options.name) {
+      return false;
+    }
 
-  if (typeof options.type !== 'undefined') {
-    rules = rules.filter((rule) => rule.ruleType === options.type);
-  }
+    if (typeof options.enable !== 'undefined' && rule.enable !== options.enable) {
+      return false;
+    }
 
-  if (url != null) {
-    rules = rules.filter((rule) => isMatchUrl(rule, url) === IS_MATCH.MATCH);
-  }
+    if (typeof options.type !== 'undefined' && rule.ruleType !== options.type) {
+      return false;
+    }
 
-  return rules;
+    if (url !== null && isMatchUrl(rule, url) !== IS_MATCH.MATCH) {
+      return false;
+    }
+
+    return true;
+  });
 }
 
 function saveRuleHistory(rule: Rule) {
@@ -228,7 +239,7 @@ function init() {
       if (TABLE_NAMES_ARR.some((tableName) => cache[tableName] === null)) {
         init();
       } else {
-        isInit = true;
+        loaded = true;
         emitter.emit(emitter.INNER_RULE_LOADED);
       }
     });
@@ -237,7 +248,7 @@ function init() {
 
 function waitLoad() {
   return new Promise((resolve) => {
-    if (isInit) {
+    if (loaded) {
       resolve(true);
     } else {
       emitter.once(emitter.INNER_RULE_LOADED, resolve);
@@ -256,5 +267,5 @@ export {
   updateCache,
   convertToBasicRule,
   waitLoad,
-  isInit as loaded,
+  loaded,
 };
