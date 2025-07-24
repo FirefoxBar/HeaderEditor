@@ -50,6 +50,7 @@ export function convertToRule(rule: InitdRule | Rule): Rule {
   delete item._reg;
   delete item._func;
   delete item._v_key;
+  delete item._runner;
   return item;
 }
 
