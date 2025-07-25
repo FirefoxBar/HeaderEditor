@@ -15,6 +15,10 @@
 		"message": "已自动开启“修改响应体”，如不需要请手动关闭",
 		"description": "A message"
 	},
+	"basic_information": {
+		"message": "基本信息",
+		"description": "Basic information of a rule"
+	},
 	"batch_delete": {
 		"message": "批量删除",
 		"description": "Button to delete multiple rules"
@@ -160,6 +164,10 @@
 		"message": "执行类型",
 		"description": "Label for execute type in modal"
 	},
+	"execution": {
+		"message": "执行",
+		"description": "Execution settings of a rule"
+	},
 	"export": {
 		"message": "导出",
 		"description": "Button to export all rules as a json file"
@@ -256,6 +264,10 @@
 		"message": "域名",
 		"description": "Domain option in modal"
 	},
+	"match_method": {
+		"message": "请求方法",
+		"description": "Request method"
+	},
 	"match_prefix": {
 		"message": "网址前缀",
 		"description": "URL prefix option in modal"
@@ -263,6 +275,10 @@
 	"match_regexp": {
 		"message": "正则表达式",
 		"description": "Regular expression option in modal"
+	},
+	"match_resourceType": {
+		"message": "资源类型",
+		"description": "Request resource type"
 	},
 	"match_rule_empty": {
 		"message": "匹配规则不能为空",
@@ -319,6 +335,66 @@
 	"rename": {
 		"message": "重命名",
 		"description": "Rename group"
+	},
+	"request_headers": {
+		"message": "请求头",
+		"description": "Request headers"
+	},
+	"resourceType_csp_report": {
+		"message": "CSP报告（在Content-Security-Policy头中设置）",
+		"description": "Resource type"
+	},
+	"resourceType_font": {
+		"message": "字体",
+		"description": "Resource type"
+	},
+	"resourceType_image": {
+		"message": "图片",
+		"description": "Resource type"
+	},
+	"resourceType_main_frame": {
+		"message": "主框架（在标签页中加载的网页）",
+		"description": "Resource type"
+	},
+	"resourceType_media": {
+		"message": "媒体（视频和音频）",
+		"description": "Resource type"
+	},
+	"resourceType_object": {
+		"message": "对象（通过<object>和<embed>标签加载）",
+		"description": "Resource type"
+	},
+	"resourceType_other": {
+		"message": "其他",
+		"description": "Resource type"
+	},
+	"resourceType_ping": {
+		"message": "Ping（在超链接的ping属性设置）",
+		"description": "Resource type"
+	},
+	"resourceType_script": {
+		"message": "脚本",
+		"description": "Resource type"
+	},
+	"resourceType_stylesheet": {
+		"message": "CSS样式",
+		"description": "Resource type"
+	},
+	"resourceType_sub_frame": {
+		"message": "子框架（在<iframe>和<frame>中显示的页面）",
+		"description": "Resource type"
+	},
+	"resourceType_websocket": {
+		"message": "WebSocket",
+		"description": "Resource type"
+	},
+	"resourceType_xmlhttprequest": {
+		"message": "XMLHttpRequest / Fetch",
+		"description": "Resource type"
+	},
+	"response_headers": {
+		"message": "响应头",
+		"description": "Response headers"
 	},
 	"ruleType": {
 		"message": "规则类型",
