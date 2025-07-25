@@ -31,9 +31,9 @@ jobs:
     - name: Copy new locale
       run: |
         rm -rf ./_dev_/public/_locales
-        rm -ff ./_dev_/locale/original/message.json
+        rm -f ./_dev_/locale/original/messages.json
         cp -r ./output ./_dev_/public/_locales
-        cp ./original/message.json ./_dev_/locale/original/message.json
+        cp ./original/messages.json ./_dev_/locale/original/messages.json
     - name: Deploy to dev-locale
       run: |
         cd ./_dev_
