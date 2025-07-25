@@ -21,7 +21,7 @@ function ksort(obj) {
 
 let lang = require(path.join(__dirname, 'original/messages.json'));
 lang = ksort(lang);
-fs.writeFileSync(path.join(__dirname, 'original/messages.json'), JSON.stringify(lang, null, "  "), {
+fs.writeFileSync(path.join(__dirname, 'original/messages.json'), JSON.stringify(lang, null, "\t"), {
   encoding: "utf8"
 });
 console.log("Sort success");
