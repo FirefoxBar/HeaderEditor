@@ -488,6 +488,10 @@
 		"message": "Quick switch",
 		"description": "Title of the quick switch feature"
 	},
+  "test_match": {
+    "message": "Matched",
+    "description": "Label to test a redirect rule"
+  },
 	"test_custom_code": {
 		"message": "Does not support testing custom code now",
 		"description": "Label to test a redirect rule"

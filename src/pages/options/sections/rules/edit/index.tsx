@@ -8,20 +8,21 @@ import { BoolRadioGroupField } from '@/pages/options/components/bool-radio';
 import { IS_MATCH, RULE_MATCH_TYPE, RULE_TYPE } from '@/share/core/constant';
 import { prefs } from '@/share/core/prefs';
 import { initRule, isMatchUrl } from '@/share/core/rule-utils';
-import type { InitdRule, Rule } from '@/share/core/types';
+import type { BasicRule, InitdRule, Rule } from '@/share/core/types';
 import { IS_SUPPORT_STREAM_FILTER, isValidArray, t } from '@/share/core/utils';
 import Api from '@/share/pages/api';
 import { CodeEditorField } from './code-editor';
 import ENCODING_LIST from './encoding';
 import HeaderField from './headers';
 import { METHOD_LIST, RESOURCE_TYPE_LIST } from './options';
+import Domains from './domains';
 
 const { Text } = Typography;
 
 interface RuleInput extends Rule {
   editHeader?: Array<{ name: string; value: string }>;
   editMatchType?: RULE_MATCH_TYPE[];
-  editExcludeType?: Array<'regex' | 'domain' | 'resourceType'>;
+  editExcludeType?: Array<'method' | 'regex' | 'domain' | 'resourceType'>;
 }
 
 interface EditProps {
@@ -31,7 +32,8 @@ interface EditProps {
 }
 
 interface EditState {
-  rule: RuleInput;
+  rule: BasicRule;
+  value: RuleInput;
   testUrl: string;
   testResult: string;
 }
@@ -42,13 +44,12 @@ const EMPTY_RULE: Rule = {
   group: t('ungrouped'),
   name: '',
   ruleType: RULE_TYPE.CANCEL,
-  matchType: RULE_MATCH_TYPE.ALL,
-  pattern: '',
-  exclude: '',
   isFunction: false,
   code: '',
   action: 'cancel',
 };
+
+const EMPTY_ARR = [];
 
 function getInput(rule: Rule) {
   const res: RuleInput = { ...rule };
@@ -112,11 +113,14 @@ function getRuleFromInput(input: RuleInput): Rule {
     }
     delete res.editHeader;
   }
+  delete res.editMatchType;
+  delete res.editExcludeType;
+  console.log('getRuleFromInput', res, input);
   return res;
 }
 
 export default class Edit extends React.Component<EditProps, EditState> {
-  private initedRule?: InitdRule;
+  private initdRule?: InitdRule;
   private formApi: FormApi | null = null;
   constructor(props: any) {
     super(props);
@@ -126,7 +130,8 @@ export default class Edit extends React.Component<EditProps, EditState> {
     this.handleTestChange = this.handleTestChange.bind(this);
 
     this.state = {
-      rule: getInput(EMPTY_RULE),
+      rule: EMPTY_RULE,
+      value: getInput(EMPTY_RULE),
       testUrl: '',
       testResult: '',
     };
@@ -137,33 +142,51 @@ export default class Edit extends React.Component<EditProps, EditState> {
   }
 
   handleChange(_: any, changedValue: any) {
-    let shouldRewriteEditHeader = false;
-    this.setState(
-      (prevState) => {
-        const rule = { ...prevState.rule };
-        Object.keys(changedValue).forEach((k) => {
-          rule[k] = changedValue[k];
-        });
-        if ('ruleType' in changedValue) {
-          if (changedValue.ruleType === RULE_TYPE.MODIFY_RECV_BODY) {
-            rule.isFunction = true;
-          }
-          if ([RULE_TYPE.MODIFY_SEND_HEADER, RULE_TYPE.MODIFY_RECV_HEADER].includes(changedValue.ruleType)) {
-            if (!rule.editHeader) {
-              rule.editHeader = [{ name: '', value: '' }];
-              shouldRewriteEditHeader = true;
-            }
-          }
+    let updateEditHeader = false;
+    let updateConditionDomain = false;
+    let updateConditionExcludeDomain = false;
+    if (!this.formApi) {
+      return;
+    }
+    const input = this.formApi.getValues();
+    if ('ruleType' in changedValue) {
+      if (changedValue.ruleType === RULE_TYPE.MODIFY_RECV_BODY) {
+        input.isFunction = true;
+      }
+      if ([RULE_TYPE.MODIFY_SEND_HEADER, RULE_TYPE.MODIFY_RECV_HEADER].includes(changedValue.ruleType)) {
+        if (!input.editHeader) {
+          input.editHeader = [{ name: '', value: '' }];
+          updateEditHeader = true;
         }
-        return { rule };
-      },
-      () => {
-        this.getTestResult(true);
-        if (shouldRewriteEditHeader) {
-          this.formApi?.setValue('editHeader', this.state.rule.editHeader);
-        }
-      },
-    );
+      }
+    }
+    if ('editMatchType' in changedValue) {
+      if (changedValue.editMatchType.includes(RULE_MATCH_TYPE.DOMAIN) && !isValidArray(input.condition?.domain)) {
+        input.condition = input.condition || {};
+        input.condition.domain = [''];
+        updateConditionDomain = true;
+      }
+    }
+    if ('editExcludeType' in changedValue) {
+      if (changedValue.editExcludeType.includes('domain') && !isValidArray(input.condition?.excludeDomain)) {
+        input.condition = input.condition || {};
+        input.condition.excludeDomain = [''];
+        updateConditionExcludeDomain = true;
+      }
+    }
+
+    this.setState({ rule: getRuleFromInput(input), value: input }, () => {
+      this.getTestResult(true);
+      if (updateEditHeader) {
+        this.formApi?.setValue('editHeader', this.state.value.editHeader);
+      }
+      if (updateConditionDomain) {
+        this.formApi?.setValue('condition.domain', this.state.rule.condition!.domain);
+      }
+      if (updateConditionExcludeDomain) {
+        this.formApi?.setValue('condition.excludeDomain', this.state.rule.condition!.excludeDomain);
+      }
+    });
   }
 
   handleTestChange(value: string) {
@@ -180,19 +203,19 @@ export default class Edit extends React.Component<EditProps, EditState> {
   getTestResult(reInit = false) {
     if (this.state.testUrl !== '') {
       // 初始化
-      if (reInit || !this.initedRule) {
+      if (reInit || !this.initdRule) {
         try {
-          this.initedRule = initRule(this.state.rule, true);
+          this.initdRule = initRule(this.state.rule, true);
         } catch (e) {
           // 出错
           this.setState({
-            testUrl: e.message,
+            testResult: e.message,
           });
         }
       }
       // 运行
-      if (this.initedRule) {
-        const match = isMatchUrl(this.initedRule, this.state.testUrl);
+      if (this.initdRule) {
+        const match = isMatchUrl(this.initdRule, this.state.testUrl);
         const resultText: { [x: number]: string } = {
           [IS_MATCH.NOT_MATCH]: t('test_mismatch'),
           [IS_MATCH.MATCH_BUT_EXCLUDE]: t('test_exclude'),
@@ -204,19 +227,20 @@ export default class Edit extends React.Component<EditProps, EditState> {
           return;
         }
         // 匹配通过，实际运行
-        if (this.initedRule.isFunction) {
+        if (this.initdRule.isFunction) {
           this.setState({
             testResult: t('test_custom_code'),
           });
           return;
         }
         // 只有重定向支持测试详细功能，其他只返回匹配
-        if (this.initedRule.ruleType === 'redirect' && this.initedRule.to) {
+        if (this.initdRule.ruleType === 'redirect' && this.initdRule.to) {
           let redirect = '';
-          if (this.initedRule.matchType === 'regexp') {
-            redirect = this.state.testUrl.replace(this.initedRule._reg, this.initedRule.to);
+          if (this.initdRule?._reg) {
+            this.initdRule._reg.lastIndex = 0;
+            redirect = this.state.testUrl.replace(this.initdRule._reg, this.initdRule.to);
           } else {
-            redirect = this.initedRule.to;
+            redirect = this.initdRule.to;
           }
           if (/^(http|https|ftp|file)%3A/.test(redirect)) {
             redirect = decodeURIComponent(redirect);
@@ -226,7 +250,7 @@ export default class Edit extends React.Component<EditProps, EditState> {
           });
         } else {
           this.setState({
-            testResult: 'Matched',
+            testResult: t('test_match'),
           });
         }
       }
@@ -244,30 +268,32 @@ export default class Edit extends React.Component<EditProps, EditState> {
       }
     }
     if (this.props.rule !== prevProps.rule) {
-      const newRule = getInput(this.props.rule ? this.props.rule : EMPTY_RULE);
+      const newRule = this.props.rule ? this.props.rule : EMPTY_RULE;
+      const input = getInput(newRule);
       this.setState(
         {
           rule: newRule,
         },
         () => {
           this.formApi?.reset();
-          this.formApi?.setValues(newRule);
+          this.formApi?.setValues(input);
         },
       );
     }
   }
 
   async handleSubmit() {
-    const rule = getRuleFromInput(this.state.rule);
+    const { rule } = this.state;
     // 常规检查
     if (rule.name === '') {
       Toast.error(t('name_empty'));
       return;
     }
-    if (rule.matchType !== 'all' && rule.pattern === '') {
-      Toast.error(t('match_rule_empty'));
-      return;
-    }
+    // TODO: 完善检查
+    // if (rule.matchType !== 'all') {
+    //   Toast.error(t('match_rule_empty'));
+    //   return;
+    // }
     if (rule.ruleType !== RULE_TYPE.MODIFY_RECV_BODY && !rule.encoding) {
       rule.encoding = 'UTF-8';
     }
@@ -301,10 +327,10 @@ export default class Edit extends React.Component<EditProps, EditState> {
   }
 
   render() {
-    const { rule } = this.state;
-    const { editMatchType = [], editExcludeType = [] } = rule;
-    const isHeaderSend = rule.ruleType === 'modifySendHeader';
-    const isHeaderReceive = rule.ruleType === 'modifyReceiveHeader';
+    const { value } = this.state;
+    const { editMatchType = [], editExcludeType = [] } = value;
+    const isHeaderSend = value.ruleType === 'modifySendHeader';
+    const isHeaderReceive = value.ruleType === 'modifyReceiveHeader';
     const isHeader = isHeaderSend || isHeaderReceive;
     return (
       <SideSheet
@@ -318,6 +344,17 @@ export default class Edit extends React.Component<EditProps, EditState> {
           .semi-sidesheet-inner {
             width: 100vw;
             max-width: 800px;
+
+            .semi-collapse {
+              .semi-collapse-header {
+                margin-left: 0;
+                margin-right: 0;
+              }
+              .semi-collapse-content {
+                padding-left: 0;
+                padding-right: 0;
+              }
+            }
 
             .semi-form {
               .semi-form-field-main {
@@ -343,20 +380,20 @@ export default class Edit extends React.Component<EditProps, EditState> {
         <Form
           labelCol={{ fixedSpan: 6 }}
           getFormApi={(api) => (this.formApi = api)}
-          initValues={rule}
+          initValues={value}
           onValueChange={this.handleChange}
           labelPosition="left"
           labelAlign="right"
           labelWidth={140}
         >
-          <Collapse defaultActiveKey={['basic', 'match', 'execution', 'execute', 'test']}>
+          <Collapse defaultActiveKey={['basic', 'match', 'exclude', 'execution', 'test']}>
             <Collapse.Panel header={t('basic_information')} itemKey="basic">
               <Form.Input field="name" label={t('name')} />
-              <Form.Select
+              <Form.RadioGroup
                 label={t('ruleType')}
                 field="ruleType"
                 disabled={this.isEdit}
-                optionList={[
+                options={[
                   { label: t('rule_cancel'), value: RULE_TYPE.CANCEL },
                   { label: t('rule_redirect'), value: RULE_TYPE.REDIRECT },
                   { label: t('rule_modifySendHeader'), value: RULE_TYPE.MODIFY_SEND_HEADER },
@@ -387,7 +424,8 @@ export default class Edit extends React.Component<EditProps, EditState> {
                   {
                     label: t('match_regexp'),
                     value: RULE_MATCH_TYPE.REGEXP,
-                    disabled: editMatchType.includes(RULE_MATCH_TYPE.ALL),
+                    disabled: [RULE_MATCH_TYPE.ALL, RULE_MATCH_TYPE.PREFIX, RULE_MATCH_TYPE.URL].some((x) =>
+                      editMatchType.includes(x)),
                   },
                   {
                     label: t('match_domain'),
@@ -397,22 +435,24 @@ export default class Edit extends React.Component<EditProps, EditState> {
                   {
                     label: t('match_prefix'),
                     value: RULE_MATCH_TYPE.PREFIX,
-                    disabled:
-                      editMatchType.includes(RULE_MATCH_TYPE.ALL) || editMatchType.includes(RULE_MATCH_TYPE.URL),
+                    disabled: [RULE_MATCH_TYPE.ALL, RULE_MATCH_TYPE.REGEXP, RULE_MATCH_TYPE.URL].some((x) =>
+                      editMatchType.includes(x)),
                   },
                   {
                     label: t('match_url'),
                     value: RULE_MATCH_TYPE.URL,
-                    disabled:
-                      editMatchType.includes(RULE_MATCH_TYPE.ALL) || editMatchType.includes(RULE_MATCH_TYPE.PREFIX),
+                    disabled: [RULE_MATCH_TYPE.ALL, RULE_MATCH_TYPE.REGEXP, RULE_MATCH_TYPE.PREFIX].some((x) =>
+                      editMatchType.includes(x)),
                   },
                   {
                     label: t('match_method'),
                     value: RULE_MATCH_TYPE.METHOD,
+                    disabled: editExcludeType.includes('method'),
                   },
                   {
                     label: t('match_resourceType'),
                     value: RULE_MATCH_TYPE.RESOURCE_TYPE,
+                    disabled: editExcludeType.includes('resourceType'),
                   },
                 ]}
               />
@@ -420,7 +460,9 @@ export default class Edit extends React.Component<EditProps, EditState> {
                 <Form.Input label={t('match_regexp')} field="condition.regex" />
               )}
               {editMatchType.includes(RULE_MATCH_TYPE.DOMAIN) && (
-                <Form.Input label={t('match_domain')} field="condition.domain" />
+                <Form.Slot label={t('match_domain')}>
+                  <Domains field="condition.domain" initValue={value.condition?.domain || EMPTY_ARR} />
+                </Form.Slot>
               )}
               {editMatchType.includes(RULE_MATCH_TYPE.PREFIX) && (
                 <Form.Input label={t('match_prefix')} field="condition.urlPrefix" />
@@ -452,11 +494,17 @@ export default class Edit extends React.Component<EditProps, EditState> {
                   },
                   {
                     label: t('match_domain'),
-                    value: RULE_MATCH_TYPE.DOMAIN,
+                    value: 'domain',
+                  },
+                  {
+                    label: t('match_method'),
+                    value: 'method',
+                    disabled: editMatchType.includes(RULE_MATCH_TYPE.METHOD),
                   },
                   {
                     label: t('match_resourceType'),
-                    value: RULE_MATCH_TYPE.RESOURCE_TYPE,
+                    value: 'resourceType',
+                    disabled: editMatchType.includes(RULE_MATCH_TYPE.RESOURCE_TYPE),
                   },
                 ]}
               />
@@ -468,7 +516,12 @@ export default class Edit extends React.Component<EditProps, EditState> {
                 />
               )}
               {editExcludeType.includes('domain') && (
-                <Form.Input label={t('match_domain')} field="condition.excludeDomain" />
+                <Form.Slot label={t('match_domain')}>
+                  <Domains field="condition.excludeDomain" initValue={value.condition?.excludeDomain || EMPTY_ARR} />
+                </Form.Slot>
+              )}
+              {editExcludeType.includes('method') && (
+                <Form.Select multiple label={t('match_method')} field="condition.excludeMethod" optionList={METHOD_LIST} />
               )}
               {editExcludeType.includes('resourceType') && (
                 <Form.Select
@@ -508,7 +561,7 @@ export default class Edit extends React.Component<EditProps, EditState> {
                   <HeaderField
                     field="editHeader"
                     type={isHeaderSend ? 'request' : 'response'}
-                    initValue={rule.editHeader}
+                    initValue={value.editHeader}
                   />
                 </Form.Slot>
               )}

@@ -40,6 +40,7 @@ export interface BasicRule {
     excludeDomain: string[];
     regex: string;
     excludeRegex: string;
+    excludeMethod: string[];
     resourceTypes: DeclarativeNetRequest.ResourceType[];
     excludeResourceTypes: DeclarativeNetRequest.ResourceType[];
   }>;

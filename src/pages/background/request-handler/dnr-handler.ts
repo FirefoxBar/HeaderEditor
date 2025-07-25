@@ -25,24 +25,49 @@ function createDNR(rule: Rule, id: number) {
 
   let isRegex = false;
   if (rule.condition) {
-    const { all, url, urlPrefix, domain, excludeDomain, regex, resourceTypes, excludeResourceTypes } = rule.condition;
+    const {
+      all,
+      url,
+      urlPrefix,
+      domain,
+      excludeDomain,
+      regex,
+      resourceTypes,
+      excludeResourceTypes,
+      excludeMethod,
+      method,
+    } = rule.condition;
     res.condition.requestDomains = domain;
+    // 只能指定 urlFilter 或 regexFilter 中的一项。
     if (regex) {
       res.condition.regexFilter = regex;
       isRegex = true;
-    }
-    if (all) {
+    } else if (all) {
       res.condition.urlFilter = '*';
     } else if (url) {
       res.condition.urlFilter = url;
     } else if (urlPrefix) {
       res.condition.urlFilter = `${urlPrefix}*`;
     }
-    res.condition.excludedRequestDomains = excludeDomain;
+    if (isValidArray(excludeDomain)) {
+      res.condition.excludedRequestDomains = excludeDomain;
+    }
+    // 应仅指定 requestMethods 和 excludedRequestMethods 中的一项
+    if (isValidArray(method)) {
+      res.condition.requestMethods = method;
+    }
+    if (isValidArray(excludeMethod)) {
+      delete res.condition.requestMethods;
+      res.condition.excludedRequestMethods = excludeMethod;
+    }
+    // 应仅指定 resourceTypes 和 excludedResourceTypes 中的一项
     if (isValidArray(resourceTypes)) {
       res.condition.resourceTypes = resourceTypes;
     }
-    res.condition.excludedResourceTypes = excludeResourceTypes;
+    if (isValidArray(excludeResourceTypes)) {
+      delete res.condition.resourceTypes;
+      res.condition.excludedResourceTypes = excludeResourceTypes;
+    }
   } else {
     // match condition
     switch (rule.matchType) {

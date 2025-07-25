@@ -1,9 +1,9 @@
-import { getDomain } from './utils';
+import { getDomain, isValidArray } from './utils';
 import { isBasicRule } from './types';
 import { IS_MATCH, RULE_MATCH_TYPE, TABLE_NAMES_ARR } from './constant';
 import type { InitdRule, Rule, BasicRule, RULE_ACTION_OBJ } from './types';
 
-export function detectRunner(rule: Rule): 'web_request' | 'dnr' {
+export function detectRunner(rule: BasicRule): 'web_request' | 'dnr' {
   if (rule.isFunction) {
     return 'web_request';
   }
@@ -13,7 +13,7 @@ export function detectRunner(rule: Rule): 'web_request' | 'dnr' {
   return 'dnr';
 }
 
-export function initRule(rule: Rule, forceUseWebRequest = false): InitdRule {
+export function initRule(rule: BasicRule, forceUseWebRequest = false): InitdRule {
   // eslint-disable-next-line @typescript-eslint/consistent-type-assertions
   const initd: InitdRule = { ...rule } as InitdRule;
   initd._runner = detectRunner(rule);
@@ -27,13 +27,11 @@ export function initRule(rule: Rule, forceUseWebRequest = false): InitdRule {
       initd._func = new Function('val', 'detail', initd.code) as any;
     }
     // Init regexp
-    if (initd.matchType === 'regexp') {
-      if (initd.pattern) {
-        initd._reg = new RegExp(initd.pattern, 'g');
-      }
-      if (initd.condition?.regex) {
-        initd._reg = new RegExp(initd.condition.regex, 'g');
-      }
+    if (initd.condition?.regex) {
+      initd._reg = new RegExp(initd.condition.regex, 'g');
+    }
+    if (initd.matchType === 'regexp' && initd.pattern) {
+      initd._reg = new RegExp(initd.pattern, 'g');
     }
     if (initd.condition?.excludeRegex) {
       initd._exclude = new RegExp(initd.condition.excludeRegex);
@@ -145,29 +143,27 @@ export function isMatchUrl(rule: InitdRule, url: string): IS_MATCH {
 
   // new condition
   if (rule.condition) {
-    const { all, url: condUrl, urlPrefix, domain, excludeDomain, excludeRegex, regex } = rule.condition;
-    if (all) {
-      result = true;
+    const { url: condUrl, urlPrefix, domain, excludeDomain, excludeRegex, regex } = rule.condition;
+    result = true;
+    if (condUrl) {
+      result = result && url === condUrl;
     }
-    if (condUrl && !result) {
-      result = url === condUrl;
-    }
-    if (urlPrefix && !result) {
-      result = url.indexOf(urlPrefix) === 0;
+    if (urlPrefix) {
+      result = result && url.indexOf(urlPrefix) === 0;
     }
     const urlDomain = getDomain(url);
-    if (domain && !result) {
-      result = domain.includes(urlDomain);
+    if (isValidArray(domain)) {
+      result = result && domain.includes(urlDomain);
     }
-    if (regex && !result) {
+    if (regex) {
       const reg = rule._reg || new RegExp(regex, 'g');
       reg.lastIndex = 0;
-      result = reg.test(url);
+      result = result && reg.test(url);
     }
     if (!result) {
       return IS_MATCH.NOT_MATCH;
     }
-    if (excludeDomain && excludeDomain.includes(urlDomain)) {
+    if (isValidArray(excludeDomain) && excludeDomain.includes(urlDomain)) {
       return IS_MATCH.MATCH_BUT_EXCLUDE;
     }
     if (excludeRegex) {
