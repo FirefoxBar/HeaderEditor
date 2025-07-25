@@ -349,8 +349,8 @@ export default class Edit extends React.Component<EditProps, EditState> {
           labelAlign="right"
           labelWidth={140}
         >
-          <Collapse defaultActiveKey={['basic', 'match', 'exclude', 'execute', 'test']}>
-            <Collapse.Panel header="basic" itemKey="basic">
+          <Collapse defaultActiveKey={['basic', 'match', 'execution', 'execute', 'test']}>
+            <Collapse.Panel header={t('basic_information')} itemKey="basic">
               <Form.Input field="name" label={t('name')} />
               <Form.Select
                 label={t('ruleType')}
@@ -406,13 +406,12 @@ export default class Edit extends React.Component<EditProps, EditState> {
                     disabled:
                       editMatchType.includes(RULE_MATCH_TYPE.ALL) || editMatchType.includes(RULE_MATCH_TYPE.PREFIX),
                   },
-                  // TODO
                   {
-                    label: 'method',
+                    label: t('match_method'),
                     value: RULE_MATCH_TYPE.METHOD,
                   },
                   {
-                    label: 'resourceType',
+                    label: t('match_resourceType'),
                     value: RULE_MATCH_TYPE.RESOURCE_TYPE,
                   },
                 ]}
@@ -430,12 +429,12 @@ export default class Edit extends React.Component<EditProps, EditState> {
                 <Form.Input label={t('match_url')} field="condition.url" />
               )}
               {editMatchType.includes(RULE_MATCH_TYPE.METHOD) && (
-                <Form.Select multiple label="method" field="condition.method" optionList={METHOD_LIST} />
+                <Form.Select multiple label={t('match_method')} field="condition.method" optionList={METHOD_LIST} />
               )}
               {editMatchType.includes(RULE_MATCH_TYPE.RESOURCE_TYPE) && (
                 <Form.Select
                   multiple
-                  label="resourceType"
+                  label={t('match_resourceType')}
                   field="condition.resourceTypes"
                   optionList={RESOURCE_TYPE_LIST}
                 />
@@ -456,7 +455,7 @@ export default class Edit extends React.Component<EditProps, EditState> {
                     value: RULE_MATCH_TYPE.DOMAIN,
                   },
                   {
-                    label: 'resourceType',
+                    label: t('match_resourceType'),
                     value: RULE_MATCH_TYPE.RESOURCE_TYPE,
                   },
                 ]}
@@ -474,13 +473,13 @@ export default class Edit extends React.Component<EditProps, EditState> {
               {editExcludeType.includes('resourceType') && (
                 <Form.Select
                   multiple
-                  label="resourceType"
+                  label={t('match_resourceType')}
                   field="condition.excludeResourceTypes"
                   optionList={RESOURCE_TYPE_LIST}
                 />
               )}
             </Collapse.Panel>
-            <Collapse.Panel header="Execute" itemKey="execute">
+            <Collapse.Panel header={t('execution')} itemKey="execution">
               {/* Response body encoding */}
               {this.state.rule.ruleType === RULE_TYPE.MODIFY_RECV_BODY && (
                 <Form.Select
@@ -505,7 +504,7 @@ export default class Edit extends React.Component<EditProps, EditState> {
               )}
               {/* Header modify */}
               {isHeader && !this.state.rule.isFunction && (
-                <Form.Slot label={t('header')}>
+                <Form.Slot label={t(isHeaderSend ? 'request_headers' : 'response_headers')}>
                   <HeaderField
                     field="editHeader"
                     type={isHeaderSend ? 'request' : 'response'}
@@ -518,7 +517,6 @@ export default class Edit extends React.Component<EditProps, EditState> {
             </Collapse.Panel>
             <Collapse.Panel header={t('test_url')} itemKey="test">
               <Input value={this.state.testUrl} onChange={this.handleTestChange} />
-
               <pre>{this.state.testResult}</pre>
             </Collapse.Panel>
           </Collapse>

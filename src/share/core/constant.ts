@@ -1,4 +1,5 @@
 import { PrefValue } from './types';
+import type { DeclarativeNetRequest } from 'webextension-polyfill/namespaces/declarativeNetRequest';
 
 export enum TABLE_NAMES {
   request = 'request',
@@ -65,3 +66,19 @@ export enum EVENTs {
   RULE_UPDATE = 'rule_update',
   RULE_DELETE = 'rule_delete',
 }
+
+export const ALL_RESOURCE_TYPES: DeclarativeNetRequest.ResourceType[] = [
+  'main_frame',
+  'sub_frame',
+  'stylesheet',
+  'script',
+  'image',
+  'font',
+  'object',
+  'xmlhttprequest',
+  'ping',
+  'csp_report',
+  'media',
+  'websocket',
+  'other',
+];

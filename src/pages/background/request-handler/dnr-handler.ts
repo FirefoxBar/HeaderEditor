@@ -1,5 +1,5 @@
 import browser from 'webextension-polyfill';
-import { RULE_MATCH_TYPE, RULE_TYPE, TABLE_NAMES } from '@/share/core/constant';
+import { ALL_RESOURCE_TYPES, RULE_MATCH_TYPE, RULE_TYPE, TABLE_NAMES } from '@/share/core/constant';
 import emitter from '@/share/core/emitter';
 import { prefs } from '@/share/core/prefs';
 import { detectRunner } from '@/share/core/rule-utils';
@@ -19,21 +19,7 @@ function createDNR(rule: Rule, id: number) {
     },
     condition: {
       // All resource types
-      resourceTypes: [
-        'main_frame',
-        'sub_frame',
-        'stylesheet',
-        'script',
-        'image',
-        'font',
-        'object',
-        'xmlhttprequest',
-        'ping',
-        'csp_report',
-        'media',
-        'websocket',
-        'other',
-      ],
+      resourceTypes: ALL_RESOURCE_TYPES,
     },
   };
 

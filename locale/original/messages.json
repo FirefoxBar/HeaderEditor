@@ -459,5 +459,81 @@
   "lite_not_support": {
     "message": "The lite version does not support this feature",
     "description": "Message at the not support features"
+  },
+  "resourceType_main_frame": {
+    "message": "Main frame (Top-level documents loaded into a tab)",
+    "description": "Resource type"
+  },
+  "resourceType_sub_frame": {
+    "message": "Sub frame (Documents loaded into an <iframe> or <frame> element)",
+    "description": "Resource type"
+  },
+  "resourceType_stylesheet": {
+    "message": "CSS stylesheets",
+    "description": "Resource type"
+  },
+  "resourceType_script": {
+    "message": "Scripts",
+    "description": "Resource type"
+  },
+  "resourceType_image": {
+    "message": "Images",
+    "description": "Resource type"
+  },
+  "resourceType_font": {
+    "message": "Web fonts",
+    "description": "Resource type"
+  },
+  "resourceType_object": {
+    "message": "Object (Resources loaded by an <object> or <embed> element)",
+    "description": "Resource type"
+  },
+  "resourceType_xmlhttprequest": {
+    "message": "XMLHttpRequest / Fetch",
+    "description": "Resource type"
+  },
+  "resourceType_ping": {
+    "message": "Ping (Given in a hyperlink's ping attribute)",
+    "description": "Resource type"
+  },
+  "resourceType_csp_report": {
+    "message": "CSP Report (Given in the Content-Security-Policy header)",
+    "description": "Resource type"
+  },
+  "resourceType_media": {
+    "message": "Media (video and audio)",
+    "description": "Resource type"
+  },
+  "resourceType_websocket": {
+    "message": "WebSocket",
+    "description": "Resource type"
+  },
+  "resourceType_other": {
+    "message": "Other",
+    "description": "Resource type"
+  },
+  "match_method": {
+    "message": "Method",
+    "description": "Request method"
+  },
+  "match_resourceType": {
+    "message": "Resource Type",
+    "description": "Request resource type"
+  },
+  "basic_information": {
+    "message": "Basic Information",
+    "description": "Basic information of a rule"
+  },
+  "execution": {
+    "message": "Execution",
+    "description": "Execution settings of a rule"
+  },
+  "response_headers": {
+    "message": "Response headers",
+    "description": "Response headers"
+  },
+  "request_headers": {
+    "message": "Request headers",
+    "description": "Request headers"
   }
 }
