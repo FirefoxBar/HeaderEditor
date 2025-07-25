@@ -500,6 +500,10 @@
 		"message": "Regular expression is invalid",
 		"description": "Label to test a redirect rule"
 	},
+	"test_match": {
+		"message": "Matched",
+		"description": "Label to test a redirect rule"
+	},
 	"test_mismatch": {
 		"message": "Mismatch",
 		"description": "Label to test a redirect rule"
