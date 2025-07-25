@@ -1,7 +1,7 @@
 import { cloneDeep } from 'lodash-es';
 import { convertToRule, convertToBasicRule, isMatchUrl, upgradeRuleFormat, initRule } from '@/share/core/rule-utils';
 import { getLocal } from '@/share/core/storage';
-import { getTableName, getVirtualKey } from '@/share/core/utils';
+import { getTableName, getVirtualKey, isValidArray } from '@/share/core/utils';
 import { APIs, EVENTs, IS_MATCH, RULE_TYPE, TABLE_NAMES, TABLE_NAMES_ARR } from '@/share/core/constant';
 import type { InitdRule, RULE_ACTION_OBJ, Rule, RuleFilterOptions } from '@/share/core/types';
 import notify from '@/share/core/notify';
@@ -113,6 +113,16 @@ function filter(fromRules: InitdRule[], options?: RuleFilterOptions) {
       return false;
     }
 
+    if (options.resourceType && rule.condition) {
+      const { resourceTypes, excludeResourceTypes } = rule.condition;
+      if (isValidArray(resourceTypes) && !resourceTypes.includes(options.resourceType)) {
+        return false;
+      }
+      if (excludeResourceTypes && excludeResourceTypes.includes(options.resourceType)) {
+        return false;
+      }
+    }
+
     return true;
   });
 }
@@ -123,7 +133,20 @@ function saveRuleHistory(rule: Rule) {
     !rule.isFunction &&
     [RULE_TYPE.MODIFY_RECV_HEADER, RULE_TYPE.MODIFY_SEND_HEADER, RULE_TYPE.REDIRECT].includes(rule.ruleType)
   ) {
-    const writeValue = rule.ruleType === RULE_TYPE.REDIRECT ? rule.to : (rule.action as RULE_ACTION_OBJ).value;
+    let writeValue = '';
+    if (rule.ruleType === RULE_TYPE.REDIRECT) {
+      writeValue = rule.to || '';
+    }
+    if ([RULE_TYPE.MODIFY_RECV_HEADER, RULE_TYPE.MODIFY_SEND_HEADER].includes(rule.ruleType)) {
+      if (rule.headers) {
+        writeValue = JSON.stringify(rule.headers);
+      } else {
+        writeValue = (rule.action as RULE_ACTION_OBJ).value;
+      }
+    }
+    if (!writeValue) {
+      return;
+    }
     const key = `rule_switch_${getVirtualKey(rule)}`;
     const engine = getLocal();
     engine.get(key).then((result) => {
@@ -146,7 +169,7 @@ async function save(o: Rule): Promise<Rule> {
     getDatabase().then((db) => {
       const tx = db.transaction([tableName], 'readwrite');
       const os = tx.objectStore(tableName);
-      // Check base informations
+      // Check base information
       upgradeRuleFormat(rule);
       // Update
       if (rule.id && rule.id !== -1) {

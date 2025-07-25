@@ -79,9 +79,9 @@ function getManifest(browser, options) {
   }
 
   if (options && options.dev && browser.startsWith('chrome')) {
-    const key = extensionConfig.crx.find((x) => x.browser === browser).public_key;
-    if (key) {
-      manifest.key = key;
+    const ext = extensionConfig.crx.find((x) => x.browser === browser);
+    if (ext && ext.public_key) {
+      manifest.key = ext.public_key;
     }
   }
 

@@ -1,7 +1,7 @@
 import { getDomain } from './utils';
 import { isBasicRule } from './types';
-import { IS_MATCH, TABLE_NAMES_ARR } from './constant';
-import type { InitdRule, Rule, BasicRule } from './types';
+import { IS_MATCH, RULE_MATCH_TYPE, TABLE_NAMES_ARR } from './constant';
+import type { InitdRule, Rule, BasicRule, RULE_ACTION_OBJ } from './types';
 
 export function detectRunner(rule: Rule): 'web_request' | 'dnr' {
   if (rule.isFunction) {
@@ -28,7 +28,15 @@ export function initRule(rule: Rule, forceUseWebRequest = false): InitdRule {
     }
     // Init regexp
     if (initd.matchType === 'regexp') {
-      initd._reg = new RegExp(initd.pattern, 'g');
+      if (initd.pattern) {
+        initd._reg = new RegExp(initd.pattern, 'g');
+      }
+      if (initd.condition?.regex) {
+        initd._reg = new RegExp(initd.condition.regex, 'g');
+      }
+    }
+    if (initd.condition?.excludeRegex) {
+      initd._exclude = new RegExp(initd.condition.excludeRegex);
     }
     if (typeof initd.exclude === 'string' && initd.exclude.length > 0) {
       initd._exclude = new RegExp(initd.exclude);
@@ -76,41 +84,114 @@ export function fromJson(str: string) {
   return list;
 }
 
-export function upgradeRuleFormat(s: any) {
-  if (typeof s.matchType === 'undefined') {
+interface OldRule extends BasicRule {
+  type?: RULE_MATCH_TYPE;
+}
+
+export function upgradeRuleFormat(s: OldRule) {
+  if (typeof s.matchType === 'undefined' && s.type) {
     s.matchType = s.type;
     delete s.type;
   }
-  if (typeof s.isFunction === 'undefined') {
-    s.isFunction = false;
-  } else {
-    s.isFunction = !!s.isFunction;
-  }
-  if (typeof s.enable === 'undefined') {
-    s.enable = true;
-  } else {
-    s.enable = !!s.enable;
-  }
+
+  s.isFunction = typeof s.isFunction === 'undefined' ? false : Boolean(s.isFunction);
+
+  s.enable = typeof s.enable === 'undefined' ? true : Boolean(s.enable);
+
   if ((s.ruleType === 'modifySendHeader' || s.ruleType === 'modifyReceiveHeader') && !s.isFunction) {
-    s.action.name = s.action.name.toLowerCase();
+    if (!s.headers && s.action) {
+      const { name, value } = s.action as RULE_ACTION_OBJ;
+      s.headers = {
+        [name]: value,
+      };
+    }
+    if (typeof s.headers === 'object') {
+      s.headers = Object.fromEntries(Object.entries(s.headers).map(([key, value]) => [key.toLowerCase(), value]));
+    }
   }
+
+  if (!s.condition && s.matchType) {
+    s.condition = {};
+    switch (s.matchType) {
+      case RULE_MATCH_TYPE.ALL:
+        s.condition.all = true;
+        break;
+      case RULE_MATCH_TYPE.DOMAIN:
+        if (s.pattern) {
+          s.condition.domain = [s.pattern];
+        }
+        break;
+      case RULE_MATCH_TYPE.PREFIX:
+        s.condition.urlPrefix = s.pattern;
+        break;
+      case RULE_MATCH_TYPE.REGEXP:
+        s.condition.regex = s.pattern;
+        break;
+      case RULE_MATCH_TYPE.URL:
+        s.condition.url = s.pattern;
+        break;
+      default:
+        break;
+    }
+    delete s.pattern;
+    delete s.matchType;
+  }
+
   return s;
 }
 
 export function isMatchUrl(rule: InitdRule, url: string): IS_MATCH {
   let result = false;
+
+  // new condition
+  if (rule.condition) {
+    const { all, url: condUrl, urlPrefix, domain, excludeDomain, excludeRegex, regex } = rule.condition;
+    if (all) {
+      result = true;
+    }
+    if (condUrl && !result) {
+      result = url === condUrl;
+    }
+    if (urlPrefix && !result) {
+      result = url.indexOf(urlPrefix) === 0;
+    }
+    const urlDomain = getDomain(url);
+    if (domain && !result) {
+      result = domain.includes(urlDomain);
+    }
+    if (regex && !result) {
+      const reg = rule._reg || new RegExp(regex, 'g');
+      reg.lastIndex = 0;
+      result = reg.test(url);
+    }
+    if (!result) {
+      return IS_MATCH.NOT_MATCH;
+    }
+    if (excludeDomain && excludeDomain.includes(urlDomain)) {
+      return IS_MATCH.MATCH_BUT_EXCLUDE;
+    }
+    if (excludeRegex) {
+      const reg = rule._exclude || new RegExp(excludeRegex, 'g');
+      reg.lastIndex = 0;
+      if (!reg.test(url)) {
+        return IS_MATCH.MATCH_BUT_EXCLUDE;
+      }
+    }
+    return IS_MATCH.MATCH;
+  }
+
   switch (rule.matchType) {
     case 'all':
       result = true;
       break;
     case 'regexp': {
-      const reg = rule._reg || new RegExp(rule.pattern, 'g');
+      const reg = rule._reg;
       reg.lastIndex = 0;
       result = reg.test(url);
       break;
     }
     case 'prefix':
-      result = url.indexOf(rule.pattern) === 0;
+      result = rule.pattern ? url.indexOf(rule.pattern) === 0 : false;
       break;
     case 'domain':
       result = getDomain(url) === rule.pattern;

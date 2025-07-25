@@ -4,7 +4,7 @@ import { flatten } from 'lodash-es';
 import React from 'react';
 import Api from '@/share/pages/api';
 import useMarkCommon from '@/share/hooks/use-mark-common';
-import { t } from '@/share/core/utils';
+import { isValidArray, t } from '@/share/core/utils';
 import { Toast } from '@/share/pages/toast';
 
 const toggleGroup = async (name: string, target: boolean) => {
@@ -27,7 +27,7 @@ const toggleGroup = async (name: string, target: boolean) => {
 const Group = () => {
   const { keys } = useMarkCommon('group');
 
-  if (!keys || keys.length === 0) {
+  if (!isValidArray(keys)) {
     return null;
   }
 

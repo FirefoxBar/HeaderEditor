@@ -5,7 +5,7 @@ import { prefs } from '@/share/core/prefs';
 import { detectRunner } from '@/share/core/rule-utils';
 import type { Rule, RULE_ACTION_OBJ } from '@/share/core/types';
 import logger from '@/share/core/logger';
-import { getTableName } from '@/share/core/utils';
+import { getTableName, isValidArray } from '@/share/core/utils';
 import { getAll, waitLoad } from '../core/rules';
 import type { DeclarativeNetRequest } from 'webextension-polyfill/namespaces/declarativeNetRequest';
 
@@ -37,21 +37,50 @@ function createDNR(rule: Rule, id: number) {
     },
   };
 
-  // match condition
-  if (rule.matchType === RULE_MATCH_TYPE.DOMAIN) {
-    res.condition.requestDomains = [rule.pattern];
-  }
-  if (rule.matchType === RULE_MATCH_TYPE.URL) {
-    res.condition.urlFilter = rule.pattern;
-  }
-  if (rule.matchType === RULE_MATCH_TYPE.ALL) {
-    res.condition.urlFilter = '*';
-  }
-  if (rule.matchType === RULE_MATCH_TYPE.PREFIX) {
-    res.condition.urlFilter = `${rule.pattern}*`;
-  }
-  if (rule.matchType === RULE_MATCH_TYPE.REGEXP) {
-    res.condition.regexFilter = rule.pattern;
+  let isRegex = false;
+  if (rule.condition) {
+    const { all, url, urlPrefix, domain, excludeDomain, regex, resourceTypes, excludeResourceTypes } = rule.condition;
+    res.condition.requestDomains = domain;
+    if (regex) {
+      res.condition.regexFilter = regex;
+      isRegex = true;
+    }
+    if (all) {
+      res.condition.urlFilter = '*';
+    } else if (url) {
+      res.condition.urlFilter = url;
+    } else if (urlPrefix) {
+      res.condition.urlFilter = `${urlPrefix}*`;
+    }
+    res.condition.excludedRequestDomains = excludeDomain;
+    if (isValidArray(resourceTypes)) {
+      res.condition.resourceTypes = resourceTypes;
+    }
+    res.condition.excludedResourceTypes = excludeResourceTypes;
+  } else {
+    // match condition
+    switch (rule.matchType) {
+      case RULE_MATCH_TYPE.DOMAIN:
+        if (rule.pattern) {
+          res.condition.requestDomains = [rule.pattern];
+        }
+        break;
+      case RULE_MATCH_TYPE.URL:
+        res.condition.urlFilter = rule.pattern;
+        break;
+      case RULE_MATCH_TYPE.ALL:
+        res.condition.urlFilter = '*';
+        break;
+      case RULE_MATCH_TYPE.PREFIX:
+        res.condition.urlFilter = `${rule.pattern}*`;
+        break;
+      case RULE_MATCH_TYPE.REGEXP:
+        isRegex = true;
+        res.condition.regexFilter = rule.pattern;
+        break;
+      default:
+        break;
+    }
   }
 
   if (rule.ruleType === RULE_TYPE.CANCEL) {
@@ -59,7 +88,7 @@ function createDNR(rule: Rule, id: number) {
   }
   if (rule.ruleType === RULE_TYPE.REDIRECT) {
     res.action.type = 'redirect';
-    if (rule.matchType === RULE_MATCH_TYPE.REGEXP) {
+    if (isRegex) {
       res.action.redirect = {
         regexSubstitution: String(rule.to).replace(/\$(\d+)/g, '\\$1'),
       };
@@ -69,27 +98,44 @@ function createDNR(rule: Rule, id: number) {
       };
     }
   }
+
+  const mapHeaders = (): DeclarativeNetRequest.RuleActionResponseHeadersItemType[] =>
+    (rule.headers
+      ? Object.keys(rule.headers).map((key) => ({
+        header: key,
+        operation: rule.headers![key] === '_header_editor_remove_' ? 'remove' : 'set',
+        value: rule.headers![key] === '_header_editor_remove_' ? undefined : rule.headers![key],
+      }))
+      : []);
   if (rule.ruleType === RULE_TYPE.MODIFY_SEND_HEADER) {
     res.action.type = 'modifyHeaders';
-    const action = rule.action as RULE_ACTION_OBJ;
-    res.action.requestHeaders = [
-      {
-        header: action.name,
-        operation: action.value === '_header_editor_remove_' ? 'remove' : 'set',
-        value: action.value === '_header_editor_remove_' ? undefined : action.value,
-      },
-    ];
+    if (rule.headers) {
+      res.action.requestHeaders = mapHeaders();
+    } else {
+      const action = rule.action as RULE_ACTION_OBJ;
+      res.action.requestHeaders = [
+        {
+          header: action.name,
+          operation: action.value === '_header_editor_remove_' ? 'remove' : 'set',
+          value: action.value === '_header_editor_remove_' ? undefined : action.value,
+        },
+      ];
+    }
   }
   if (rule.ruleType === RULE_TYPE.MODIFY_RECV_HEADER) {
     res.action.type = 'modifyHeaders';
-    const action = rule.action as RULE_ACTION_OBJ;
-    res.action.responseHeaders = [
-      {
-        header: action.name,
-        operation: action.value === '_header_editor_remove_' ? 'remove' : 'set',
-        value: action.value === '_header_editor_remove_' ? undefined : action.value,
-      },
-    ];
+    if (rule.headers) {
+      res.action.responseHeaders = mapHeaders();
+    } else {
+      const action = rule.action as RULE_ACTION_OBJ;
+      res.action.responseHeaders = [
+        {
+          header: action.name,
+          operation: action.value === '_header_editor_remove_' ? 'remove' : 'set',
+          value: action.value === '_header_editor_remove_' ? undefined : action.value,
+        },
+      ];
+    }
   }
 
   if (IS_DEV) {

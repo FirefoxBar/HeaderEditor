@@ -1,4 +1,5 @@
 import type { RULE_MATCH_TYPE, RULE_TYPE } from './constant';
+import type { DeclarativeNetRequest } from 'webextension-polyfill/namespaces/declarativeNetRequest';
 
 export interface RuleFilterOptions {
   enable?: boolean;
@@ -7,6 +8,7 @@ export interface RuleFilterOptions {
   name?: string;
   runner?: 'web_request' | 'dnr';
   type?: RULE_TYPE;
+  resourceType?: DeclarativeNetRequest.ResourceType;
 }
 
 export interface RULE_ACTION_OBJ {
@@ -20,15 +22,28 @@ export interface BasicRule {
   enable: boolean;
   name: string;
   ruleType: RULE_TYPE;
-  matchType: RULE_MATCH_TYPE;
-  pattern: string;
+  matchType?: RULE_MATCH_TYPE; // 已废弃
+  pattern?: string; // 已废弃
+  exclude?: string; // 已废弃
   isFunction: boolean;
   code: string;
-  exclude: string;
   group: string;
   encoding?: string;
   to?: string;
   action: RULE_ACTION;
+  condition?: Partial<{
+    all: boolean;
+    url: string;
+    urlPrefix: string;
+    method: string[];
+    domain: string[];
+    excludeDomain: string[];
+    regex: string;
+    excludeRegex: string;
+    resourceTypes: DeclarativeNetRequest.ResourceType[];
+    excludeResourceTypes: DeclarativeNetRequest.ResourceType[];
+  }>;
+  headers?: Record<string, string>;
 }
 
 export function isBasicRule(obj: any): obj is BasicRule {

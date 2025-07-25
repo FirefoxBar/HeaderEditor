@@ -1,8 +1,9 @@
 import browser from 'webextension-polyfill';
 import * as storage from '@/share/core/storage';
-import { TABLE_NAMES_ARR } from '@/share/core/constant';
+import { TABLE_NAMES, TABLE_NAMES_ARR } from '@/share/core/constant';
 import notify from '@/share/core/notify';
 import { getDatabase } from './core/db';
+import { getAll, save, updateCache, waitLoad } from './core/rules';
 
 // Upgrade
 async function doUpgrade() {
@@ -16,11 +17,11 @@ async function doUpgrade() {
 
   // Put a version mark
   const currentVersionMark: any = await storage.getLocal().get('version_mark');
-  const version = currentVersionMark.version_mark ? parseInt(currentVersionMark.version_mark, 10) : 0;
-  if (!(version >= 1)) {
-    storage.getLocal().set({
-      version_mark: 1,
-    });
+  let version = Number(currentVersionMark.version_mark);
+  if (Number.isNaN(version)) {
+    version = 0;
+  }
+  if (version < 1) {
     // Upgrade group
     const rebindRuleWithGroup = (group) => {
       return new Promise((resolve) => {
@@ -84,6 +85,33 @@ async function doUpgrade() {
       }
     }
   }
+
+  if (version < 2) {
+    await waitLoad();
+    const all = getAll();
+    const queue: Array<Promise<any>> = [];
+    const tableToUpdate: TABLE_NAMES[] = [];
+    TABLE_NAMES_ARR.forEach((table) => {
+      const rules = all[table];
+      rules?.forEach((r) => {
+        if (!r.condition) {
+          // call save will auto call "upgradeRuleFormat"
+          queue.push(save(r));
+          if (!tableToUpdate.includes(table)) {
+            tableToUpdate.push(table);
+          }
+        }
+      });
+    });
+    await Promise.all(queue);
+    tableToUpdate.forEach((table) => {
+      updateCache(table);
+    });
+  }
+
+  storage.getLocal().set({
+    version_mark: 2,
+  });
 }
 
 if (MANIFEST_VER === 'v3') {

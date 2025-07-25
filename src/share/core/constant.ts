@@ -25,6 +25,9 @@ export enum RULE_MATCH_TYPE {
   PREFIX = 'prefix',
   DOMAIN = 'domain',
   URL = 'url',
+  // new
+  METHOD = 'method',
+  RESOURCE_TYPE = 'resourceType',
 }
 
 export const defaultPrefValue: PrefValue = {

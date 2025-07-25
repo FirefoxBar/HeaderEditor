@@ -21,6 +21,7 @@ export const FIREFOX_VERSION = IS_FIREFOX
 export const IS_SUPPORT_STREAM_FILTER =
   ENABLE_WEB_REQUEST && ENABLE_EVAL && typeof browser.webRequest?.filterResponseData === 'function';
 
+export const isValidArray = <T = any>(v: any): v is T[] => Array.isArray(v) && v.length > 0;
 // Get Active Tab
 export async function getActiveTab() {
   const tabs = await browser.tabs.query({ currentWindow: true, active: true });
@@ -138,7 +139,7 @@ export function getDomain(url: string) {
     return '';
   }
   const d = /.*?:\/*([^/:]+)/.exec(url);
-  return d ? d[1] : null;
+  return d ? d[1] : '';
 }
 
 export function getGlobal() {

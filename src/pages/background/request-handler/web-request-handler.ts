@@ -137,7 +137,12 @@ class WebRequestHandler {
     }
     logger.debug(`handle before request ${e.url}`, e);
     // 可用：重定向，阻止加载
-    const rule = getRules(TABLE_NAMES.request, { url: e.url, enable: true, runner: 'web_request' });
+    const rule = getRules(TABLE_NAMES.request, {
+      url: e.url,
+      enable: true,
+      runner: 'web_request',
+      resourceType: e.type,
+    });
     // Browser is starting up, pass all requests
     if (rule === null) {
       return;
@@ -194,7 +199,13 @@ class WebRequestHandler {
       return;
     }
     logger.debug(`handle before send ${e.url}`, e.requestHeaders);
-    const rule = getRules(TABLE_NAMES.sendHeader, { url: e.url, enable: true, runner: 'web_request', type: RULE_TYPE.MODIFY_SEND_HEADER });
+    const rule = getRules(TABLE_NAMES.sendHeader, {
+      url: e.url,
+      enable: true,
+      runner: 'web_request',
+      type: RULE_TYPE.MODIFY_SEND_HEADER,
+      resourceType: e.type,
+    });
     // Browser is starting up, pass all requests
     if (rule === null) {
       return;
@@ -238,7 +249,12 @@ class WebRequestHandler {
       return;
     }
     logger.debug(`handle received ${e.url}`, e.responseHeaders);
-    const rule = getRules(TABLE_NAMES.receiveHeader, { url: e.url, enable: true, runner: 'web_request' });
+    const rule = getRules(TABLE_NAMES.receiveHeader, {
+      url: e.url,
+      enable: true,
+      runner: 'web_request',
+      resourceType: e.type,
+    });
     // Browser is starting up, pass all requests
     if (rule) {
       this.modifyHeaders(e, REQUEST_TYPE.RESPONSE, rule, detail);
@@ -346,8 +362,12 @@ class WebRequestHandler {
         continue;
       }
       if (!item.isFunction) {
-        const action = item.action as RULE_ACTION_OBJ;
-        newHeaders[action.name] = action.value;
+        if (item.headers) {
+          Object.assign(newHeaders, item.headers);
+        } else {
+          const { name, value } = item.action as RULE_ACTION_OBJ;
+          newHeaders[name] = value;
+        }
         rule.splice(i, 1);
         i--;
       } else {
@@ -422,7 +442,13 @@ class WebRequestHandler {
       return;
     }
 
-    let rule = getRules(TABLE_NAMES.receiveBody, { url: e.url, enable: true, runner: 'web_request', type: RULE_TYPE.MODIFY_RECV_BODY });
+    let rule = getRules(TABLE_NAMES.receiveBody, {
+      url: e.url,
+      enable: true,
+      runner: 'web_request',
+      type: RULE_TYPE.MODIFY_RECV_BODY,
+      resourceType: e.type,
+    });
     if (rule === null) {
       return;
     }
