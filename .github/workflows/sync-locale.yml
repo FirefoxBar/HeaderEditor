@@ -16,22 +16,24 @@ jobs:
       matrix:
         node-version: [16.x]
     steps:
-    - uses: actions/checkout@v3
+    - uses: actions/checkout@v4
     - name: Use Node.js ${{ matrix.node-version }}
-      uses: actions/setup-node@v3
+      uses: actions/setup-node@v4
       with:
         node-version: ${{ matrix.node-version }}
     - name: Format output
       run: node ./locales.js
     - name: Checkout dev branch
-      uses: actions/checkout@v3
+      uses: actions/checkout@v4
       with:
         ref: 'dev'
         path: '_dev_'
     - name: Copy new locale
       run: |
         rm -rf ./_dev_/public/_locales
+        rm -ff ./_dev_/locale/original/message.json
         cp -r ./output ./_dev_/public/_locales
+        cp ./original/message.json ./_dev_/locale/original/message.json
     - name: Deploy to dev-locale
       run: |
         cd ./_dev_
