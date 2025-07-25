@@ -500,6 +500,10 @@
 		"message": "正则表达式无效",
 		"description": "Label to test a redirect rule"
 	},
+	"test_match": {
+		"message": "成功匹配",
+		"description": "Label to test a redirect rule"
+	},
 	"test_mismatch": {
 		"message": "不匹配",
 		"description": "Label to test a redirect rule"
