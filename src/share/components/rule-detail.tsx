@@ -1,12 +1,11 @@
 import React from 'react';
 import { css, cx } from '@emotion/css';
-import { Descriptions, Typography } from '@douyinfe/semi-ui';
+import { Descriptions, Tag } from '@douyinfe/semi-ui';
 import { Data } from '@douyinfe/semi-ui/lib/es/descriptions';
 import { t } from '@/share/core/utils';
 import type { Rule } from '@/share/core/types';
 import { RULE_TYPE } from '../core/constant';
-
-const { Text } = Typography;
+import { tagList } from '../pages/styles';
 
 interface RuleDetailProps {
   rule: Rule;
@@ -16,22 +15,33 @@ interface RuleDetailProps {
 const style = css`
   display: flex;
   flex-direction: column;
-  gap: 8px;
   font-size: 14px;
+  .semi-descriptions-key {
+    font-size: 14px;
+  }
+  .semi-descriptions-item {
+    padding-bottom: 8px;
+  }
+  th {
+    padding-right: 12px;
+  }
   p {
     margin: 0;
-    overflow: hidden;
-    word-break: break-all;
-    text-overflow: ellipsis;
-    display: box;
-    box-orient: vertical;
-    line-clamp: 3;
   }
 `;
 
 const smallStyle = css`
-  gap: 4px;
   font-size: 12px;
+  .semi-descriptions-key,
+  .semi-descriptions-value {
+    font-size: 12px;
+  }
+  .semi-descriptions-item {
+    padding-bottom: 4px;
+  }
+  th {
+    padding-right: 4px;
+  }
 `;
 
 const RuleDetail = (props: RuleDetailProps) => {
@@ -52,27 +62,54 @@ const RuleDetail = (props: RuleDetailProps) => {
           {condition.all && <p>{t('match_all')}</p>}
           {condition.url && (
             <p>
-              {t('match_url')}: {condition.url}
+              {t('match_url')}
+              <Tag color="grey" size="small" shape="circle">
+                {condition.url}
+              </Tag>
             </p>
           )}
           {condition.urlPrefix && (
             <p>
-              {t('match_prefix')}: {condition.urlPrefix}
+              {t('match_prefix')}
+              <Tag color="grey" size="small" shape="circle">
+                {condition.urlPrefix}
+              </Tag>
             </p>
           )}
           {condition.domain && (
             <p>
-              {t('match_domain')}: {condition.domain.join('/')}
+              {t('match_domain')}
+              <div className={tagList}>
+                {condition.domain.map((k) => (
+                  <Tag color="grey" key={k} size="small" shape="circle">
+                    {k}
+                  </Tag>
+                ))}
+              </div>
             </p>
           )}
           {condition.method && (
             <p>
-              {t('match_method')}: {condition.method.join('/')}
+              {t('match_method')}
+              <div className={tagList}>
+                {condition.method.map((k) => (
+                  <Tag color="grey" key={k} size="small" shape="circle">
+                    {k.toUpperCase()}
+                  </Tag>
+                ))}
+              </div>
             </p>
           )}
           {condition.resourceTypes && (
             <p>
-              {t('match_resourceType')}: {condition.resourceTypes.map((e) => t(`resourceType_${e}`)).join('/')}
+              {t('match_resourceType')}
+              <div className={tagList}>
+                {condition.resourceTypes.map((e) => (
+                  <Tag color="grey" key={e} size="small" shape="circle">
+                    {t(`resourceType_${e}`)}
+                  </Tag>
+                ))}
+              </div>
             </p>
           )}
         </div>
@@ -98,11 +135,15 @@ const RuleDetail = (props: RuleDetailProps) => {
     isModifyHeader
       ? {
         key: t(isSendHeader ? 'request_headers' : 'response_headers'),
-        value: Object.keys(rule.headers || {}).map((k) => (
-          <Text code key={k}>
-            {k}: {rule.headers![k]}
-          </Text>
-        )),
+        value: (
+          <div className={tagList}>
+            {Object.keys(rule.headers || {}).map((k) => (
+              <Tag color="grey" key={k} size="small" shape="circle">
+                {k}: {rule.headers![k]}
+              </Tag>
+            ))}
+          </div>
+        ),
       }
       : undefined,
   ].filter(Boolean) as Data[];
@@ -115,17 +156,12 @@ const RuleDetail = (props: RuleDetailProps) => {
           > table tr:last-child > .semi-descriptions-item {
             padding-bottom: 0;
           }
-          .semi-typography {
-            display: block;
-            margin-bottom: 4px;
-
-            > code {
-              display: block;
-            }
-
-            &:last-child {
-              margin-bottom: 0;
-            }
+          .semi-tag {
+            height: auto;
+          }
+          .semi-tag-content {
+            white-space: normal;
+            word-break: break-all;
           }
         `,
         {

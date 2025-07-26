@@ -11,7 +11,7 @@ function useStorage<T = string>(key: string, defaultValue: T, useSync = false) {
     engine.get(key)
       .then((result) => {
         if (typeof result[key] !== 'undefined') {
-          _setValue(result[key]);
+          _setValue(result[key] as T);
         }
         ready.current = true;
       });

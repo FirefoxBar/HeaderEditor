@@ -2,6 +2,8 @@ import browser from 'webextension-polyfill';
 import * as storage from '@/share/core/storage';
 import { TABLE_NAMES, TABLE_NAMES_ARR } from '@/share/core/constant';
 import notify from '@/share/core/notify';
+import { RULE_ACTION_OBJ } from '@/share/core/types';
+import { getVirtualKey, isValidArray } from '@/share/core/utils';
 import { getDatabase } from './core/db';
 import { getAll, save, updateCache, waitLoad } from './core/rules';
 
@@ -91,9 +93,23 @@ async function doUpgrade() {
     const all = getAll();
     const queue: Array<Promise<any>> = [];
     const tableToUpdate: TABLE_NAMES[] = [];
+    const local = storage.getLocal();
     TABLE_NAMES_ARR.forEach((table) => {
       const rules = all[table];
       rules?.forEach((r) => {
+        if (typeof r.action === 'object') {
+          const { name } = r.action as RULE_ACTION_OBJ;
+          const storageKey = `rule_switch_${getVirtualKey(r)}`;
+          local
+            .get(storageKey)
+            .then((res) => res[storageKey])
+            .then((res) => {
+              if (!isValidArray<string>(res)) {
+                return;
+              }
+              local.set({ [storageKey]: res.map((x) => ({ [name]: x })) });
+            });
+        }
         if (!r.condition) {
           // call save will auto call "upgradeRuleFormat"
           queue.push(save(r));
@@ -107,6 +123,7 @@ async function doUpgrade() {
     tableToUpdate.forEach((table) => {
       updateCache(table);
     });
+    // rule_switch_
   }
 
   storage.getLocal().set({

@@ -133,13 +133,13 @@ function saveRuleHistory(rule: Rule) {
     !rule.isFunction &&
     [RULE_TYPE.MODIFY_RECV_HEADER, RULE_TYPE.MODIFY_SEND_HEADER, RULE_TYPE.REDIRECT].includes(rule.ruleType)
   ) {
-    let writeValue = '';
+    let writeValue: any;
     if (rule.ruleType === RULE_TYPE.REDIRECT) {
       writeValue = rule.to || '';
     }
     if ([RULE_TYPE.MODIFY_RECV_HEADER, RULE_TYPE.MODIFY_SEND_HEADER].includes(rule.ruleType)) {
       if (rule.headers) {
-        writeValue = JSON.stringify(rule.headers);
+        writeValue = rule.headers;
       } else {
         writeValue = (rule.action as RULE_ACTION_OBJ).value;
       }

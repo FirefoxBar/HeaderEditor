@@ -6,9 +6,9 @@ import * as React from 'react';
 import { BoolRadioGroupField } from '@/pages/options/components/bool-radio';
 import { RULE_TYPE } from '@/share/core/constant';
 import { t } from '@/share/core/utils';
+import HeaderField from '@/share/components/header-field';
 import { CodeEditorField } from '../code-editor';
 import ENCODING_LIST from '../encoding';
-import HeaderField from '../headers';
 import { RuleInput } from '../utils';
 
 const Execution = () => {

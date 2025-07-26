@@ -29,7 +29,7 @@ const Domains = ({ field, initValue }: DomainsProps) => (
         {arrayFields.map(({ key, field: subField, remove }) => (
           <Space key={key}>
             <Form.Input noLabel placeholder="sub.example.com" field={subField} allowEmptyString />
-            <Button onClick={remove} icon={<IconDelete />} />
+            <Button onClick={remove} icon={<IconDelete />} type="tertiary" />
           </Space>
         ))}
         <Button onClick={add} icon={<IconPlus />}>
