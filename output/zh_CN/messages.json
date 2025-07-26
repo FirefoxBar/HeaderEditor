@@ -27,9 +27,17 @@
 		"message": "批量操作",
 		"description": "Button to enter batch operation mode"
 	},
+	"browser_version": {
+		"message": "浏览器版本",
+		"description": "Browser version"
+	},
 	"cancel": {
 		"message": "取消",
 		"description": "Button to close modal without save"
+	},
+	"check_update": {
+		"message": "检查更新",
+		"description": "Check for updates"
 	},
 	"choose": {
 		"message": "选择",
@@ -148,6 +156,10 @@
 		"message": "请输入组名称",
 		"description": "Prompt the user when the user click add group button"
 	},
+	"env_info": {
+		"message": "环境信息",
+		"description": "Version info, etc"
+	},
 	"excludeRule": {
 		"message": "排除规则",
 		"description": "Label for exclude rule in modal"
@@ -183,6 +195,10 @@
 	"extName": {
 		"message": "Header Editor",
 		"description": "Extension name"
+	},
+	"ext_version": {
+		"message": "扩展版本",
+		"description": "Extension version"
 	},
 	"group": {
 		"message": "分组",
@@ -303,6 +319,10 @@
 	"name_empty": {
 		"message": "名称不能为空",
 		"description": "Message for saving a rule without name"
+	},
+	"no_update": {
+		"message": "没有更新",
+		"description": "No update"
 	},
 	"ok": {
 		"message": "确定",
@@ -519,6 +539,14 @@
 	"ungrouped": {
 		"message": "未分组",
 		"description": "The default group name"
+	},
+	"update_available": {
+		"message": "发现新版本",
+		"description": "An update of the extension is available"
+	},
+	"update_throttled": {
+		"message": "更新受限",
+		"description": "Update is throttled"
 	},
 	"upload": {
 		"message": "上传",
