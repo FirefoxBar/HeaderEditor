@@ -223,6 +223,7 @@ function remove(tableName: TABLE_NAMES, id: number): Promise<void> {
         updateCache(tableName);
         notify.other({ method: APIs.ON_EVENT, event: EVENTs.RULE_DELETE, table: tableName, id: Number(id) });
         emitter.emit(emitter.INNER_RULE_REMOVE, { table: tableName, id: Number(id) });
+        getLocal().remove(`rule_switch_${tableName}-${id}`);
         // check common mark
         getLocal()
           .get('common_rule')

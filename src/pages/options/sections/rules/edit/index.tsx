@@ -140,7 +140,7 @@ const Edit = ({ visible, rule: ruleProp, onClose }: EditProps) => {
       }
     >
       <Form
-        labelCol={{ fixedSpan: 6 }}
+        labelCol={{ fixedSpan: 4 }}
         getFormApi={(api) => (formApi.current = api)}
         labelPosition="left"
         labelAlign="right"

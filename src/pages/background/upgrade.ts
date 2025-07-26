@@ -7,7 +7,6 @@ import { getVirtualKey, isValidArray } from '@/share/core/utils';
 import { getDatabase } from './core/db';
 import { getAll, save, updateCache, waitLoad } from './core/rules';
 
-// Upgrade
 async function doUpgrade() {
   if (typeof localStorage !== 'undefined') {
     const downloadHistory = localStorage.getItem('dl_history');
@@ -24,7 +23,7 @@ async function doUpgrade() {
     version = 0;
   }
   if (version < 1) {
-    // Upgrade group
+    // Upgrade groups
     const rebindRuleWithGroup = (group) => {
       return new Promise((resolve) => {
         const cacheQueue: Array<Promise<void>> = [];
@@ -70,20 +69,17 @@ async function doUpgrade() {
       if (groups) {
         const g = JSON.parse(groups);
         localStorage.removeItem('groups');
-        rebindRuleWithGroup(g);
+        await rebindRuleWithGroup(g);
       } else {
-        storage
-          .getLocal()
-          .get('groups')
-          .then((r) => {
-            if (r.groups !== undefined) {
-              rebindRuleWithGroup(r.groups).then(() => storage.getLocal().remove('groups'));
-            } else {
-              const g = {};
-              g[browser.i18n.getMessage('ungrouped')] = [];
-              rebindRuleWithGroup(g);
-            }
-          });
+        const r = await storage.getLocal().get('groups');
+        if (r.groups !== undefined) {
+          await rebindRuleWithGroup(r.groups);
+          await storage.getLocal().remove('groups');
+        } else {
+          const g = {};
+          g[browser.i18n.getMessage('ungrouped')] = [];
+          await rebindRuleWithGroup(g);
+        }
       }
     }
   }
@@ -120,27 +116,12 @@ async function doUpgrade() {
       });
     });
     await Promise.all(queue);
-    tableToUpdate.forEach((table) => {
-      updateCache(table);
-    });
-    // rule_switch_
+    await Promise.all(tableToUpdate.map((table) => updateCache(table)));
   }
 
-  storage.getLocal().set({
+  await storage.getLocal().set({
     version_mark: 2,
   });
 }
 
-if (MANIFEST_VER === 'v3') {
-  browser.runtime.onInstalled.addListener((details) => {
-    if (IS_DEV) {
-      console.log('chrome onInstalled', details);
-    }
-    if (details.reason !== 'install' && details.reason !== 'update') {
-      return;
-    }
-    doUpgrade();
-  });
-} else {
-  doUpgrade();
-}
+doUpgrade();

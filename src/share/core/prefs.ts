@@ -49,7 +49,7 @@ class Prefs {
     });
   }
 
-  get<T = any>(key: string, defaultValue?: T): T | undefined {
+  get<K extends keyof PrefValue>(key: K, defaultValue?: PrefValue[K]): PrefValue[K] {
     if (key in this.boundMethods) {
       if (key in this.boundWrappers) {
         return this.boundWrappers[key];
@@ -64,11 +64,7 @@ class Prefs {
     if (defaultValue !== undefined) {
       return defaultValue;
     }
-    if (key in defaultPrefValue) {
-      return defaultPrefValue[key];
-    }
-    console.warn(`No default preference for ${key}`);
-    return defaultValue;
+    return defaultPrefValue[key];
   }
 
   getAll() {

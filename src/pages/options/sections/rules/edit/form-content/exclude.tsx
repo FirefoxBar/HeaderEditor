@@ -57,7 +57,7 @@ const Exclude = () => {
         <Form.Input
           label={t('match_regexp')}
           field="condition.excludeRegex"
-          helpText={MANIFEST_VER === 'v3' ? <Text type="tertiary">{t('lite_not_supported')}</Text> : undefined}
+          helpText={MANIFEST_VER === 'v3' ? <Text type="tertiary">{t('lite_not_support')}</Text> : undefined}
         />
       )}
       {editExcludeType.includes('domain') && (

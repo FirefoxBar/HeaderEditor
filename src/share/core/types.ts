@@ -73,7 +73,6 @@ export interface InitdRule extends Rule {
 }
 
 export interface PrefValue {
-  [key: string]: any;
   'disable-all': boolean;
   'manage-collapse-group': boolean; // Collapse groups
   'exclude-he': boolean; // rules take no effect on HE or not

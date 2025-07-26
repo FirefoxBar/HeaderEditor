@@ -1,18 +1,18 @@
-import {
-  Form,
-  useFormState,
-} from '@douyinfe/semi-ui';
+import { Form, useFormState } from '@douyinfe/semi-ui';
 import * as React from 'react';
 import { BoolRadioGroupField } from '@/pages/options/components/bool-radio';
 import { RULE_TYPE } from '@/share/core/constant';
 import { t } from '@/share/core/utils';
 import HeaderField from '@/share/components/header-field';
+import usePref from '@/share/hooks/use-pref';
 import { CodeEditorField } from '../code-editor';
 import ENCODING_LIST from '../encoding';
 import { RuleInput } from '../utils';
 
 const Execution = () => {
   const { values } = useFormState();
+
+  const [showCommonHeader] = usePref('show-common-header');
 
   const { ruleType, isFunction } = values as RuleInput;
   const isHeaderSend = values.ruleType === 'modifySendHeader';
@@ -44,7 +44,11 @@ const Execution = () => {
       {/* Header modify */}
       {isHeader && !isFunction && (
         <Form.Slot label={t(isHeaderSend ? 'request_headers' : 'response_headers')}>
-          <HeaderField field="editHeader" type={isHeaderSend ? 'request' : 'response'} />
+          <HeaderField
+            field="editHeader"
+            // eslint-disable-next-line no-nested-ternary
+            type={showCommonHeader ? (isHeaderSend ? 'request' : 'response') : undefined}
+          />
         </Form.Slot>
       )}
       {/* Custom function */}
