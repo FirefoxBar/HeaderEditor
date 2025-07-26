@@ -47,7 +47,7 @@ Thanks to them for their contribution: [YFdyh000](https://github.com/yfdyh000) [
 
 English: Please submit a issue or pull request for file `locale/original/messages.json`
 
-Other language: Please translate them on [Transifex](https://www.transifex.com/sytec/header-editor/)
+Other language: Please translate them on [Transifex](https://app.transifex.com/sytec/header-editor/)
 
 Please note that some languages (such as zh-Hans) will not be translated on transifex because the browser does not support them, click [here](https://developer.chrome.com/docs/webstore/i18n/#choosing-locales-to-support) to view full list
 
