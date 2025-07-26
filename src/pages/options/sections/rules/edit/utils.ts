@@ -24,6 +24,7 @@ export function getInput(rule: BasicRule) {
   const res: RuleInput = { ...rule };
   if (res.headers) {
     res.editHeader = Object.entries(res.headers).map(([name, value]) => ({ name, value }));
+    delete res.headers;
   }
   if (res.condition) {
     res.editMatchType = [];

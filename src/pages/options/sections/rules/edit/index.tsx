@@ -3,7 +3,7 @@ import { Button, Form, SideSheet, Toast, Typography } from '@douyinfe/semi-ui';
 import { FormApi } from '@douyinfe/semi-ui/lib/es/form';
 import { css } from '@emotion/css';
 import { useRequest } from 'ahooks';
-import React, { useEffect, useRef } from 'react';
+import React, { useEffect, useMemo, useRef } from 'react';
 import Api from '@/share/pages/api';
 import { t } from '@/share/core/utils';
 import type { Rule } from '@/share/core/types';
@@ -20,27 +20,27 @@ interface EditProps {
   onClose: () => void;
 }
 
-const defaultInput = getInput(EMPTY_RULE);
-
 const Edit = ({ visible, rule: ruleProp, onClose }: EditProps) => {
   const formApi = useRef<FormApi>();
 
   const isEdit = Boolean(ruleProp);
 
-  useEffect(() => {
+  const initInput = useMemo(() => {
     const rule = ruleProp || EMPTY_RULE;
-    const input = getInput(rule);
-    formApi.current?.reset();
-    formApi.current?.setValues(input);
+    return getInput(rule);
   }, [ruleProp]);
 
+  useEffect(() => {
+    formApi.current?.reset();
+    formApi.current?.setValues(initInput);
+  }, [initInput]);
+
   const { run: doSubmit, loading } = useRequest(
-    () => {
+    async () => {
       if (!formApi.current) {
         return;
       }
       const rule = getRuleFromInput(formApi.current.getValues());
-      // debugger;
       // 常规检查
       if (!rule.name) {
         Toast.error(t('name_empty'));
@@ -50,7 +50,11 @@ const Edit = ({ visible, rule: ruleProp, onClose }: EditProps) => {
         Toast.error(t('match_rule_empty'));
         return;
       }
-      if (['all', 'url', 'urlPrefix', 'method', 'domain', 'regex', 'resourceTypes'].every((x) => typeof rule.condition![x] === 'undefined')) {
+      if (
+        ['all', 'url', 'urlPrefix', 'method', 'domain', 'regex', 'resourceTypes'].every(
+          (x) => typeof rule.condition![x] === 'undefined',
+        )
+      ) {
         Toast.error(t('match_rule_empty'));
         return;
       }
@@ -72,7 +76,6 @@ const Edit = ({ visible, rule: ruleProp, onClose }: EditProps) => {
           Toast.error(t('header_empty'));
           return;
         }
-        return;
       }
 
       // 检查是否有开启
@@ -142,7 +145,7 @@ const Edit = ({ visible, rule: ruleProp, onClose }: EditProps) => {
         labelPosition="left"
         labelAlign="right"
         labelWidth={140}
-        initValues={defaultInput}
+        initValues={initInput}
       >
         <FormContent isEdit={isEdit} />
       </Form>

@@ -105,13 +105,14 @@ export function upgradeRuleFormat(s: OldRule) {
       s.headers = {
         [name]: value,
       };
+      delete s.action;
     }
     if (typeof s.headers === 'object') {
       s.headers = Object.fromEntries(Object.entries(s.headers).map(([key, value]) => [key.toLowerCase(), value]));
     }
   }
 
-  if (!s.condition && s.matchType) {
+  if (!s.condition) {
     s.condition = {};
     switch (s.matchType) {
       case RULE_MATCH_TYPE.ALL:
@@ -135,8 +136,9 @@ export function upgradeRuleFormat(s: OldRule) {
         break;
     }
     delete s.pattern;
-    delete s.matchType;
   }
+
+  delete s.matchType;
 
   return s;
 }

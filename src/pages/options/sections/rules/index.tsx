@@ -87,7 +87,7 @@ export default class Rules extends React.Component<RulesProps, RulesState> {
     for (const key of groupKeys) {
       const group = this.state.group[key];
       for (const currentRule of group.rules) {
-        if (currentRule.id === rule.id) {
+        if (getVirtualKey(currentRule) === getVirtualKey(rule)) {
           sameItem = currentRule;
           fromGroup = group.rules;
           break;

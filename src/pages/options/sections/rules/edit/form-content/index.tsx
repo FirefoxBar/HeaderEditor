@@ -14,7 +14,7 @@ interface FormContentProps {
 }
 
 const FormContent = ({ isEdit }: FormContentProps) => (
-  <Collapse defaultActiveKey={['basic', 'match', 'exclude', 'execution', 'test']}>
+  <Collapse defaultActiveKey={['basic', 'match', 'exclude', 'execution', 'test']} keepDOM>
     <Collapse.Panel header={t('basic_information')} itemKey="basic">
       <Basic isEdit={isEdit} />
     </Collapse.Panel>

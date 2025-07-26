@@ -27,7 +27,7 @@ const Exclude = () => {
         options={[
           {
             label: t('match_regexp'),
-            value: RULE_MATCH_TYPE.REGEXP,
+            value: 'regex',
           },
           {
             label: t('match_domain'),

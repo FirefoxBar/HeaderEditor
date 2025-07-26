@@ -11,6 +11,7 @@ export interface RuleFilterOptions {
   resourceType?: DeclarativeNetRequest.ResourceType;
 }
 
+/** @deprecated */
 export interface RULE_ACTION_OBJ {
   name: string;
   value: string;
@@ -22,15 +23,19 @@ export interface BasicRule {
   enable: boolean;
   name: string;
   ruleType: RULE_TYPE;
-  matchType?: RULE_MATCH_TYPE; // 已废弃
-  pattern?: string; // 已废弃
-  exclude?: string; // 已废弃
+  /** @deprecated */
+  matchType?: RULE_MATCH_TYPE;
+  /** @deprecated */
+  pattern?: string;
+  /** @deprecated */
+  exclude?: string;
   isFunction: boolean;
   code: string;
   group: string;
   encoding?: string;
   to?: string;
-  action: RULE_ACTION;
+  /** @deprecated deprecated for headers */
+  action?: RULE_ACTION;
   condition?: Partial<{
     all: boolean;
     url: string;

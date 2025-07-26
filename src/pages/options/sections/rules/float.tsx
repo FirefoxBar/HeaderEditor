@@ -97,6 +97,7 @@ const Float = (props: FloatProps) => {
         max-height: 100vh;
         box-shadow: 0 0 4px rgba(0, 0, 0, 0.2);
         height: auto;
+        padding-bottom: 24px;
 
         .semi-modal-title {
           cursor: move;
