@@ -18,6 +18,17 @@ const baseExternals = {
   'react-dom': 'ReactDOM',
 };
 
+function getGlobalVars() {
+  const obj = {
+    ...browserConfig,
+    IS_DEV: isDev,
+    TARGET_BROWSER: targetBrowser,
+  };
+  return Object.fromEntries(
+    Object.entries(obj).map(([key, value]) => [key, JSON.stringify(value)]),
+  );
+}
+
 export default defineConfig({
   source: {
     entry: {
@@ -28,11 +39,7 @@ export default defineConfig({
       options: './src/pages/options/index.tsx',
       popup: './src/pages/popup/index.tsx',
     },
-    define: {
-      ...browserConfig,
-      IS_DEV: isDev,
-      TARGET_BROWSER: targetBrowser,
-    },
+    define: getGlobalVars(),
   },
   output: {
     manifest: false,

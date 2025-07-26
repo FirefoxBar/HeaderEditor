@@ -12,9 +12,10 @@ let browser;
 
 beforeAll(async () => {
   browser = await startUp('chrome_v3');
+  console.log('browser ready');
   // Check if test server is running
   await waitTestServer();
-  // console.log('browser', browser);
+  console.log('test server ready');
 }, 20000);
 
 afterAll(async () => {
