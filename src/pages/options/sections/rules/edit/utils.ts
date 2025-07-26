@@ -82,6 +82,14 @@ export function getRuleFromInput(input: RuleInput): BasicRule {
     }
     delete res.editHeader;
   }
+
+  if (!res.condition) {
+    res.condition = {};
+    if (res.editMatchType?.includes(RULE_MATCH_TYPE.ALL)) {
+      res.condition.all = true;
+    }
+  }
+
   delete res.editMatchType;
   delete res.editExcludeType;
   return res;
