@@ -85,6 +85,7 @@ async function createBrowser(browserKey, pathToExtension) {
       args: [
         `--disable-extensions-except=${pathToExtension}`,
         `--load-extension=${pathToExtension}`,
+        '--no-sandbox',
       ],
     });
   }
