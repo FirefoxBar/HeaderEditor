@@ -539,5 +539,33 @@
 	"view": {
 		"message": "View",
 		"description": "View rule or a link"
-	}
+	},
+  "env_info": {
+    "message": "Environment information",
+		"description": "Version info, etc"
+  },
+  "ext_version": {
+    "message": "Extension version",
+		"description": "Extension version"
+  },
+  "browser_version": {
+    "message": "Browser version",
+		"description": "Browser version"
+  },
+  "check_update": {
+    "message": "Check for updates",
+		"description": "Check for updates"
+  },
+  "no_update": {
+    "message": "No update",
+		"description": "No update"
+  },
+  "update_throttled": {
+    "message": "Update is throttled",
+		"description": "Update is throttled"
+  },
+  "update_available": {
+    "message": "An update of the extension is available",
+		"description": "An update of the extension is available"
+  }
 }

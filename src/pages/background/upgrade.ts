@@ -119,9 +119,11 @@ async function doUpgrade() {
     await Promise.all(tableToUpdate.map((table) => updateCache(table)));
   }
 
-  await storage.getLocal().set({
-    version_mark: 2,
-  });
+  if (version !== 2) {
+    await storage.getLocal().set({
+      version_mark: 2,
+    });
+  }
 }
 
 doUpgrade();
