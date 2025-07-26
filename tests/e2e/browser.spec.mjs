@@ -1,4 +1,12 @@
-import { saveRule, getHeader, getPageValue, getResponseHeader, startUp, testServer, waitTestServer } from './utils.mjs';
+import {
+  getHeader,
+  getPageValue,
+  getResponseHeader,
+  saveRule,
+  startUp,
+  testServer,
+  waitTestServer,
+} from './utils.mjs';
 
 let browser;
 

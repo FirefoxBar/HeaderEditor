@@ -113,7 +113,7 @@ export async function startUp(browserKey) {
     } else {
       await page.goto(url);
     }
-    await page.waitForSelector('#ice-container');
+    await page.waitForSelector('#root');
     return page;
   };
 
