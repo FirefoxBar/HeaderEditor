@@ -35,7 +35,7 @@ const Edit = ({ visible, rule: ruleProp, onClose }: EditProps) => {
   }, [ruleProp]);
 
   const { run: doSubmit, loading } = useRequest(
-    async () => {
+    () => {
       if (!formApi.current) {
         return;
       }
@@ -83,11 +83,11 @@ const Edit = ({ visible, rule: ruleProp, onClose }: EditProps) => {
         }
       }
 
-      await Api.saveRule(rule);
-      onClose();
+      return Api.saveRule(rule);
     },
     {
       manual: true,
+      onSuccess: () => onClose(),
     },
   );
 
