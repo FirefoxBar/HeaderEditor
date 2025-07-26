@@ -27,9 +27,17 @@
 		"message": "Batch operation",
 		"description": "Button to enter batch operation mode"
 	},
+	"browser_version": {
+		"message": "Browser version",
+		"description": "Browser version"
+	},
 	"cancel": {
 		"message": "Cancel",
 		"description": "Button to close modal without save"
+	},
+	"check_update": {
+		"message": "Check for updates",
+		"description": "Check for updates"
 	},
 	"choose": {
 		"message": "Choose",
@@ -148,6 +156,10 @@
 		"message": "Please enter a group name",
 		"description": "Prompt the user when the user click add group button"
 	},
+	"env_info": {
+		"message": "Environment information",
+		"description": "Version info, etc"
+	},
 	"excludeRule": {
 		"message": "Exclude rule",
 		"description": "Label for exclude rule in modal"
@@ -183,6 +195,10 @@
 	"extName": {
 		"message": "Header Editor",
 		"description": "Extension name"
+	},
+	"ext_version": {
+		"message": "Extension version",
+		"description": "Extension version"
 	},
 	"group": {
 		"message": "Group",
@@ -303,6 +319,10 @@
 	"name_empty": {
 		"message": "Name can not be empty",
 		"description": "Message for saving a rule without name"
+	},
+	"no_update": {
+		"message": "No update",
+		"description": "No update"
 	},
 	"ok": {
 		"message": "OK",
@@ -520,6 +540,14 @@
 		"message": "Ungrouped",
 		"description": "The default group name"
 	},
+	"update_available": {
+		"message": "An update of the extension is available",
+		"description": "An update of the extension is available"
+	},
+	"update_throttled": {
+		"message": "Update is throttled",
+		"description": "Update is throttled"
+	},
 	"upload": {
 		"message": "Upload",
 		"description": "Upload button"
@@ -539,33 +567,5 @@
 	"view": {
 		"message": "View",
 		"description": "View rule or a link"
-	},
-  "env_info": {
-    "message": "Environment information",
-		"description": "Version info, etc"
-  },
-  "ext_version": {
-    "message": "Extension version",
-		"description": "Extension version"
-  },
-  "browser_version": {
-    "message": "Browser version",
-		"description": "Browser version"
-  },
-  "check_update": {
-    "message": "Check for updates",
-		"description": "Check for updates"
-  },
-  "no_update": {
-    "message": "No update",
-		"description": "No update"
-  },
-  "update_throttled": {
-    "message": "Update is throttled",
-		"description": "Update is throttled"
-  },
-  "update_available": {
-    "message": "An update of the extension is available",
-		"description": "An update of the extension is available"
-  }
+	}
 }
