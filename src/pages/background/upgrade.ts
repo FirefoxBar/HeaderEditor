@@ -103,7 +103,7 @@ async function doUpgrade() {
               if (!isValidArray<string>(res)) {
                 return;
               }
-              local.set({ [storageKey]: res.map((x) => ({ [name]: x })) });
+              local.set({ [storageKey]: res.map((x) => (typeof x === 'string' ? { [name]: x } : x)) });
             });
         }
         if (!r.condition) {
