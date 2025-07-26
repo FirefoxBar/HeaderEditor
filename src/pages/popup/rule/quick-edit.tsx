@@ -1,4 +1,4 @@
-import { IconEdit, IconPlusCircle } from '@douyinfe/semi-icons';
+import { IconEdit, IconItalic, IconPlusCircle } from '@douyinfe/semi-icons';
 import { Button, Form, Input, Modal, Tabs } from '@douyinfe/semi-ui';
 import { css } from '@emotion/css';
 import { useLatest } from 'ahooks';
@@ -47,10 +47,13 @@ const HeaderQuickEdit = ({ defaultValue, onChange }: HeaderQuickEditProps) => {
       tabBarExtraContent={
         <Button onClick={() => handleChange((res) => res.push(['', '']))} icon={<IconPlusCircle />} />
       }
+      size="small"
+      type="card"
+      keepDOM
     >
       {innerValue.map(([name, value], index) => {
         return (
-          <Tabs.TabPane key={index} closable itemKey={String(index)}>
+          <Tabs.TabPane key={index} closable itemKey={String(index)} tab={name || <IconItalic />}>
             <Form.Slot label={t('headerName')}>
               <Input value={name} onChange={(v) => handleItemChange(index, 0, v)} />
             </Form.Slot>
@@ -100,6 +103,9 @@ const QuickEdit = ({ rule }: QuickEditProps) => {
           position: fixed;
           bottom: 0;
           width: 100%;
+          .semi-modal-body {
+            overflow: hidden;
+          }
           > .semi-modal-content {
             border-bottom-left-radius: 0;
             border-bottom-right-radius: 0;
