@@ -1,20 +1,26 @@
+import {
+  IconFolderOpen,
+  IconHelpCircle,
+  IconMenu,
+  IconSetting,
+} from '@douyinfe/semi-icons';
 import { Nav } from '@douyinfe/semi-ui';
-import React, { useCallback, useEffect, useRef, useState } from 'react';
+import type { OnSelectedData } from '@douyinfe/semi-ui/lib/es/navigation';
 import { css } from '@emotion/css';
-import { IconFolderOpen, IconHelpCircle, IconMenu, IconSetting } from '@douyinfe/semi-icons';
 import { useGetState, useResponsive } from 'ahooks';
-import { convertToRule } from '@/share/core/rule-utils';
-import { t } from '@/share/core/utils';
-import { prefs } from '@/share/core/prefs';
-import type { Rule } from '@/share/core/types';
+import React, { useCallback, useEffect, useRef, useState } from 'react';
+import ReactDOM from 'react-dom/client';
 import SemiLocale from '@/share/components/semi-locale';
+import { prefs } from '@/share/core/prefs';
+import { convertToRule } from '@/share/core/rule-utils';
+import type { Rule } from '@/share/core/types';
+import { t } from '@/share/core/utils';
 import isDarkMode from '@/share/pages/is-dark-mode';
 import GroupSelect from './sections/group-select';
 import ImportAndExportSection from './sections/import-and-export';
 import OptionsSection from './sections/options';
 import RulesSection from './sections/rules';
 import Edit from './sections/rules/edit';
-import type { OnSelectedData } from '@douyinfe/semi-ui/lib/es/navigation';
 
 const Options = () => {
   const [editShow, setEditShow] = useState(false);
@@ -70,7 +76,8 @@ const Options = () => {
 
   return (
     <SemiLocale>
-      <div className={css`
+      <div
+        className={css`
         display: flex;
         flex-direction: row;
         height: 100vh;
@@ -108,13 +115,19 @@ const Options = () => {
           selectedKeys={[active]}
           onSelect={handleSwitch}
           header={{
-            logo: <img src="/assets/images/128.png" style={{ width: '36px' }} />,
+            logo: (
+              <img src="/assets/images/128.png" style={{ width: '36px' }} />
+            ),
             text: 'Header Editor',
           }}
           items={[
             { itemKey: 'rules', text: t('rule_list'), icon: <IconMenu /> },
             { itemKey: 'options', text: t('options'), icon: <IconSetting /> },
-            { itemKey: 'export_and_import', text: t('export_and_import'), icon: <IconFolderOpen /> },
+            {
+              itemKey: 'export_and_import',
+              text: t('export_and_import'),
+              icon: <IconFolderOpen />,
+            },
             { itemKey: 'help', text: t('help'), icon: <IconHelpCircle /> },
           ]}
           isCollapsed={navCollapse}
@@ -128,7 +141,8 @@ const Options = () => {
           <OptionsSection visible={active === 'options'} />
           <ImportAndExportSection visible={active === 'export_and_import'} />
           {active === 'help' && (
-          <div className={css`
+            <div
+              className={css`
             width: 100%;
             height: 100%;
 
@@ -138,9 +152,9 @@ const Options = () => {
               height: 100%;
             }
           `}
-          >
-            <iframe src={t('url_help')} />
-          </div>
+            >
+              <iframe src={t('url_help')} />
+            </div>
           )}
         </main>
         <GroupSelect />
@@ -150,4 +164,12 @@ const Options = () => {
   );
 };
 
-export default Options;
+const rootEl = document.getElementById('root');
+if (rootEl) {
+  const root = ReactDOM.createRoot(rootEl);
+  root.render(
+    <React.StrictMode>
+      <Options />
+    </React.StrictMode>,
+  );
+}

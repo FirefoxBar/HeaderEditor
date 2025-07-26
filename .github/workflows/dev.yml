@@ -78,11 +78,6 @@ jobs:
           dist_chrome_v3
           dist_firefox_v2
           dist_firefox_v3
-    - name: Upload bundle analyze
-      uses: actions/upload-artifact@v4
-      with:
-        name: bundle-analyze
-        path: temp/bundle-analyze.html
     - name: Test
       run: |
         php -S 0.0.0.0:8899 -t $GITHUB_WORKSPACE/tests/simple-server &

@@ -1,8 +1,8 @@
 import browser from 'webextension-polyfill';
-import * as storage from '@/share/core/storage';
-import { TABLE_NAMES, TABLE_NAMES_ARR } from '@/share/core/constant';
+import { type TABLE_NAMES, TABLE_NAMES_ARR } from '@/share/core/constant';
 import notify from '@/share/core/notify';
-import { RULE_ACTION_OBJ } from '@/share/core/types';
+import * as storage from '@/share/core/storage';
+import type { RULE_ACTION_OBJ } from '@/share/core/types';
 import { getVirtualKey, isValidArray } from '@/share/core/utils';
 import { getDatabase } from './core/db';
 import { getAll, save, updateCache, waitLoad } from './core/rules';
@@ -24,8 +24,8 @@ async function doUpgrade() {
   }
   if (version < 1) {
     // Upgrade groups
-    const rebindRuleWithGroup = (group) => {
-      return new Promise((resolve) => {
+    const rebindRuleWithGroup = group => {
+      return new Promise(resolve => {
         const cacheQueue: Array<Promise<void>> = [];
         function findGroup(type, id) {
           let result = browser.i18n.getMessage('ungrouped');
@@ -37,11 +37,11 @@ async function doUpgrade() {
           }
           return result;
         }
-        TABLE_NAMES_ARR.forEach((k) => {
-          getDatabase().then((db) => {
+        TABLE_NAMES_ARR.forEach(k => {
+          getDatabase().then(db => {
             const tx = db.transaction([k], 'readwrite');
             const os = tx.objectStore(k);
-            os.openCursor().onsuccess = (e) => {
+            os.openCursor().onsuccess = e => {
               if (!e.target) {
                 return;
               }
@@ -55,7 +55,9 @@ async function doUpgrade() {
                 }
                 cursor.continue();
               } else {
-                cacheQueue.push(notify.other({ method: 'updateCache', type: k }));
+                cacheQueue.push(
+                  notify.other({ method: 'updateCache', type: k }),
+                );
               }
             };
           });
@@ -90,20 +92,24 @@ async function doUpgrade() {
     const queue: Array<Promise<any>> = [];
     const tableToUpdate: TABLE_NAMES[] = [];
     const local = storage.getLocal();
-    TABLE_NAMES_ARR.forEach((table) => {
+    TABLE_NAMES_ARR.forEach(table => {
       const rules = all[table];
-      rules?.forEach((r) => {
+      rules?.forEach(r => {
         if (typeof r.action === 'object') {
           const { name } = r.action as RULE_ACTION_OBJ;
           const storageKey = `rule_switch_${getVirtualKey(r)}`;
           local
             .get(storageKey)
-            .then((res) => res[storageKey])
-            .then((res) => {
+            .then(res => res[storageKey])
+            .then(res => {
               if (!isValidArray<string>(res)) {
                 return;
               }
-              local.set({ [storageKey]: res.map((x) => (typeof x === 'string' ? { [name]: x } : x)) });
+              local.set({
+                [storageKey]: res.map(x =>
+                  typeof x === 'string' ? { [name]: x } : x,
+                ),
+              });
             });
         }
         if (!r.condition) {
@@ -116,7 +122,7 @@ async function doUpgrade() {
       });
     });
     await Promise.all(queue);
-    await Promise.all(tableToUpdate.map((table) => updateCache(table)));
+    await Promise.all(tableToUpdate.map(table => updateCache(table)));
   }
 
   if (version !== 2) {

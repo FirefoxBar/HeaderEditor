@@ -1,34 +1,14 @@
 {
-  "compileOnSave": false,
-  "buildOnSave": false,
+  "extends": "@modern-js/tsconfig/base",
   "compilerOptions": {
-    "baseUrl": ".",
-    "outDir": "build",
-    "module": "esnext",
-    "target": "es2020",
-    "jsx": "react",
-    "moduleResolution": "node",
-    "allowSyntheticDefaultImports": true,
-    "lib": ["es2020", "dom"],
-    "sourceMap": true,
-    "allowJs": true,
-    "rootDir": "./",
-    "forceConsistentCasingInFileNames": true,
-    "noImplicitReturns": true,
-    "noImplicitThis": true,
-    "noImplicitAny": false,
-    "importHelpers": true,
-    "strictNullChecks": true,
-    "suppressImplicitAnyIndexErrors": true,
-    "noUnusedLocals": true,
-    "skipLibCheck": true,
-    "types": ["node"],
+    "declaration": false,
+    "module": "preserve",
+    "jsx": "preserve",
+    "baseUrl": "./",
     "paths": {
-      "@/*": ["./src/*"],
-      "ice": [".ice/index.ts"],
-      "ice/*": [".ice/pages/*"]
+      "@/*": ["./src/*"]
     }
   },
-  "include": ["src", ".ice"],
-  "exclude": ["node_modules", "build", "public"]
+  "include": ["src", "scripts", "rsbuild.config.ts"],
+  "exclude": ["**/node_modules"]
 }
