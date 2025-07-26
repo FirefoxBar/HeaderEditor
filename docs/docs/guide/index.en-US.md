@@ -29,7 +29,7 @@ The features of the full version (Header Editor) and the lite version (Header Ed
 | --- | --- | --- |
 | Basic functions | ✅ | ✅ |
 | DNR mode | ✅ | ✅ |
-| Rules - Exclude | ✅ | ✅ |
+| Rules - Exclude - Regular Expression | ✅ | ✅ |
 | Custom functions | ✅ | ❌ |
 | Modify response body | ✅ | ❌ |
 
@@ -39,7 +39,7 @@ The features of the full version (Header Editor) and the lite version (Header Ed
 | --- | --- | --- |
 | Basic functions | ✅ | ✅ |
 | DNR mode | ❌ | ✅ |
-| Rules - Exclude | ✅ | ❌ |
+| Rules - Exclude - Regular Expression | ✅ | ❌ |
 | Custom functions | ✅ | ❌ |
 | Modify response body | ❌ | ❌ |
 

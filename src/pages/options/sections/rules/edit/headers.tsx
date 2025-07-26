@@ -149,8 +149,8 @@ const HeaderField = ({ field, type, initValue }: HeaderFieldProps) => (
       >
         {arrayFields.map(({ key, field: subField, remove }) => (
           <Space key={key}>
-            <AutoCompleteField noLabel field={`${subField}.name`} placeholder={t('headerName')} list={commonHeaders[type]} />
-            <Form.Input noLabel placeholder={t('headerValue')} field={`${subField}.value`} />
+            <AutoCompleteField noLabel field={`${subField}.name`} placeholder={t('headerName')} list={commonHeaders[type]} allowEmptyString />
+            <Form.Input noLabel placeholder={t('headerValue')} field={`${subField}.value`} allowEmptyString />
             <Button onClick={remove} icon={<IconDelete />} />
           </Space>
         ))}

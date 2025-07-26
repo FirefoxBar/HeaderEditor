@@ -10,6 +10,9 @@ export function detectRunner(rule: BasicRule): 'web_request' | 'dnr' {
   if (rule.exclude) {
     return 'web_request';
   }
+  if (rule.condition?.excludeRegex) {
+    return 'web_request';
+  }
   return 'dnr';
 }
 
@@ -139,12 +142,11 @@ export function upgradeRuleFormat(s: OldRule) {
 }
 
 export function isMatchUrl(rule: InitdRule, url: string): IS_MATCH {
-  let result = false;
+  let result = true;
 
   // new condition
   if (rule.condition) {
     const { url: condUrl, urlPrefix, domain, excludeDomain, excludeRegex, regex } = rule.condition;
-    result = true;
     if (condUrl) {
       result = result && url === condUrl;
     }
@@ -177,9 +179,6 @@ export function isMatchUrl(rule: InitdRule, url: string): IS_MATCH {
   }
 
   switch (rule.matchType) {
-    case 'all':
-      result = true;
-      break;
     case 'regexp': {
       const reg = rule._reg;
       reg.lastIndex = 0;
