@@ -55,9 +55,7 @@ jobs:
         node-version: ${{ matrix.node-version }}
         cache: 'pnpm'
     - name: Install dependencies
-      run: |
-        pnpm i --frozen-lockfile
-        npx puppeteer browsers install
+      run: pnpm i --frozen-lockfile
     - name: Get snapshot version
       env:
         TOKEN: ${{ secrets.SNAPSHOT_TOKEN }}
@@ -82,6 +80,7 @@ jobs:
           dist_firefox_v3
     - name: Test
       run: |
+        npx puppeteer browsers install
         php -S 0.0.0.0:8899 -t $GITHUB_WORKSPACE/tests/simple-server &
         sleep 5
         npm run test:e2e

@@ -10,6 +10,7 @@ import { promisify } from 'util';
 
 export const testServer = 'http://127.0.0.1:8899/';
 export const fxAddonUUID = 'f492d714-700a-4402-8b96-4ec9e829332d';
+
 const browserList = {};
 
 const __filename = fileURLToPath(import.meta.url);
