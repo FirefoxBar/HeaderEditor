@@ -51,7 +51,8 @@ function getManifest(browser, options) {
   }
 
   if (config.ENABLE_EVAL) {
-    manifest.content_security_policy = "script-src 'self' 'unsafe-eval'; object-src 'self';";
+    manifest.content_security_policy =
+      "script-src 'self' 'unsafe-eval'; object-src 'self';";
   }
 
   if (config.ENABLE_WEB_REQUEST) {
@@ -79,7 +80,7 @@ function getManifest(browser, options) {
   }
 
   if (options && options.dev && browser.startsWith('chrome')) {
-    const ext = extensionConfig.crx.find((x) => x.browser === browser);
+    const ext = extensionConfig.crx.find(x => x.browser === browser);
     if (ext && ext.public_key) {
       manifest.key = ext.public_key;
     }
@@ -87,19 +88,19 @@ function getManifest(browser, options) {
 
   if (browser.startsWith('firefox')) {
     if (options && options.amo) {
-      const id = extensionConfig.amo.find((x) => x.browser === browser).id;
+      const id = extensionConfig.amo.find(x => x.browser === browser).id;
       manifest.browser_specific_settings = {
         gecko: {
           id,
-          strict_min_version: '77.0',
+          strict_min_version: '113.0',
         },
       };
     } else {
-      const id = extensionConfig.xpi.find((x) => x.browser === browser).id;
+      const id = extensionConfig.xpi.find(x => x.browser === browser).id;
       manifest.browser_specific_settings = {
         gecko: {
           id,
-          strict_min_version: '77.0',
+          strict_min_version: '113.0',
           update_url:
             config.MANIFEST_VER === 'v2'
               ? 'https://ext.firefoxcn.net/header-editor/install/update.json'
@@ -109,7 +110,8 @@ function getManifest(browser, options) {
     }
   } else {
     if (config.MANIFEST_VER === 'v2') {
-      manifest.update_url = 'https://ext.firefoxcn.net/header-editor/install/update.xml';
+      manifest.update_url =
+        'https://ext.firefoxcn.net/header-editor/install/update.xml';
     }
   }
 
