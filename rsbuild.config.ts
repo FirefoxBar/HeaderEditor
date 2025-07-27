@@ -55,11 +55,11 @@ export default defineConfig({
     copy: [
       {
         from: `./node_modules/react/umd/react.${isDev ? 'development' : 'production.min'}.js`,
-        to: 'external/react.min.js',
+        to: 'external/react.js',
       },
       {
         from: `./node_modules/react-dom/umd/react-dom.${isDev ? 'development' : 'production.min'}.js`,
-        to: 'external/react-dom.min.js',
+        to: 'external/react-dom.js',
       },
       {
         from: './public',
@@ -91,7 +91,7 @@ export default defineConfig({
         head: true,
         append: false,
         attrs: {
-          src: 'external/react.min.js',
+          src: 'external/react.js',
         },
       },
       {
@@ -99,7 +99,7 @@ export default defineConfig({
         head: true,
         append: false,
         attrs: {
-          src: 'external/react-dom.min.js',
+          src: 'external/react-dom.js',
         },
       },
     ],
@@ -129,7 +129,7 @@ export default defineConfig({
           },
           common: {
             name: 'common',
-            test: /(@dnd-kit)/,
+            test: /(@dnd-kit|react-jsx-runtime|classnames|react-window|fast-copy)/,
             enforce: true,
           },
         },
@@ -138,7 +138,7 @@ export default defineConfig({
     // bundleAnalyze: {
     //   analyzerMode: 'static',
     //   openAnalyzer: false,
-    //   reportFilename: `report-${targetBrowser}.html`,
+    //   reportFilename: 'report.html',
     // },
   },
   tools: {
