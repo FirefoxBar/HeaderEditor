@@ -10,6 +10,7 @@ import { promisify } from 'util';
 
 export const testServer = 'http://127.0.0.1:8899/';
 export const fxAddonUUID = 'f492d714-700a-4402-8b96-4ec9e829332d';
+const browserList = {};
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
@@ -26,23 +27,6 @@ export async function sleep(ms) {
   return new Promise(resolve => {
     setTimeout(resolve, ms);
   });
-}
-
-function getExecutablePath(name) {
-  const path = process.env.PATH.split(':');
-  for (const p of path) {
-    const fullPath = path.join(p, name);
-    if (existsSync(fullPath)) {
-      return fullPath;
-    }
-  }
-}
-
-function getFirefox() {
-  if (config.firefoxPath) {
-    return config.firefoxPath;
-  }
-  return getExecutablePath('firefox');
 }
 
 async function createBrowser(browserKey, pathToExtension) {
@@ -65,7 +49,7 @@ async function createBrowser(browserKey, pathToExtension) {
     const browser = await puppeteer.launch({
       // headless: false,
       browser: 'firefox',
-      executablePath: getFirefox(),
+      executablePath: config.firefoxPath ? config.firefoxPath : undefined,
       args: [`--start-debugger-server=${rppPort}`],
       extraPrefsFirefox: {
         'devtools.chrome.enabled': true,
@@ -91,7 +75,11 @@ async function createBrowser(browserKey, pathToExtension) {
   }
 }
 
-export async function startUp(browserKey) {
+export async function getBrowserClient(browserKey) {
+  if (typeof browserList[browserKey] !== 'undefined') {
+    return browserList[browserKey];
+  }
+
   const pathToExtension = path.join(__dirname, `../../dist_${browserKey}`);
 
   const manifest = JSON.parse(
@@ -109,7 +97,9 @@ export async function startUp(browserKey) {
     const page = await browser.newPage();
     if (url.startsWith('moz-extension://')) {
       // Firefox will not resolve goto
-      page.goto(url);
+      page.goto(url, { timeout: 0 }).catch(() => {
+        // ignore
+      });
     } else {
       await page.goto(url);
     }
@@ -125,13 +115,14 @@ export async function startUp(browserKey) {
       );
       const page = await backgroundPageTarget.page();
       const popup = await openPopup(page);
-      return {
+      browserList[browserKey] = {
         browserType: 'chrome',
         type: 'page',
         target: page,
         browser,
         popup,
       };
+      return browserList[browserKey];
     }
 
     if (manifest.background.service_worker) {
@@ -143,23 +134,40 @@ export async function startUp(browserKey) {
       );
       const worker = await workerTarget.worker();
       const popup = await openPopup(worker);
-      return {
+      browserList[browserKey] = {
         browserType: 'chrome',
         type: 'worker',
         target: worker,
         browser,
         popup,
       };
+      return browserList[browserKey];
     }
   } else {
     // Firefox has no 'background_page' target
     const popup = await openPopup();
-    return {
+    browserList[browserKey] = {
       browserType: 'firefox',
       type: 'none',
       browser,
       popup,
     };
+    return browserList[browserKey];
+  }
+}
+
+export async function cleanup() {
+  for (const client of Object.values(browserList)) {
+    try {
+      if (client.popup && !client.popup.isClosed()) {
+        await client.popup.close();
+      }
+      if (client.browser.isConnected()) {
+        await client.browser.close();
+      }
+    } catch (error) {
+      console.log('Cleanup error:', error.message);
+    }
   }
 }
 
@@ -179,6 +187,13 @@ export async function waitTestServer() {
       console.log('Test server is not running, retrying...', error);
       await sleep(1000);
     }
+  }
+}
+
+export async function runTest(targets, cb) {
+  for (const target of targets) {
+    const client = await getBrowserClient(target);
+    await cb(client);
   }
 }
 

@@ -19,6 +19,7 @@
     "format": "biome format --write",
     "release": "node ./scripts/release.mjs",
     "pack": "node ./scripts/pack.mjs",
+    "run-test-server": "php -S 0.0.0.0:8899 -t tests/simple-server",
     "test:e2e": "cross-env NODE_OPTIONS=\"$NODE_OPTIONS --experimental-vm-modules\" npx jest --config ./tests/e2e/jest.config.json"
   },
   "dependencies": {
