@@ -15,6 +15,10 @@
 		"message": "已自動開啟「變更回應本文」，如不需要請手動關閉",
 		"description": "A message"
 	},
+	"basic_information": {
+		"message": "基本資訊",
+		"description": "Basic information of a rule"
+	},
 	"batch_delete": {
 		"message": "批次刪除",
 		"description": "Button to delete multiple rules"
@@ -23,9 +27,17 @@
 		"message": "批次作業",
 		"description": "Button to enter batch operation mode"
 	},
+	"browser_version": {
+		"message": "瀏覽器版本",
+		"description": "Browser version"
+	},
 	"cancel": {
 		"message": "取消",
 		"description": "Button to close modal without save"
+	},
+	"check_update": {
+		"message": "檢查更新",
+		"description": "Check for updates"
 	},
 	"choose": {
 		"message": "選擇",
@@ -144,6 +156,10 @@
 		"message": "請輸入分組名稱",
 		"description": "Prompt the user when the user click add group button"
 	},
+	"env_info": {
+		"message": "環境資訊",
+		"description": "Version info, etc"
+	},
 	"excludeRule": {
 		"message": "排除規則",
 		"description": "Label for exclude rule in modal"
@@ -160,6 +176,10 @@
 		"message": "執行類型",
 		"description": "Label for execute type in modal"
 	},
+	"execution": {
+		"message": "執行",
+		"description": "Execution settings of a rule"
+	},
 	"export": {
 		"message": "匯出",
 		"description": "Button to export all rules as a json file"
@@ -175,6 +195,10 @@
 	"extName": {
 		"message": "Header Editor",
 		"description": "Extension name"
+	},
+	"ext_version": {
+		"message": "套件版本",
+		"description": "Extension version"
 	},
 	"group": {
 		"message": "分組",
@@ -253,8 +277,12 @@
 		"description": "All option in modal"
 	},
 	"match_domain": {
-		"message": "域名",
+		"message": "網域",
 		"description": "Domain option in modal"
+	},
+	"match_method": {
+		"message": "要求方法",
+		"description": "Request method"
 	},
 	"match_prefix": {
 		"message": "網址首碼",
@@ -263,6 +291,10 @@
 	"match_regexp": {
 		"message": "規則運算式",
 		"description": "Regular expression option in modal"
+	},
+	"match_resourceType": {
+		"message": "資源類型",
+		"description": "Request resource type"
 	},
 	"match_rule_empty": {
 		"message": "比對規則不能為空",
@@ -288,6 +320,10 @@
 		"message": "名稱不能為空",
 		"description": "Message for saving a rule without name"
 	},
+	"no_update": {
+		"message": "沒有更新",
+		"description": "No update"
+	},
 	"ok": {
 		"message": "確定",
 		"description": "OK Button"
@@ -297,7 +333,7 @@
 		"description": "Heading for options section on manage page."
 	},
 	"pack_up_or_unfurl": {
-		"message": "收起/展開分組",
+		"message": "摺疊/展開分組",
 		"description": "Button to pack up or unfurl a group"
 	},
 	"quick_edit": {
@@ -319,6 +355,66 @@
 	"rename": {
 		"message": "重新命名",
 		"description": "Rename group"
+	},
+	"request_headers": {
+		"message": "要求標頭",
+		"description": "Request headers"
+	},
+	"resourceType_csp_report": {
+		"message": "CSP 報告（在 Content-Security-Policy 標頭中設定）",
+		"description": "Resource type"
+	},
+	"resourceType_font": {
+		"message": "字型",
+		"description": "Resource type"
+	},
+	"resourceType_image": {
+		"message": "圖片",
+		"description": "Resource type"
+	},
+	"resourceType_main_frame": {
+		"message": "主框架（在分頁中載入的網頁）",
+		"description": "Resource type"
+	},
+	"resourceType_media": {
+		"message": "媒體（影片和音訊）",
+		"description": "Resource type"
+	},
+	"resourceType_object": {
+		"message": "物件（透過<object>和<embed>分頁載入）",
+		"description": "Resource type"
+	},
+	"resourceType_other": {
+		"message": "其他",
+		"description": "Resource type"
+	},
+	"resourceType_ping": {
+		"message": "Ping（在超連結的 ping 屬性設定）",
+		"description": "Resource type"
+	},
+	"resourceType_script": {
+		"message": "指令碼",
+		"description": "Resource type"
+	},
+	"resourceType_stylesheet": {
+		"message": "CSS 樣式",
+		"description": "Resource type"
+	},
+	"resourceType_sub_frame": {
+		"message": "子框架（在<iframe>和<frame>中顯示的頁面）",
+		"description": "Resource type"
+	},
+	"resourceType_websocket": {
+		"message": "WebSocket",
+		"description": "Resource type"
+	},
+	"resourceType_xmlhttprequest": {
+		"message": "XMLHttpRequest / Fetch",
+		"description": "Resource type"
+	},
+	"response_headers": {
+		"message": "回應標頭",
+		"description": "Response headers"
 	},
 	"ruleType": {
 		"message": "規則類型",
@@ -424,6 +520,10 @@
 		"message": "正規表示式無效",
 		"description": "Label to test a redirect rule"
 	},
+	"test_match": {
+		"message": "比對相符",
+		"description": "Label to test a redirect rule"
+	},
 	"test_mismatch": {
 		"message": "不相符",
 		"description": "Label to test a redirect rule"
@@ -439,6 +539,14 @@
 	"ungrouped": {
 		"message": "未分組",
 		"description": "The default group name"
+	},
+	"update_available": {
+		"message": "有新版本可更新",
+		"description": "An update of the extension is available"
+	},
+	"update_throttled": {
+		"message": "更新受限",
+		"description": "Update is throttled"
 	},
 	"upload": {
 		"message": "上傳",
