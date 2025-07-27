@@ -191,11 +191,13 @@ export async function waitTestServer() {
   }
 }
 
-export async function runTest(targets, cb) {
-  for (const target of targets) {
-    const client = await getBrowserClient(target);
-    await cb(client);
-  }
+export function runTest(targets, cb) {
+  return Promise.all(
+    targets.map(async target => {
+      const client = await getBrowserClient(target);
+      await cb(client);
+    }),
+  );
 }
 
 export async function saveRule(popup, rule) {
