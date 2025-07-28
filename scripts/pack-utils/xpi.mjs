@@ -16,9 +16,11 @@ async function packXpi(
     return Promise.reject(new Error('AMO_SECRET not found'));
   }
 
+  const version = await getVersion(sourcePath);
+
   const result = await signAddon({
     xpiPath: zipPath,
-    version: await getVersion(sourcePath),
+    version,
     apiKey: process.env.AMO_KEY,
     apiSecret: process.env.AMO_SECRET,
     id: itemConfig.id,
@@ -33,7 +35,7 @@ async function packXpi(
     throw new Error('No signed addon found');
   }
   console.log(`Downloaded signed addon: ${res.join(', ')}`);
-  const fileName = getOutputFile(itemConfig.browser, _version, 'xpi');
+  const fileName = getOutputFile(itemConfig.browser, version, 'xpi');
   const out = join(releasePath, fileName);
   const idFile = join(releasePath, `${fileName}-id.txt`);
   // Move download file to output dir

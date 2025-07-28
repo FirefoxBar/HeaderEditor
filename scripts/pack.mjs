@@ -126,13 +126,17 @@ async function main() {
     join(scriptRoot, 'browser-config/browser.config.json'),
   );
 
+  const queue = [];
+
   for (const name of platform) {
     const platformConfig = extension[name];
     for (const item of platformConfig) {
       const browser = browserConfig[item.browser];
-      await packOnePlatform(name, browser, item);
+      queue.push(packOnePlatform(name, browser, item));
     }
   }
+
+  await Promise.all(queue);
 }
 
 main();
