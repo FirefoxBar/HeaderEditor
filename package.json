@@ -84,7 +84,8 @@
   },
   "pnpm": {
     "patchedDependencies": {
-      "lodash-es": "patches/lodash-es.patch"
+      "lodash-es": "patches/lodash-es.patch",
+      "lodash": "patches/lodash.patch"
     }
   }
 }
