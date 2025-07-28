@@ -192,16 +192,12 @@ export async function waitTestServer() {
   }
 }
 
-export function runTest(targets, cb) {
-  return Promise.all(
-    targets.map(async target => {
-      const client = browserList[target];
-      if (!client) {
-        return Promise.resolve();
-      }
-      await cb(client);
-    }),
-  );
+export function runTest(browserKey, cb) {
+  const client = browserList[browserKey];
+  if (!client) {
+    return Promise.resolve();
+  }
+  return cb(client);
 }
 
 export async function saveRule(popup, rule) {
@@ -214,7 +210,6 @@ export async function saveRule(popup, rule) {
   const resp = await popup.evaluate(
     `${apiPrefix}.runtime.sendMessage(${JSON.stringify(action)})`,
   );
-  console.log('resp', isFirefox, resp);
   let tabName = '';
   switch (rule.ruleType) {
     case 'cancel':

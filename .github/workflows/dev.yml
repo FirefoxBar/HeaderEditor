@@ -84,21 +84,20 @@ jobs:
         php -S 0.0.0.0:8899 -t $GITHUB_WORKSPACE/tests/simple-server &
         sleep 5
         npm run test:e2e
-    # - name: Publish snapshot
-    #   env:
-    #     AMO_KEY: ${{ secrets.AMO_KEY }}
-    #     AMO_SECRET: ${{ secrets.AMO_SECRET }}
-    #     CRX_PRIV_KEY: ${{ secrets.CRX_PRIV_KEY }}
-    #     CRX_PRIV_KEY_V3: ${{ secrets.CRX_PRIV_KEY_V3 }}
-    #     PACK_PLATFORM: xpi,crx
-    #   run: npm run pack
-    # - name: Upload snapshot release
-    #   uses: actions/upload-artifact@v3
-    #   with:
-    #     name: release
-    #     path: |
-    #       temp/release
-    #       !temp/release/*-id.txt
+    - name: Publish snapshot
+      env:
+        AMO_KEY: ${{ secrets.AMO_KEY }}
+        AMO_SECRET: ${{ secrets.AMO_SECRET }}
+        CRX_PRIV_KEY: ${{ secrets.CRX_PRIV_KEY }}
+        PACK_PLATFORM: xpi,crx
+      run: npm run pack
+    - name: Upload snapshot release
+      uses: actions/upload-artifact@v3
+      with:
+        name: release
+        path: |
+          temp/release
+          !temp/release/*-id.txt
 
   sync-locale:
     needs: check_changes

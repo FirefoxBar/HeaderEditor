@@ -1,8 +1,14 @@
 import { rename, writeFile } from 'fs/promises';
-import { getVersion, join } from '../config.mjs';
 import { signAddon } from 'sign-addon';
+import { getOutputFile, getVersion, join } from '../config.mjs';
 
-async function packXpi(sourcePath, zipPath, releasePath, browserConfig, itemConfig) {
+async function packXpi(
+  sourcePath,
+  zipPath,
+  releasePath,
+  browserConfig,
+  itemConfig,
+) {
   if (!process.env.AMO_KEY) {
     return Promise.reject(new Error('AMO_KEY not found'));
   }
@@ -16,7 +22,7 @@ async function packXpi(sourcePath, zipPath, releasePath, browserConfig, itemConf
     apiKey: process.env.AMO_KEY,
     apiSecret: process.env.AMO_SECRET,
     id: itemConfig.id,
-    downloadDir: outputDir,
+    downloadDir: releasePath,
     disableProgressBar: true,
   });
   if (!result.success) {
@@ -28,8 +34,8 @@ async function packXpi(sourcePath, zipPath, releasePath, browserConfig, itemConf
   }
   console.log(`Downloaded signed addon: ${res.join(', ')}`);
   const fileName = getOutputFile(itemConfig.browser, _version, 'xpi');
-  const out = join(outputDir, fileName);
-  const idFile = join(outputDir, `${fileName}-id.txt`);
+  const out = join(releasePath, fileName);
+  const idFile = join(releasePath, `${fileName}-id.txt`);
   // Move download file to output dir
   await rename(res[0], out);
   await writeFile(idFile, itemConfig.id);
