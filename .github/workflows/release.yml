@@ -47,6 +47,7 @@ jobs:
       run: npm run build:chrome_v3
     - name: Upload bundle
       uses: actions/upload-artifact@v4
+      retention-days: 7
       with:
         name: dist
         path: |
@@ -70,6 +71,7 @@ jobs:
       run: npm run pack
     - name: Upload release
       uses: actions/upload-artifact@v4
+      retention-days: 7
       with:
         name: release
         path: temp/release

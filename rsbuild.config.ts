@@ -1,4 +1,4 @@
-import { defineConfig } from '@rsbuild/core';
+import { defineConfig, type OutputConfig } from '@rsbuild/core';
 import { pluginReact } from '@rsbuild/plugin-react';
 import browserConfigs from './scripts/browser-config/browser.config.json' with {
   type: 'json',
@@ -13,7 +13,7 @@ const browserConfig =
 
 const isDev = process.env.NODE_ENV === 'development';
 
-const baseExternals = {
+const baseExternals: OutputConfig['externals'] = {
   react: 'React',
   'react-dom': 'ReactDOM',
 };
@@ -69,7 +69,7 @@ export default defineConfig({
     externals: browserConfig.ENABLE_EVAL
       ? baseExternals
       : [
-          ({ context, request }, callback) => {
+          ({ request }, callback) => {
             if (['text-encoding'].includes(request || '')) {
               return callback(undefined, '{}', 'var');
             }

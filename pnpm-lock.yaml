@@ -4,6 +4,11 @@ settings:
   autoInstallPeers: false
   excludeLinksFromLockfile: false
 
+patchedDependencies:
+  lodash-es:
+    hash: ei4mkmuaiu6dqdwsoy2qikioae
+    path: patches/lodash-es.patch
+
 importers:
 
   .:
@@ -40,7 +45,7 @@ importers:
         version: 2.0.1
       lodash-es:
         specifier: ^4.17.21
-        version: 4.17.21
+        version: 4.17.21(patch_hash=ei4mkmuaiu6dqdwsoy2qikioae)
       query-string:
         specifier: ^8.1.0
         version: 8.1.0
@@ -8497,7 +8502,7 @@ snapshots:
     dependencies:
       p-locate: 5.0.0
 
-  lodash-es@4.17.21: {}
+  lodash-es@4.17.21(patch_hash=ei4mkmuaiu6dqdwsoy2qikioae): {}
 
   lodash.defaults@4.2.0: {}
 

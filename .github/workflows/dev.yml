@@ -34,6 +34,7 @@ jobs:
               - 'public/**'
               - 'scripts/**'
               - 'tests/**'
+              - 'patches/**'
               - 'build.config.js'
               - 'pnpm-lock.yaml'
 
@@ -73,6 +74,7 @@ jobs:
       uses: actions/upload-artifact@v4
       with:
         name: dist
+        retention-days: 7
         path: |
           dist_chrome_v2
           dist_chrome_v3
@@ -91,15 +93,11 @@ jobs:
         CRX_PRIV_KEY: ${{ secrets.CRX_PRIV_KEY }}
         PACK_PLATFORM: xpi,crx
       run: npm run pack
-    - name: Upload temp
-      uses: actions/upload-artifact@v4
-      with:
-        name: temp
-        path: temp
     - name: Upload snapshot release
       uses: actions/upload-artifact@v4
       with:
         name: release
+        retention-days: 7
         path: |
           temp/release
           !temp/release/*-id.txt
