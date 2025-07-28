@@ -29,6 +29,7 @@ import crx from './pack-utils/crx.mjs';
 import cws from './pack-utils/cws.mjs';
 import edge from './pack-utils/edge.mjs';
 import xpi from './pack-utils/xpi.mjs';
+import { createZip } from './zip.mjs';
 
 const packUtils = {
   amo,
@@ -59,19 +60,6 @@ function copyDir(source, target) {
   });
 }
 
-function createZip(source, target) {
-  return new Promise((resolve, reject) => {
-    zip(source, target, err => {
-      console.log(`zip ${source} -> ${target}`, err);
-      if (err) {
-        reject(err);
-      } else {
-        resolve();
-      }
-    });
-  });
-}
-
 async function packOnePlatform(name, browserConfig, itemConfig) {
   if (typeof packUtils[name] === 'undefined') {
     console.error(`pack-utils for ${name} not found`);
@@ -95,6 +83,7 @@ async function packOnePlatform(name, browserConfig, itemConfig) {
       }),
     );
     // 打包成zip
+    console.log(`zip ${source} -> ${target}`);
     await createZip(thisPack, zipPath);
     // 执行上传等操作
     console.log(`running ${name} pack...`);
