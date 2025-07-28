@@ -8,19 +8,27 @@
  * dist-pack/release：其他平台打包输出结果
  * 在这里，打包文件夹统一命名为pack
  */
-import { unlink, mkdir } from 'fs/promises';
+
+import cpr from 'cpr';
+import { zip } from 'cross-zip';
+import { mkdir, unlink } from 'fs/promises';
 import { outputJSON, readJSON } from 'fs-extra/esm';
 import { join } from 'path';
-import { join as _join, path as _path, getDistPath, scriptRoot, extension } from './config.mjs';
-import { zip } from 'cross-zip';
 import { rimraf } from 'rimraf';
-import cpr from 'cpr';
 import getManifest from './browser-config/get-manifest.js';
+import {
+  join as _join,
+  path as _path,
+  extension,
+  getDistPath,
+  getVersion,
+  scriptRoot,
+} from './config.mjs';
 import amo from './pack-utils/amo.mjs';
-import cws from './pack-utils/cws.mjs';
-import xpi from './pack-utils/xpi.mjs';
-import edge from './pack-utils/edge.mjs';
 import crx from './pack-utils/crx.mjs';
+import cws from './pack-utils/cws.mjs';
+import edge from './pack-utils/edge.mjs';
+import xpi from './pack-utils/xpi.mjs';
 
 const packUtils = {
   amo,
@@ -40,7 +48,7 @@ function copyDir(source, target) {
         overwrite: true,
         confirm: false,
       },
-      function (err, files) {
+      (err, files) => {
         if (err) {
           reject(err);
         } else {
@@ -53,8 +61,8 @@ function copyDir(source, target) {
 
 function createZip(source, target) {
   return new Promise((resolve, reject) => {
-    zip(source, target, (err) => {
-      console.log(`${source} -> ${target}`, err);
+    zip(source, target, err => {
+      console.log(`zip ${source} -> ${target}`, err);
       if (err) {
         reject(err);
       } else {
@@ -76,10 +84,12 @@ async function packOnePlatform(name, browserConfig, itemConfig) {
     // 复制一份到dist下面
     await copyDir(getDistPath(itemConfig.browser), thisPack);
     // 重新生成manifest
+    const version = await getVersion(thisPack);
     await outputJSON(
       _join(thisPack, 'manifest.json'),
       getManifest(itemConfig.browser, {
         dev: false,
+        version,
         amo: name === 'amo',
         xpi: name === 'xpi',
       }),
@@ -87,8 +97,14 @@ async function packOnePlatform(name, browserConfig, itemConfig) {
     // 打包成zip
     await createZip(thisPack, zipPath);
     // 执行上传等操作
-    // console.log('packUtils', name, thisPack, zipPath, _path.release, browserConfig, itemConfig);
-    const res = await packUtils[name](thisPack, zipPath, _path.release, browserConfig, itemConfig);
+    console.log(`running ${name} pack...`);
+    const res = await packUtils[name](
+      thisPack,
+      zipPath,
+      _path.release,
+      browserConfig,
+      itemConfig,
+    );
     console.log(`${name}: ${res}`);
     await unlink(zipPath);
   } catch (e) {
@@ -113,10 +129,14 @@ async function main() {
   } else if (process.env.INPUT_PLATFORM) {
     platform = process.env.INPUT_PLATFORM.split(',');
   } else {
-    platform = Object.keys(extension.auto).filter((x) => Boolean(extension.auto[x]));
+    platform = Object.keys(extension.auto).filter(x =>
+      Boolean(extension.auto[x]),
+    );
   }
 
-  const browserConfig = await readJSON(join(scriptRoot, 'browser-config/browser.config.json'));
+  const browserConfig = await readJSON(
+    join(scriptRoot, 'browser-config/browser.config.json'),
+  );
 
   for (const name of platform) {
     const platformConfig = extension[name];

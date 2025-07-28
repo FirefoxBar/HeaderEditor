@@ -115,6 +115,10 @@ function getManifest(browser, options) {
     }
   }
 
+  if (options && options.version) {
+    manifest.version = options.version;
+  }
+
   return manifest;
 }
 
