@@ -1,6 +1,6 @@
 import ChromeExtension from 'crx';
 import { readFile, writeFile } from 'fs/promises';
-import { join, getVersion, getOutputFile } from '../config.mjs';
+import { getOutputFile, getVersion, join } from '../config.mjs';
 
 async function createCrx(fileContent, keyContent) {
   if (!keyContent) {
@@ -18,16 +18,29 @@ async function createCrx(fileContent, keyContent) {
   return crxBuffer;
 }
 
-async function packCrx(sourcePath, zipPath, releasePath, browserConfig, itemConfig) {
+async function packCrx(
+  sourcePath,
+  zipPath,
+  releasePath,
+  browserConfig,
+  itemConfig,
+) {
   const fileContent = await readFile(zipPath);
   if (typeof process.env[itemConfig.priv_key] === 'undefined') {
     throw new Error(`${itemConfig.priv_key} not found`);
   }
-  const content = await createCrx(fileContent, process.env[itemConfig.priv_key]);
-  const fileName = getOutputFile(itemConfig.browser, await getVersion(sourcePath), 'crx');
+  const content = await createCrx(
+    fileContent,
+    process.env[itemConfig.priv_key],
+  );
+  const fileName = getOutputFile(
+    itemConfig.browser,
+    await getVersion(sourcePath),
+    'crx',
+  );
   const out = join(releasePath, fileName);
   await writeFile(out, content);
-  const idFile = join(outputDir, `${fileName}-id.txt`);
+  const idFile = join(releasePath, `${fileName}-id.txt`);
   await writeFile(idFile, itemConfig.id);
   return out;
 }

@@ -91,6 +91,11 @@ jobs:
         CRX_PRIV_KEY: ${{ secrets.CRX_PRIV_KEY }}
         PACK_PLATFORM: xpi,crx
       run: npm run pack
+    - name: Upload temp
+      uses: actions/upload-artifact@v4
+      with:
+        name: temp
+        path: temp
     - name: Upload snapshot release
       uses: actions/upload-artifact@v4
       with:
