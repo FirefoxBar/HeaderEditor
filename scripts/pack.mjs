@@ -82,7 +82,7 @@ async function packOnePlatform(name, browserConfig, itemConfig) {
       }),
     );
     // 打包成zip
-    console.log(`zip ${source} -> ${target}`);
+    console.log(`zip ${thisPack} -> ${zipPath}`);
     await createZip(thisPack, zipPath);
     // 执行上传等操作
     console.log(`running ${name} pack...`);
