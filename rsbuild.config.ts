@@ -13,11 +13,6 @@ const browserConfig =
 
 const isDev = process.env.NODE_ENV === 'development';
 
-const baseExternals: OutputConfig['externals'] = {
-  react: 'React',
-  'react-dom': 'ReactDOM',
-};
-
 function getGlobalVars() {
   const obj = {
     ...browserConfig,
@@ -66,17 +61,33 @@ export default defineConfig({
         to: '.',
       },
     ],
-    externals: browserConfig.ENABLE_EVAL
-      ? baseExternals
-      : [
-          ({ request }, callback) => {
-            if (['text-encoding'].includes(request || '')) {
-              return callback(undefined, '{}', 'var');
-            }
-            callback();
-          },
-          baseExternals,
-        ],
+    externals: [
+      ({ request }, callback) => {
+        // remove some pkgs from semi
+        if (
+          [
+            'lottie-web',
+            'prismjs',
+            'remark-gfm',
+            '@mdx-js/mdx',
+            '@douyinfe/semi-json-viewer-core',
+          ].includes(request || '')
+        ) {
+          return callback(undefined, '{}', 'var');
+        }
+        if (
+          !browserConfig.ENABLE_EVAL &&
+          ['text-encoding'].includes(request || '')
+        ) {
+          return callback(undefined, '{}', 'var');
+        }
+        callback();
+      },
+      {
+        react: 'React',
+        'react-dom': 'ReactDOM',
+      },
+    ],
   },
   html: {
     title: 'Header Editor',
