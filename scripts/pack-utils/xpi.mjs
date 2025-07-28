@@ -38,7 +38,7 @@ async function packXpi(
   const idFile = join(releasePath, `${fileName}-id.txt`);
   // Move download file to output dir
   await rename(res[0], out);
-  await writeFile(idFile, itemConfig.id);
+  await writeFile(idFile, itemConfig.id, { encoding: 'utf-8' });
   return out;
 }
 
