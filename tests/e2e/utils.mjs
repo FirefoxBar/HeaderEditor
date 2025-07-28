@@ -101,6 +101,7 @@ export async function getBrowserClient(browserKey) {
       page.goto(url, { timeout: 0 }).catch(() => {
         // ignore
       });
+      await sleep(300);
     } else {
       await page.goto(url);
     }
@@ -194,21 +195,26 @@ export async function waitTestServer() {
 export function runTest(targets, cb) {
   return Promise.all(
     targets.map(async target => {
-      const client = await getBrowserClient(target);
+      const client = browserList[target];
+      if (!client) {
+        return Promise.resolve();
+      }
       await cb(client);
     }),
   );
 }
 
 export async function saveRule(popup, rule) {
+  const isFirefox = (await popup.browser().version()).startsWith('firefox');
+  const apiPrefix = isFirefox ? 'browser' : 'chrome';
   const action = {
     method: 'save_rule',
     rule,
   };
   const resp = await popup.evaluate(
-    'chrome.runtime.sendMessage(' + JSON.stringify(action) + ')',
+    `${apiPrefix}.runtime.sendMessage(${JSON.stringify(action)})`,
   );
-  // console.log('addRule', resp.id);
+  console.log('resp', isFirefox, resp);
   let tabName = '';
   switch (rule.ruleType) {
     case 'cancel':
@@ -232,13 +238,11 @@ export async function saveRule(popup, rule) {
     id: resp.id,
     remove: () =>
       popup.evaluate(
-        'chrome.runtime.sendMessage(' +
-          JSON.stringify({
-            method: 'del_rule',
-            id: resp.id,
-            type: tabName,
-          }) +
-          ')',
+        `${apiPrefix}.runtime.sendMessage(${JSON.stringify({
+          method: 'del_rule',
+          id: resp.id,
+          type: tabName,
+        })})`,
       ),
   };
 }

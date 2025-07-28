@@ -12,6 +12,7 @@ import {
 beforeAll(async () => {
   await Promise.all([
     getBrowserClient('chrome_v3'),
+    getBrowserClient('firefox_v2'),
     getBrowserClient('firefox_v3'),
   ]);
   console.log('browser ready');
@@ -25,7 +26,7 @@ afterAll(async () => {
 });
 
 test('Modify Request Header', async () =>
-  runTest(['chrome_v3', 'firefox_v3'], async browser => {
+  runTest(['chrome_v3', 'firefox_v2', 'firefox_v3'], async browser => {
     const key = String(Math.random()).replace('.', '');
 
     const { remove } = await saveRule(browser.popup, {
@@ -49,7 +50,7 @@ test('Modify Request Header', async () =>
   }));
 
 test('Disable rule', async () =>
-  runTest(['chrome_v3', 'firefox_v3'], async browser => {
+  runTest(['chrome_v3', 'firefox_v2', 'firefox_v3'], async browser => {
     const key = String(Math.random()).replace('.', '');
 
     const { remove } = await saveRule(browser.popup, {
@@ -73,7 +74,7 @@ test('Disable rule', async () =>
   }));
 
 test('Remove Response Header', async () =>
-  runTest(['chrome_v3', 'firefox_v3'], async browser => {
+  runTest(['chrome_v3', 'firefox_v2', 'firefox_v3'], async browser => {
     const { remove } = await saveRule(browser.popup, {
       name: 'test remove request header',
       ruleType: 'modifyReceiveHeader',
@@ -95,7 +96,7 @@ test('Remove Response Header', async () =>
   }));
 
 test('Modify Response Header', async () =>
-  runTest(['chrome_v3', 'firefox_v3'], async browser => {
+  runTest(['chrome_v3', 'firefox_v2', 'firefox_v3'], async browser => {
     const key = String(Math.random()).replace('.', '');
 
     const { remove } = await saveRule(browser.popup, {
