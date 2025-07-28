@@ -164,6 +164,9 @@ export default defineConfig({
       output: {
         asyncChunks: false,
       },
+      node: {
+        global: false,
+      },
     },
   },
   plugins: [pluginReact(), pluginManifest()],
