@@ -10,7 +10,6 @@
  */
 
 import cpr from 'cpr';
-import { zip } from 'cross-zip';
 import { mkdir, unlink } from 'fs/promises';
 import { outputJSON, readJSON } from 'fs-extra/esm';
 import { join } from 'path';
