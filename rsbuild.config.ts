@@ -1,4 +1,4 @@
-import { defineConfig, type OutputConfig } from '@rsbuild/core';
+import { defineConfig } from '@rsbuild/core';
 import { pluginReact } from '@rsbuild/plugin-react';
 import browserConfigs from './scripts/browser-config/browser.config.json' with {
   type: 'json',

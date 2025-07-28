@@ -35,7 +35,7 @@ jobs:
               - 'scripts/**'
               - 'tests/**'
               - 'patches/**'
-              - 'build.config.js'
+              - 'rsbuild.config.ts'
               - 'pnpm-lock.yaml'
 
   build:
