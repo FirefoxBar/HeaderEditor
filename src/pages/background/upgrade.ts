@@ -132,4 +132,11 @@ async function doUpgrade() {
   }
 }
 
-doUpgrade();
+// is chromium-like browser in v3 mode
+if (MANIFEST_VER === 'v3' && typeof window === 'undefined') {
+  browser.runtime.onInstalled.addListener(() => {
+    doUpgrade();
+  });
+} else {
+  doUpgrade();
+}

@@ -65,6 +65,7 @@ export default defineConfig({
       ({ request }, callback) => {
         // remove some pkgs from semi
         if (
+          !isDev &&
           [
             'lottie-web',
             'prismjs',

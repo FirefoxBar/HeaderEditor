@@ -1,4 +1,3 @@
-import browser from 'webextension-polyfill';
 import createApiHandler from './api-handler';
 import { createDNRHandler } from './request-handler/dnr-handler';
 import { createWebRequestHandler } from './request-handler/web-request-handler';
@@ -18,19 +17,15 @@ function init() {
   }
 }
 
-if (ENABLE_DNR) {
-  browser.runtime.onInstalled.addListener(async (details) => {
-    if (details.reason === 'update') {
-      browser.storage.session.remove('dnr_handler');
-      const currentRules = await browser.declarativeNetRequest.getSessionRules();
-      browser.declarativeNetRequest.updateSessionRules({
-        removeRuleIds: currentRules.map((x) => x.id),
-      });
-    }
-  });
-}
-
-init();
 if (MANIFEST_VER !== 'v3' && typeof window !== 'undefined') {
   window.IS_BACKGROUND = true;
+}
+
+// is chromium-like browser in v3 mode
+if (MANIFEST_VER === 'v3' && typeof window === 'undefined') {
+  chrome.runtime.onStartup.addListener(() => {
+    init();
+  });
+} else {
+  init();
 }
