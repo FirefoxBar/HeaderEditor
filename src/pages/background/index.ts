@@ -23,9 +23,7 @@ if (typeof window !== 'undefined') {
 
 // is chromium-like browser in v3 mode
 if (MANIFEST_VER === 'v3' && typeof window === 'undefined') {
-  chrome.runtime.onStartup.addListener(() => {
-    init();
-  });
-} else {
-  init();
+  chrome.runtime.onStartup.addListener(init);
 }
+
+init();

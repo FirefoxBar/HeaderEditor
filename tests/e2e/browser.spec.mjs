@@ -11,6 +11,7 @@ import {
 
 beforeAll(async () => {
   const browserKeys = ['edge_v2', 'chrome_v3', 'firefox_v2', 'firefox_v3'];
+  // const browserKeys = ['chrome_v3'];
   const browserPromises = browserKeys.map(async browserKey => {
     const timeoutPromise = new Promise((_, reject) => {
       setTimeout(

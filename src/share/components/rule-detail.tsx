@@ -1,9 +1,9 @@
-import React from 'react';
-import { css, cx } from '@emotion/css';
 import { Descriptions, Tag } from '@douyinfe/semi-ui';
-import { Data } from '@douyinfe/semi-ui/lib/es/descriptions';
-import { t } from '@/share/core/utils';
+import type { Data } from '@douyinfe/semi-ui/lib/es/descriptions';
+import { css, cx } from '@emotion/css';
+import React from 'react';
 import type { Rule } from '@/share/core/types';
+import { t } from '@/share/core/utils';
 import { RULE_TYPE } from '../core/constant';
 import { tagList } from '../pages/styles';
 
@@ -80,7 +80,7 @@ const RuleDetail = (props: RuleDetailProps) => {
             <p>
               {t('match_domain')}
               <div className={tagList}>
-                {condition.domain.map((k) => (
+                {condition.domain.map(k => (
                   <Tag color="grey" key={k} size="small" shape="circle">
                     {k}
                   </Tag>
@@ -88,11 +88,19 @@ const RuleDetail = (props: RuleDetailProps) => {
               </div>
             </p>
           )}
+          {condition.regex && (
+            <p>
+              {t('match_regexp')}
+              <Tag color="grey" size="small" shape="circle">
+                {condition.regex}
+              </Tag>
+            </p>
+          )}
           {condition.method && (
             <p>
               {t('match_method')}
               <div className={tagList}>
-                {condition.method.map((k) => (
+                {condition.method.map(k => (
                   <Tag color="grey" key={k} size="small" shape="circle">
                     {k.toUpperCase()}
                   </Tag>
@@ -104,7 +112,7 @@ const RuleDetail = (props: RuleDetailProps) => {
             <p>
               {t('match_resourceType')}
               <div className={tagList}>
-                {condition.resourceTypes.map((e) => (
+                {condition.resourceTypes.map(e => (
                   <Tag color="grey" key={e} size="small" shape="circle">
                     {t(`resourceType_${e}`)}
                   </Tag>
@@ -121,30 +129,34 @@ const RuleDetail = (props: RuleDetailProps) => {
     },
     rule.ruleType === RULE_TYPE.REDIRECT
       ? {
-        key: t('redirectTo'),
-        value: rule.to,
-      }
+          key: t('redirectTo'),
+          value: (
+            <Tag color="grey" size="small" shape="circle">
+              {rule.to}
+            </Tag>
+          ),
+        }
       : undefined,
 
     rule.ruleType === RULE_TYPE.MODIFY_RECV_BODY
       ? {
-        key: t('encoding'),
-        value: rule.encoding,
-      }
+          key: t('encoding'),
+          value: rule.encoding,
+        }
       : undefined,
     isModifyHeader
       ? {
-        key: t(isSendHeader ? 'request_headers' : 'response_headers'),
-        value: (
-          <div className={tagList}>
-            {Object.keys(rule.headers || {}).map((k) => (
-              <Tag color="grey" key={k} size="small" shape="circle">
-                {k}: {rule.headers![k]}
-              </Tag>
-            ))}
-          </div>
-        ),
-      }
+          key: t(isSendHeader ? 'request_headers' : 'response_headers'),
+          value: (
+            <div className={tagList}>
+              {Object.keys(rule.headers || {}).map(k => (
+                <Tag color="grey" key={k} size="small" shape="circle">
+                  {k}: {rule.headers![k]}
+                </Tag>
+              ))}
+            </div>
+          ),
+        }
       : undefined,
   ].filter(Boolean) as Data[];
 
