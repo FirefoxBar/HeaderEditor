@@ -51,6 +51,8 @@ jobs:
         cd $GITHUB_WORKSPACE/docs
         npm run build
         cp $GITHUB_WORKSPACE/scripts/www/* $GITHUB_WORKSPACE/docs/dist/
+    - name: Install wrangler
+      run: npm i -g wrangler
     - name: Deploy Cloudflare Pages
       uses: cloudflare/wrangler-action@v3
       with:

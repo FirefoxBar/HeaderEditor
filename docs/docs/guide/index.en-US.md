@@ -14,7 +14,7 @@ order: 1
 Please choose a different installation method depending on your browser:
 
 | Browser | Lite Version | Full Version |
-| --- | --- |
+| --- | --- | --- |
 | ![Firefox Logo](https://cdnjs.cloudflare.com/ajax/libs/browser-logos/75.0.1/firefox/firefox_16x16.png) Firefox | None | [Mozilla Add-on](https://addons.mozilla.org/en-US/firefox/addon/header-editor/) or our [self-distributed version](https://github.com/FirefoxBar/HeaderEditor/releases) |
 | ![Chrome Logo](https://cdnjs.cloudflare.com/ajax/libs/browser-logos/75.0.1/chrome/chrome_16x16.png) Chrome | [Chrome Web Store](https://chrome.google.com/webstore/detail/header-editor/eningockdidmgiojffjmkdblpjocbhgh) | [Install full version](./install-full-version.en-US.md) |
 | ![Edge Logo](https://cdnjs.cloudflare.com/ajax/libs/browser-logos/75.0.1/edge/edge_16x16.png) Edge | None | [Edge Addons](https://microsoftedge.microsoft.com/addons/detail/header-editor/afopnekiinpekooejpchnkgfffaeceko) |

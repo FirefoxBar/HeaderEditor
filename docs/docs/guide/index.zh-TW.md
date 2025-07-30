@@ -14,10 +14,10 @@ order: 1
 请根据您的平台不同，选择不同的安装方式：
 
 | 瀏覽器 | Lite 版 | Full 版 |
-| --- | --- |
+| --- | --- | --- |
 | ![Firefox Logo](https://cdnjs.cloudflare.com/ajax/libs/browser-logos/75.0.1/firefox/firefox_16x16.png) Firefox | 暫無 | [Mozilla Add-on](https://addons.mozilla.org/en-US/firefox/addon/header-editor/) 或 我們的[自發行版本](https://github.com/FirefoxBar/HeaderEditor/releases) |
 | ![Chrome Logo](https://cdnjs.cloudflare.com/ajax/libs/browser-logos/75.0.1/chrome/chrome_16x16.png) Chrome | [Chrome Web Store](https://chrome.google.com/webstore/detail/header-editor/eningockdidmgiojffjmkdblpjocbhgh) | [安裝完整版](./install-full-version.zh-TW.md) |
-| ![Edge Logo](https://cdnjs.cloudflare.com/ajax/libs/browser-logos/75.0.1edge/edge_16x16.png) Edge | 暫無 | [Edge Addons](https://microsoftedge.microsoft.com/addons/detail/header-editor/afopnekiinpekooejpchnkgfffaeceko) |
+| ![Edge Logo](https://cdnjs.cloudflare.com/ajax/libs/browser-logos/75.0.1/edge/edge_16x16.png) Edge | 暫無 | [Edge Addons](https://microsoftedge.microsoft.com/addons/detail/header-editor/afopnekiinpekooejpchnkgfffaeceko) |
 
 ## 功能比較
 

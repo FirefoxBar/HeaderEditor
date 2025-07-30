@@ -8,6 +8,8 @@ order: 2
 
 > Firefox 可以直接在 AMO 中安装完整版；Edge 用户可以通过 Edge Addons 安装完整版。Chrome 用户请按照下述步骤安装
 
+## 安装
+
 * 从[该地址](https://github.com/FirefoxBar/HeaderEditor/issues/286)下载最新的安装包（crx格式）
 * 打开[chrome://extensions/](chrome://extensions/)
 * 开启“开发者模式”
