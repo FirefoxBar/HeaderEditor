@@ -83,6 +83,8 @@ jobs:
     - name: Install Edge
       id: install-edge
       run: |
+        sudo apt-get remove -y microsoft-edge-stable microsoft-edge-beta microsoft-edge-dev
+        sudo apt-get purge -y microsoft-edge-stable microsoft-edge-beta microsoft-edge-dev
         sudo wget -qO- https://packages.microsoft.com/keys/microsoft.asc | sudo gpg --dearmor -o /etc/apt/trusted.gpg.d/microsoft.gpg
         sudo add-apt-repository "deb [arch=amd64] https://packages.microsoft.com/repos/edge stable main"
         sudo apt-get update
