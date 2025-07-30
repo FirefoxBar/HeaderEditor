@@ -46,7 +46,7 @@ test.each([['edge_v2'], ['chrome_v3'], ['firefox_v2'], ['firefox_v3']])(
         matchType: 'regexp',
         isFunction: false,
         enable: true,
-        to: `${testServer}/get-query.php?id=$1&value=$2`,
+        to: `${testServer}get-query.php?id=$1&value=$2`,
       });
 
       const query = JSON.parse(
