@@ -132,3 +132,27 @@ test.each([['edge_v2'], ['chrome_v3'], ['firefox_v2'], ['firefox_v3']])(
       await remove();
     }),
 );
+
+test.each([['edge_v2'], ['firefox_v2']])(
+  '[%s] - Custom Function',
+  async browserKey =>
+    runTest(browserKey, async browser => {
+      const key = String(Math.random()).replace('.', '');
+
+      const { remove } = await saveRule(browser.popup, {
+        name: 'test custom function',
+        ruleType: 'modifySendHeader',
+        pattern: '^' + testServer,
+        matchType: 'regexp',
+        isFunction: true,
+        enable: true,
+        code: `val.push({ "name": "X-Custom-Header", "value": "${key}" })`,
+      });
+
+      const header = await getHeader(browser.browser);
+
+      expect(header['X_CUSTOM_HEADER']).toBe(key);
+
+      await remove();
+    }),
+);

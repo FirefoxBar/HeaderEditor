@@ -83,10 +83,10 @@ jobs:
     - name: Install Edge
       id: install-edge
       run: |
-        wget -q https://packages.microsoft.com/keys/microsoft.asc -O- | sudo apt-key add -
+        sudo wget -qO /etc/apt/trusted.gpg.d/microsoft.gpg https://packages.microsoft.com/keys/microsoft.asc
         sudo add-apt-repository "deb [arch=amd64] https://packages.microsoft.com/repos/edge stable main"
-        sudo apt update
-        sudo apt install -y microsoft-edge-stable=138.0.3351.109-1
+        sudo apt-get update
+        sudo apt-get install -y microsoft-edge-stable=138.0.3351.109-1
         microsoft-edge --version
         EDGE_PATH=$(which microsoft-edge)
         echo "edge-path=$EDGE_PATH" >> $GITHUB_OUTPUT
