@@ -16,6 +16,7 @@ beforeAll(async () => {
     getBrowserClient('firefox_v2'),
     getBrowserClient('firefox_v3'),
   ]);
+
   console.log('browser ready');
   // Check if test server is running
   await waitTestServer();
