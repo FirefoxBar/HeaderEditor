@@ -1,11 +1,15 @@
 import { TextDecoder, TextEncoder } from 'text-encoding';
-import browser, { WebRequest } from 'webextension-polyfill';
-import { getGlobal, IS_CHROME, IS_SUPPORT_STREAM_FILTER } from '@/share/core/utils';
+import browser, { type WebRequest } from 'webextension-polyfill';
+import { RULE_TYPE, TABLE_NAMES } from '@/share/core/constant';
 import emitter from '@/share/core/emitter';
 import logger from '@/share/core/logger';
-import type { InitdRule, RULE_ACTION_OBJ } from '@/share/core/types';
-import { RULE_TYPE, TABLE_NAMES } from '@/share/core/constant';
 import { prefs } from '@/share/core/prefs';
+import type { InitdRule, RULE_ACTION_OBJ } from '@/share/core/types';
+import {
+  getGlobal,
+  IS_CHROME,
+  IS_SUPPORT_STREAM_FILTER,
+} from '@/share/core/utils';
 import { get as getRules } from '../core/rules';
 
 // 最大修改8MB的Body
@@ -16,8 +20,12 @@ enum REQUEST_TYPE {
   RESPONSE,
 }
 
-type HeaderRequestDetails = WebRequest.OnHeadersReceivedDetailsType | WebRequest.OnBeforeSendHeadersDetailsType;
-type AnyRequestDetails = WebRequest.OnBeforeRequestDetailsType | HeaderRequestDetails;
+type HeaderRequestDetails =
+  | WebRequest.OnHeadersReceivedDetailsType
+  | WebRequest.OnBeforeSendHeadersDetailsType;
+type AnyRequestDetails =
+  | WebRequest.OnBeforeRequestDetailsType
+  | HeaderRequestDetails;
 
 interface CustomFunctionDetail {
   id: string;
@@ -69,7 +77,9 @@ class WebRequestHandler {
     if (
       IS_CHROME &&
       // @ts-ignore
-      chrome.webRequest.OnBeforeSendHeadersOptions.hasOwnProperty('EXTRA_HEADERS')
+      chrome.webRequest.OnBeforeSendHeadersOptions.hasOwnProperty(
+        'EXTRA_HEADERS',
+      )
     ) {
       result.push('extraHeaders');
     }
@@ -77,9 +87,11 @@ class WebRequestHandler {
   }
 
   private initHook() {
-    browser.webRequest.onBeforeRequest.addListener(this.handleBeforeRequest.bind(this), { urls: ['<all_urls>'] }, [
-      'blocking',
-    ]);
+    browser.webRequest.onBeforeRequest.addListener(
+      this.handleBeforeRequest.bind(this),
+      { urls: ['<all_urls>'] },
+      ['blocking'],
+    );
     browser.webRequest.onBeforeSendHeaders.addListener(
       this.handleBeforeSend.bind(this),
       { urls: ['<all_urls>'] },
@@ -160,7 +172,10 @@ class WebRequestHandler {
             logger.debug(`[rule: ${item.id}] redirect ${redirectTo} to ${r}`);
             redirectTo = r;
           }
-          if (r === '_header_editor_cancel_' || (item.action === 'cancel' && r === true)) {
+          if (
+            r === '_header_editor_cancel_' ||
+            (item.action === 'cancel' && r === true)
+          ) {
             logger.debug(`[rule: ${item.id}] cancel`);
             return { cancel: true };
           }
@@ -168,12 +183,14 @@ class WebRequestHandler {
           console.error(err);
         }
       } else if (item.to) {
-        if (item.matchType === 'regexp') {
+        if (item.condition?.regex || item.matchType === 'regexp') {
           const to = redirectTo.replace(item._reg, item.to);
           logger.debug(`[rule: ${item.id}] redirect ${redirectTo} to ${to}`);
           redirectTo = to;
         } else {
-          logger.debug(`[rule: ${item.id}] redirect ${redirectTo} to ${item.to}`);
+          logger.debug(
+            `[rule: ${item.id}] redirect ${redirectTo} to ${item.to}`,
+          );
           redirectTo = item.to;
         }
       }
@@ -281,12 +298,14 @@ class WebRequestHandler {
       responseHeaders: null,
     };
 
-    ['statusCode', 'statusLine', 'requestHeaders', 'responseHeaders'].forEach((p) => {
-      if (p in request) {
-        // @ts-ignore
-        details[p] = request[p];
-      }
-    });
+    ['statusCode', 'statusLine', 'requestHeaders', 'responseHeaders'].forEach(
+      p => {
+        if (p in request) {
+          // @ts-ignore
+          details[p] = request[p];
+        }
+      },
+    );
 
     return details;
   }
@@ -298,7 +317,9 @@ class WebRequestHandler {
       if (encoding === 'UTF-8' && getGlobal().TextEncoder) {
         encoder = new (getGlobal().TextEncoder)();
       } else {
-        encoder = new TextEncoder(encoding, { NONSTANDARD_allowLegacyEncoding: true });
+        encoder = new TextEncoder(encoding, {
+          NONSTANDARD_allowLegacyEncoding: true,
+        });
       }
       this.textEncoder.set(encoding, encoder);
     }
@@ -341,8 +362,10 @@ class WebRequestHandler {
     rule: InitdRule[],
     presetDetail?: CustomFunctionDetail,
   ) {
-    // @ts-ignore
-    const headers = request[type === REQUEST_TYPE.REQUEST ? 'requestHeaders' : 'responseHeaders'];
+    const headers =
+      type === REQUEST_TYPE.REQUEST
+        ? (request as WebRequest.OnBeforeSendHeadersDetailsType).requestHeaders
+        : (request as WebRequest.OnHeadersReceivedDetailsType).responseHeaders;
     if (!headers) {
       return;
     }
@@ -398,7 +421,7 @@ class WebRequestHandler {
     }
     if (hasFunction) {
       const detail = presetDetail || this.makeDetails(request);
-      rule.forEach((item) => {
+      rule.forEach(item => {
         try {
           item._func(headers, detail);
         } catch (e) {
@@ -437,7 +460,10 @@ class WebRequestHandler {
     }, 10000);
   }
 
-  private modifyReceivedBody(e: WebRequest.OnHeadersReceivedDetailsType, detail: CustomFunctionDetail) {
+  private modifyReceivedBody(
+    e: WebRequest.OnHeadersReceivedDetailsType,
+    detail: CustomFunctionDetail,
+  ) {
     if (!IS_SUPPORT_STREAM_FILTER) {
       return;
     }
@@ -452,7 +478,7 @@ class WebRequestHandler {
     if (rule === null) {
       return;
     }
-    rule = rule.filter((item) => item.isFunction);
+    rule = rule.filter(item => item.isFunction);
     if (rule.length === 0) {
       return;
     }
@@ -490,7 +516,10 @@ class WebRequestHandler {
       for (const item of rule!) {
         const encoding = item.encoding || 'UTF-8';
         try {
-          const _text = this.textDecode(encoding, new Uint8Array(buffers!.buffer));
+          const _text = this.textDecode(
+            encoding,
+            new Uint8Array(buffers!.buffer),
+          );
           const text = item._func(_text, detail);
           if (typeof text === 'string' && text !== _text) {
             buffers = this.textEncode(encoding, text);

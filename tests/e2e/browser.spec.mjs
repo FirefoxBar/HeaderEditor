@@ -28,6 +28,33 @@ afterAll(async () => {
 });
 
 test.each([['edge_v2'], ['chrome_v3'], ['firefox_v2'], ['firefox_v3']])(
+  '[%s] - Redirect',
+  async browserKey =>
+    runTest(browserKey, async browser => {
+      const key = String(Math.random()).replace('.', '');
+
+      const { remove } = await saveRule(browser.popup, {
+        name: 'test redirect',
+        ruleType: 'redirect',
+        pattern: `^${testServer}get(\\d+)/(.*?)$`,
+        matchType: 'regexp',
+        isFunction: false,
+        enable: true,
+        to: `${testServer}/get-query.php?id=$1&value=$2`,
+      });
+
+      const query = JSON.parse(
+        await getPageValue(browser.browser, `get123/test${key}`),
+      );
+
+      expect(query['id']).toBe('123');
+      expect(query['value']).toBe(`test${key}`);
+
+      await remove();
+    }),
+);
+
+test.each([['edge_v2'], ['chrome_v3'], ['firefox_v2'], ['firefox_v3']])(
   '[%s] - Modify Request Header',
   async browserKey =>
     runTest(browserKey, async browser => {

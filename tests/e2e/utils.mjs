@@ -284,15 +284,20 @@ export async function getHeader(browser) {
   return JSON.parse(value);
 }
 
+export async function getQuery(browser, rawQuery) {
+  const value = await getPageValue(browser, 'get-query.php?' + rawQuery);
+  return JSON.parse(value);
+}
+
 export async function getResponseHeader(browser, defaultHeader) {
   const page = await browser.newPage();
   const u = new URLSearchParams(defaultHeader);
   return new Promise(resolve => {
     page
-      .waitForResponse(resp => resp.url().includes('mock-response.php'))
+      .waitForResponse(resp => resp.url().includes('mock-header.php'))
       .then(resp => {
         resolve(resp.headers());
       });
-    page.goto(`${testServer}mock-response.php?${u.toString()}`);
+    page.goto(`${testServer}mock-header.php?${u.toString()}`);
   });
 }

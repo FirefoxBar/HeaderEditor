@@ -1,14 +1,14 @@
 import { IconSave } from '@douyinfe/semi-icons';
 import { Button, Form, SideSheet, Toast, Typography } from '@douyinfe/semi-ui';
-import { FormApi } from '@douyinfe/semi-ui/lib/es/form';
+import type { FormApi } from '@douyinfe/semi-ui/lib/es/form';
 import { css } from '@emotion/css';
 import { useRequest } from 'ahooks';
 import React, { useEffect, useMemo, useRef } from 'react';
-import Api from '@/share/pages/api';
-import { t } from '@/share/core/utils';
-import type { Rule } from '@/share/core/types';
-import { prefs } from '@/share/core/prefs';
 import { RULE_TYPE } from '@/share/core/constant';
+import { prefs } from '@/share/core/prefs';
+import type { Rule } from '@/share/core/types';
+import { t } from '@/share/core/utils';
+import Api from '@/share/pages/api';
 import FormContent from './form-content';
 import { EMPTY_RULE, getInput, getRuleFromInput } from './utils';
 
@@ -51,9 +51,15 @@ const Edit = ({ visible, rule: ruleProp, onClose }: EditProps) => {
         return;
       }
       if (
-        ['all', 'url', 'urlPrefix', 'method', 'domain', 'regex', 'resourceTypes'].every(
-          (x) => typeof rule.condition![x] === 'undefined',
-        )
+        [
+          'all',
+          'url',
+          'urlPrefix',
+          'method',
+          'domain',
+          'regex',
+          'resourceTypes',
+        ].every(x => typeof rule.condition![x] === 'undefined')
       ) {
         Toast.error(t('match_rule_empty'));
         return;
@@ -70,8 +76,13 @@ const Edit = ({ visible, rule: ruleProp, onClose }: EditProps) => {
         Toast.error(t('redirect_empty'));
         return;
       }
-      if (rule.ruleType === 'modifySendHeader' || rule.ruleType === 'modifyReceiveHeader') {
-        const validateValue = Object.entries(rule.headers || {}).filter(([k]) => Boolean(k));
+      if (
+        rule.ruleType === 'modifySendHeader' ||
+        rule.ruleType === 'modifyReceiveHeader'
+      ) {
+        const validateValue = Object.entries(rule.headers || {}).filter(([k]) =>
+          Boolean(k),
+        );
         if (validateValue.length === 0) {
           Toast.error(t('header_empty'));
           return;
@@ -129,11 +140,28 @@ const Edit = ({ visible, rule: ruleProp, onClose }: EditProps) => {
         }
       `}
       footer={
-        <div style={{ display: 'flex', justifyContent: 'space-between', gap: '8px', alignItems: 'center' }}>
-          <Text type="tertiary" link={{ href: t('url_help'), target: '_blank' }}>
-            {t('lite_edit_tip')}
-          </Text>
-          <Button theme="solid" onClick={doSubmit} icon={<IconSave />} loading={loading}>
+        <div
+          style={{
+            display: 'flex',
+            justifyContent: 'space-between',
+            gap: '8px',
+            alignItems: 'center',
+          }}
+        >
+          {MANIFEST_VER === 'v3' && (
+            <Text
+              type="tertiary"
+              link={{ href: t('url_help'), target: '_blank' }}
+            >
+              {t('lite_edit_tip')}
+            </Text>
+          )}
+          <Button
+            theme="solid"
+            onClick={doSubmit}
+            icon={<IconSave />}
+            loading={loading}
+          >
             {t('save')}
           </Button>
         </div>
@@ -141,7 +169,7 @@ const Edit = ({ visible, rule: ruleProp, onClose }: EditProps) => {
     >
       <Form
         labelCol={{ fixedSpan: 4 }}
-        getFormApi={(api) => (formApi.current = api)}
+        getFormApi={api => (formApi.current = api)}
         labelPosition="left"
         labelAlign="right"
         labelWidth={140}
