@@ -23,7 +23,6 @@ beforeAll(async () => {
   });
   await Promise.all(browserPromises);
   console.log('browser ready');
-
   // Check if test server is running
   await waitTestServer();
   console.log('test server ready');
