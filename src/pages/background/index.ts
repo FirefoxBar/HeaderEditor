@@ -17,7 +17,7 @@ function init() {
   }
 }
 
-if (MANIFEST_VER !== 'v3' && typeof window !== 'undefined') {
+if (typeof window !== 'undefined') {
   window.IS_BACKGROUND = true;
 }
 
