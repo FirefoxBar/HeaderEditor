@@ -1,8 +1,7 @@
 ---
-nav: 指南
 group: 介绍
 title: FAQ
-order: 2
+order: 3
 ---
 
 ## 为什么“头名称”变成小写了？

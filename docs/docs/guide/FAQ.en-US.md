@@ -1,8 +1,7 @@
 ---
-group:
-  title: Introduction
+group: Introduction
 title: FAQ
-order: 2
+order: 3
 ---
 
 ## Why is "header name" reduced to lowercase?

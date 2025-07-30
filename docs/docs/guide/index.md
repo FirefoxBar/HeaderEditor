@@ -13,11 +13,11 @@ order: 1
 
 请根据您的平台不同，选择不同的安装方式：
 
-| 浏览器 | 安装 |
+| 浏览器 | Lite 版 | Full 版 |
 | --- | --- |
-| ![Firefox Logo](https://cdnjs.cloudflare.com/ajax/libs/browser-logos/75.0.1/firefox/firefox_16x16.png) Firefox | [Mozilla Add-on](https://addons.mozilla.org/en-US/firefox/addon/header-editor/) 或 我们的[自分发版本](https://github.com/FirefoxBar/HeaderEditor/releases) |
-| ![Chrome Logo](https://cdnjs.cloudflare.com/ajax/libs/browser-logos/75.0.1/chrome/chrome_16x16.png) Chrome | [Chrome Web Store](https://chrome.google.com/webstore/detail/header-editor/eningockdidmgiojffjmkdblpjocbhgh) |
-| ![Edge Logo](https://cdnjs.cloudflare.com/ajax/libs/browser-logos/75.0.1edge/edge_16x16.png) Edge(Chromium) | [Edge Addons](https://microsoftedge.microsoft.com/addons/detail/header-editor/afopnekiinpekooejpchnkgfffaeceko) |
+| ![Firefox Logo](https://cdnjs.cloudflare.com/ajax/libs/browser-logos/75.0.1/firefox/firefox_16x16.png) Firefox | 暂无 | [Mozilla Add-on](https://addons.mozilla.org/en-US/firefox/addon/header-editor/) 或 我们的[自分发版本](https://github.com/FirefoxBar/HeaderEditor/releases) |
+| ![Chrome Logo](https://cdnjs.cloudflare.com/ajax/libs/browser-logos/75.0.1/chrome/chrome_16x16.png) Chrome | [Chrome Web Store](https://chrome.google.com/webstore/detail/header-editor/eningockdidmgiojffjmkdblpjocbhgh) | [安装完整版](./install-full-version.md) |
+| ![Edge Logo](https://cdnjs.cloudflare.com/ajax/libs/browser-logos/75.0.1edge/edge_16x16.png) Edge | 暂无 | [Edge Addons](https://microsoftedge.microsoft.com/addons/detail/header-editor/afopnekiinpekooejpchnkgfffaeceko) |
 
 ## 功能比较
 
@@ -53,13 +53,6 @@ order: 1
 * 点击右上角的HE图标，打开HE管理面板
 * 新建规则：点击右下角的添加按钮，填写规则内容后，保存即可。
 * 或者，您可以在“导入和导出”中下载他人的规则。
-
-## 在 Chrome 中安裝完整版本
-
-* 从[该地址](https://github.com/FirefoxBar/HeaderEditor/issues/286)下载最新的安装包（crx格式）
-* 打开[chrome://extensions/](chrome://extensions/)
-* 开启“开发者模式”
-* 将下载的crx文件拖拽到扩展页面
 
 ## 从其他类似扩展迁移
 

@@ -33,7 +33,7 @@ Regardless of whether the matching rules are met, as long as any exclusion condi
 
 ### Custom function
 
-Through a custom function to realize a more flexible function, the specific use please see [here](./custom-function.md)
+Through a custom function to realize a more flexible function, the specific use please see [here](./custom-function.en-US.md)
 * This feature is not supported in the Lite version.
 
 ## Other special features

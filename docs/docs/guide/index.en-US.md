@@ -13,11 +13,11 @@ order: 1
 
 Please choose a different installation method depending on your browser:
 
-| Browser | Installation |
+| Browser | Lite Version | Full Version |
 | --- | --- |
-| ![Firefox Logo](https://cdnjs.cloudflare.com/ajax/libs/browser-logos/75.0.1/firefox/firefox_16x16.png) Firefox | [Mozilla Add-on](https://addons.mozilla.org/en-US/firefox/addon/header-editor/) or our [self-distributed version](https://github.com/FirefoxBar/HeaderEditor/releases) |
-| ![Chrome Logo](https://cdnjs.cloudflare.com/ajax/libs/browser-logos/75.0.1/chrome/chrome_16x16.png) Chrome | [Chrome Web Store](https://chrome.google.com/webstore/detail/header-editor/eningockdidmgiojffjmkdblpjocbhgh) |
-| ![Edge Logo](https://cdnjs.cloudflare.com/ajax/libs/browser-logos/75.0.1/edge/edge_16x16.png) Edge(Chromium) | [Edge Addons](https://microsoftedge.microsoft.com/addons/detail/header-editor/afopnekiinpekooejpchnkgfffaeceko) |
+| ![Firefox Logo](https://cdnjs.cloudflare.com/ajax/libs/browser-logos/75.0.1/firefox/firefox_16x16.png) Firefox | None | [Mozilla Add-on](https://addons.mozilla.org/en-US/firefox/addon/header-editor/) or our [self-distributed version](https://github.com/FirefoxBar/HeaderEditor/releases) |
+| ![Chrome Logo](https://cdnjs.cloudflare.com/ajax/libs/browser-logos/75.0.1/chrome/chrome_16x16.png) Chrome | [Chrome Web Store](https://chrome.google.com/webstore/detail/header-editor/eningockdidmgiojffjmkdblpjocbhgh) | [Install full version](./install-full-version.en-US.md) |
+| ![Edge Logo](https://cdnjs.cloudflare.com/ajax/libs/browser-logos/75.0.1/edge/edge_16x16.png) Edge | None | [Edge Addons](https://microsoftedge.microsoft.com/addons/detail/header-editor/afopnekiinpekooejpchnkgfffaeceko) |
 
 ## Features Comparison
 
@@ -53,13 +53,6 @@ Notes:
 * Click the HE icon in the upper right corner of your browser to open the HE Management Panel
 * Create a new rule: Click the Add button in the lower right corner, fill in the rules, and save.
 * Alternatively, you can download the rules of others in "Import and Export".
-
-## Install the full version in Chrome
-
-* Download the latest installation package (crx format) from [this address](https://github.com/FirefoxBar/HeaderEditor/issues/286)
-* Open [chrome://extensions/](chrome://extensions/)
-* Enable "Developer Mode"
-* Drag the downloaded crx file to the extension page
 
 ## Migrate from other similar extensions
 

@@ -83,7 +83,7 @@ jobs:
     - name: Install Edge
       id: install-edge
       run: |
-        sudo wget -qO /etc/apt/trusted.gpg.d/microsoft.gpg https://packages.microsoft.com/keys/microsoft.asc
+        sudo wget -qO- https://packages.microsoft.com/keys/microsoft.asc | sudo gpg --dearmor -o /etc/apt/trusted.gpg.d/microsoft.gpg
         sudo add-apt-repository "deb [arch=amd64] https://packages.microsoft.com/repos/edge stable main"
         sudo apt-get update
         sudo apt-get install -y microsoft-edge-stable=138.0.3351.109-1
