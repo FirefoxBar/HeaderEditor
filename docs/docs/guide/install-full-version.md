@@ -11,7 +11,7 @@ order: 2
 ## 安装
 
 * 从[该地址](https://github.com/FirefoxBar/HeaderEditor/issues/286)下载最新的安装包（crx格式）
-* 打开[chrome://extensions/](chrome://extensions/)
+* 打开`chrome://extensions/`
 * 开启“开发者模式”
 * 将下载的crx文件拖拽到扩展页面
 
@@ -25,7 +25,7 @@ order: 2
 
 **方式一 注册表**
 
-将下列代码保存为`.reg`文件，并双击运行。其中，1可以是任意值，如果你有多个需要启用的扩展那就换行再写一行，保证前边的序号唯一。
+将下列代码保存为`.reg`文件，并双击运行。其中，1可以是任意值，若有多个需要启用的扩展，则换行再写，保证前边的序号唯一。
 
 ```
 Windows Registry Editor Version 5.00

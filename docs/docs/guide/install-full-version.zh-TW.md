@@ -8,10 +8,10 @@ order: 2
 
 > Firefox 可以直接在 AMO 中安裝完整版；Edge 使用者可以透過 Edge Addons 安裝完整版。 Chrome 用戶請依照下述步驟安裝
 
-# 安裝
 ## 安裝
+
 * 從[該位址](https://github.com/FirefoxBar/HeaderEditor/issues/286)下載最新的安裝包（crx格式）
-* 開啟[chrome://extensions/](chrome://extensions/)
+* 開啟`chrome://extensions/`
 * 開啟“開發者模式”
 * 將下載的crx檔案拖曳到擴充頁面
 
@@ -25,7 +25,7 @@ order: 2
 
 **方式一 註冊表**
 
-將下列程式碼儲存為`.reg`文件，並雙擊運行。其中，1可以是任意值，如果你有多個需要啟用的擴充那就換行再寫一行，保證前邊的序號唯一。
+將下列程式碼儲存為`.reg`文件，並雙擊運行。其中，1可以是任意值，若有多個需要啟用的擴展，則換行再寫，保證前邊的序號唯一。
 
 ```
 Windows Registry Editor Version 5.00

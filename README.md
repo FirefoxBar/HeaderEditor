@@ -17,25 +17,23 @@ For more documentations, Please visit [he.firefoxcn.net](https://he.firefoxcn.ne
 
 ## Get this extension
 
-![Firefox Logo](https://cdnjs.cloudflare.com/ajax/libs/browser-logos/73.0.0/firefox/firefox_16x16.png) [Mozilla Add-on](https://addons.mozilla.org/en-US/firefox/addon/header-editor/).
+| Browser | Lite Version | Full Version |
+| --- | --- | --- |
+| ![Firefox Logo](https://cdnjs.cloudflare.com/ajax/libs/browser-logos/75.0.1/firefox/firefox_16x16.png) Firefox | None | [Mozilla Add-on](https://addons.mozilla.org/en-US/firefox/addon/header-editor/) or our [self-distributed version](https://github.com/FirefoxBar/HeaderEditor/releases) |
+| ![Chrome Logo](https://cdnjs.cloudflare.com/ajax/libs/browser-logos/75.0.1/chrome/chrome_16x16.png) Chrome | [Chrome Web Store](https://chrome.google.com/webstore/detail/header-editor/eningockdidmgiojffjmkdblpjocbhgh) | [Install full version](https://he.firefoxcn.net/en-US/guide) |
+| ![Edge Logo](https://cdnjs.cloudflare.com/ajax/libs/browser-logos/75.0.1/edge/edge_16x16.png) Edge | None | [Edge Addons](https://microsoftedge.microsoft.com/addons/detail/header-editor/afopnekiinpekooejpchnkgfffaeceko) |
 
-![Chrome Logo](https://cdnjs.cloudflare.com/ajax/libs/browser-logos/73.0.0/chrome/chrome_16x16.png) [Chrome Web Store](https://chrome.google.com/webstore/detail/header-editor/eningockdidmgiojffjmkdblpjocbhgh).
-
-![Edge Logo](https://cdnjs.cloudflare.com/ajax/libs/browser-logos/73.0.0/edge/edge_16x16.png) [Edge Add-ons](https://microsoftedge.microsoft.com/addons/detail/header-editor/afopnekiinpekooejpchnkgfffaeceko).
-
-![Firefox Logo](https://cdnjs.cloudflare.com/ajax/libs/browser-logos/73.0.0/firefox/firefox_16x16.png) Install our [self-distributed version](https://github.com/FirefoxBar/HeaderEditor/releases).
-
-## About Permissions
+## Permissions
 
 Header Editor require those permissions:
 
-* `tabs`: Open links (such as the options page) or switch to a tab
+* `tabs`: Open links (such as the options page)
 
-* `webRequest`, `webRequestBlocking`, `_all_urls_`: Modify requests
+* `webRequest`, `webRequestBlocking`, `declarativeNetRequest`, `*://*/*`: Modify requests
 
 * `storage`, `unlimitedStorage`: Storage rules and settings
 
-* `unsafe-eval`: Execute custom function, code at [src/share/core/rule-utils.ts#L8](https://github.com/FirefoxBar/HeaderEditor/blob/dev/src/share/core/rule-utils.ts#L8) (may change in the future, you can search for the newest location by `new Function`)
+* `unsafe-eval`: Execute custom function, code at [src/share/core/rule-utils.ts#L30](https://github.com/FirefoxBar/HeaderEditor/blob/dev/src/share/core/rule-utils.ts#L30) (may change in the future, you can search for the newest location by `new Function`)
 
 ## Contribution
 
@@ -45,7 +43,7 @@ Thanks to them for their contribution: [YFdyh000](https://github.com/yfdyh000) [
 
 ### Translation
 
-English: Please submit a issue or pull request for file `locale/original/messages.json`
+English: Please submit a issue or pull request to file `locale/original/messages.json`
 
 Other language: Please translate them on [Transifex](https://app.transifex.com/sytec/header-editor/)
 

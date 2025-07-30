@@ -11,7 +11,7 @@ order: 2
 ## Install
 
 * Download the latest installation package (crx format) from [this address](https://github.com/FirefoxBar/HeaderEditor/issues/286)
-* Open [chrome://extensions/](chrome://extensions/)
+* Open `chrome://extensions/`
 * Enable "Developer Mode"
 * Drag the downloaded crx file to the extension page
 
@@ -25,7 +25,7 @@ You can use one of the following methods:
 
 **Method 1: Registry**
 
-Save the following code as a `.reg` file and double-click to run it. The value `1` can be anything. If you have multiple extensions to enable, add them on a separate line to ensure the leading numbers are unique.
+Save the following code as a `.reg` file and double-click to run it. The value `1` can be anything. If you have multiple extensions to enable, add them on a separate line, ensure the leading numbers are unique.
 
 ```
 Windows Registry Editor Version 5.00
