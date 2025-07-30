@@ -24,6 +24,17 @@ const config = (() => {
   return JSON.parse(readFileSync(configPath, 'utf8'));
 })();
 
+function getExecutablePath(name) {
+  const path = process.env.PATH.split(':');
+  for (const p of path) {
+    const fullPath = path.join(p, name);
+    if (existsSync(fullPath)) {
+      console.log(`Found ${name} at ${fullPath}`);
+      return fullPath;
+    }
+  }
+}
+
 export async function sleep(ms) {
   return new Promise(resolve => {
     setTimeout(resolve, ms);
@@ -64,9 +75,22 @@ async function createBrowser(browserKey, pathToExtension) {
     await rdp.installTemporaryAddon(pathToExtension);
     return browser;
   } else {
+    let executablePath;
+    if (browserKey.startsWith('edge_')) {
+      if (config.edgePath) {
+        executablePath = config.edgePath;
+      } else if (process.env.EDGE_PATH) {
+        executablePath = process.env.EDGE_PATH;
+      } else {
+        executablePath = getExecutablePath('microsoft-edge');
+      }
+    } else if (config.chromePath) {
+      executablePath = config.chromePath;
+    }
+
     return puppeteer.launch({
-      executablePath: config.chromePath ? config.chromePath : undefined,
-      // headless: false,
+      executablePath,
+      headless: false,
       args: [
         `--disable-extensions-except=${pathToExtension}`,
         `--load-extension=${pathToExtension}`,
@@ -81,7 +105,12 @@ export async function getBrowserClient(browserKey) {
     return browserList[browserKey];
   }
 
-  const pathToExtension = path.join(__dirname, `../../dist_${browserKey}`);
+  let extDir = `dist_${browserKey}`;
+  if (browserKey.startsWith('edge_')) {
+    extDir = `dist_${browserKey.replace('edge_', 'chrome_')}`;
+  }
+
+  const pathToExtension = path.join(__dirname, `../../${extDir}`);
 
   const manifest = JSON.parse(
     readFileSync(path.join(pathToExtension, 'manifest.json'), 'utf8'),
@@ -201,14 +230,12 @@ export function runTest(browserKey, cb) {
 }
 
 export async function saveRule(popup, rule) {
-  const isFirefox = (await popup.browser().version()).startsWith('firefox');
-  const apiPrefix = isFirefox ? 'browser' : 'chrome';
   const action = {
     method: 'save_rule',
     rule,
   };
   const resp = await popup.evaluate(
-    `${apiPrefix}.runtime.sendMessage(${JSON.stringify(action)})`,
+    `browser.runtime.sendMessage(${JSON.stringify(action)})`,
   );
   let tabName = '';
   switch (rule.ruleType) {
@@ -233,7 +260,7 @@ export async function saveRule(popup, rule) {
     id: resp.id,
     remove: () =>
       popup.evaluate(
-        `${apiPrefix}.runtime.sendMessage(${JSON.stringify({
+        `browser.runtime.sendMessage(${JSON.stringify({
           method: 'del_rule',
           id: resp.id,
           type: tabName,

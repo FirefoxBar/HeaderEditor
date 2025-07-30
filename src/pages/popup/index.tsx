@@ -159,3 +159,7 @@ if (rootEl) {
     </React.StrictMode>,
   );
 }
+
+if (typeof window !== 'undefined' && typeof window.browser === 'undefined') {
+  window.browser = browser;
+}

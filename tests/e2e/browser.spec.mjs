@@ -11,6 +11,7 @@ import {
 
 beforeAll(async () => {
   await Promise.all([
+    getBrowserClient('edge_v2'),
     getBrowserClient('chrome_v3'),
     getBrowserClient('firefox_v2'),
     getBrowserClient('firefox_v3'),
@@ -25,7 +26,7 @@ afterAll(async () => {
   await cleanup();
 });
 
-test.each([['chrome_v3'], ['firefox_v2'], ['firefox_v3']])(
+test.each([['edge_v2'], ['chrome_v3'], ['firefox_v2'], ['firefox_v3']])(
   '[%s] - Modify Request Header',
   async browserKey =>
     runTest(browserKey, async browser => {
@@ -52,7 +53,7 @@ test.each([['chrome_v3'], ['firefox_v2'], ['firefox_v3']])(
     }),
 );
 
-test.each([['chrome_v3'], ['firefox_v2'], ['firefox_v3']])(
+test.each([['edge_v2'], ['chrome_v3'], ['firefox_v2'], ['firefox_v3']])(
   '[%s] - Disable rule',
   async browserKey =>
     runTest(browserKey, async browser => {
@@ -79,7 +80,7 @@ test.each([['chrome_v3'], ['firefox_v2'], ['firefox_v3']])(
     }),
 );
 
-test.each([['chrome_v3'], ['firefox_v2'], ['firefox_v3']])(
+test.each([['edge_v2'], ['chrome_v3'], ['firefox_v2'], ['firefox_v3']])(
   '[%s] - Remove Response Header',
   async browserKey =>
     runTest(browserKey, async browser => {
@@ -104,7 +105,7 @@ test.each([['chrome_v3'], ['firefox_v2'], ['firefox_v3']])(
     }),
 );
 
-test.each([['chrome_v3'], ['firefox_v2'], ['firefox_v3']])(
+test.each([['edge_v2'], ['chrome_v3'], ['firefox_v2'], ['firefox_v3']])(
   '[%s] - Modify Response Header',
   async browserKey =>
     runTest(browserKey, async browser => {

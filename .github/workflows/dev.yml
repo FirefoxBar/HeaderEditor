@@ -80,7 +80,19 @@ jobs:
           dist_chrome_v3
           dist_firefox_v2
           dist_firefox_v3
+    - name: Install Edge
+      id: install-edge
+      run: |
+        wget -q https://packages.microsoft.com/keys/microsoft.asc -O- | sudo apt-key add -
+        sudo add-apt-repository "deb [arch=amd64] https://packages.microsoft.com/repos/edge stable main"
+        sudo apt update
+        sudo apt install -y microsoft-edge-stable=138.0.3351.109-1
+        microsoft-edge --version
+        EDGE_PATH=$(which microsoft-edge)
+        echo "edge-path=$EDGE_PATH" >> $GITHUB_OUTPUT
     - name: Test
+      with:
+        EDGE_PATH: ${{ steps.install-edge.outputs.edge-path }}
       run: |
         npx puppeteer browsers install
         php -S 0.0.0.0:8899 -t $GITHUB_WORKSPACE/tests/simple-server &
