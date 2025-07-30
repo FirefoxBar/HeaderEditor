@@ -90,7 +90,7 @@ async function createBrowser(browserKey, pathToExtension) {
 
     return puppeteer.launch({
       executablePath,
-      headless: false,
+      // headless: false,
       args: [
         `--disable-extensions-except=${pathToExtension}`,
         `--load-extension=${pathToExtension}`,
