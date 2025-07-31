@@ -2,7 +2,7 @@ import { dirname, join } from 'path';
 import { fileURLToPath } from 'url';
 import extension from '../extension.json' with { type: 'json' };
 import { getDistDir, getOutputFile } from './browser-config/get-path.js';
-import { readJSON } from './utils';
+import { readJSON } from './utils.mjs';
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = dirname(__filename);

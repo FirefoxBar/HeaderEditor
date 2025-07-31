@@ -11,7 +11,7 @@ import {
   getVersion,
   scriptRoot,
 } from './config.mjs';
-import { readJSON } from './utils';
+import { readJSON } from './utils.mjs';
 
 function hash(content) {
   const fsHash = createHash('sha256');

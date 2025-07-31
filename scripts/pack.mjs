@@ -27,7 +27,7 @@ import crx from './pack-utils/crx.mjs';
 import cws from './pack-utils/cws.mjs';
 import edge from './pack-utils/edge.mjs';
 import xpi from './pack-utils/xpi.mjs';
-import { outputJSON, readJSON } from './utils';
+import { outputJSON, readJSON } from './utils.mjs';
 import { createZip } from './zip.mjs';
 
 const packUtils = {
