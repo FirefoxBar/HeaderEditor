@@ -23,25 +23,31 @@ async function packCrx(
   zipPath,
   releasePath,
   browserConfig,
-  itemConfig,
+  extensionConfig,
 ) {
   const fileContent = await readFile(zipPath);
-  if (typeof process.env[itemConfig.priv_key] === 'undefined') {
-    throw new Error(`${itemConfig.priv_key} not found`);
+  if (typeof process.env[extensionConfig.priv_key] === 'undefined') {
+    throw new Error(`${extensionConfig.priv_key} not found`);
   }
   const content = await createCrx(
     fileContent,
-    process.env[itemConfig.priv_key],
+    process.env[extensionConfig.priv_key],
   );
   const fileName = getOutputFile(
-    itemConfig.browser,
+    extensionConfig.browser,
     await getVersion(sourcePath),
     'crx',
   );
   const out = join(releasePath, fileName);
   await writeFile(out, content);
-  const idFile = join(releasePath, `${fileName}-id.txt`);
-  await writeFile(idFile, itemConfig.id);
+
+  const infoFile = join(releasePath, `${fileName}-config.json`);
+  await outputJSON(infoFile, {
+    id: extensionConfig.id,
+    browser: browserConfig,
+    extension: extensionConfig,
+  });
+
   return out;
 }
 

@@ -1,6 +1,6 @@
 import axios from 'axios';
-import { readFile } from 'fs/promises';
 import { Blob } from 'buffer';
+import { readFile } from 'fs/promises';
 
 const webStoreId = process.env.CWS_CLIENT_ID;
 const webStoreToken = process.env.CWS_TOKEN;
@@ -17,11 +17,15 @@ async function getToken() {
     refresh_token: webStoreToken,
     grant_type: 'refresh_token',
   });
-  const resp = await axios.post('https://www.googleapis.com/oauth2/v4/token', post.toString(), {
-    headers: {
-      'Content-Type': 'application/x-www-form-urlencoded',
+  const resp = await axios.post(
+    'https://www.googleapis.com/oauth2/v4/token',
+    post.toString(),
+    {
+      headers: {
+        'Content-Type': 'application/x-www-form-urlencoded',
+      },
     },
-  });
+  );
   const res = resp.data;
   if (res.access_token) {
     _webStoreToken = res.access_token;
@@ -33,12 +37,16 @@ async function getToken() {
 
 async function upload(id, content, token) {
   const blob = new Blob(content);
-  const res = await axios.put(`https://www.googleapis.com/upload/chromewebstore/v1.1/items/${id}`, blob, {
-    headers: {
-      Authorization: `Bearer ${token}`,
-      'x-goog-api-version': '2',
+  const res = await axios.put(
+    `https://www.googleapis.com/upload/chromewebstore/v1.1/items/${id}`,
+    blob,
+    {
+      headers: {
+        Authorization: `Bearer ${token}`,
+        'x-goog-api-version': '2',
+      },
     },
-  });
+  );
 
   return res.data;
 }
@@ -55,7 +63,13 @@ async function publish(id, target = 'default', token) {
   return res.data;
 }
 
-async function packCws(sourcePath, zipPath, releasePath, browserConfig, itemConfig) {
+async function packCws(
+  sourcePath,
+  zipPath,
+  releasePath,
+  browserConfig,
+  extensionConfig,
+) {
   if (!process.env.CWS_CLIENT_ID) {
     return Promise.reject(new Error('CWS_CLIENT_ID not found'));
   }
@@ -68,7 +82,7 @@ async function packCws(sourcePath, zipPath, releasePath, browserConfig, itemConf
 
   const distContent = await readFile(zipPath);
   const token = await getToken();
-  const id = itemConfig.id;
+  const id = extensionConfig.id;
   await upload(id, distContent, token);
   return publish(id, 'default', token);
 }

@@ -11,7 +11,6 @@
 
 import cpr from 'cpr';
 import { mkdir, unlink } from 'fs/promises';
-import { outputJSON, readJSON } from 'fs-extra/esm';
 import { join } from 'path';
 import { rimraf } from 'rimraf';
 import getManifest from './browser-config/get-manifest.js';
@@ -28,6 +27,7 @@ import crx from './pack-utils/crx.mjs';
 import cws from './pack-utils/cws.mjs';
 import edge from './pack-utils/edge.mjs';
 import xpi from './pack-utils/xpi.mjs';
+import { outputJSON, readJSON } from './utils';
 import { createZip } from './zip.mjs';
 
 const packUtils = {
@@ -59,22 +59,29 @@ function copyDir(source, target) {
   });
 }
 
-async function packOnePlatform(name, browserConfig, itemConfig) {
+/**
+ * 打包一个平台的产物
+ * @param {*} name
+ * @param {*} browserConfig 对应browser.config.json中的配置
+ * @param {*} extensionConfig 对应extension.json中的配置
+ * @returns
+ */
+async function packOnePlatform(name, browserConfig, extensionConfig) {
   if (typeof packUtils[name] === 'undefined') {
     console.error(`pack-utils for ${name} not found`);
     return;
   }
-  const dirName = [name, itemConfig.browser].join('_');
+  const dirName = [name, extensionConfig.browser].join('_');
   const thisPack = _join(_path.pack, dirName);
   const zipPath = _join(_path.pack, `${dirName}.zip`);
   try {
     // 复制一份到dist下面
-    await copyDir(getDistPath(itemConfig.browser), thisPack);
+    await copyDir(getDistPath(extensionConfig.browser), thisPack);
     // 重新生成manifest
     const version = await getVersion(thisPack);
     await outputJSON(
       _join(thisPack, 'manifest.json'),
-      getManifest(itemConfig.browser, {
+      getManifest(extensionConfig.browser, {
         dev: false,
         version,
         amo: name === 'amo',
@@ -91,7 +98,7 @@ async function packOnePlatform(name, browserConfig, itemConfig) {
       zipPath,
       _path.release,
       browserConfig,
-      itemConfig,
+      extensionConfig,
     );
     console.log(`${name}: ${res}`);
     await unlink(zipPath);
