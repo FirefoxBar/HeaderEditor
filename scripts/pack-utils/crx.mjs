@@ -1,6 +1,7 @@
 import ChromeExtension from 'crx';
 import { readFile, writeFile } from 'fs/promises';
 import { getOutputFile, getVersion, join } from '../config.mjs';
+import { outputJSON } from '../utils.mjs';
 
 async function createCrx(fileContent, keyContent) {
   if (!keyContent) {
