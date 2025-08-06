@@ -1,9 +1,10 @@
 import { Input, useFormState } from '@douyinfe/semi-ui';
 import { useDebounceEffect } from 'ahooks';
+import { RE2JS } from 're2js';
 import React, { useRef, useState } from 'react';
 import { IS_MATCH } from '@/share/core/constant';
-import { initRule, isMatchUrl } from '@/share/core/rule-utils';
-import { InitdRule } from '@/share/core/types';
+import { detectRunner, initRule, isMatchUrl } from '@/share/core/rule-utils';
+import type { InitdRule } from '@/share/core/types';
 import { t } from '@/share/core/utils';
 import { getRuleFromInput } from '../utils';
 
@@ -22,8 +23,16 @@ const Test = () => {
       }
 
       if (lastValue.current !== values || !rule.current) {
+        const ruleContent = getRuleFromInput(values);
         try {
-          rule.current = initRule(getRuleFromInput(values), true);
+          if (
+            detectRunner(ruleContent) === 'dnr' &&
+            ruleContent.condition?.regex
+          ) {
+            // check re2 syntax
+            RE2JS.compile(ruleContent.condition.regex);
+          }
+          rule.current = initRule(ruleContent, true);
         } catch (e) {
           // 出错
           setResult(e.message);

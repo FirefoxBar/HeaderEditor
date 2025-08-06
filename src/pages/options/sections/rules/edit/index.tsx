@@ -3,9 +3,11 @@ import { Button, Form, SideSheet, Toast, Typography } from '@douyinfe/semi-ui';
 import type { FormApi } from '@douyinfe/semi-ui/lib/es/form';
 import { css } from '@emotion/css';
 import { useRequest } from 'ahooks';
+import { RE2JS } from 're2js';
 import React, { useEffect, useMemo, useRef } from 'react';
 import { RULE_TYPE } from '@/share/core/constant';
 import { prefs } from '@/share/core/prefs';
+import { detectRunner } from '@/share/core/rule-utils';
 import type { Rule } from '@/share/core/types';
 import { t } from '@/share/core/utils';
 import Api from '@/share/pages/api';
@@ -38,17 +40,18 @@ const Edit = ({ visible, rule: ruleProp, onClose }: EditProps) => {
   const { run: doSubmit, loading } = useRequest(
     async () => {
       if (!formApi.current) {
-        return;
+        throw new Error('No form api');
       }
       const rule = getRuleFromInput(formApi.current.getValues());
       // 常规检查
       if (!rule.name) {
-        Toast.error(t('name_empty'));
-        return;
+        throw new Error(t('name_empty'));
       }
       if (!rule.condition) {
-        Toast.error(t('match_rule_empty'));
-        return;
+        throw new Error(t('match_rule_empty'));
+      }
+      if (rule.condition.regex && detectRunner(rule) === 'dnr') {
+        RE2JS.compile(rule.condition.regex);
       }
       if (
         [
@@ -61,20 +64,17 @@ const Edit = ({ visible, rule: ruleProp, onClose }: EditProps) => {
           'resourceTypes',
         ].every(x => typeof rule.condition![x] === 'undefined')
       ) {
-        Toast.error(t('match_rule_empty'));
-        return;
+        throw new Error(t('match_rule_empty'));
       }
       if (rule.ruleType !== RULE_TYPE.MODIFY_RECV_BODY && !rule.encoding) {
         rule.encoding = 'UTF-8';
       }
 
       if (rule.isFunction && rule.code === '') {
-        Toast.error(t('code_empty'));
-        return;
+        throw new Error(t('code_empty'));
       }
       if (rule.ruleType === 'redirect' && (!rule.to || rule.to === '')) {
-        Toast.error(t('redirect_empty'));
-        return;
+        throw new Error(t('redirect_empty'));
       }
       if (
         rule.ruleType === 'modifySendHeader' ||
@@ -84,8 +84,7 @@ const Edit = ({ visible, rule: ruleProp, onClose }: EditProps) => {
           Boolean(k),
         );
         if (validateValue.length === 0) {
-          Toast.error(t('header_empty'));
-          return;
+          throw new Error(t('header_empty'));
         }
       }
 
@@ -102,6 +101,7 @@ const Edit = ({ visible, rule: ruleProp, onClose }: EditProps) => {
     {
       manual: true,
       onSuccess: () => onClose(),
+      onError: e => Toast.error(e.message),
     },
   );
 
