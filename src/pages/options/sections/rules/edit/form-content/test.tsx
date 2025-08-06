@@ -25,10 +25,7 @@ const Test = () => {
       if (lastValue.current !== values || !rule.current) {
         const ruleContent = getRuleFromInput(values);
         try {
-          if (
-            detectRunner(ruleContent) === 'dnr' &&
-            ruleContent.condition?.regex
-          ) {
+          if (ruleContent.condition?.regex) {
             // check re2 syntax
             RE2JS.compile(ruleContent.condition.regex);
           }

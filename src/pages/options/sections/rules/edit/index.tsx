@@ -50,7 +50,7 @@ const Edit = ({ visible, rule: ruleProp, onClose }: EditProps) => {
       if (!rule.condition) {
         throw new Error(t('match_rule_empty'));
       }
-      if (rule.condition.regex && detectRunner(rule) === 'dnr') {
+      if (rule.condition.regex) {
         RE2JS.compile(rule.condition.regex);
       }
       if (
