@@ -3,7 +3,12 @@ import { createDNRHandler } from './request-handler/dnr-handler';
 import { createWebRequestHandler } from './request-handler/web-request-handler';
 import './upgrade';
 
+let initd = false;
 function init() {
+  if (initd) {
+    return;
+  }
+  initd = true;
   if (IS_DEV) {
     console.log('init:', ENABLE_WEB_REQUEST, ENABLE_DNR);
   }

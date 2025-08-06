@@ -56,8 +56,8 @@ export const pluginManifest = (): RsbuildPlugin => ({
       const isDev = process.env.NODE_ENV === 'development';
       manifest = getManifest(targetBrowser, {
         dev: isDev,
+        version: versionText,
       });
-      manifest.version = versionText;
       // manifest v3 环境不要添加 CSP
       if (isDev && manifest.manifest_version !== 3) {
         manifest['content_security_policy'] =
