@@ -1,6 +1,4 @@
-import { getBMS } from '../utils.mjs';
-
-const { submitEdge } = getBMS();
+import { EdgeAddonsAPI } from '@plasmohq/edge-addons-api';
 
 export default function ({ zipPath, extensionConfig }) {
   if (!process.env.MS_CLIENT_ID) {
@@ -13,12 +11,14 @@ export default function ({ zipPath, extensionConfig }) {
     return Promise.reject(new Error('MS_ACCESS_TOKEN_URL not found'));
   }
 
-  return submitEdge({
+  const client = new EdgeAddonsAPI({
     productId: extensionConfig.product_id,
     clientId: process.env.MS_CLIENT_ID,
     apiKey: process.env.MS_API_KEY,
-    zip: zipPath,
+  });
+
+  return client.submit({
+    filePath: zipPath,
     notes: 'release',
-    verbose: true,
   });
 }

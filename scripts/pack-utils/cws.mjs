@@ -1,6 +1,4 @@
-import { getBMS } from '../utils.mjs';
-
-const { submitChrome } = getBMS();
+import { ChromeWebstoreAPI } from '@plasmohq/chrome-webstore-api';
 
 async function packCws({ zipPath, extensionConfig }) {
   if (!process.env.CWS_CLIENT_ID) {
@@ -15,13 +13,15 @@ async function packCws({ zipPath, extensionConfig }) {
 
   const id = extensionConfig.id;
 
-  return submitChrome({
+  const client = new ChromeWebstoreAPI({
     extId: id,
     refreshToken: process.env.CWS_TOKEN,
     clientId: process.env.CWS_CLIENT_ID,
     clientSecret: process.env.CWS_CLIENT_SECRET,
-    zip: zipPath,
-    verbose: false,
+  });
+
+  return client.submit({
+    filePath: zipPath,
   });
 }
 
