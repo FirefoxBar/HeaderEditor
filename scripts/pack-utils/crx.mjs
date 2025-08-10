@@ -19,13 +19,13 @@ async function createCrx(fileContent, keyContent) {
   return crxBuffer;
 }
 
-async function packCrx(
+async function packCrx({
   sourcePath,
   zipPath,
   releasePath,
   browserConfig,
   extensionConfig,
-) {
+}) {
   const fileContent = await readFile(zipPath);
   if (typeof process.env[extensionConfig.priv_key] === 'undefined') {
     throw new Error(`${extensionConfig.priv_key} not found`);

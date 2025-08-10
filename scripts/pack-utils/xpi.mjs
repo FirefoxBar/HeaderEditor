@@ -3,13 +3,13 @@ import { signAddon } from 'sign-addon';
 import { getOutputFile, getVersion, join } from '../config.mjs';
 import { outputJSON } from '../utils.mjs';
 
-async function packXpi(
+async function packXpi({
   sourcePath,
   zipPath,
   releasePath,
   browserConfig,
   extensionConfig,
-) {
+}) {
   if (!process.env.AMO_KEY) {
     return Promise.reject(new Error('AMO_KEY not found'));
   }

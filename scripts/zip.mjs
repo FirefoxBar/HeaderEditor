@@ -1,6 +1,5 @@
 import { execFile } from 'child_process';
 import fs from 'fs/promises';
-import os from 'os';
 import path from 'path';
 
 function quotePath(p) {

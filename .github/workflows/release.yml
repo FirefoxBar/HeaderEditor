@@ -64,10 +64,8 @@ jobs:
         CWS_CLIENT_ID: ${{ secrets.CWS_CLIENT_ID }}
         CWS_CLIENT_SECRET: ${{ secrets.CWS_CLIENT_SECRET }}
         CWS_TOKEN: ${{ secrets.CWS_TOKEN }}
-        MS_ACCESS_TOKEN_URL: ${{ secrets.MS_ACCESS_TOKEN_URL }}
         MS_CLIENT_ID: ${{ secrets.MS_CLIENT_ID }}
-        MS_CLIENT_SECRET: ${{ secrets.MS_CLIENT_SECRET }}
-        MS_PRODUCT_ID: ${{ secrets.MS_PRODUCT_ID }}
+        MS_API_KEY: ${{ secrets.MS_API_KEY }}
       run: npm run pack
     - name: Upload release
       uses: actions/upload-artifact@v4

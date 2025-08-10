@@ -1,13 +1,7 @@
 import { signAddon } from 'sign-addon';
 import { getVersion } from '../config.mjs';
 
-export default async function (
-  sourcePath,
-  zipPath,
-  releasePath,
-  browserConfig,
-  extensionConfig,
-) {
+export default async function ({ sourcePath, zipPath, extensionConfig }) {
   if (!process.env.AMO_KEY) {
     return Promise.reject(new Error('AMO_KEY not found'));
   }

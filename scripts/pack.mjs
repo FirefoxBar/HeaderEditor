@@ -93,13 +93,13 @@ async function packOnePlatform(name, browserConfig, extensionConfig) {
     await createZip(thisPack, zipPath);
     // 执行上传等操作
     console.log(`running ${name} pack...`);
-    const res = await packUtils[name](
-      thisPack,
+    const res = await packUtils[name]({
+      sourcePath: thisPack,
       zipPath,
-      _path.release,
+      releasePath: _path.release,
       browserConfig,
       extensionConfig,
-    );
+    });
     console.log(`${name}: ${res}`);
     await unlink(zipPath);
   } catch (e) {

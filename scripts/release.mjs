@@ -3,7 +3,7 @@ import { Blob } from 'buffer';
 import { createHash } from 'crypto';
 import { access, constants, readdir, readFile } from 'fs/promises';
 import { get } from 'lodash';
-import { dirname, join } from 'path';
+import { join } from 'path';
 import {
   path as _path,
   extension,
