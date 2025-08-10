@@ -70,7 +70,6 @@
     "rimraf": "^6.0.1",
     "sign-addon": "^6.0.0",
     "simple-git-hooks": "^2.13.0",
-    "stylelint": "^13.7.2",
     "typescript": "^5.7.3",
     "web-ext": "^8.6.0"
   },

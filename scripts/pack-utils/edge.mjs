@@ -1,4 +1,6 @@
-import { submitEdge } from '@plasmohq/bms';
+import { getBMS } from '../utils.mjs';
+
+const { submitEdge } = getBMS();
 
 export default function ({ zipPath, extensionConfig }) {
   if (!process.env.MS_CLIENT_ID) {

@@ -1,4 +1,6 @@
-import { submitChrome } from '@plasmohq/bms';
+import { getBMS } from '../utils.mjs';
+
+const { submitChrome } = getBMS();
 
 async function packCws({ zipPath, extensionConfig }) {
   if (!process.env.CWS_CLIENT_ID) {

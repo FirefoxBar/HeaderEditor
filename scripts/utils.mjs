@@ -1,4 +1,5 @@
 import fs from 'fs/promises';
+import { createRequire } from 'module';
 import path from 'path';
 
 /**
@@ -29,4 +30,9 @@ export async function outputJSON(file, data, options = {}) {
 
   // Write the file
   await fs.writeFile(file, jsonData, options.encoding || 'utf8');
+}
+
+export function getBMS() {
+  const require = createRequire(import.meta.url);
+  return require('@plasmohq/bms');
 }
