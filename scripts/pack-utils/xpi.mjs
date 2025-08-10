@@ -36,13 +36,13 @@ async function packXpi({
     throw new Error('No signed addon found');
   }
   console.log(`Downloaded signed addon: ${res.join(', ')}`);
-  const fileName = getOutputFile(itemConfig.browser, version, 'xpi');
+  const fileName = getOutputFile(extensionConfig.browser, version, 'xpi');
   const out = join(releasePath, fileName);
   // Move download file to output dir
   await rename(res[0], out);
   const infoFile = join(releasePath, `${fileName}-config.json`);
   await outputJSON(infoFile, {
-    id: itemConfig.id,
+    id: extensionConfig.id,
     browser: browserConfig,
     extension: extensionConfig,
   });
