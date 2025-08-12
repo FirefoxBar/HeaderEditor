@@ -1,10 +1,12 @@
 import browser from 'webextension-polyfill';
-import * as storage from '@/share/core/storage';
-import { TABLE_NAMES_ARR } from '@/share/core/constant';
+import { type TABLE_NAMES, TABLE_NAMES_ARR } from '@/share/core/constant';
 import notify from '@/share/core/notify';
+import * as storage from '@/share/core/storage';
+import type { RULE_ACTION_OBJ } from '@/share/core/types';
+import { getVirtualKey, isValidArray } from '@/share/core/utils';
 import { getDatabase } from './core/db';
+import { getAll, save, updateCache, waitLoad } from './core/rules';
 
-// Upgrade
 async function doUpgrade() {
   if (typeof localStorage !== 'undefined') {
     const downloadHistory = localStorage.getItem('dl_history');
@@ -16,14 +18,14 @@ async function doUpgrade() {
 
   // Put a version mark
   const currentVersionMark: any = await storage.getLocal().get('version_mark');
-  const version = currentVersionMark.version_mark ? parseInt(currentVersionMark.version_mark, 10) : 0;
-  if (!(version >= 1)) {
-    storage.getLocal().set({
-      version_mark: 1,
-    });
-    // Upgrade group
-    const rebindRuleWithGroup = (group) => {
-      return new Promise((resolve) => {
+  let version = Number(currentVersionMark.version_mark);
+  if (Number.isNaN(version)) {
+    version = 0;
+  }
+  if (version < 1) {
+    // Upgrade groups
+    const rebindRuleWithGroup = group => {
+      return new Promise(resolve => {
         const cacheQueue: Array<Promise<void>> = [];
         function findGroup(type, id) {
           let result = browser.i18n.getMessage('ungrouped');
@@ -35,11 +37,11 @@ async function doUpgrade() {
           }
           return result;
         }
-        TABLE_NAMES_ARR.forEach((k) => {
-          getDatabase().then((db) => {
+        TABLE_NAMES_ARR.forEach(k => {
+          getDatabase().then(db => {
             const tx = db.transaction([k], 'readwrite');
             const os = tx.objectStore(k);
-            os.openCursor().onsuccess = (e) => {
+            os.openCursor().onsuccess = e => {
               if (!e.target) {
                 return;
               }
@@ -53,7 +55,9 @@ async function doUpgrade() {
                 }
                 cursor.continue();
               } else {
-                cacheQueue.push(notify.other({ method: 'updateCache', type: k }));
+                cacheQueue.push(
+                  notify.other({ method: 'updateCache', type: k }),
+                );
               }
             };
           });
@@ -67,33 +71,70 @@ async function doUpgrade() {
       if (groups) {
         const g = JSON.parse(groups);
         localStorage.removeItem('groups');
-        rebindRuleWithGroup(g);
+        await rebindRuleWithGroup(g);
       } else {
-        storage
-          .getLocal()
-          .get('groups')
-          .then((r) => {
-            if (r.groups !== undefined) {
-              rebindRuleWithGroup(r.groups).then(() => storage.getLocal().remove('groups'));
-            } else {
-              const g = {};
-              g[browser.i18n.getMessage('ungrouped')] = [];
-              rebindRuleWithGroup(g);
-            }
-          });
+        const r = await storage.getLocal().get('groups');
+        if (r.groups !== undefined) {
+          await rebindRuleWithGroup(r.groups);
+          await storage.getLocal().remove('groups');
+        } else {
+          const g = {};
+          g[browser.i18n.getMessage('ungrouped')] = [];
+          await rebindRuleWithGroup(g);
+        }
       }
     }
   }
+
+  if (version < 2) {
+    await waitLoad();
+    const all = getAll();
+    const queue: Array<Promise<any>> = [];
+    const tableToUpdate: TABLE_NAMES[] = [];
+    const local = storage.getLocal();
+    TABLE_NAMES_ARR.forEach(table => {
+      const rules = all[table];
+      rules?.forEach(r => {
+        if (typeof r.action === 'object') {
+          const { name } = r.action as RULE_ACTION_OBJ;
+          const storageKey = `rule_switch_${getVirtualKey(r)}`;
+          local
+            .get(storageKey)
+            .then(res => res[storageKey])
+            .then(res => {
+              if (!isValidArray<string>(res)) {
+                return;
+              }
+              local.set({
+                [storageKey]: res.map(x =>
+                  typeof x === 'string' ? { [name]: x } : x,
+                ),
+              });
+            });
+        }
+        if (!r.condition) {
+          // call save will auto call "upgradeRuleFormat"
+          queue.push(save(r));
+          if (!tableToUpdate.includes(table)) {
+            tableToUpdate.push(table);
+          }
+        }
+      });
+    });
+    await Promise.all(queue);
+    await Promise.all(tableToUpdate.map(table => updateCache(table)));
+  }
+
+  if (version !== 2) {
+    await storage.getLocal().set({
+      version_mark: 2,
+    });
+  }
 }
 
-if (MANIFEST_VER === 'v3') {
-  browser.runtime.onInstalled.addListener((details) => {
-    if (IS_DEV) {
-      console.log('chrome onInstalled', details);
-    }
-    if (details.reason !== 'install' && details.reason !== 'update') {
-      return;
-    }
+// is chromium-like browser in v3 mode
+if (MANIFEST_VER === 'v3' && typeof window === 'undefined') {
+  browser.runtime.onInstalled.addListener(() => {
     doUpgrade();
   });
 } else {

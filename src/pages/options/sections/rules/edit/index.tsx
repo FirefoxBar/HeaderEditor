@@ -1,19 +1,18 @@
-import { IconExternalOpen, IconSave } from '@douyinfe/semi-icons';
-import { Banner, Button, Form, Input, SideSheet, Space, Toast, Typography } from '@douyinfe/semi-ui';
-import { FormApi } from '@douyinfe/semi-ui/lib/es/form';
+import { IconSave } from '@douyinfe/semi-icons';
+import { Button, Form, SideSheet, Toast, Typography } from '@douyinfe/semi-ui';
+import type { FormApi } from '@douyinfe/semi-ui/lib/es/form';
 import { css } from '@emotion/css';
-import * as React from 'react';
-import { BoolRadioGroupField } from '@/pages/options/components/bool-radio';
-import { IS_MATCH, RULE_MATCH_TYPE, RULE_TYPE } from '@/share/core/constant';
+import { useRequest } from 'ahooks';
+import { RE2JS } from 're2js';
+import React, { useEffect, useMemo, useRef } from 'react';
+import { RULE_TYPE } from '@/share/core/constant';
 import { prefs } from '@/share/core/prefs';
-import { initRule, isMatchUrl } from '@/share/core/rule-utils';
-import type { InitdRule, Rule } from '@/share/core/types';
-import { IS_SUPPORT_STREAM_FILTER, t } from '@/share/core/utils';
+import { detectRunner } from '@/share/core/rule-utils';
+import type { Rule } from '@/share/core/types';
+import { t } from '@/share/core/utils';
 import Api from '@/share/pages/api';
-import { AutoCompleteField } from './auto-complete';
-import { CodeEditorField } from './code-editor';
-import ENCODING_LIST from './encoding';
-import COMMON_HEADERS from './headers';
+import FormContent from './form-content';
+import { EMPTY_RULE, getInput, getRuleFromInput } from './utils';
 
 const { Text } = Typography;
 
@@ -23,356 +22,163 @@ interface EditProps {
   onClose: () => void;
 }
 
-interface EditState {
-  rule: Rule;
-  testUrl: string;
-  testResult: string;
-}
+const Edit = ({ visible, rule: ruleProp, onClose }: EditProps) => {
+  const formApi = useRef<FormApi>();
 
-const EMPTY_RULE: Rule = {
-  id: -1,
-  enable: true,
-  group: t('ungrouped'),
-  name: '',
-  ruleType: RULE_TYPE.CANCEL,
-  matchType: RULE_MATCH_TYPE.ALL,
-  pattern: '',
-  exclude: '',
-  isFunction: false,
-  code: '',
-  action: 'cancel',
-};
+  const isEdit = Boolean(ruleProp);
 
-function getInput(rule: Rule) {
-  const res = { ...rule };
-  if (
-    typeof res.action === 'object' &&
-    (res.ruleType === 'modifySendHeader' || res.ruleType === 'modifyReceiveHeader')
-  ) {
-    res.headerName = res.action.name;
-    res.headerValue = res.action.value;
-  }
-  return res;
-}
+  const initInput = useMemo(() => {
+    const rule = ruleProp || EMPTY_RULE;
+    return getInput(rule);
+  }, [ruleProp]);
 
-function getRuleFromInput(input: Rule): Rule {
-  const res = { ...input };
-  if (res.ruleType === 'modifySendHeader' || res.ruleType === 'modifyReceiveHeader') {
-    res.action = {
-      name: res.headerName,
-      value: res.headerValue,
-    };
-    delete res.headerName;
-    delete res.headerValue;
-  }
-  return res;
-}
+  useEffect(() => {
+    formApi.current?.reset();
+    formApi.current?.setValues(initInput);
+  }, [initInput]);
 
-export default class Edit extends React.Component<EditProps, EditState> {
-  private initedRule?: InitdRule;
-  private formApi: FormApi | null = null;
-  constructor(props: any) {
-    super(props);
+  const { run: doSubmit, loading } = useRequest(
+    async () => {
+      if (!formApi.current) {
+        throw new Error('No form api');
+      }
+      const rule = getRuleFromInput(formApi.current.getValues());
+      // 常规检查
+      if (!rule.name) {
+        throw new Error(t('name_empty'));
+      }
+      if (!rule.condition) {
+        throw new Error(t('match_rule_empty'));
+      }
+      if (rule.condition.regex) {
+        RE2JS.compile(rule.condition.regex);
+      }
+      if (
+        [
+          'all',
+          'url',
+          'urlPrefix',
+          'method',
+          'domain',
+          'regex',
+          'resourceTypes',
+        ].every(x => typeof rule.condition![x] === 'undefined')
+      ) {
+        throw new Error(t('match_rule_empty'));
+      }
+      if (rule.ruleType !== RULE_TYPE.MODIFY_RECV_BODY && !rule.encoding) {
+        rule.encoding = 'UTF-8';
+      }
 
-    this.handleChange = this.handleChange.bind(this);
-    this.handleSubmit = this.handleSubmit.bind(this);
-    this.handleTestChange = this.handleTestChange.bind(this);
-
-    this.state = {
-      rule: getInput(EMPTY_RULE),
-      testUrl: '',
-      testResult: '',
-    };
-  }
-
-  get isEdit() {
-    return !!this.props.rule;
-  }
-
-  handleChange(_: any, item: any) {
-    // console.log('handleChange', item);
-    this.setState(
-      (prevState) => {
-        const rule = { ...prevState.rule };
-        Object.keys(item).forEach((k) => {
-          rule[k] = item[k];
-        });
-        if (item.name === 'ruleType' && item.value === 'modifyReceiveBody') {
-          rule.isFunction = true;
-        }
-
-        return { rule };
-      },
-      () => {
-        this.getTestResult(true);
-      },
-    );
-  }
-
-  handleTestChange(value: string) {
-    this.setState(
-      {
-        testUrl: value,
-      },
-      () => {
-        this.getTestResult();
-      },
-    );
-  }
-
-  getTestResult(reInit = false) {
-    if (this.state.testUrl !== '') {
-      // 初始化
-      if (reInit || !this.initedRule) {
-        try {
-          this.initedRule = initRule(this.state.rule, true);
-        } catch (e) {
-          // 出错
-          this.setState({
-            testUrl: e.message,
-          });
+      if (rule.isFunction && rule.code === '') {
+        throw new Error(t('code_empty'));
+      }
+      if (rule.ruleType === 'redirect' && (!rule.to || rule.to === '')) {
+        throw new Error(t('redirect_empty'));
+      }
+      if (
+        rule.ruleType === 'modifySendHeader' ||
+        rule.ruleType === 'modifyReceiveHeader'
+      ) {
+        const validateValue = Object.entries(rule.headers || {}).filter(([k]) =>
+          Boolean(k),
+        );
+        if (validateValue.length === 0) {
+          throw new Error(t('header_empty'));
         }
       }
-      // 运行
-      if (this.initedRule) {
-        const match = isMatchUrl(this.initedRule, this.state.testUrl);
-        const resultText: { [x: number]: string } = {
-          [IS_MATCH.NOT_MATCH]: t('test_mismatch'),
-          [IS_MATCH.MATCH_BUT_EXCLUDE]: t('test_exclude'),
-        };
-        if (typeof resultText[match] !== 'undefined') {
-          this.setState({
-            testResult: resultText[match],
-          });
-          return;
+
+      // 检查是否有开启
+      if (rule.ruleType === RULE_TYPE.MODIFY_RECV_BODY) {
+        if (!prefs.get('modify-body')) {
+          prefs.set('modify-body', true);
+          Toast.info(t('auto-enable-modify-body'));
         }
-        // 匹配通过，实际运行
-        if (this.initedRule.isFunction) {
-          this.setState({
-            testResult: t('test_custom_code'),
-          });
-          return;
-        }
-        // 只有重定向支持测试详细功能，其他只返回匹配
-        if (this.initedRule.ruleType === 'redirect' && this.initedRule.to) {
-          let redirect = '';
-          if (this.initedRule.matchType === 'regexp') {
-            redirect = this.state.testUrl.replace(this.initedRule._reg, this.initedRule.to);
-          } else {
-            redirect = this.initedRule.to;
+      }
+
+      return Api.saveRule(rule);
+    },
+    {
+      manual: true,
+      onSuccess: () => onClose(),
+      onError: e => Toast.error(e.message),
+    },
+  );
+
+  return (
+    <SideSheet
+      placement="right"
+      visible={visible}
+      onCancel={onClose}
+      title={isEdit ? t('edit') : t('add')}
+      keepDOM={false}
+      width="100vw"
+      className={css`
+        .semi-sidesheet-inner {
+          width: 100vw;
+          max-width: 800px;
+
+          .semi-collapse {
+            .semi-collapse-header {
+              margin-left: 0;
+              margin-right: 0;
+            }
+            .semi-collapse-content {
+              padding-left: 0;
+              padding-right: 0;
+            }
           }
-          if (/^(http|https|ftp|file)%3A/.test(redirect)) {
-            redirect = decodeURIComponent(redirect);
-          }
-          this.setState({
-            testResult: redirect,
-          });
-        } else {
-          this.setState({
-            testResult: 'Matched',
-          });
-        }
-      }
-    }
-  }
 
-  componentDidUpdate(prevProps: EditProps) {
-    if (this.props.visible !== prevProps.visible) {
-      this.setState({
-        testUrl: '',
-        testResult: '',
-      });
-      if (!this.props.visible) {
-        this.formApi = null;
-      }
-    }
-    if (this.props.rule !== prevProps.rule) {
-      const newRule = getInput(this.props.rule ? this.props.rule : EMPTY_RULE);
-      this.setState(
-        {
-          rule: newRule,
-        },
-        () => {
-          this.formApi?.reset();
-          this.formApi?.setValues(newRule);
-        },
-      );
-    }
-  }
-
-  async handleSubmit() {
-    const rule = getRuleFromInput(this.state.rule);
-    // 常规检查
-    if (rule.name === '') {
-      Toast.error(t('name_empty'));
-      return;
-    }
-    if (rule.matchType !== 'all' && rule.matchRule === '') {
-      Toast.error(t('match_rule_empty'));
-      return;
-    }
-    if (rule.ruleType !== 'modifyReceiveBody' && !rule.encoding) {
-      rule.encoding = 'UTF-8';
-    }
-
-    if (rule.isFunction && rule.code === '') {
-      Toast.error(t('code_empty'));
-      return;
-    }
-    if (rule.ruleType === 'redirect' && (!rule.to || rule.to === '')) {
-      Toast.error(t('redirect_empty'));
-      return;
-    }
-    if (
-      (rule.ruleType === 'modifySendHeader' || rule.ruleType === 'modifyReceiveHeader') &&
-      (typeof rule.action !== 'object' || rule.action.name === '')
-    ) {
-      Toast.error(t('header_empty'));
-      return;
-    }
-
-    // 检查是否有开启
-    if (rule.ruleType === RULE_TYPE.MODIFY_RECV_BODY) {
-      if (!prefs.get('modify-body')) {
-        prefs.set('modify-body', true);
-        Toast.info(t('auto-enable-modify-body'));
-      }
-    }
-
-    await Api.saveRule(rule);
-    this.props.onClose();
-  }
-
-  render() {
-    const isHeaderSend = this.state.rule.ruleType === 'modifySendHeader';
-    const isHeaderReceive = this.state.rule.ruleType === 'modifyReceiveHeader';
-    const isHeader = isHeaderSend || isHeaderReceive;
-    return (
-      <SideSheet
-        placement="right"
-        visible={this.props.visible}
-        onCancel={this.props.onClose}
-        title={this.isEdit ? t('edit') : t('add')}
-        keepDOM={false}
-        width="100vw"
-        className={css`
-          .semi-sidesheet-inner {
-            width: 100vw;
-            max-width: 800px;
-
-            .semi-form {
-              .semi-form-field-main {
-                > .semi-autocomplete,
-                > .semi-select {
-                  width: 100%;
-                }
+          .semi-form {
+            .semi-form-field-main {
+              > .semi-autocomplete,
+              > .semi-select {
+                width: 100%;
               }
             }
           }
-        `}
-        footer={
-          <div style={{ display: 'flex', justifyContent: 'flex-end' }}>
-            <Button theme="solid" onClick={this.handleSubmit} icon={<IconSave />}>
-              {t('save')}
-            </Button>
-          </div>
         }
-      >
-        {MANIFEST_VER === 'v3' && (
-          <Banner
-            type="info"
-            description={
-              <Space>
-                {t('lite_edit_tip')}{' '}
-                <Text link={{ href: t('url_help'), target: '_blank' }} style={{ lineHeight: '14px' }}>
-                  <IconExternalOpen />
-                </Text>
-              </Space>
-            }
-          />
-        )}
-        <Form
-          labelCol={{
-            fixedSpan: 6,
+      `}
+      footer={
+        <div
+          style={{
+            display: 'flex',
+            justifyContent: 'space-between',
+            gap: '8px',
+            alignItems: 'center',
           }}
-          getFormApi={(api) => (this.formApi = api)}
-          initValues={this.state.rule}
-          onValueChange={this.handleChange}
-          labelPosition="left"
-          labelAlign="right"
-          labelWidth={140}
         >
-          <Form.Input field="name" label={t('name')} />
-          <Form.Select
-            label={t('ruleType')}
-            field="ruleType"
-            disabled={this.isEdit}
-            optionList={[
-              { label: t('rule_cancel'), value: 'cancel' },
-              { label: t('rule_redirect'), value: 'redirect' },
-              { label: t('rule_modifySendHeader'), value: 'modifySendHeader' },
-              { label: t('rule_modifyReceiveHeader'), value: 'modifyReceiveHeader' },
-              { label: t('rule_modifyReceiveBody'), value: 'modifyReceiveBody', disabled: !IS_SUPPORT_STREAM_FILTER },
-            ]}
-          />
-          <Form.Select
-            label={t('matchType')}
-            field="matchType"
-            optionList={[
-              { label: t('match_all'), value: 'all' },
-              { label: t('match_regexp'), value: 'regexp' },
-              { label: t('match_prefix'), value: 'prefix' },
-              { label: t('match_domain'), value: 'domain' },
-              { label: t('match_url'), value: 'url' },
-            ]}
-          />
-          {this.state.rule.matchType !== 'all' && <Form.Input label={t('matchRule')} field="pattern" />}
-          <Form.Input
-            label={t('excludeRule')}
-            field="exclude"
-            helpText={MANIFEST_VER === 'v3' ? <Text type="tertiary">{t('lite_not_supported')}</Text> : undefined}
-          />
-          {/* Response body encoding */}
-          {this.state.rule.ruleType === 'modifyReceiveBody' && (
-            <Form.Select
-              filter
-              field="encoding"
-              label={t('encoding')}
-              optionList={ENCODING_LIST.map((x) => ({ label: x, value: x }))}
-            />
+          {MANIFEST_VER === 'v3' && (
+            <Text
+              type="tertiary"
+              link={{ href: t('url_help'), target: '_blank' }}
+            >
+              {t('lite_edit_tip')}
+            </Text>
           )}
-          {/* isFunction or not */}
-          <BoolRadioGroupField
-            label={t('exec_type')}
-            field="isFunction"
-            options={[
-              { label: t('exec_normal'), value: false },
-              { label: t('exec_function'), value: true, disabled: !ENABLE_EVAL },
-            ]}
-          />
-          {/* Redirect */}
-          {this.state.rule.ruleType === 'redirect' && !this.state.rule.isFunction && (
-            <Form.Input label={t('redirectTo')} field="to" />
-          )}
-          {/* Header modify */}
-          {isHeader && !this.state.rule.isFunction && (
-            <AutoCompleteField
-              field="headerName"
-              label={t('headerName')}
-              list={isHeaderSend ? COMMON_HEADERS.request : COMMON_HEADERS.response}
-            />
-          )}
-          {isHeader && !this.state.rule.isFunction && <Form.Input label={t('headerValue')} field="headerValue" />}
-          {/* Custom function */}
-          {this.state.rule.isFunction && <CodeEditorField field="code" label={t('code')} height="200px" />}
-          <Form.Slot label={t('test_url')}>
-            <Input value={this.state.testUrl} onChange={this.handleTestChange} />
-          </Form.Slot>
-          <Form.Slot label=" ">
-            <pre>{this.state.testResult}</pre>
-          </Form.Slot>
-        </Form>
-      </SideSheet>
-    );
-  }
-}
+          <Button
+            theme="solid"
+            onClick={doSubmit}
+            icon={<IconSave />}
+            loading={loading}
+          >
+            {t('save')}
+          </Button>
+        </div>
+      }
+    >
+      <Form
+        labelCol={{ fixedSpan: 4 }}
+        getFormApi={api => (formApi.current = api)}
+        labelPosition="left"
+        labelAlign="right"
+        labelWidth={140}
+        initValues={initInput}
+      >
+        <FormContent isEdit={isEdit} />
+      </Form>
+    </SideSheet>
+  );
+};
+
+export default Edit;

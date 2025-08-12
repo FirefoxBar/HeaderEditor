@@ -34,7 +34,8 @@ jobs:
               - 'public/**'
               - 'scripts/**'
               - 'tests/**'
-              - 'build.config.js'
+              - 'patches/**'
+              - 'rsbuild.config.ts'
               - 'pnpm-lock.yaml'
 
   build:
@@ -73,36 +74,46 @@ jobs:
       uses: actions/upload-artifact@v4
       with:
         name: dist
+        retention-days: 7
         path: |
           dist_chrome_v2
           dist_chrome_v3
           dist_firefox_v2
           dist_firefox_v3
-    - name: Upload bundle analyze
+    - name: Install Edge
+      id: install-edge
+      run: |
+        sudo apt-get remove -y microsoft-edge-stable
+        sudo wget -qO- https://packages.microsoft.com/keys/microsoft.asc | sudo gpg --dearmor -o /etc/apt/trusted.gpg.d/microsoft.gpg
+        sudo add-apt-repository "deb [arch=amd64] https://packages.microsoft.com/repos/edge stable main"
+        sudo apt-get update
+        sudo apt-get install -y microsoft-edge-stable=138.0.3351.109-1
+        microsoft-edge --version
+        EDGE_PATH=$(which microsoft-edge)
+        echo "edge-path=$EDGE_PATH" >> $GITHUB_OUTPUT
+    - name: Test
+      env:
+        EDGE_PATH: ${{ steps.install-edge.outputs.edge-path }}
+      run: |
+        npx puppeteer browsers install
+        php -S 0.0.0.0:8899 -t $GITHUB_WORKSPACE/tests/simple-server &
+        sleep 3
+        npm run test:e2e
+    - name: Publish snapshot
+      env:
+        AMO_KEY: ${{ secrets.AMO_KEY }}
+        AMO_SECRET: ${{ secrets.AMO_SECRET }}
+        CRX_PRIV_KEY: ${{ secrets.CRX_PRIV_KEY }}
+        PACK_PLATFORM: xpi,crx
+      run: npm run pack
+    - name: Upload snapshot release
       uses: actions/upload-artifact@v4
       with:
-        name: bundle-analyze
-        path: temp/bundle-analyze.html
-    - name: Test
-      run: |
-        php -S 0.0.0.0:8899 -t $GITHUB_WORKSPACE/tests/simple-server &
-        sleep 5
-        npm run test:e2e
-    # - name: Publish snapshot
-    #   env:
-    #     AMO_KEY: ${{ secrets.AMO_KEY }}
-    #     AMO_SECRET: ${{ secrets.AMO_SECRET }}
-    #     CRX_PRIV_KEY: ${{ secrets.CRX_PRIV_KEY }}
-    #     CRX_PRIV_KEY_V3: ${{ secrets.CRX_PRIV_KEY_V3 }}
-    #     PACK_PLATFORM: xpi,crx
-    #   run: npm run pack
-    # - name: Upload snapshot release
-    #   uses: actions/upload-artifact@v3
-    #   with:
-    #     name: release
-    #     path: |
-    #       temp/release
-    #       !temp/release/*-id.txt
+        name: release
+        retention-days: 7
+        path: |
+          temp/release
+          !temp/release/*-id.txt
 
   sync-locale:
     needs: check_changes
@@ -153,14 +164,9 @@ jobs:
         npm run build
         cp $GITHUB_WORKSPACE/scripts/www/* $GITHUB_WORKSPACE/docs/dist/
     - name: Deploy Cloudflare Pages
-      uses: cloudflare/wrangler-action@v3
-      with:
-        apiToken: ${{ secrets.CF_API_TOKEN }}
-        accountId: ${{ secrets.CF_ACCOUNT_ID }}
-        command: pages deploy docs/dist --project-name=${{ vars.CF_PAGE_NAME }} --branch=dev
-    - name: Deploy EdgeOne Pages
       env:
-        EO_PAGE_TOKEN: ${{ secrets.EO_PAGE_TOKEN }}
-      run: |
-        npm i -g edgeone
-        edgeone pages deploy $GITHUB_WORKSPACE/docs/dist -n ${{ vars.EO_PAGE_NAME }} -t $EO_PAGE_TOKEN -e preview
+        CLOUDFLARE_API_TOKEN: ${{ secrets.CF_API_TOKEN }}
+        CLOUDFLARE_ACCOUNT_ID: ${{ secrets.CF_ACCOUNT_ID }}
+      run: npx wrangler@3 pages deploy docs/dist --project-name=${{ vars.CF_PAGE_NAME }} --branch=dev
+    - name: Deploy EdgeOne Pages
+      run: npx edgeone pages deploy $GITHUB_WORKSPACE/docs/dist -n ${{ vars.EO_PAGE_NAME }} -t ${{ secrets.EO_PAGE_TOKEN }} -e preview

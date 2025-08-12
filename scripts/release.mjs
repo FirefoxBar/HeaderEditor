@@ -1,10 +1,17 @@
-import { readFile, readdir, access, constants } from 'fs/promises';
-import { dirname, join } from 'path';
-import { createHash } from 'crypto';
-import { Blob } from 'buffer';
-import { scriptRoot, extension, path as _path, getDistPath, getVersion } from './config.mjs';
 import axios from 'axios';
-import { readJSON } from 'fs-extra/esm';
+import { Blob } from 'buffer';
+import { createHash } from 'crypto';
+import { access, constants, readdir, readFile } from 'fs/promises';
+import { get } from 'lodash';
+import { join } from 'path';
+import {
+  path as _path,
+  extension,
+  getDistPath,
+  getVersion,
+  scriptRoot,
+} from './config.mjs';
+import { readJSON } from './utils.mjs';
 
 function hash(content) {
   const fsHash = createHash('sha256');
@@ -12,7 +19,7 @@ function hash(content) {
   return fsHash.digest('hex');
 }
 
-async function exists(path) {
+async function exists(fullPath) {
   try {
     await access(fullPath, constants.R_OK);
     return true;
@@ -42,7 +49,9 @@ async function main() {
 
   // Get version
   let version = '';
-  const browserConfig = await readJSON(join(scriptRoot, 'browser-config/browser.config.json'));
+  const browserConfig = await readJSON(
+    join(scriptRoot, 'browser-config/browser.config.json'),
+  );
   const browserList = Object.keys(browserConfig);
   for (const browser of browserList) {
     const path = getDistPath(browser);
@@ -60,11 +69,12 @@ async function main() {
   // Git basic infos
   const gitName = repo.split('/');
   const tagName = process.env.GITHUB_REF_NAME;
-  const gitHubBaseURL = process.env.GITHUB_API_URL + '/repos/' + process.env.GITHUB_REPOSITORY;
+  const gitHubBaseURL =
+    process.env.GITHUB_API_URL + '/repos/' + process.env.GITHUB_REPOSITORY;
   const gitHubToken = process.env.GITHUB_TOKEN;
   const gitHubApiHeader = {
-    'Accept': 'application/vnd.github+json',
-    'Authorization': 'Bearer ' + gitHubToken,
+    Accept: 'application/vnd.github+json',
+    Authorization: 'Bearer ' + gitHubToken,
     'X-GitHub-Api-Version': '2022-11-28',
     'Content-Type': 'application/json',
   };
@@ -81,16 +91,15 @@ async function main() {
       continue;
     }
     const fileContent = await readFile(fullPath);
-    const id = await readFile(join(_path.release, file + '-id.txt'), {
-      encoding: 'utf8',
-    });
+    const info = await readJSON(join(_path.release, file + '-config.json'));
     assets.push({
-      id,
+      id: info.id,
       name: file,
       path: fullPath,
       hash: hash(fileContent),
       content: fileContent,
-      url: `https://github.com/${repo}/releases/download/${tagName}/${file}`
+      config,
+      url: `https://github.com/${repo}/releases/download/${tagName}/${file}`,
     });
   }
 
@@ -103,17 +112,21 @@ async function main() {
   if (!releaseInfo) {
     console.log('Release not exists, creating...');
     try {
-      const res = await axios.post(`${gitHubBaseURL}/releases`, {
-        owner: gitName[0],
-        repo: gitName[1],
-        tag_name: tagName,
-        name: version,
-        body: "",
-        draft: false,
-        prerelease: false,
-      }, {
-        headers: gitHubApiHeader,
-      });
+      const res = await axios.post(
+        `${gitHubBaseURL}/releases`,
+        {
+          owner: gitName[0],
+          repo: gitName[1],
+          tag_name: tagName,
+          name: version,
+          body: '',
+          draft: false,
+          prerelease: false,
+        },
+        {
+          headers: gitHubApiHeader,
+        },
+      );
       console.log(`Release created: #${res.data.id}`);
       releaseInfo = res.data;
     } catch (e) {
@@ -124,7 +137,10 @@ async function main() {
     console.log(`Release exists: #${releaseInfo.id} ${releaseInfo.name}`);
   }
   const releaseId = releaseInfo.id;
-  const releaseUploadUrl = releaseInfo.upload_url.replace(/\/assets(.*)$/, '/assets');
+  const releaseUploadUrl = releaseInfo.upload_url.replace(
+    /\/assets(.*)$/,
+    '/assets',
+  );
 
   // Upload all assets to release
   for (const it of assets) {
@@ -134,12 +150,16 @@ async function main() {
     });
     console.log('Upload file: ' + it.path);
     try {
-      await axios.post(`${releaseUploadUrl}?name=${encodeURIComponent(it.name)}`, blob, {
-        headers: {
-          ...gitHubApiHeader,
-          'Content-Type': 'application/octet-stream',
-        }
-      });
+      await axios.post(
+        `${releaseUploadUrl}?name=${encodeURIComponent(it.name)}`,
+        blob,
+        {
+          headers: {
+            ...gitHubApiHeader,
+            'Content-Type': 'application/octet-stream',
+          },
+        },
+      );
       console.log('success');
     } catch (e) {
       console.log('fail: ', e.response.status, e.response.data);
@@ -149,25 +169,36 @@ async function main() {
   // Update release description
   try {
     console.log('Update release description...');
-    await axios.patch(`${gitHubBaseURL}/releases/${releaseId}`, {
-      owner: gitName[0],
-      repo: gitName[1],
-      release_id: tagName,
-      tag_name: tagName,
-      name: version,
-      body: assets.map(item => `> ${item.name} SHA256: ${item.hash} \n`).join('\n'),
-      draft: false,
-      prerelease: false,
-    }, {
-      headers: gitHubApiHeader,
-    });
+    await axios.patch(
+      `${gitHubBaseURL}/releases/${releaseId}`,
+      {
+        owner: gitName[0],
+        repo: gitName[1],
+        release_id: tagName,
+        tag_name: tagName,
+        name: version,
+        body: assets
+          .map(item => `> ${item.name} SHA256: ${item.hash} \n`)
+          .join('\n'),
+        draft: false,
+        prerelease: false,
+      },
+      {
+        headers: gitHubApiHeader,
+      },
+    );
     console.log('success');
   } catch (e) {
     console.log('fail: ', e.response.status, e.response.data);
   }
 
   // notify the update server
-  const notifyAssets = assets.map(x => ({ ...x, content: '' }));
+  const notifyAssets = assets.map(x => ({
+    ...x,
+    content: '',
+    config: undefined,
+    min_version: get(x, 'config.extension.min_version'),
+  }));
   console.log('notify the update server', notifyAssets);
   await axios.post('https://server-api.sylibs.com/ext/update.php', {
     token: token,

@@ -1,9 +1,6 @@
-import { EdgeWebstoreClient } from '@plasmo-corp/ewu';
+import { EdgeAddonsAPI } from '@plasmohq/edge-addons-api';
 
-export default function (sourcePath, zipPath, releasePath, browserConfig, itemConfig) {
-  if (!process.env.MS_PRODUCT_ID) {
-    return Promise.reject(new Error('MS_PRODUCT_ID not found'));
-  }
+export default function ({ zipPath, extensionConfig }) {
   if (!process.env.MS_CLIENT_ID) {
     return Promise.reject(new Error('MS_CLIENT_ID not found'));
   }
@@ -14,15 +11,14 @@ export default function (sourcePath, zipPath, releasePath, browserConfig, itemCo
     return Promise.reject(new Error('MS_ACCESS_TOKEN_URL not found'));
   }
 
-  const client = new EdgeWebstoreClient({
-    productId: process.env.MS_PRODUCT_ID,
+  const client = new EdgeAddonsAPI({
+    productId: extensionConfig.product_id,
     clientId: process.env.MS_CLIENT_ID,
-    clientSecret: process.env.MS_CLIENT_SECRET,
-    accessTokenUrl: process.env.MS_ACCESS_TOKEN_URL,
+    apiKey: process.env.MS_API_KEY,
   });
-  
+
   return client.submit({
     filePath: zipPath,
-    notes: "release"
+    notes: 'release',
   });
-};
+}

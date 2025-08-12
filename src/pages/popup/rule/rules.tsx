@@ -82,7 +82,7 @@ const Rules = () => {
                 enable: checked,
               })}
             />
-            <Popover showArrow position="top" content={<RuleDetail rule={item} />} style={{ maxWidth: '300px' }}>
+            <Popover showArrow position="top" content={<RuleDetail rule={item} size="small" />} style={{ maxWidth: '300px' }}>
               <div className={cx(textEllipsis, 'name')}>{item.name}</div>
             </Popover>
             <div className="actions">

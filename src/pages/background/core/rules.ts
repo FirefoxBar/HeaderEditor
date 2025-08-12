@@ -1,7 +1,7 @@
 import { cloneDeep } from 'lodash-es';
 import { convertToRule, convertToBasicRule, isMatchUrl, upgradeRuleFormat, initRule } from '@/share/core/rule-utils';
 import { getLocal } from '@/share/core/storage';
-import { getTableName, getVirtualKey } from '@/share/core/utils';
+import { getTableName, getVirtualKey, isValidArray } from '@/share/core/utils';
 import { APIs, EVENTs, IS_MATCH, RULE_TYPE, TABLE_NAMES, TABLE_NAMES_ARR } from '@/share/core/constant';
 import type { InitdRule, RULE_ACTION_OBJ, Rule, RuleFilterOptions } from '@/share/core/types';
 import notify from '@/share/core/notify';
@@ -9,7 +9,7 @@ import { prefs } from '@/share/core/prefs';
 import emitter from '@/share/core/emitter';
 import { getDatabase } from './db';
 
-let isInit = false;
+let loaded = false;
 
 const cache: { [key: string]: null | InitdRule[] } = {};
 TABLE_NAMES_ARR.forEach((t) => {
@@ -63,43 +63,68 @@ async function updateCache(type: TABLE_NAMES): Promise<void> {
   });
 }
 
-function filter(fromRules: InitdRule[], options: RuleFilterOptions) {
-  let rules = Array.from(fromRules);
-  if (options === null || typeof options !== 'object') {
+function filter(fromRules: InitdRule[], options?: RuleFilterOptions) {
+  const rules = Array.from(fromRules);
+
+  if (!options || typeof options !== 'object') {
     return rules;
   }
+
   const url = typeof options.url !== 'undefined' ? options.url : null;
 
-  if (options.runner) {
-    rules = rules.filter((rule) => rule._runner === options.runner);
-  }
+  return rules.filter((rule) => {
+    if (typeof options.runner !== 'undefined' && rule._runner !== options.runner) {
+      return false;
+    }
 
-  if (typeof options.id !== 'undefined') {
-    rules = rules.filter((rule) => {
+    if (typeof options.id !== 'undefined') {
       if (Array.isArray(options.id)) {
-        return options.id.includes(rule.id);
+        if (!options.id.includes(rule.id)) {
+          return false;
+        }
+      } else if (rule.id !== Number(options.id)) {
+        return false;
       }
-      return rule.id === Number(options.id);
-    });
-  }
+    }
 
-  if (options.name) {
-    rules = rules.filter((rule) => {
-      return rule.name === options.name;
-    });
-  }
+    if (typeof options.id !== 'undefined') {
+      if (Array.isArray(options.id)) {
+        if (!options.id.includes(rule.id)) {
+          return false;
+        }
+      } else if (rule.id !== Number(options.id)) {
+        return false;
+      }
+    }
 
-  if (typeof options.enable !== 'undefined') {
-    rules = rules.filter((rule) => {
-      return rule.enable === options.enable;
-    });
-  }
+    if (options.name && rule.name !== options.name) {
+      return false;
+    }
 
-  if (url != null) {
-    rules = rules.filter((rule) => isMatchUrl(rule, url) === IS_MATCH.MATCH);
-  }
+    if (typeof options.enable !== 'undefined' && rule.enable !== options.enable) {
+      return false;
+    }
 
-  return rules;
+    if (typeof options.type !== 'undefined' && rule.ruleType !== options.type) {
+      return false;
+    }
+
+    if (url !== null && isMatchUrl(rule, url) !== IS_MATCH.MATCH) {
+      return false;
+    }
+
+    if (options.resourceType && rule.condition) {
+      const { resourceTypes, excludeResourceTypes } = rule.condition;
+      if (isValidArray(resourceTypes) && !resourceTypes.includes(options.resourceType)) {
+        return false;
+      }
+      if (excludeResourceTypes && excludeResourceTypes.includes(options.resourceType)) {
+        return false;
+      }
+    }
+
+    return true;
+  });
 }
 
 function saveRuleHistory(rule: Rule) {
@@ -108,7 +133,20 @@ function saveRuleHistory(rule: Rule) {
     !rule.isFunction &&
     [RULE_TYPE.MODIFY_RECV_HEADER, RULE_TYPE.MODIFY_SEND_HEADER, RULE_TYPE.REDIRECT].includes(rule.ruleType)
   ) {
-    const writeValue = rule.ruleType === RULE_TYPE.REDIRECT ? rule.to : (rule.action as RULE_ACTION_OBJ).value;
+    let writeValue: any;
+    if (rule.ruleType === RULE_TYPE.REDIRECT) {
+      writeValue = rule.to || '';
+    }
+    if ([RULE_TYPE.MODIFY_RECV_HEADER, RULE_TYPE.MODIFY_SEND_HEADER].includes(rule.ruleType)) {
+      if (rule.headers) {
+        writeValue = rule.headers;
+      } else {
+        writeValue = (rule.action as RULE_ACTION_OBJ).value;
+      }
+    }
+    if (!writeValue) {
+      return;
+    }
     const key = `rule_switch_${getVirtualKey(rule)}`;
     const engine = getLocal();
     engine.get(key).then((result) => {
@@ -131,7 +169,7 @@ async function save(o: Rule): Promise<Rule> {
     getDatabase().then((db) => {
       const tx = db.transaction([tableName], 'readwrite');
       const os = tx.objectStore(tableName);
-      // Check base informations
+      // Check base information
       upgradeRuleFormat(rule);
       // Update
       if (rule.id && rule.id !== -1) {
@@ -185,6 +223,7 @@ function remove(tableName: TABLE_NAMES, id: number): Promise<void> {
         updateCache(tableName);
         notify.other({ method: APIs.ON_EVENT, event: EVENTs.RULE_DELETE, table: tableName, id: Number(id) });
         emitter.emit(emitter.INNER_RULE_REMOVE, { table: tableName, id: Number(id) });
+        getLocal().remove(`rule_switch_${tableName}-${id}`);
         // check common mark
         getLocal()
           .get('common_rule')
@@ -224,7 +263,7 @@ function init() {
       if (TABLE_NAMES_ARR.some((tableName) => cache[tableName] === null)) {
         init();
       } else {
-        isInit = true;
+        loaded = true;
         emitter.emit(emitter.INNER_RULE_LOADED);
       }
     });
@@ -233,7 +272,7 @@ function init() {
 
 function waitLoad() {
   return new Promise((resolve) => {
-    if (isInit) {
+    if (loaded) {
       resolve(true);
     } else {
       emitter.once(emitter.INNER_RULE_LOADED, resolve);
@@ -252,4 +291,5 @@ export {
   updateCache,
   convertToBasicRule,
   waitLoad,
+  loaded,
 };

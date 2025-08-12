@@ -1,16 +1,36 @@
 /* eslint-disable max-lines */
-import { IconCheckList, IconDelete, IconFavoriteList, IconList, IconPlusCircle, IconSend, IconUnlock } from '@douyinfe/semi-icons';
-import { Button, ButtonGroup, Modal, Space, Spin, Typography } from '@douyinfe/semi-ui';
+import {
+  IconCheckList,
+  IconDelete,
+  IconFavoriteList,
+  IconList,
+  IconPlusCircle,
+  IconSend,
+  IconUnlock,
+} from '@douyinfe/semi-icons';
+import {
+  Button,
+  ButtonGroup,
+  Modal,
+  Space,
+  Spin,
+  Typography,
+} from '@douyinfe/semi-ui';
 import { cx, css } from '@emotion/css';
 import * as React from 'react';
 import { selectGroup } from '@/pages/options/utils';
-import Api from '@/share/pages/api';
+import {
+  EVENTs,
+  type TABLE_NAMES,
+  TABLE_NAMES_ARR,
+  VIRTUAL_KEY,
+} from '@/share/core/constant';
 import emitter from '@/share/core/emitter';
 import notify from '@/share/core/notify';
 import { prefs } from '@/share/core/prefs';
-import { getVirtualKey, t } from '@/share/core/utils';
 import type { Rule } from '@/share/core/types';
-import { VIRTUAL_KEY, EVENTs, TABLE_NAMES, TABLE_NAMES_ARR } from '@/share/core/constant';
+import { getVirtualKey, t } from '@/share/core/utils';
+import Api from '@/share/pages/api';
 import Float from './float';
 import RuleGroupCard from './rule-group-card';
 import { batchShare, remove } from './utils';
@@ -53,13 +73,6 @@ export default class Rules extends React.Component<RulesProps, RulesState> {
     this.handleBatchDelete = this.handleBatchDelete.bind(this);
     this.handlePreview = this.handlePreview.bind(this);
 
-    prefs.ready(() => {
-      this.isCollapse = prefs.get('manage-collapse-group');
-      this.load();
-    });
-    notify.event.on(EVENTs.RULE_UPDATE, this.handleRuleUpdateEvent);
-    notify.event.on(EVENTs.RULE_DELETE, this.handleRuleDeleteEvent);
-
     this.state = {
       loading: false,
       group: {},
@@ -68,6 +81,13 @@ export default class Rules extends React.Component<RulesProps, RulesState> {
       float: [],
       collapsed: [],
     };
+
+    prefs.ready(() => {
+      this.isCollapse = Boolean(prefs.get('manage-collapse-group'));
+      this.load();
+    });
+    notify.event.on(EVENTs.RULE_UPDATE, this.handleRuleUpdateEvent);
+    notify.event.on(EVENTs.RULE_DELETE, this.handleRuleDeleteEvent);
   }
 
   componentWillUnmount() {
@@ -87,7 +107,7 @@ export default class Rules extends React.Component<RulesProps, RulesState> {
     for (const key of groupKeys) {
       const group = this.state.group[key];
       for (const currentRule of group.rules) {
-        if (currentRule.id === rule.id) {
+        if (getVirtualKey(currentRule) === getVirtualKey(rule)) {
           sameItem = currentRule;
           fromGroup = group.rules;
           break;
@@ -125,7 +145,11 @@ export default class Rules extends React.Component<RulesProps, RulesState> {
       toGroup.push(displayRule);
     }
     // 分组没了？
-    if (fromGroup && fromGroup.length === 0 && fromGroupKey !== t('ungrouped')) {
+    if (
+      fromGroup &&
+      fromGroup.length === 0 &&
+      fromGroupKey !== t('ungrouped')
+    ) {
       delete this.state.group[fromGroupKey];
     }
     this.forceUpdate();
@@ -143,7 +167,7 @@ export default class Rules extends React.Component<RulesProps, RulesState> {
     const groupKeys = Object.keys(this.state.group);
     for (const key of groupKeys) {
       const group = this.state.group[key];
-      const currentRule = group.rules.find((x) => x[VIRTUAL_KEY] === virtualKey);
+      const currentRule = group.rules.find(x => x[VIRTUAL_KEY] === virtualKey);
       if (currentRule) {
         sameItem = currentRule;
         fromGroup = group.rules;
@@ -176,7 +200,7 @@ export default class Rules extends React.Component<RulesProps, RulesState> {
 
   // 预览
   handlePreview(item: Rule) {
-    this.setState((prevState) => {
+    this.setState(prevState => {
       const newFloat = [...prevState.float];
       if (!newFloat.includes(item)) {
         newFloat.push(item);
@@ -191,7 +215,7 @@ export default class Rules extends React.Component<RulesProps, RulesState> {
 
   // 切换多选状态
   toggleSelect() {
-    this.setState((prevState) => ({
+    this.setState(prevState => ({
       isEnableSelect: !prevState.isEnableSelect,
       selectedKeys: [],
     }));
@@ -203,8 +227,8 @@ export default class Rules extends React.Component<RulesProps, RulesState> {
     }
     // 通过 VIRTUAL_KEY 筛选出所需要的
     const batch = ([] as Rule[])
-      .concat(...Object.values(group).map((it) => it.rules))
-      .filter((it) => selectedKeys.includes(it[VIRTUAL_KEY]));
+      .concat(...Object.values(group).map(it => it.rules))
+      .filter(it => selectedKeys.includes(it[VIRTUAL_KEY]));
     return batch;
   }
 
@@ -216,8 +240,8 @@ export default class Rules extends React.Component<RulesProps, RulesState> {
       });
     } else {
       const keys: string[] = [];
-      Object.values(this.state.group).forEach((g) => {
-        g.rules.forEach((it) => {
+      Object.values(this.state.group).forEach(g => {
+        g.rules.forEach(it => {
           keys.push(it[VIRTUAL_KEY]);
         });
       });
@@ -234,7 +258,7 @@ export default class Rules extends React.Component<RulesProps, RulesState> {
       return;
     }
     const setTo = !batch[0].enable;
-    batch.forEach((rule) => {
+    batch.forEach(rule => {
       if (rule.enable === setTo) {
         return;
       }
@@ -244,9 +268,9 @@ export default class Rules extends React.Component<RulesProps, RulesState> {
   }
   // 批量移动群组
   handleBatchMove() {
-    selectGroup().then((newGroup) => {
-      const batch = this.getSelectedRules().filter((it) => it.group !== newGroup);
-      batch.forEach((it) => {
+    selectGroup().then(newGroup => {
+      const batch = this.getSelectedRules().filter(it => it.group !== newGroup);
+      batch.forEach(it => {
         it.group = newGroup;
         Api.saveRule(it);
       });
@@ -262,13 +286,13 @@ export default class Rules extends React.Component<RulesProps, RulesState> {
       title: t('delete_confirm'),
       onOk: async () => {
         const batch = this.getSelectedRules();
-        batch.forEach((item) => remove(item));
+        batch.forEach(item => remove(item));
       },
     });
   }
 
   handleCollapse(name: string) {
-    this.setState((prevState) => {
+    this.setState(prevState => {
       const collapsed = [...prevState.collapsed];
       if (collapsed.includes(name)) {
         collapsed.splice(collapsed.indexOf(name), 1);
@@ -301,7 +325,7 @@ export default class Rules extends React.Component<RulesProps, RulesState> {
         requestRules(table);
         return;
       }
-      response.forEach((item) => {
+      response.forEach(item => {
         if (typeof result[item.group] === 'undefined') {
           result[item.group] = {
             name: item.group,
@@ -325,10 +349,10 @@ export default class Rules extends React.Component<RulesProps, RulesState> {
     };
     const requestRules = (table: TABLE_NAMES) => {
       setTimeout(() => {
-        Api.getRules(table).then((res) => checkResult(table, res));
+        Api.getRules(table).then(res => checkResult(table, res));
       });
     };
-    TABLE_NAMES_ARR.forEach((table) => requestRules(table));
+    TABLE_NAMES_ARR.forEach(table => requestRules(table));
   }
 
   render() {
@@ -353,29 +377,64 @@ export default class Rules extends React.Component<RulesProps, RulesState> {
           <Space>
             <ButtonGroup>
               {this.state.isEnableSelect && (
-              <React.Fragment>
-                <Button theme="light" type="tertiary" onClick={this.handleToggleSelectAll} icon={<IconCheckList />}>
-                  {t('select_all')}
-                </Button>
-                <Button theme="light" type="tertiary" onClick={this.handleBatchEnable} icon={<IconUnlock />}>
-                  {t('enable')}
-                </Button>
-                <Button theme="light" type="tertiary" onClick={this.handleBatchMove} icon={<IconFavoriteList />}>
-                  {t('group')}
-                </Button>
-                <Button theme="light" type="tertiary" onClick={this.handleBatchShare} icon={<IconSend />}>
-                  {t('share')}
-                </Button>
-                <Button theme="light" type="tertiary" onClick={this.handleBatchDelete} icon={<IconDelete />}>
-                  {t('delete')}
-                </Button>
-              </React.Fragment>
+                <React.Fragment>
+                  <Button
+                    theme="light"
+                    type="tertiary"
+                    onClick={this.handleToggleSelectAll}
+                    icon={<IconCheckList />}
+                  >
+                    {t('select_all')}
+                  </Button>
+                  <Button
+                    theme="light"
+                    type="tertiary"
+                    onClick={this.handleBatchEnable}
+                    icon={<IconUnlock />}
+                  >
+                    {t('enable')}
+                  </Button>
+                  <Button
+                    theme="light"
+                    type="tertiary"
+                    onClick={this.handleBatchMove}
+                    icon={<IconFavoriteList />}
+                  >
+                    {t('group')}
+                  </Button>
+                  <Button
+                    theme="light"
+                    type="tertiary"
+                    onClick={this.handleBatchShare}
+                    icon={<IconSend />}
+                  >
+                    {t('share')}
+                  </Button>
+                  <Button
+                    theme="light"
+                    type="tertiary"
+                    onClick={this.handleBatchDelete}
+                    icon={<IconDelete />}
+                  >
+                    {t('delete')}
+                  </Button>
+                </React.Fragment>
               )}
-              <Button theme="light" type="tertiary" onClick={this.toggleSelect} icon={<IconList />}>
+              <Button
+                theme="light"
+                type="tertiary"
+                onClick={this.toggleSelect}
+                icon={<IconList />}
+              >
                 {t('batch_mode')}
               </Button>
             </ButtonGroup>
-            <Button type="primary" theme="solid" onClick={() => this.props.onEdit()} icon={<IconPlusCircle />}>
+            <Button
+              type="primary"
+              theme="solid"
+              onClick={() => this.props.onEdit()}
+              icon={<IconPlusCircle />}
+            >
               {t('add')}
             </Button>
           </Space>
@@ -387,7 +446,7 @@ export default class Rules extends React.Component<RulesProps, RulesState> {
               overflow: auto;
             `}
           >
-            {Object.values(this.state.group).map((group) => {
+            {Object.values(this.state.group).map(group => {
               const { name } = group;
               return (
                 <RuleGroupCard
@@ -406,8 +465,12 @@ export default class Rules extends React.Component<RulesProps, RulesState> {
             })}
           </div>
         </Spin>
-        {this.state.float.map((it) => (
-          <Float key={it[VIRTUAL_KEY]} rule={it} onClose={() => this.handlePreview(it)} />
+        {this.state.float.map(it => (
+          <Float
+            key={it[VIRTUAL_KEY]}
+            rule={it}
+            onClose={() => this.handlePreview(it)}
+          />
         ))}
       </section>
     );

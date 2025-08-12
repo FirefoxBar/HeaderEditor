@@ -1,4 +1,5 @@
 import type { RULE_MATCH_TYPE, RULE_TYPE } from './constant';
+import type { DeclarativeNetRequest } from 'webextension-polyfill/namespaces/declarativeNetRequest';
 
 export interface RuleFilterOptions {
   enable?: boolean;
@@ -6,8 +7,11 @@ export interface RuleFilterOptions {
   id?: number | number[];
   name?: string;
   runner?: 'web_request' | 'dnr';
+  type?: RULE_TYPE;
+  resourceType?: DeclarativeNetRequest.ResourceType;
 }
 
+/** @deprecated */
 export interface RULE_ACTION_OBJ {
   name: string;
   value: string;
@@ -16,19 +20,36 @@ export interface RULE_ACTION_OBJ {
 export type RULE_ACTION = 'cancel' | RULE_ACTION_OBJ;
 
 export interface BasicRule {
-  [key: string]: any;
   enable: boolean;
   name: string;
   ruleType: RULE_TYPE;
-  matchType: RULE_MATCH_TYPE;
-  pattern: string;
+  /** @deprecated */
+  matchType?: RULE_MATCH_TYPE;
+  /** @deprecated */
+  pattern?: string;
+  /** @deprecated */
+  exclude?: string;
   isFunction: boolean;
   code: string;
-  exclude: string;
   group: string;
   encoding?: string;
   to?: string;
-  action: RULE_ACTION;
+  /** @deprecated deprecated for headers */
+  action?: RULE_ACTION;
+  condition?: Partial<{
+    all: boolean;
+    url: string;
+    urlPrefix: string;
+    method: string[];
+    domain: string[];
+    excludeDomain: string[];
+    regex: string;
+    excludeRegex: string;
+    excludeMethod: string[];
+    resourceTypes: DeclarativeNetRequest.ResourceType[];
+    excludeResourceTypes: DeclarativeNetRequest.ResourceType[];
+  }>;
+  headers?: Record<string, string>;
 }
 
 export function isBasicRule(obj: any): obj is BasicRule {
@@ -52,7 +73,6 @@ export interface InitdRule extends Rule {
 }
 
 export interface PrefValue {
-  [key: string]: any;
   'disable-all': boolean;
   'manage-collapse-group': boolean; // Collapse groups
   'exclude-he': boolean; // rules take no effect on HE or not

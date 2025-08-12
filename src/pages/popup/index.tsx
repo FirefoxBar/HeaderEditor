@@ -1,16 +1,17 @@
-import { Nav, Switch, Tooltip, Typography } from '@douyinfe/semi-ui';
 import { IconMenu, IconSetting } from '@douyinfe/semi-icons';
+import { Nav, Switch, Tooltip, Typography } from '@douyinfe/semi-ui';
+import type { OnSelectedData } from '@douyinfe/semi-ui/lib/es/navigation';
 import { css, cx } from '@emotion/css';
 import React, { useCallback, useEffect, useState } from 'react';
+import ReactDOM from 'react-dom/client';
 import browser from 'webextension-polyfill';
-import { IS_ANDROID, t } from '@/share/core/utils';
-import { prefs } from '@/share/core/prefs';
-import Api from '@/share/pages/api';
 import SemiLocale from '@/share/components/semi-locale';
+import { prefs } from '@/share/core/prefs';
+import { IS_ANDROID, t } from '@/share/core/utils';
+import Api from '@/share/pages/api';
 import isDarkMode from '@/share/pages/is-dark-mode';
-import Rules from './rule/rules';
 import Group from './rule/group';
-import type { OnSelectedData } from '@douyinfe/semi-ui/lib/es/navigation';
+import Rules from './rule/rules';
 
 const basicStyle = css`
   min-width: 340px;
@@ -111,7 +112,9 @@ const Popup = () => {
           selectedKeys={['rules']}
           onSelect={handleNavSelect}
           header={{
-            logo: <img src="/assets/images/128.png" style={{ width: '36px' }} />,
+            logo: (
+              <img src="/assets/images/128.png" style={{ width: '36px' }} />
+            ),
             text: 'Header Editor',
           }}
           items={[
@@ -122,7 +125,11 @@ const Popup = () => {
           footer={
             <div>
               <Tooltip content={t('enable_he')} position="right">
-                <Switch checked={enable} onChange={handleEnableChange} size="small" />
+                <Switch
+                  checked={enable}
+                  onChange={handleEnableChange}
+                  size="small"
+                />
               </Tooltip>
             </div>
           }
@@ -131,11 +138,28 @@ const Popup = () => {
           <Rules />
           <Group />
           <div style={{ flexGrow: 1, minHeight: '20px' }} />
-          <Typography.Text type="tertiary" style={{ textAlign: 'center', padding: '12px', fontSize: '12px' }}>{t('common_mark_tip')}</Typography.Text>
+          <Typography.Text
+            type="tertiary"
+            style={{ textAlign: 'center', padding: '12px', fontSize: '12px' }}
+          >
+            {t('common_mark_tip')}
+          </Typography.Text>
         </main>
       </div>
     </SemiLocale>
   );
 };
 
-export default Popup;
+const rootEl = document.getElementById('root');
+if (rootEl) {
+  const root = ReactDOM.createRoot(rootEl);
+  root.render(
+    <React.StrictMode>
+      <Popup />
+    </React.StrictMode>,
+  );
+}
+
+if (typeof window !== 'undefined' && typeof window.browser === 'undefined') {
+  window.browser = browser;
+}

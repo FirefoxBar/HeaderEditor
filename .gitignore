@@ -40,11 +40,9 @@ Thumbs.db
 
 encrypt
 
-.ice
-.eslintcache
-.vscode
+# Profile
+.rspack-profile-*/
 temp
-
 manifest.json
 dist_*
 tests/**/config.json

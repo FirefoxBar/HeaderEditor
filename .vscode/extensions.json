@@ -1,0 +1,8 @@
+{
+  "recommendations": [
+    "styled-components.vscode-styled-components",
+    "EditorConfig.editorconfig",
+    "streetsidesoftware.code-spell-checker",
+    "biomejs.biome"
+  ]
+}

@@ -8,19 +8,27 @@
  * dist-pack/release：其他平台打包输出结果
  * 在这里，打包文件夹统一命名为pack
  */
-import { unlink, mkdir } from 'fs/promises';
-import { outputJSON, readJSON } from 'fs-extra/esm';
-import { join } from 'path';
-import { join as _join, path as _path, getDistPath, scriptRoot, extension } from './config.mjs';
-import { zip } from 'cross-zip';
-import { rimraf } from 'rimraf';
+
 import cpr from 'cpr';
+import { mkdir, unlink } from 'fs/promises';
+import { join } from 'path';
+import { rimraf } from 'rimraf';
 import getManifest from './browser-config/get-manifest.js';
+import {
+  join as _join,
+  path as _path,
+  extension,
+  getDistPath,
+  getVersion,
+  scriptRoot,
+} from './config.mjs';
 import amo from './pack-utils/amo.mjs';
-import cws from './pack-utils/cws.mjs';
-import xpi from './pack-utils/xpi.mjs';
-import edge from './pack-utils/edge.mjs';
 import crx from './pack-utils/crx.mjs';
+import cws from './pack-utils/cws.mjs';
+import edge from './pack-utils/edge.mjs';
+import xpi from './pack-utils/xpi.mjs';
+import { outputJSON, readJSON } from './utils.mjs';
+import { createZip } from './zip.mjs';
 
 const packUtils = {
   amo,
@@ -40,7 +48,7 @@ function copyDir(source, target) {
         overwrite: true,
         confirm: false,
       },
-      function (err, files) {
+      (err, files) => {
         if (err) {
           reject(err);
         } else {
@@ -51,44 +59,47 @@ function copyDir(source, target) {
   });
 }
 
-function createZip(source, target) {
-  return new Promise((resolve, reject) => {
-    zip(source, target, (err) => {
-      console.log(`${source} -> ${target}`, err);
-      if (err) {
-        reject(err);
-      } else {
-        resolve();
-      }
-    });
-  });
-}
-
-async function packOnePlatform(name, browserConfig, itemConfig) {
+/**
+ * 打包一个平台的产物
+ * @param {*} name
+ * @param {*} browserConfig 对应browser.config.json中的配置
+ * @param {*} extensionConfig 对应extension.json中的配置
+ * @returns
+ */
+async function packOnePlatform(name, browserConfig, extensionConfig) {
   if (typeof packUtils[name] === 'undefined') {
     console.error(`pack-utils for ${name} not found`);
     return;
   }
-  const dirName = [name, itemConfig.browser].join('_');
+  const dirName = [name, extensionConfig.browser].join('_');
   const thisPack = _join(_path.pack, dirName);
   const zipPath = _join(_path.pack, `${dirName}.zip`);
   try {
     // 复制一份到dist下面
-    await copyDir(getDistPath(itemConfig.browser), thisPack);
+    await copyDir(getDistPath(extensionConfig.browser), thisPack);
     // 重新生成manifest
+    const version = await getVersion(thisPack);
     await outputJSON(
       _join(thisPack, 'manifest.json'),
-      getManifest(itemConfig.browser, {
+      getManifest(extensionConfig.browser, {
         dev: false,
+        version,
         amo: name === 'amo',
         xpi: name === 'xpi',
       }),
     );
     // 打包成zip
+    console.log(`zip ${thisPack} -> ${zipPath}`);
     await createZip(thisPack, zipPath);
     // 执行上传等操作
-    // console.log('packUtils', name, thisPack, zipPath, _path.release, browserConfig, itemConfig);
-    const res = await packUtils[name](thisPack, zipPath, _path.release, browserConfig, itemConfig);
+    console.log(`running ${name} pack...`);
+    const res = await packUtils[name]({
+      sourcePath: thisPack,
+      zipPath,
+      releasePath: _path.release,
+      browserConfig,
+      extensionConfig,
+    });
     console.log(`${name}: ${res}`);
     await unlink(zipPath);
   } catch (e) {
@@ -110,19 +121,29 @@ async function main() {
   let platform = [];
   if (process.env.PACK_PLATFORM) {
     platform = process.env.PACK_PLATFORM.split(',');
+  } else if (process.env.INPUT_PLATFORM) {
+    platform = process.env.INPUT_PLATFORM.split(',');
   } else {
-    platform = Object.keys(extension.auto).filter((x) => Boolean(extension.auto[x]));
+    platform = Object.keys(extension.auto).filter(x =>
+      Boolean(extension.auto[x]),
+    );
   }
 
-  const browserConfig = await readJSON(join(scriptRoot, 'browser-config/browser.config.json'));
+  const browserConfig = await readJSON(
+    join(scriptRoot, 'browser-config/browser.config.json'),
+  );
+
+  const queue = [];
 
   for (const name of platform) {
     const platformConfig = extension[name];
     for (const item of platformConfig) {
       const browser = browserConfig[item.browser];
-      await packOnePlatform(name, browser, item);
+      queue.push(packOnePlatform(name, browser, item));
     }
   }
+
+  await Promise.all(queue);
 }
 
 main();

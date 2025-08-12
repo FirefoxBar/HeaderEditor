@@ -6,4 +6,5 @@ declare const IS_DEV: boolean;
 
 declare interface Window {
   IS_BACKGROUND?: boolean;
+  browser: any;
 }

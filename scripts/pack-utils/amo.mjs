@@ -1,7 +1,7 @@
-import { getVersion } from '../config.mjs';
 import { signAddon } from 'sign-addon';
+import { getVersion } from '../config.mjs';
 
-export default async function (sourcePath, zipPath, releasePath, browserConfig, itemConfig) {
+export default async function ({ sourcePath, zipPath, extensionConfig }) {
   if (!process.env.AMO_KEY) {
     return Promise.reject(new Error('AMO_KEY not found'));
   }
@@ -9,7 +9,7 @@ export default async function (sourcePath, zipPath, releasePath, browserConfig, 
     return Promise.reject(new Error('AMO_SECRET not found'));
   }
 
-  // console.log("AMO", sourcePath, zipPath, releasePath, browserConfig, itemConfig);
+  // console.log("AMO", sourcePath, zipPath, releasePath, browserConfig, extensionConfig);
 
   // return;
   return signAddon({
@@ -17,7 +17,7 @@ export default async function (sourcePath, zipPath, releasePath, browserConfig, 
     version: await getVersion(sourcePath),
     apiKey: process.env.AMO_KEY,
     apiSecret: process.env.AMO_SECRET,
-    id: itemConfig.id,
+    id: extensionConfig.id,
     disableProgressBar: true,
   });
-};
+}

@@ -1,31 +1,25 @@
 import browser from 'webextension-polyfill';
 import { RULE_TYPE, TABLE_NAMES } from './constant';
-import { Rule } from './types';
+import type { Rule } from './types';
 
 export const IS_ANDROID = navigator.userAgent.includes('Android');
 export const IS_CHROME = /Chrome\/(\d+)\.(\d+)/.test(navigator.userAgent);
-export const CHROME_VERSION = IS_CHROME
-  ? (() => {
-    const a = navigator.userAgent.match(/Chrome\/(\d+)\.(\d+)/);
-    return a ? parseFloat(`${a[1]}.${a[2]}`) : 0;
-  })()
-  : 0;
 export const IS_FIREFOX = !IS_CHROME;
-export const FIREFOX_VERSION = IS_FIREFOX
-  ? (() => {
-    const a = navigator.userAgent.match(/Firefox\/(\d+)\.(\d+)/);
-    return a ? parseFloat(`${a[1]}.${a[2]}`) : 0;
-  })()
-  : 0;
 
 export const IS_SUPPORT_STREAM_FILTER =
-  ENABLE_WEB_REQUEST && ENABLE_EVAL && typeof browser.webRequest?.filterResponseData === 'function';
+  ENABLE_WEB_REQUEST &&
+  ENABLE_EVAL &&
+  typeof browser.webRequest?.filterResponseData === 'function';
+
+export const isValidArray = <T = any>(v: any): v is T[] =>
+  Array.isArray(v) && v.length > 0;
 
 // Get Active Tab
 export async function getActiveTab() {
   const tabs = await browser.tabs.query({ currentWindow: true, active: true });
   return tabs[0];
 }
+
 export function trimNewLines(s: string) {
   return s.replace(/^[\s\n]+/, '').replace(/[\s\n]+$/, '');
 }
@@ -70,7 +64,7 @@ export async function fetchUrl(param: FetchUrlParam) {
     }
   }
   if (param.header) {
-    Object.keys(param.header).forEach((name) => {
+    Object.keys(param.header).forEach(name => {
       headers[name] = param.header![name];
     });
   }
@@ -81,14 +75,14 @@ export async function fetchUrl(param: FetchUrlParam) {
 
 export function getTableName(ruleType: RULE_TYPE): TABLE_NAMES {
   switch (ruleType) {
-    case 'cancel':
-    case 'redirect':
+    case RULE_TYPE.CANCEL:
+    case RULE_TYPE.REDIRECT:
       return TABLE_NAMES.request;
-    case 'modifySendHeader':
+    case RULE_TYPE.MODIFY_SEND_HEADER:
       return TABLE_NAMES.sendHeader;
-    case 'modifyReceiveHeader':
+    case RULE_TYPE.MODIFY_RECV_HEADER:
       return TABLE_NAMES.receiveHeader;
-    case 'modifyReceiveBody':
+    case RULE_TYPE.MODIFY_RECV_BODY:
       return TABLE_NAMES.receiveBody;
     default:
       return TABLE_NAMES.request;
@@ -103,16 +97,7 @@ export function canAccess(url?: string) {
   if (
     url.indexOf('http') !== 0 &&
     url.indexOf('file') !== 0 &&
-    url.indexOf('moz-extension') !== 0 &&
-    url.indexOf('chrome-extension') !== 0 &&
     url.indexOf('ftp') !== 0
-  ) {
-    return false;
-  }
-  // other extensions can't be styled
-  if (
-    (url.indexOf('moz-extension') === 0 || url.indexOf('chrome-extension') === 0) &&
-    url.indexOf(browser.runtime.getURL('')) !== 0
   ) {
     return false;
   }
@@ -138,7 +123,7 @@ export function getDomain(url: string) {
     return '';
   }
   const d = /.*?:\/*([^/:]+)/.exec(url);
-  return d ? d[1] : null;
+  return d ? d[1] : '';
 }
 
 export function getGlobal() {
