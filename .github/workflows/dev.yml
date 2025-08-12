@@ -136,33 +136,30 @@ jobs:
     needs: check_changes
     runs-on: ubuntu-24.04
     if: ${{ needs.check_changes.outputs.docs_changed == 'true' }}
-    strategy:
-      matrix:
-        node-version: [18.x]
     steps:
     - uses: actions/checkout@v4
     - uses: pnpm/action-setup@v4
       with:
         version: 9
-    - name: Use Node.js ${{ matrix.node-version }}
+    - name: Setup Node.js
       uses: actions/setup-node@v4
       with:
-        node-version: ${{ matrix.node-version }}
+        node-version: 18
     - name: Install dependencies
       run: |
         cd $GITHUB_WORKSPACE/docs
-        pnpm i
+        pnpm i --frozen-lockfile
     - name: Build
       run: |
         cd $GITHUB_WORKSPACE/docs
         npm run build
-        cp $GITHUB_WORKSPACE/scripts/www/* $GITHUB_WORKSPACE/docs/dist/
+        cp $GITHUB_WORKSPACE/scripts/www/* $GITHUB_WORKSPACE/docs/doc_build/
     - name: Upload
       uses: actions/upload-artifact@v4
       with:
         name: docs
         retention-days: 2
-        path: docs/dist
+        path: docs/doc_build
 
   deploy-docs-cloudflare:
     needs: build-docs

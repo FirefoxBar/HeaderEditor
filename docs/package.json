@@ -1,17 +1,16 @@
 {
-  "name": "header-editor-docs",
-  "version": "0.0.1",
-  "description": "Header Editor official manual",
+  "name": "docs",
+  "version": "1.0.0",
+  "private": true,
   "scripts": {
-    "start": "npm run dev",
-    "dev": "dumi dev",
-    "build": "dumi build",
-    "prepare": "dumi setup"
+    "build": "rspress build",
+    "dev": "rspress dev",
+    "preview": "rspress preview"
   },
-  "authors": [
-    "ShuangYa"
-  ],
+  "dependencies": {
+    "rspress": "^1.40.2"
+  },
   "devDependencies": {
-    "dumi": "^2.0.2"
+    "@types/node": "^18.11.17"
   }
 }

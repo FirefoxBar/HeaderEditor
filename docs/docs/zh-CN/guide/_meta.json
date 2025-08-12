@@ -1,0 +1,22 @@
+[
+  "index",
+  "install-full-version",
+  "FAQ",
+  {
+    "type": "divider",
+    "dashed": true
+  },
+  "rule",
+  "cloud-backup",
+  {
+    "type": "divider",
+    "dashed": true
+  },
+  "custom-function",
+  "modify-body",
+  {
+    "type": "divider",
+    "dashed": true
+  },
+  "third-party-rules"
+]
