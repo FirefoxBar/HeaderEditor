@@ -22,18 +22,15 @@ concurrency:
 jobs:
   build:
     runs-on: ubuntu-24.04
-    strategy:
-      matrix:
-        node-version: [18.x]
     steps:
     - uses: actions/checkout@v4
     - uses: pnpm/action-setup@v4
       with:
         version: 9
-    - name: Use Node.js ${{ matrix.node-version }}
+    - name: Setup Node.js
       uses: actions/setup-node@v4
       with:
-        node-version: ${{ matrix.node-version }}
+        node-version: 18
         cache: 'pnpm'
     - name: Install dependencies
       run: pnpm i --frozen-lockfile
