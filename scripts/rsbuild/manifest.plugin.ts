@@ -45,12 +45,14 @@ export const pluginManifest = (): RsbuildPlugin => ({
         const tagName = process.env.GITHUB_REF_NAME;
         if (/^[0-9]\.[0-9]+\.[0-9]+$/.test(tagName!)) {
           versionText = tagName;
+          console.log('Get version from tagName: ' + versionText);
         }
       }
 
       // 自定义输入版本号的CI
       if (process.env.INPUT_VERSION) {
         versionText = process.env.INPUT_VERSION;
+        console.log('Get version from input: ' + versionText);
       }
 
       const isDev = process.env.NODE_ENV === 'development';

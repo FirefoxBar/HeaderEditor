@@ -92,7 +92,7 @@ async function packOnePlatform(name, browserConfig, extensionConfig) {
     console.log(`zip ${thisPack} -> ${zipPath}`);
     await createZip(thisPack, zipPath);
     // 执行上传等操作
-    console.log(`running ${name} pack...`);
+    console.log(`Running ${name} pack...`);
     const res = await packUtils[name]({
       sourcePath: thisPack,
       zipPath,
@@ -100,10 +100,15 @@ async function packOnePlatform(name, browserConfig, extensionConfig) {
       browserConfig,
       extensionConfig,
     });
-    console.log(`${name}: ${res}`);
-    await unlink(zipPath);
+    console.log(`Pack ${name} success: ${res}`);
   } catch (e) {
+    console.error(`Pack ${name} error`);
     console.error(e);
+  }
+  try {
+    await unlink(zipPath);
+  } catch (_) {
+    // ignore
   }
 }
 
@@ -119,10 +124,10 @@ async function main() {
   });
 
   let platform = [];
-  if (process.env.PACK_PLATFORM) {
-    platform = process.env.PACK_PLATFORM.split(',');
-  } else if (process.env.INPUT_PLATFORM) {
+  if (process.env.INPUT_PLATFORM) {
     platform = process.env.INPUT_PLATFORM.split(',');
+  } else if (process.env.PACK_PLATFORM) {
+    platform = process.env.PACK_PLATFORM.split(',');
   } else {
     platform = Object.keys(extension.auto).filter(x =>
       Boolean(extension.auto[x]),

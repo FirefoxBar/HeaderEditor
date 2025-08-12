@@ -4,6 +4,16 @@ on:
   push:
     branches:
     - dev
+  workflow_dispatch:
+    inputs:
+      platform:
+        description: 'Platform(amo,cws,xpi,edge,crx)'
+        required: true
+        type: string
+      version:
+        description: 'Version'
+        required: true
+        type: string
 
 concurrency:
   group: ${{ github.workflow }}-${{ github.ref }}
