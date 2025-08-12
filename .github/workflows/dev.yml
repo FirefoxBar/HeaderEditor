@@ -194,4 +194,4 @@ jobs:
         name: docs
         path: docs
     - name: Deploy EdgeOne Pages
-      run: npx edgeone pages deploy $GITHUB_WORKSPACE/docs/dist -n ${{ vars.EO_PAGE_NAME }} -t ${{ secrets.EO_PAGE_TOKEN }} -e preview
+      run: npx edgeone pages deploy $GITHUB_WORKSPACE/docs -n ${{ vars.EO_PAGE_NAME }} -t ${{ secrets.EO_PAGE_TOKEN }} -e preview
