@@ -100,7 +100,6 @@ export async function submitAddon(
     apiSecret: process.env.AMO_SECRET,
     approvalNotes:
       'https://github.com/FirefoxBar/HeaderEditor/blob/master/README.md',
-    releaseNotes: '',
     override: false,
     pollInterval: 5000,
     pollRetry: 9999,
