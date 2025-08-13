@@ -1,7 +1,7 @@
 import axios from 'axios';
 import { Blob } from 'buffer';
 import { createHash } from 'crypto';
-import { access, constants, readdir, readFile } from 'fs/promises';
+import { readdir, readFile } from 'fs/promises';
 import { get } from 'lodash';
 import { join } from 'path';
 import {
@@ -11,21 +11,12 @@ import {
   getVersion,
   scriptRoot,
 } from './config.mjs';
-import { readJSON } from './utils.mjs';
+import { fileExists, readJSON } from './utils.mjs';
 
 function hash(content) {
   const fsHash = createHash('sha256');
   fsHash.update(content);
   return fsHash.digest('hex');
-}
-
-async function exists(fullPath) {
-  try {
-    await access(fullPath, constants.R_OK);
-    return true;
-  } catch (e) {
-    return false;
-  }
 }
 
 async function main() {
@@ -55,7 +46,7 @@ async function main() {
   const browserList = Object.keys(browserConfig);
   for (const browser of browserList) {
     const path = getDistPath(browser);
-    if (await exists(join(path, 'manifest.json'))) {
+    if (await fileExists(join(path, 'manifest.json'))) {
       version = await getVersion(path);
       console.log(`Get version from ${path}`);
       break;
@@ -87,7 +78,7 @@ async function main() {
       continue;
     }
     const fullPath = join(_path.release, file);
-    if (!(await exists(fullPath))) {
+    if (!(await fileExists(fullPath))) {
       continue;
     }
     const fileContent = await readFile(fullPath);

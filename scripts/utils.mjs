@@ -2,8 +2,21 @@ import cpr from 'cpr';
 import fs from 'fs/promises';
 import path from 'path';
 import resolve from 'resolve';
-import { fileURLToPath } from 'url';
 import { promisify } from 'util';
+
+/**
+ * Check if a file exists
+ * @param {*} fullPath
+ * @returns
+ */
+export async function fileExists(fullPath) {
+  try {
+    await fs.access(fullPath, fs.constants.R_OK);
+    return true;
+  } catch (e) {
+    return false;
+  }
+}
 
 /**
  * Read a JSON file

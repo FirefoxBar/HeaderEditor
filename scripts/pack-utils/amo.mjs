@@ -1,9 +1,10 @@
 import fs from 'fs/promises';
 import path from 'path';
 import { path as _path } from '../config.mjs';
-import { copyDir, getWebExt } from '../utils.mjs';
+import { copyDir, fileExists, getWebExt } from '../utils.mjs';
 import { createZip } from '../zip.mjs';
 
+let packingSourceCode = null;
 /**
  * Pack source code respecting .gitignore rules
  * @param {string} rootPath - Project root path
@@ -12,6 +13,9 @@ import { createZip } from '../zip.mjs';
 async function packSourceCode(rootPath) {
   const tempDir = path.join(_path.temp, 'source-package');
   const sourceZipPath = path.join(_path.temp, 'source.zip');
+  if (await fileExists(sourceZipPath)) {
+    return sourceZipPath;
+  }
   const clear = async () => {
     try {
       await fs.rm(tempDir, { recursive: true, force: true });
@@ -100,7 +104,7 @@ export async function submitAddon(
     savedUploadUuidPath,
     metaDataJson: {
       version: {
-        license: 'GPL-2.0-or-later',
+        license: 'GPL-2.0-only', // AMO does not support GPL-2.0-or-later
         approval_notes:
           'https://github.com/FirefoxBar/HeaderEditor/blob/master/README.md',
       },
@@ -110,7 +114,10 @@ export async function submitAddon(
 
   // Pack source codes
   if (uploadSourceCode) {
-    opts.submissionSource = await packSourceCode(rootPath);
+    if (!packingSourceCode) {
+      packingSourceCode = packSourceCode(rootPath, sourceZipPath);
+    }
+    opts.submissionSource = await packingSourceCode;
   }
 
   const { signAddon } = await getWebExt('lib/util/submit-addon.js');

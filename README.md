@@ -78,7 +78,7 @@ Please note that some languages (such as zh-Hans) will not be translated on tran
 
 Copyright © 2017-2025 [FirefoxBar Team](https://team.firefoxcn.net)
 
-Open source licensed under [GPLv2](LICENSE).
+This project is licensed under the ​**GNU GPL v2.0 or later**.
 
 ## Technical Sponsorship
 
