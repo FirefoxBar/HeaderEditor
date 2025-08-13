@@ -13,7 +13,7 @@ async function packXpi({
 }) {
   const version = await getVersion(sourcePath);
 
-  const { downloadedFiles } = await submitAddon(rootPath, true, {
+  const { downloadedFiles } = await submitAddon(rootPath, false, {
     id: extensionConfig.id,
     xpiPath: zipPath,
     downloadDir: releasePath,
@@ -26,7 +26,7 @@ async function packXpi({
   const fileName = getOutputFile(extensionConfig.browser, version, 'xpi');
   const out = join(releasePath, fileName);
   // Move download file to output dir
-  await rename(downloadedFiles[0], out);
+  await rename(join(releasePath, downloadedFiles[0]), out);
   const infoFile = join(releasePath, `${fileName}-config.json`);
   await outputJSON(infoFile, {
     id: extensionConfig.id,
