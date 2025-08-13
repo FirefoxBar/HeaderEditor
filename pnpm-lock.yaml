@@ -5,6 +5,9 @@ settings:
   excludeLinksFromLockfile: false
 
 patchedDependencies:
+  amo-upload:
+    hash: n6uqvfngyziegv777siwxorjva
+    path: patches/amo-upload.patch
   lodash:
     hash: 7icjxhpg6is3feodofgormnreq
     path: patches/lodash.patch
@@ -112,7 +115,7 @@ importers:
         version: 0.12.3
       amo-upload:
         specifier: ^0.6.1
-        version: 0.6.1
+        version: 0.6.1(patch_hash=n6uqvfngyziegv777siwxorjva)
       axios:
         specifier: ^1.7.2
         version: 1.7.2
@@ -5732,7 +5735,7 @@ snapshots:
       json-schema-traverse: 1.0.0
       require-from-string: 2.0.2
 
-  amo-upload@0.6.1:
+  amo-upload@0.6.1(patch_hash=n6uqvfngyziegv777siwxorjva):
     dependencies:
       '@babel/runtime': 7.27.0
       commander: 11.1.0
