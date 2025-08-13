@@ -48,12 +48,6 @@ export async function outputJSON(file, data, options = {}) {
   await fs.writeFile(file, jsonData, options.encoding || 'utf8');
 }
 
-export async function getWebExt(p) {
-  const pResolve = promisify(resolve);
-  const webExtRoot = await pResolve('web-ext');
-  return import('file://' + path.join(path.dirname(webExtRoot), p));
-}
-
 export function copyDir(source, target) {
   return new Promise((resolve, reject) => {
     cpr(

@@ -1,7 +1,8 @@
+import { signAddon } from 'amo-upload';
 import fs from 'fs/promises';
 import path from 'path';
-import { path as _path } from '../config.mjs';
-import { copyDir, fileExists, getWebExt } from '../utils.mjs';
+import { path as _path, getVersion } from '../config.mjs';
+import { copyDir, fileExists } from '../utils.mjs';
 import { createZip } from '../zip.mjs';
 
 let packingSourceCode = null;
@@ -94,21 +95,17 @@ export async function submitAddon(
     return Promise.reject(new Error('AMO_SECRET not found'));
   }
 
-  const savedIdPath = path.join(rootPath, '.web-extension-id');
-  const savedUploadUuidPath = path.join(rootPath, '.amo-upload-uuid');
   const opts = {
-    amoBaseUrl: 'https://addons.mozilla.org/api/v5/',
     apiKey: process.env.AMO_KEY,
     apiSecret: process.env.AMO_SECRET,
-    savedIdPath,
-    savedUploadUuidPath,
-    metaDataJson: {
-      version: {
-        license: 'GPL-2.0-only', // AMO does not support GPL-2.0-or-later
-        approval_notes:
-          'https://github.com/FirefoxBar/HeaderEditor/blob/master/README.md',
-      },
-    },
+    approvalNotes:
+      'https://github.com/FirefoxBar/HeaderEditor/blob/master/README.md',
+    releaseNotes: '',
+    override: false,
+    output,
+    pollInterval: 5000,
+    pollRetry: 9999,
+    pollRetryExisting: 9999,
     ...options,
   };
 
@@ -117,18 +114,22 @@ export async function submitAddon(
     if (!packingSourceCode) {
       packingSourceCode = packSourceCode(rootPath);
     }
-    opts.submissionSource = await packingSourceCode;
+    opts.sourceFile = await packingSourceCode;
   }
 
-  const { signAddon } = await getWebExt('lib/util/submit-addon.js');
-  return signAddon(opts);
+  return signAddon({});
 }
 
-export default async function ({ rootPath, zipPath, extensionConfig }) {
+export default async function ({
+  rootPath,
+  sourcePath,
+  zipPath,
+  extensionConfig,
+}) {
   return submitAddon(rootPath, true, {
-    id: extensionConfig.id,
-    xpiPath: zipPath,
+    addonId: extensionConfig.id,
+    addonVersion: await getVersion(sourcePath),
     channel: 'listed',
-    approvalCheckTimeout: 0,
+    distFile: zipPath,
   });
 }

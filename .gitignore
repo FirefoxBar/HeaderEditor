@@ -46,6 +46,3 @@ temp
 manifest.json
 dist_*
 tests/**/config.json
-
-.web-extension-id
-.amo-upload-uuid
