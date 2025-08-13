@@ -78,11 +78,10 @@ async function packSourceCode(rootPath) {
   }
 }
 
-export default async function ({
+export async function submitAddon({
   rootPath,
-  sourcePath,
-  zipPath,
-  extensionConfig,
+  sourceCode = false,
+  options = {},
 }) {
   if (!process.env.AMO_KEY) {
     return Promise.reject(new Error('AMO_KEY not found'));
@@ -91,21 +90,14 @@ export default async function ({
     return Promise.reject(new Error('AMO_SECRET not found'));
   }
 
-  // Pack source codes
-  const uploadSourceCode = await packSourceCode(rootPath);
-
   const savedIdPath = path.join(rootPath, '.web-extension-id');
   const savedUploadUuidPath = path.join(rootPath, '.amo-upload-uuid');
-  const { signAddon } = await getWebExt('lib/util/submit-addon.js');
-  return await signAddon({
+  const opts = {
+    amoBaseUrl: 'https://addons.mozilla.org/api/v5/',
     apiKey: process.env.AMO_KEY,
     apiSecret: process.env.AMO_SECRET,
-    id: extensionConfig.id,
-    xpiPath: zipPath,
     savedIdPath,
     savedUploadUuidPath,
-    submissionSource: uploadSourceCode,
-    channel: 'listed',
     metaDataJson: {
       version: {
         license: 'GPL-2.0-or-later',
@@ -113,5 +105,23 @@ export default async function ({
           'https://github.com/FirefoxBar/HeaderEditor/blob/master/README.md',
       },
     },
+    ...options,
+  };
+
+  // Pack source codes
+  if (sourceCode) {
+    opts.submissionSource = await packSourceCode(rootPath);
+  }
+
+  const { signAddon } = await getWebExt('lib/util/submit-addon.js');
+  return signAddon(opts);
+}
+
+export default async function ({ rootPath, zipPath, extensionConfig }) {
+  return submitAddon(rootPath, true, {
+    id: extensionConfig.id,
+    xpiPath: zipPath,
+    channel: 'listed',
+    approvalCheckTimeout: 0,
   });
 }

@@ -1,7 +1,7 @@
 import { rename } from 'fs/promises';
-import path from 'path';
 import { getOutputFile, getVersion, join } from '../config.mjs';
-import { getWebExt, outputJSON } from '../utils.mjs';
+import { outputJSON } from '../utils.mjs';
+import { submitAddon } from './amo.mjs';
 
 async function packXpi({
   rootPath,
@@ -11,32 +11,13 @@ async function packXpi({
   browserConfig,
   extensionConfig,
 }) {
-  if (!process.env.AMO_KEY) {
-    return Promise.reject(new Error('AMO_KEY not found'));
-  }
-  if (!process.env.AMO_SECRET) {
-    return Promise.reject(new Error('AMO_SECRET not found'));
-  }
-
   const version = await getVersion(sourcePath);
 
-  const savedIdPath = path.join(rootPath, '.web-extension-id');
-  const savedUploadUuidPath = path.join(rootPath, '.amo-upload-uuid');
-  const { signAddon } = await getWebExt('lib/util/submit-addon.js');
-  const { downloadedFiles } = await signAddon({
-    apiKey: process.env.AMO_KEY,
-    apiSecret: process.env.AMO_SECRET,
+  const { downloadedFiles } = await submitAddon(rootPath, true, {
     id: extensionConfig.id,
     xpiPath: zipPath,
     downloadDir: releasePath,
-    savedIdPath,
-    savedUploadUuidPath,
     channel: 'unlisted',
-    metaDataJson: {
-      version: {
-        license: 'GPL-2.0-or-later',
-      },
-    },
   });
   if (downloadedFiles.length === 0) {
     throw new Error('No signed addon found');
