@@ -16,7 +16,7 @@ import {
   Spin,
   Typography,
 } from '@douyinfe/semi-ui';
-import { cx, css } from '@emotion/css';
+import { css, cx } from '@emotion/css';
 import * as React from 'react';
 import { selectGroup } from '@/pages/options/utils';
 import {
@@ -84,10 +84,14 @@ export default class Rules extends React.Component<RulesProps, RulesState> {
 
     prefs.ready(() => {
       this.isCollapse = Boolean(prefs.get('manage-collapse-group'));
-      this.load();
     });
+
     notify.event.on(EVENTs.RULE_UPDATE, this.handleRuleUpdateEvent);
     notify.event.on(EVENTs.RULE_DELETE, this.handleRuleDeleteEvent);
+  }
+
+  componentDidMount() {
+    prefs.ready(() => this.load());
   }
 
   componentWillUnmount() {

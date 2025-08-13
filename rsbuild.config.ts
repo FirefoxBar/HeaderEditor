@@ -26,14 +26,6 @@ function getGlobalVars() {
 
 export default defineConfig({
   source: {
-    entry: {
-      background: {
-        import: './src/pages/background/index.ts',
-        html: false,
-      },
-      options: './src/pages/options/index.tsx',
-      popup: './src/pages/popup/index.tsx',
-    },
     define: getGlobalVars(),
   },
   output: {
@@ -47,20 +39,6 @@ export default defineConfig({
       js: 'assets/js',
       css: 'assets/css',
     },
-    copy: [
-      {
-        from: `./node_modules/react/umd/react.${isDev ? 'development' : 'production.min'}.js`,
-        to: 'external/react.js',
-      },
-      {
-        from: `./node_modules/react-dom/umd/react-dom.${isDev ? 'development' : 'production.min'}.js`,
-        to: 'external/react-dom.js',
-      },
-      {
-        from: './public',
-        to: '.',
-      },
-    ],
     externals: [
       ({ request }, callback) => {
         // remove some pkgs from semi
@@ -90,68 +68,16 @@ export default defineConfig({
       },
     ],
   },
-  html: {
-    title: 'Header Editor',
-    tags: [
-      {
-        tag: 'style',
-        children:
-          'body{margin:0;background-color:var(--semi-color-bg-0);color:var(--semi-color-text-0)}',
-      },
-      {
-        tag: 'script',
-        head: true,
-        append: false,
-        attrs: {
-          src: 'external/react.js',
-        },
-      },
-      {
-        tag: 'script',
-        head: true,
-        append: false,
-        attrs: {
-          src: 'external/react-dom.js',
-        },
-      },
-    ],
-  },
   dev: {
     writeToDisk: true,
     hmr: false,
     liveReload: false,
   },
   performance: {
-    chunkSplit: {
-      strategy: 'custom',
-      splitChunks: {
-        chunks: 'all',
-        minChunks: 100,
-        cacheGroups: {
-          default: false,
-          codemirror: {
-            name: 'codemirror',
-            test: /codemirror/,
-            enforce: true,
-          },
-          semi: {
-            name: 'semi',
-            test: /(@douyinfe[/+]semi-|date-fns|async-validator)/,
-            enforce: true,
-          },
-          common: {
-            name: 'common',
-            test: /(@dnd-kit|react-jsx-runtime|classnames|react-window|fast-copy)/,
-            enforce: true,
-          },
-        },
-      },
+    bundleAnalyze: {
+      analyzerMode: 'static',
+      openAnalyzer: false,
     },
-    // bundleAnalyze: {
-    //   analyzerMode: 'static',
-    //   openAnalyzer: false,
-    //   reportFilename: 'report.html',
-    // },
   },
   tools: {
     swc: {
@@ -170,5 +96,97 @@ export default defineConfig({
       },
     },
   },
-  plugins: [pluginReact(), pluginManifest()],
+  environments: {
+    background: {
+      source: {
+        entry: {
+          background: {
+            import: './src/pages/background/index.ts',
+            html: false,
+          },
+        },
+      },
+      output: {
+        target: 'web',
+        copy: [
+          {
+            from: './public',
+            to: '.',
+          },
+        ],
+      },
+      performance: {
+        chunkSplit: {
+          strategy: 'all-in-one',
+        },
+      },
+      plugins: [pluginManifest()],
+    },
+    web: {
+      source: {
+        entry: {
+          options: './src/pages/options/index.tsx',
+          popup: './src/pages/popup/index.tsx',
+        },
+      },
+      output: {
+        copy: [
+          {
+            from: `./node_modules/react/umd/react.${isDev ? 'development' : 'production.min'}.js`,
+            to: 'external/react.js',
+          },
+          {
+            from: `./node_modules/react-dom/umd/react-dom.${isDev ? 'development' : 'production.min'}.js`,
+            to: 'external/react-dom.js',
+          },
+        ],
+      },
+      performance: {
+        chunkSplit: {
+          strategy: 'split-by-experience',
+          override: {
+            cacheGroups: {
+              codemirror: {
+                name: 'codemirror',
+                test: /codemirror/,
+                enforce: true,
+              },
+              semi: {
+                name: 'semi',
+                test: /(@douyinfe[/+]semi-|date-fns|async-validator)/,
+                enforce: true,
+              },
+            },
+          },
+        },
+      },
+      html: {
+        title: 'Header Editor',
+        tags: [
+          {
+            tag: 'style',
+            children:
+              'body{margin:0;background-color:var(--semi-color-bg-0);color:var(--semi-color-text-0)}',
+          },
+          {
+            tag: 'script',
+            head: true,
+            append: false,
+            attrs: {
+              src: 'external/react.js',
+            },
+          },
+          {
+            tag: 'script',
+            head: true,
+            append: false,
+            attrs: {
+              src: 'external/react-dom.js',
+            },
+          },
+        ],
+      },
+      plugins: [pluginReact()],
+    },
+  },
 });
