@@ -52,6 +52,25 @@ jobs:
           dist_chrome_v3
           dist_firefox_v2
           dist_firefox_v3
+    - name: Install Edge
+      id: install-edge
+      run: |
+        sudo apt-get remove -y microsoft-edge-stable
+        sudo wget -qO- https://packages.microsoft.com/keys/microsoft.asc | sudo gpg --dearmor -o /etc/apt/trusted.gpg.d/microsoft.gpg
+        sudo add-apt-repository "deb [arch=amd64] https://packages.microsoft.com/repos/edge stable main"
+        sudo apt-get update
+        sudo apt-get install -y microsoft-edge-stable=138.0.3351.109-1
+        microsoft-edge --version
+        EDGE_PATH=$(which microsoft-edge)
+        echo "edge-path=$EDGE_PATH" >> $GITHUB_OUTPUT
+    - name: Test
+      env:
+        EDGE_PATH: ${{ steps.install-edge.outputs.edge-path }}
+      run: |
+        npx puppeteer browsers install
+        php -S 0.0.0.0:8899 -t $GITHUB_WORKSPACE/tests/simple-server &
+        sleep 3
+        npm run test:e2e
     - name: Pack
       env:
         AMO_KEY: ${{ secrets.AMO_KEY }}

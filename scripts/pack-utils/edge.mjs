@@ -4,11 +4,8 @@ export default function ({ zipPath, extensionConfig }) {
   if (!process.env.MS_CLIENT_ID) {
     return Promise.reject(new Error('MS_CLIENT_ID not found'));
   }
-  if (!process.env.MS_CLIENT_SECRET) {
-    return Promise.reject(new Error('MS_CLIENT_SECRET not found'));
-  }
-  if (!process.env.MS_ACCESS_TOKEN_URL) {
-    return Promise.reject(new Error('MS_ACCESS_TOKEN_URL not found'));
+  if (!process.env.MS_API_KEY) {
+    return Promise.reject(new Error('MS_API_KEY not found'));
   }
 
   const client = new EdgeAddonsAPI({
