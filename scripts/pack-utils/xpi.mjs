@@ -1,4 +1,5 @@
 import { rename } from 'fs/promises';
+import path from 'path';
 import { getOutputFile, getVersion, join } from '../config.mjs';
 import { getWebExt, outputJSON } from '../utils.mjs';
 
