@@ -115,7 +115,7 @@ export async function submitAddon(
   // Pack source codes
   if (uploadSourceCode) {
     if (!packingSourceCode) {
-      packingSourceCode = packSourceCode(rootPath, sourceZipPath);
+      packingSourceCode = packSourceCode(rootPath);
     }
     opts.submissionSource = await packingSourceCode;
   }
