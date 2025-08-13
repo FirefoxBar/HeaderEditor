@@ -1,4 +1,3 @@
-import { rename } from 'fs/promises';
 import { getOutputFile, getVersion, join } from '../config.mjs';
 import { outputJSON } from '../utils.mjs';
 import { submitAddon } from './amo.mjs';

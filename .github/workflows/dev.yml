@@ -112,6 +112,7 @@ jobs:
         AMO_SECRET: ${{ secrets.AMO_SECRET }}
         CRX_PRIV_KEY: ${{ secrets.CRX_PRIV_KEY }}
         PACK_PLATFORM: xpi,crx
+        DEBUG: '*'
       run: npm run pack
     - name: Upload snapshot release
       uses: actions/upload-artifact@v4
