@@ -102,7 +102,6 @@ export async function submitAddon(
       'https://github.com/FirefoxBar/HeaderEditor/blob/master/README.md',
     releaseNotes: '',
     override: false,
-    output,
     pollInterval: 5000,
     pollRetry: 9999,
     pollRetryExisting: 9999,
