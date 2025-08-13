@@ -56,7 +56,7 @@ Please note that some languages (such as zh-Hans) will not be translated on tran
 
 ### Build
 
-* Install node (18+) and pnpm.
+* Install Node.js 18.x and pnpm 9.x.
 * Clone this project, or download the source code and extract it.
 * Run `pnpm i --frozen-lockfile`.
 * Run build command

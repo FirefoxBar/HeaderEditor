@@ -118,9 +118,7 @@ jobs:
       with:
         name: release
         retention-days: 7
-        path: |
-          temp/release
-          !temp/release/*-id.txt
+        path: temp/release
 
   sync-locale:
     needs: check_changes
@@ -168,7 +166,7 @@ jobs:
       uses: actions/upload-artifact@v4
       with:
         name: docs
-        retention-days: 2
+        retention-days: 1
         path: docs/doc_build
 
   deploy-docs-cloudflare:

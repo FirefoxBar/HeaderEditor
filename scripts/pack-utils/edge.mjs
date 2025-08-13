@@ -16,6 +16,6 @@ export default function ({ zipPath, extensionConfig }) {
 
   return client.submit({
     filePath: zipPath,
-    notes: 'release',
+    notes: 'https://github.com/FirefoxBar/HeaderEditor/blob/master/README.md',
   });
 }

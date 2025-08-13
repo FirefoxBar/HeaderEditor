@@ -1,5 +1,9 @@
+import cpr from 'cpr';
 import fs from 'fs/promises';
 import path from 'path';
+import resolve from 'resolve';
+import { fileURLToPath } from 'url';
+import { promisify } from 'util';
 
 /**
  * Read a JSON file
@@ -29,4 +33,31 @@ export async function outputJSON(file, data, options = {}) {
 
   // Write the file
   await fs.writeFile(file, jsonData, options.encoding || 'utf8');
+}
+
+export async function getWebExt(p) {
+  const pResolve = promisify(resolve);
+  const webExtRoot = await pResolve('web-ext');
+  return import('file://' + path.join(path.dirname(webExtRoot), p));
+}
+
+export function copyDir(source, target) {
+  return new Promise((resolve, reject) => {
+    cpr(
+      source,
+      target,
+      {
+        deleteFirst: true,
+        overwrite: true,
+        confirm: false,
+      },
+      (err, files) => {
+        if (err) {
+          reject(err);
+        } else {
+          resolve(files);
+        }
+      },
+    );
+  });
 }

@@ -20,7 +20,11 @@ function exec(command, args, options) {
 
 export async function createZip(inPath, outPath) {
   if (process.platform === 'win32') {
-    await fs.rm(outPath, { recursive: true, maxRetries: 3 });
+    try {
+      await fs.rm(outPath, { recursive: true, maxRetries: 3 });
+    } catch (e) {
+      // ignore
+    }
     return exec(
       'powershell.exe',
       [
