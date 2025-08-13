@@ -116,7 +116,7 @@ export async function submitAddon(
     opts.sourceFile = await packingSourceCode;
   }
 
-  return signAddon({});
+  return signAddon(opts);
 }
 
 export default async function ({
