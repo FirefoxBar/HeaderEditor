@@ -78,11 +78,11 @@ async function packSourceCode(rootPath) {
   }
 }
 
-export async function submitAddon({
+export async function submitAddon(
   rootPath,
-  sourceCode = false,
+  uploadSourceCode = false,
   options = {},
-}) {
+) {
   if (!process.env.AMO_KEY) {
     return Promise.reject(new Error('AMO_KEY not found'));
   }
@@ -109,7 +109,7 @@ export async function submitAddon({
   };
 
   // Pack source codes
-  if (sourceCode) {
+  if (uploadSourceCode) {
     opts.submissionSource = await packSourceCode(rootPath);
   }
 
