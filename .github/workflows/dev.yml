@@ -60,7 +60,7 @@ jobs:
     - name: Setup Node.js
       uses: actions/setup-node@v4
       with:
-        node-version: 18
+        node-version: 20
         cache: 'pnpm'
     - name: Install dependencies
       run: pnpm i --frozen-lockfile
@@ -130,7 +130,7 @@ jobs:
     - name: Setup Node.js
       uses: actions/setup-node@v4
       with:
-        node-version: 18
+        node-version: 20
     - name: Sort
       run: node ./locale/sort-origin.js
     - name: Deploy
@@ -153,7 +153,7 @@ jobs:
     - name: Setup Node.js
       uses: actions/setup-node@v4
       with:
-        node-version: 18
+        node-version: 20
     - name: Install dependencies
       run: |
         cd $GITHUB_WORKSPACE/docs

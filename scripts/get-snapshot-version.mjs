@@ -15,6 +15,7 @@ async function main() {
 
   const pkgJson = await readJSON(join(__dirname, '../package.json'));
   const { version: versionPrefix } = pkgJson;
+  console.log('Get latest release version from package.json');
 
   // Get latest release version
   // const gitHubToken = process.env.GITHUB_TOKEN;
