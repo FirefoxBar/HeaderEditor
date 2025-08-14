@@ -5,9 +5,6 @@ settings:
   excludeLinksFromLockfile: false
 
 patchedDependencies:
-  amo-upload:
-    hash: n6uqvfngyziegv777siwxorjva
-    path: patches/amo-upload.patch
   lodash:
     hash: 7icjxhpg6is3feodofgormnreq
     path: patches/lodash.patch
@@ -114,8 +111,8 @@ importers:
         specifier: ^0.12.3
         version: 0.12.3
       amo-upload:
-        specifier: ^0.6.1
-        version: 0.6.1(patch_hash=n6uqvfngyziegv777siwxorjva)
+        specifier: ^1.0.0
+        version: 1.0.0
       axios:
         specifier: ^1.7.2
         version: 1.7.2
@@ -1181,8 +1178,8 @@ packages:
   ajv@8.17.1:
     resolution: {integrity: sha512-B/gBuNg5SiMTrPkC+A2+cW0RszwxYmn6VYxB/inlBStS5nx6xHIt/ehKRhIMhqusl7a8LjQoZnjCs5vhwxOQ1g==}
 
-  amo-upload@0.6.1:
-    resolution: {integrity: sha512-EQpXiaNhIZvDxfzAwmB3hr7JgtjhjHZIeHQyjwwQQi0zZGtB9zhCXRLDtw7WN1eWKLxoWk8LHwPuGtpHrfUj5w==}
+  amo-upload@1.0.0:
+    resolution: {integrity: sha512-RHN7FkgCdEPLftaJzKt5UWwqwZ4bFb1sL/5qxpDfpwmD8mY5gOrfOgFcE1kmq3zkuv67oTSvOYjNnCAJwSLuPg==}
     engines: {node: '>=20'}
     hasBin: true
 
@@ -1592,13 +1589,13 @@ packages:
     resolution: {integrity: sha512-y4Mg2tXshplEbSGzx7amzPwKKOCGuoSRP/CjEdwwk0FOGlUbq6lKuoyDZTNZkmxHdJtp54hdfY/JUrdL7Xfdug==}
     engines: {node: '>=14'}
 
-  commander@11.1.0:
-    resolution: {integrity: sha512-yPVavfyCcRhmorC7rWlkHn15b4wDVgVmBA7kV4QVBsF7kv/9TKJAbAXVTxvTnwP8HHKjRCJDClKbciiYS7p0DQ==}
-    engines: {node: '>=16'}
-
   commander@12.1.0:
     resolution: {integrity: sha512-Vw8qHK3bZM9y/P10u3Vib8o/DdkvA2OtPtZvD871QKjy74Wj1WSKFILMPRPSdUSx5RFK1arlJzEtA4PkFgnbuA==}
     engines: {node: '>=18'}
+
+  commander@14.0.0:
+    resolution: {integrity: sha512-2uM9rYjPvyq39NwLRqaiLtWHyDC1FvryJDa2ATTVims5YAS4PupsEQsDvP14FqhFr0P49CYDugi59xaxJlTXRA==}
+    engines: {node: '>=20'}
 
   commander@2.20.3:
     resolution: {integrity: sha512-GpVkmM8vF2vQUkj2LvZmD35JxeJOLCwJ9cUkugyk2nuhbv3+mJvpLYYt+0+USMxE+oj+ey/lJEnhZw75x/OMcQ==}
@@ -5735,10 +5732,9 @@ snapshots:
       json-schema-traverse: 1.0.0
       require-from-string: 2.0.2
 
-  amo-upload@0.6.1(patch_hash=n6uqvfngyziegv777siwxorjva):
+  amo-upload@1.0.0:
     dependencies:
-      '@babel/runtime': 7.27.0
-      commander: 11.1.0
+      commander: 14.0.0
       console-table-printer: 2.14.6
       debug: 4.4.1
       es-toolkit: 1.39.9
@@ -6192,9 +6188,9 @@ snapshots:
 
   commander@10.0.1: {}
 
-  commander@11.1.0: {}
-
   commander@12.1.0: {}
+
+  commander@14.0.0: {}
 
   commander@2.20.3: {}
 
