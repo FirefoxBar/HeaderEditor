@@ -1,5 +1,5 @@
-import type { RULE_MATCH_TYPE, RULE_TYPE } from './constant';
 import type { DeclarativeNetRequest } from 'webextension-polyfill/namespaces/declarativeNetRequest';
+import type { RULE_MATCH_TYPE, RULE_TYPE } from './constant';
 
 export interface RuleFilterOptions {
   enable?: boolean;
@@ -50,6 +50,7 @@ export interface BasicRule {
     excludeResourceTypes: DeclarativeNetRequest.ResourceType[];
   }>;
   headers?: Record<string, string>;
+  bodyValue?: string;
 }
 
 export function isBasicRule(obj: any): obj is BasicRule {

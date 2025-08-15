@@ -35,7 +35,7 @@ const prefItems: {
   'modify-body': {
     langKey: 'modify_body',
     type: 'switch',
-    disabled: !IS_SUPPORT_STREAM_FILTER,
+    disabled: BROWSER_TYPE === 'firefox' && !IS_SUPPORT_STREAM_FILTER,
   },
   'is-debug': {
     langKey: 'debug_mode_enable',
@@ -90,7 +90,7 @@ export default class Prefs extends React.Component<{}, PrefsState> {
   componentDidMount() {
     prefs.ready(() => {
       const newPrefs = { ...this.state.prefs };
-      Object.keys(newPrefs).forEach((it) => {
+      Object.keys(newPrefs).forEach(it => {
         newPrefs[it] = prefs.get(it as keyof PrefValue);
       });
       this.setState({
@@ -108,7 +108,7 @@ export default class Prefs extends React.Component<{}, PrefsState> {
     if (this.state.prefs[key] === val) {
       return;
     }
-    this.setState((prevState) => ({
+    this.setState(prevState => ({
       prefs: {
         ...prevState.prefs,
         [key]: val,
@@ -117,7 +117,7 @@ export default class Prefs extends React.Component<{}, PrefsState> {
   }
 
   handleChange(name: string, value: any) {
-    this.setState((prevState) => {
+    this.setState(prevState => {
       const newPrefs = { ...prevState.prefs, [name]: value };
       Api.setPrefs(name, value);
       prefs.set(name, value);
@@ -129,7 +129,7 @@ export default class Prefs extends React.Component<{}, PrefsState> {
     return (
       <List
         dataSource={allPrefs}
-        renderItem={(key) => {
+        renderItem={key => {
           const item = prefItems[key];
           const label = t(item.langKey);
           const help = t(`${item.langKey}_help`, undefined, '');
@@ -138,9 +138,7 @@ export default class Prefs extends React.Component<{}, PrefsState> {
               key={key}
               main={
                 <div className="list-item">
-                  <Typography.Text className="title">
-                    {label}
-                  </Typography.Text>
+                  <Typography.Text className="title">{label}</Typography.Text>
                   {help && (
                     <Typography.Text type="quaternary" className="content">
                       {help}
@@ -152,14 +150,14 @@ export default class Prefs extends React.Component<{}, PrefsState> {
                 item.type === 'select' ? (
                   <Select
                     optionList={item.optionList}
-                    onChange={(v) => this.handleChange(key, v)}
+                    onChange={v => this.handleChange(key, v)}
                     value={this.state.prefs[key]}
                     disabled={item.disabled}
                   />
                 ) : (
                   <Switch
                     checked={this.state.prefs[key]}
-                    onChange={(v) => this.handleChange(key, Boolean(v))}
+                    onChange={v => this.handleChange(key, Boolean(v))}
                     disabled={item.disabled}
                   />
                 )

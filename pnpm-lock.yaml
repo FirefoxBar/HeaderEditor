@@ -90,8 +90,8 @@ importers:
         specifier: ^11.0.0
         version: 11.0.0
       '@types/chrome':
-        specifier: ^0.0.72
-        version: 0.0.72
+        specifier: ^0.1.4
+        version: 0.1.4
       '@types/lodash-es':
         specifier: ^4.17.6
         version: 4.17.6
@@ -991,8 +991,8 @@ packages:
   '@types/babel__traverse@7.20.7':
     resolution: {integrity: sha512-dkO5fhS7+/oos4ciWxyEyjWe48zmG6wbCheo/G2ZnHx4fs3EU6YC6UM8rk56gAjNJ9P3MTH2jo5jb92/K6wbng==}
 
-  '@types/chrome@0.0.72':
-    resolution: {integrity: sha512-x4I7h7QBoq25Vh6LYxzawj+N+2GTW1MZZX9hawk6yo0TCJpKt8rHEHKa1x7dpHlKzlAl1F1we0P8jbFaEDowlw==}
+  '@types/chrome@0.1.4':
+    resolution: {integrity: sha512-vfISO7SPppN3OKVUqWujtZ4vux3nhDqKaHYEHgfQuPARHuWJ3jjyc1s13H0ckzEc86/neTkCl1TeW72UK6jYKA==}
 
   '@types/debug@4.1.12':
     resolution: {integrity: sha512-vIChWdVG3LG1SMxEvI/AK+FWJthlrqlTu7fbrlywTkkaONwk/UAGaULXRlf8vkzFBLVm0zkMdCquhL5aOjhXPQ==}
@@ -1011,6 +1011,9 @@ packages:
 
   '@types/graceful-fs@4.1.9':
     resolution: {integrity: sha512-olP3sd1qOEe5dXTSaFvQG+02VdRXcdytWLAZsAq1PecU8uqQAhkrnbli7DagjtXKW/Bl7YJbUsa8MPcuc8LHEQ==}
+
+  '@types/har-format@1.2.16':
+    resolution: {integrity: sha512-fluxdy7ryD3MV6h8pTfTYpy/xQzCFC7m89nOH9y94cNqJ1mDIDPut7MnRHI3F6qRmh/cT2fUjG1MLdCNb4hE9A==}
 
   '@types/hast@3.0.4':
     resolution: {integrity: sha512-WPs+bbQw5aCj+x6laNGWLH3wviHtoCv/P3+otBhbOhJgG8qtpdAMlTCxLtsTWA7LH1Oh/bFCHsBn0TPS5m30EQ==}
@@ -5506,9 +5509,10 @@ snapshots:
     dependencies:
       '@babel/types': 7.21.2
 
-  '@types/chrome@0.0.72':
+  '@types/chrome@0.1.4':
     dependencies:
       '@types/filesystem': 0.0.32
+      '@types/har-format': 1.2.16
 
   '@types/debug@4.1.12':
     dependencies:
@@ -5529,6 +5533,8 @@ snapshots:
   '@types/graceful-fs@4.1.9':
     dependencies:
       '@types/node': 18.15.5
+
+  '@types/har-format@1.2.16': {}
 
   '@types/hast@3.0.4':
     dependencies:

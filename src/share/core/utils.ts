@@ -3,8 +3,6 @@ import { RULE_TYPE, TABLE_NAMES } from './constant';
 import type { Rule } from './types';
 
 export const IS_ANDROID = navigator.userAgent.includes('Android');
-export const IS_CHROME = /Chrome\/(\d+)\.(\d+)/.test(navigator.userAgent);
-export const IS_FIREFOX = !IS_CHROME;
 
 export const IS_SUPPORT_STREAM_FILTER =
   ENABLE_WEB_REQUEST &&
@@ -101,7 +99,10 @@ export function canAccess(url?: string) {
   ) {
     return false;
   }
-  if (IS_CHROME && url.indexOf('https://chrome.google.com/webstore') === 0) {
+  if (
+    BROWSER_TYPE === 'chrome' &&
+    url.indexOf('https://chrome.google.com/webstore') === 0
+  ) {
     return false;
   }
   return true;

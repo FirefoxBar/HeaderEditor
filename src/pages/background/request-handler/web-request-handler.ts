@@ -1,16 +1,14 @@
-import { TextDecoder, TextEncoder } from 'text-encoding';
+import { last } from 'lodash-es';
+import { TextDecoder } from 'text-encoding';
 import browser, { type WebRequest } from 'webextension-polyfill';
 import { RULE_TYPE, TABLE_NAMES } from '@/share/core/constant';
 import emitter from '@/share/core/emitter';
 import logger from '@/share/core/logger';
 import { prefs } from '@/share/core/prefs';
 import type { InitdRule, RULE_ACTION_OBJ } from '@/share/core/types';
-import {
-  getGlobal,
-  IS_CHROME,
-  IS_SUPPORT_STREAM_FILTER,
-} from '@/share/core/utils';
+import { getGlobal, IS_SUPPORT_STREAM_FILTER } from '@/share/core/utils';
 import { get as getRules } from '../core/rules';
+import { textDecode } from './decoder';
 
 // 最大修改8MB的Body
 const MAX_BODY_SIZE = 8 * 1024 * 1024;
@@ -44,6 +42,7 @@ interface CustomFunctionDetail {
   responseHeaders: WebRequest.HttpHeaders | null;
   statusCode?: number;
   statusLine?: string;
+  browser: 'firefox' | 'chrome';
 }
 
 class WebRequestHandler {
@@ -54,8 +53,7 @@ class WebRequestHandler {
   private savedRequestHeader = new Map();
   private deleteHeaderTimer: ReturnType<typeof setTimeout> | null = null;
   private deleteHeaderQueue = new Map();
-  private textDecoder: Map<string, TextDecoder> = new Map();
-  private textEncoder: Map<string, TextEncoder> = new Map();
+  private textEncoder: TextEncoder | null = null;
 
   constructor() {
     this.initHook();
@@ -75,7 +73,7 @@ class WebRequestHandler {
     const result = ['blocking'];
     result.push(type);
     if (
-      IS_CHROME &&
+      BROWSER_TYPE === 'chrome' &&
       // @ts-ignore
       chrome.webRequest.OnBeforeSendHeadersOptions.hasOwnProperty(
         'EXTRA_HEADERS',
@@ -296,6 +294,7 @@ class WebRequestHandler {
       documentUrl: request.documentUrl || '',
       requestHeaders: null,
       responseHeaders: null,
+      browser: BROWSER_TYPE,
     };
 
     ['statusCode', 'statusLine', 'requestHeaders', 'responseHeaders'].forEach(
@@ -308,52 +307,6 @@ class WebRequestHandler {
     );
 
     return details;
-  }
-
-  private textEncode(encoding: string, text: string) {
-    let encoder = this.textEncoder.get(encoding);
-    if (!encoder) {
-      // UTF-8使用原生API，性能更好
-      if (encoding === 'UTF-8' && getGlobal().TextEncoder) {
-        encoder = new (getGlobal().TextEncoder)();
-      } else {
-        encoder = new TextEncoder(encoding, {
-          NONSTANDARD_allowLegacyEncoding: true,
-        });
-      }
-      this.textEncoder.set(encoding, encoder);
-    }
-    // 防止解码失败导致整体错误
-    try {
-      return encoder.encode(text);
-    } catch (e) {
-      console.error(e);
-      return new Uint8Array(0);
-    }
-  }
-
-  private textDecode(encoding: string, buffer: Uint8Array) {
-    let encoder = this.textDecoder.get(encoding);
-    if (!encoder) {
-      // 如果原生支持的话，优先使用原生
-      if (getGlobal().TextDecoder) {
-        try {
-          encoder = new (getGlobal().TextDecoder)(encoding);
-        } catch (e) {
-          encoder = new TextDecoder(encoding);
-        }
-      } else {
-        encoder = new TextDecoder(encoding);
-      }
-      this.textDecoder.set(encoding, encoder);
-    }
-    // 防止解码失败导致整体错误
-    try {
-      return encoder.decode(buffer);
-    } catch (e) {
-      console.error(e);
-      return '';
-    }
   }
 
   private modifyHeaders(
@@ -468,7 +421,7 @@ class WebRequestHandler {
       return;
     }
 
-    let rule = getRules(TABLE_NAMES.receiveBody, {
+    const rule = getRules(TABLE_NAMES.receiveBody, {
       url: e.url,
       enable: true,
       runner: 'web_request',
@@ -478,15 +431,28 @@ class WebRequestHandler {
     if (rule === null) {
       return;
     }
-    rule = rule.filter(item => item.isFunction);
-    if (rule.length === 0) {
+    const hasCustomFunction = rule.some(item => item.isFunction);
+    // simple execute
+    if (!hasCustomFunction) {
+      const filter = browser.webRequest.filterResponseData(e.requestId);
+      filter.onstop = () => {
+        const finalBody = last(rule)?.bodyValue;
+        if (typeof finalBody !== 'undefined') {
+          // 缓存实例，减少开销
+          if (!this.textEncoder) {
+            this.textEncoder = new TextEncoder();
+          }
+          filter.write(this.textEncoder.encode(finalBody));
+        }
+        filter.close();
+      };
       return;
     }
 
     const filter = browser.webRequest.filterResponseData(e.requestId);
     let buffers: Uint8Array | null = null;
-    // @ts-ignore
-    filter.ondata = (event: WebRequest.StreamFilterEventData) => {
+
+    filter.ondata = event => {
       const { data } = event;
       if (buffers === null) {
         buffers = new Uint8Array(data);
@@ -513,23 +479,37 @@ class WebRequestHandler {
       }
 
       // 缓存实例，减少开销
+      if (!this.textEncoder) {
+        this.textEncoder = new TextEncoder();
+      }
+
+      let finalBody: string | null = null;
+      let hasChanged = false;
+
       for (const item of rule!) {
         const encoding = item.encoding || 'UTF-8';
         try {
-          const _text = this.textDecode(
-            encoding,
-            new Uint8Array(buffers!.buffer),
-          );
-          const text = item._func(_text, detail);
-          if (typeof text === 'string' && text !== _text) {
-            buffers = this.textEncode(encoding, text);
+          if (!finalBody) {
+            const body = textDecode(encoding, buffers);
+            if (body) {
+              finalBody = body;
+            }
+          }
+          const text = item._func(finalBody, detail);
+          if (typeof text === 'string' && text !== finalBody) {
+            finalBody = text;
+            hasChanged = true;
           }
         } catch (err) {
           console.error(err);
         }
       }
 
-      filter.write(buffers.buffer);
+      if (hasChanged && finalBody) {
+        filter.write(this.textEncoder.encode(finalBody));
+      } else {
+        filter.write(buffers);
+      }
       buffers = null;
       filter.close();
     };
