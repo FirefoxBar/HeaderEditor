@@ -1,571 +1,587 @@
 {
-	"action": {
-		"message": "Action",
-		"description": "Table title in management page"
-	},
-	"add": {
-		"message": "Add",
-		"description": "Button to add somethings"
-	},
-	"auto": {
-		"message": "Auto",
-		"description": "Auto detect dark mode"
-	},
-	"auto_enable_modify_body": {
-		"message": "Modify body has been automatically turned on, please turn it off manually if you don't need it",
-		"description": "A message"
-	},
-	"basic_information": {
-		"message": "Basic Information",
-		"description": "Basic information of a rule"
-	},
-	"batch_delete": {
-		"message": "batch deletion",
-		"description": "Button to delete multiple rules"
-	},
-	"batch_mode": {
-		"message": "Batch operation",
-		"description": "Button to enter batch operation mode"
-	},
-	"browser_version": {
-		"message": "Browser version",
-		"description": "Browser version"
-	},
-	"cancel": {
-		"message": "Cancel",
-		"description": "Button to close modal without save"
-	},
-	"check_update": {
-		"message": "Check for updates",
-		"description": "Check for updates"
-	},
-	"choose": {
-		"message": "Choose",
-		"description": "Choose a group"
-	},
-	"clone": {
-		"message": "Clone",
-		"description": "Clone rule"
-	},
-	"cloud_backup": {
-		"message": "Cloud backup",
-		"description": "Cloud backup button"
-	},
-	"cloud_backup_at": {
-		"message": "Last backup at $date$",
-		"description": "Display last backup time if any backup found",
-		"placeholders": {
-			"date": {
-				"content": "$1"
-			}
-		}
-	},
-	"cloud_no_backup": {
-		"message": "No backup",
-		"description": "Display if no backup found"
-	},
-	"cloud_over_limit": {
-		"message": "Exceeded backup size limit",
-		"description": "Message display when exceeded backup size limit"
-	},
-	"code": {
-		"message": "Code",
-		"description": "Label for code section in modal"
-	},
-	"code_empty": {
-		"message": "Code can not be empty",
-		"description": "Tips when a rule is custom function but code is empty"
-	},
-	"common_mark": {
-		"message": "Mark as common",
-		"description": "Mark a rule/group as common, it will display at the popup panel"
-	},
-	"common_mark_tip": {
-		"message": "When you mark any rule or group as common, you'll see it here",
-		"description": "If user didn't mark anything as common, this message will display at the popup panel"
-	},
-	"common_unmark": {
-		"message": "Unmark",
-		"description": "Unmark a common rule/group"
-	},
-	"dark_mode": {
-		"message": "Dark mode",
-		"description": "Dark mode select"
-	},
-	"dark_mode_help": {
-		"message": "Dark mode is experimental, refresh this page to see the effect",
-		"description": "Dark help text"
-	},
-	"debug_mode_enable": {
-		"message": "Enable debug mode",
-		"description": "Enable debug mode"
-	},
-	"debug_mode_enable_help": {
-		"message": "When debug mode is turned on, some logs will be printed in the background page",
-		"description": "Debug mode description"
-	},
-	"delete": {
-		"message": "Delete",
-		"description": "Delete button"
-	},
-	"delete_confirm": {
-		"message": "Do you want to delete these rules?",
-		"description": "A confirmation box shows when user want to delete rules"
-	},
-	"description": {
-		"message": "Manage browser's requests, include modify the request headers and response headers, redirect requests, cancel requests",
-		"description": "Extension description"
-	},
-	"disable": {
-		"message": "Disable",
-		"description": "disable"
-	},
-	"display_common_header": {
-		"message": "Display common header",
-		"description": "An option to enable header auto-complete when editing rules"
-	},
-	"display_common_header_help": {
-		"message": "When editing rules, display common request & response header names",
-		"description": "Help text for display_common_header_help option"
-	},
-	"download": {
-		"message": "Download",
-		"description": "Download button"
-	},
-	"download_rule": {
-		"message": "Download rule",
-		"description": "Title of the rule download area"
-	},
-	"edit": {
-		"message": "Edit",
-		"description": "Edit something"
-	},
-	"enable": {
-		"message": "Enable",
-		"description": "Switch one rule on/off in table title"
-	},
-	"enable_he": {
-		"message": "Enable Header Editor",
-		"description": "If not checked, all rules will take no effects"
-	},
-	"encoding": {
-		"message": "Encoding",
-		"description": "Label for responseBody's character encoding"
-	},
-	"enter_group_name": {
-		"message": "Please enter a group name",
-		"description": "Prompt the user when the user click add group button"
-	},
-	"env_info": {
-		"message": "Environment information",
-		"description": "Version info, etc"
-	},
-	"excludeRule": {
-		"message": "Exclude rule",
-		"description": "Label for exclude rule in modal"
-	},
-	"exec_function": {
-		"message": "Custom function",
-		"description": "Custom function in execute type"
-	},
-	"exec_normal": {
-		"message": "normal",
-		"description": "Normal option in execute type"
-	},
-	"exec_type": {
-		"message": "Execute type",
-		"description": "Label for execute type in modal"
-	},
-	"execution": {
-		"message": "Execution",
-		"description": "Execution settings of a rule"
-	},
-	"export": {
-		"message": "Export",
-		"description": "Button to export all rules as a json file"
-	},
-	"export_and_import": {
-		"message": "Export and Import",
-		"description": "The tab title in the top"
-	},
-	"extButtonTitle": {
-		"message": "Header Editor",
-		"description": "Toolbar tooltip"
-	},
-	"extName": {
-		"message": "Header Editor",
-		"description": "Extension name"
-	},
-	"ext_version": {
-		"message": "Extension version",
-		"description": "Extension version"
-	},
-	"group": {
-		"message": "Group",
-		"description": "Group button"
-	},
-	"headerName": {
-		"message": "Header name",
-		"description": "Label for header name in modal"
-	},
-	"headerValue": {
-		"message": "Header value",
-		"description": "Label for header value in modal"
-	},
-	"header_empty": {
-		"message": "Header name can not be empty",
-		"description": "Message for saving a rule without header name"
-	},
-	"help": {
-		"message": "Help",
-		"description": "Help link"
-	},
-	"import": {
-		"message": "Import",
-		"description": "Button to import rules from a file"
-	},
-	"import_drop": {
-		"message": "Do not import",
-		"description": "do not import a rule"
-	},
-	"import_new": {
-		"message": "Add",
-		"description": "Add a new rule"
-	},
-	"import_override": {
-		"message": "Overrides existing",
-		"description": "Overrides already existing rule"
-	},
-	"import_success": {
-		"message": "Successfully imported",
-		"description": "Displays when import successfully"
-	},
-	"include_header_in_custom_function": {
-		"message": "Include request headers in custom function",
-		"description": "An option to enable this feature"
-	},
-	"include_header_in_custom_function_help": {
-		"message": "Pass the request header into the custom function that processes the response header, it may reduce some performance",
-		"description": "Help text for include_header_in_custom_function option"
-	},
-	"lite_edit_tip": {
-		"message": "Some features are not supported in lite version",
-		"description": "Tip at the edit panel for lite version"
-	},
-	"lite_not_support": {
-		"message": "The lite version does not support this feature",
-		"description": "Message at the not support features"
-	},
-	"manage": {
-		"message": "Manage",
-		"description": "Manage rules, options and more"
-	},
-	"manage_collapse_group": {
-		"message": "Collapse groups by default",
-		"description": "All groups will be collapsed when open the management page"
-	},
-	"matchRule": {
-		"message": "Match rules",
-		"description": "Label for match rule in modal"
-	},
-	"matchType": {
-		"message": "Match type",
-		"description": "Label for match type in modal"
-	},
-	"match_all": {
-		"message": "All",
-		"description": "All option in modal"
-	},
-	"match_domain": {
-		"message": "Domain",
-		"description": "Domain option in modal"
-	},
-	"match_method": {
-		"message": "Method",
-		"description": "Request method"
-	},
-	"match_prefix": {
-		"message": "URL prefix",
-		"description": "URL prefix option in modal"
-	},
-	"match_regexp": {
-		"message": "Regular expression",
-		"description": "Regular expression option in modal"
-	},
-	"match_resourceType": {
-		"message": "Resource Type",
-		"description": "Request resource type"
-	},
-	"match_rule_empty": {
-		"message": "Match rule can not be empty",
-		"description": "Message for saving a rule without match rule"
-	},
-	"match_url": {
-		"message": "URL",
-		"description": "URL option in modal"
-	},
-	"modify_body": {
-		"message": "Modify response body (only supports Firefox)",
-		"description": "Option to enable/disable modify body"
-	},
-	"modify_body_help": {
-		"message": "Allow custom function modify response body, it may reduce some performance",
-		"description": "Help text for modify_body option"
-	},
-	"name": {
-		"message": "Name",
-		"description": "Label for name in modal"
-	},
-	"name_empty": {
-		"message": "Name can not be empty",
-		"description": "Message for saving a rule without name"
-	},
-	"no_update": {
-		"message": "No update",
-		"description": "No update"
-	},
-	"ok": {
-		"message": "OK",
-		"description": "OK Button"
-	},
-	"options": {
-		"message": "Options",
-		"description": "Heading for options section on manage page."
-	},
-	"pack_up_or_unfurl": {
-		"message": "Pack up or unfurl group",
-		"description": "Button to pack up or unfurl a group"
-	},
-	"quick_edit": {
-		"message": "Quick edit",
-		"description": "Display edit button on the popup panel"
-	},
-	"quick_edit_help": {
-		"message": "Display edit button on the popup panel",
-		"description": "Help text for quick_edit option"
-	},
-	"redirectTo": {
-		"message": "Redirect to",
-		"description": "Label for redirect to in modal"
-	},
-	"redirect_empty": {
-		"message": "Redirect target can not be empty",
-		"description": "Message for saving a rule without redirect target if rule type is redirect"
-	},
-	"rename": {
-		"message": "Rename",
-		"description": "Rename group"
-	},
-	"request_headers": {
-		"message": "Request headers",
-		"description": "Request headers"
-	},
-	"resourceType_csp_report": {
-		"message": "CSP Report (Given in the Content-Security-Policy header)",
-		"description": "Resource type"
-	},
-	"resourceType_font": {
-		"message": "Web fonts",
-		"description": "Resource type"
-	},
-	"resourceType_image": {
-		"message": "Images",
-		"description": "Resource type"
-	},
-	"resourceType_main_frame": {
-		"message": "Main frame (Top-level documents loaded into a tab)",
-		"description": "Resource type"
-	},
-	"resourceType_media": {
-		"message": "Media (video and audio)",
-		"description": "Resource type"
-	},
-	"resourceType_object": {
-		"message": "Object (Resources loaded by an <object> or <embed> element)",
-		"description": "Resource type"
-	},
-	"resourceType_other": {
-		"message": "Other",
-		"description": "Resource type"
-	},
-	"resourceType_ping": {
-		"message": "Ping (Given in a hyperlink's ping attribute)",
-		"description": "Resource type"
-	},
-	"resourceType_script": {
-		"message": "Scripts",
-		"description": "Resource type"
-	},
-	"resourceType_stylesheet": {
-		"message": "CSS stylesheets",
-		"description": "Resource type"
-	},
-	"resourceType_sub_frame": {
-		"message": "Sub frame (Documents loaded into an <iframe> or <frame> element)",
-		"description": "Resource type"
-	},
-	"resourceType_websocket": {
-		"message": "WebSocket",
-		"description": "Resource type"
-	},
-	"resourceType_xmlhttprequest": {
-		"message": "XMLHttpRequest / Fetch",
-		"description": "Resource type"
-	},
-	"response_headers": {
-		"message": "Response headers",
-		"description": "Response headers"
-	},
-	"ruleType": {
-		"message": "Rule type",
-		"description": "Label for rule type in modal"
-	},
-	"rule_cancel": {
-		"message": "Cancel request",
-		"description": "Cancel request option in modal"
-	},
-	"rule_history": {
-		"message": "Automatically record rule history",
-		"description": "If checked, rule history will automatically record to the switch list"
-	},
-	"rule_history_help": {
-		"message": "If checked, rule history will automatically record to the switch list",
-		"description": "Help text for rule_history option"
-	},
-	"rule_list": {
-		"message": "Rules list",
-		"description": "Title of the rules list"
-	},
-	"rule_modifyReceiveBody": {
-		"message": "Modify response body",
-		"description": "Response body option in modal"
-	},
-	"rule_modifyReceiveHeader": {
-		"message": "Modify response header",
-		"description": "Response header option in modal"
-	},
-	"rule_modifySendHeader": {
-		"message": "Modify request header",
-		"description": "Request header option in modal"
-	},
-	"rule_redirect": {
-		"message": "Redirect request",
-		"description": "Redirect option in modal"
-	},
-	"rule_switch": {
-		"message": "Enable rule quick switching",
-		"description": "Use the menu to switch rule content"
-	},
-	"rule_switch_help": {
-		"message": "Use the menu to switch rule content",
-		"description": "Help text for rule_switch option"
-	},
-	"rules_no_effect_for_he": {
-		"message": "Rules take no effect on Header Editor",
-		"description": "If checked, all rules will take no effect on pages in Header Editor"
-	},
-	"rules_no_effect_for_he_help": {
-		"message": "If checked, all rules will take no effect on pages in Header Editor",
-		"description": "Help text for rules_no_effect_for_he option"
-	},
-	"save": {
-		"message": "Save",
-		"description": "Button to save a rule"
-	},
-	"save_to": {
-		"message": "Save to",
-		"description": "Save rule to"
-	},
-	"saved": {
-		"message": "Saved",
-		"description": "Displays when rule saved successfully"
-	},
-	"select_all": {
-		"message": "Select/Unselect all",
-		"description": "Button to select or unselect all rules in batch management mode"
-	},
-	"select_or_download": {
-		"message": "Please import from a local file or download rules",
-		"description": "A notice in import card"
-	},
-	"share": {
-		"message": "Share",
-		"description": "Share button title"
-	},
-	"suggested_group": {
-		"message": "Suggested group",
-		"description": "The suggested group name provided by the rule author"
-	},
-	"switch_empty": {
-		"message": "No quick switch rules",
-		"description": "Description text"
-	},
-	"switch_success": {
-		"message": "Switch successfully",
-		"description": "Toast message when quick switch successfully"
-	},
-	"switch_title": {
-		"message": "Quick switch",
-		"description": "Title of the quick switch feature"
-	},
-	"test_custom_code": {
-		"message": "Does not support testing custom code now",
-		"description": "Label to test a redirect rule"
-	},
-	"test_exclude": {
-		"message": "Matched but excluded",
-		"description": "Label to test a redirect rule"
-	},
-	"test_invalid_regexp": {
-		"message": "Regular expression is invalid",
-		"description": "Label to test a redirect rule"
-	},
-	"test_match": {
-		"message": "Matched",
-		"description": "Label to test a redirect rule"
-	},
-	"test_mismatch": {
-		"message": "Mismatch",
-		"description": "Label to test a redirect rule"
-	},
-	"test_url": {
-		"message": "Test (Won't be saved)",
-		"description": "Label to test a redirect rule"
-	},
-	"third_party_rules": {
-		"message": "Third party rules",
-		"description": "Link to find more third party rules"
-	},
-	"ungrouped": {
-		"message": "Ungrouped",
-		"description": "The default group name"
-	},
-	"update_available": {
-		"message": "An update of the extension is available",
-		"description": "An update of the extension is available"
-	},
-	"update_throttled": {
-		"message": "Update is throttled",
-		"description": "Update is throttled"
-	},
-	"upload": {
-		"message": "Upload",
-		"description": "Upload button"
-	},
-	"url_cloud_backup": {
-		"message": "https://he.firefoxcn.net/en-US/guide/cloud-backup/",
-		"description": "URL of documentations, if not translated, please use english version"
-	},
-	"url_help": {
-		"message": "https://he.firefoxcn.net/en-US/guide",
-		"description": "URL of documentations, if not translated, please use english version"
-	},
-	"url_third_party_rules": {
-		"message": "https://he.firefoxcn.net/en-US/guide/third-party-rules/",
-		"description": "URL of documentations, if not translated, please use english version"
-	},
-	"view": {
-		"message": "View",
-		"description": "View rule or a link"
-	}
+  "action": {
+    "message": "Action",
+    "description": "Table title in management page"
+  },
+  "add": {
+    "message": "Add",
+    "description": "Button to add somethings"
+  },
+  "auto": {
+    "message": "Auto",
+    "description": "Auto detect dark mode"
+  },
+  "auto_enable_modify_body": {
+    "message": "Modify body has been automatically turned on, please turn it off manually if you don't need it",
+    "description": "A message"
+  },
+  "basic_information": {
+    "message": "Basic Information",
+    "description": "Basic information of a rule"
+  },
+  "batch_delete": {
+    "message": "batch deletion",
+    "description": "Button to delete multiple rules"
+  },
+  "batch_mode": {
+    "message": "Batch operation",
+    "description": "Button to enter batch operation mode"
+  },
+  "browser_version": {
+    "message": "Browser version",
+    "description": "Browser version"
+  },
+  "cancel": {
+    "message": "Cancel",
+    "description": "Button to close modal without save"
+  },
+  "check_update": {
+    "message": "Check for updates",
+    "description": "Check for updates"
+  },
+  "choose": {
+    "message": "Choose",
+    "description": "Choose a group"
+  },
+  "clone": {
+    "message": "Clone",
+    "description": "Clone rule"
+  },
+  "cloud_backup": {
+    "message": "Cloud backup",
+    "description": "Cloud backup button"
+  },
+  "cloud_backup_at": {
+    "message": "Last backup at $date$",
+    "description": "Display last backup time if any backup found",
+    "placeholders": {
+      "date": {
+        "content": "$1"
+      }
+    }
+  },
+  "cloud_no_backup": {
+    "message": "No backup",
+    "description": "Display if no backup found"
+  },
+  "cloud_over_limit": {
+    "message": "Exceeded backup size limit",
+    "description": "Message display when exceeded backup size limit"
+  },
+  "code": {
+    "message": "Code",
+    "description": "Label for code section in modal"
+  },
+  "code_empty": {
+    "message": "Code can not be empty",
+    "description": "Tips when a rule is custom function but code is empty"
+  },
+  "common_mark": {
+    "message": "Mark as common",
+    "description": "Mark a rule/group as common, it will display at the popup panel"
+  },
+  "common_mark_tip": {
+    "message": "When you mark any rule or group as common, you'll see it here",
+    "description": "If user didn't mark anything as common, this message will display at the popup panel"
+  },
+  "common_unmark": {
+    "message": "Unmark",
+    "description": "Unmark a common rule/group"
+  },
+  "dark_mode": {
+    "message": "Dark mode",
+    "description": "Dark mode select"
+  },
+  "dark_mode_help": {
+    "message": "Dark mode is experimental, refresh this page to see the effect",
+    "description": "Dark help text"
+  },
+  "debug_mode_enable": {
+    "message": "Enable debug mode",
+    "description": "Enable debug mode"
+  },
+  "debug_mode_enable_help": {
+    "message": "When debug mode is turned on, some logs will be printed in the background page",
+    "description": "Debug mode description"
+  },
+  "delete": {
+    "message": "Delete",
+    "description": "Delete button"
+  },
+  "delete_confirm": {
+    "message": "Do you want to delete these rules?",
+    "description": "A confirmation box shows when user want to delete rules"
+  },
+  "description": {
+    "message": "Manage browser's requests, include modify the request headers and response headers, redirect requests, cancel requests",
+    "description": "Extension description"
+  },
+  "disable": {
+    "message": "Disable",
+    "description": "disable"
+  },
+  "display_common_header": {
+    "message": "Display common header",
+    "description": "An option to enable header auto-complete when editing rules"
+  },
+  "display_common_header_help": {
+    "message": "When editing rules, display common request & response header names",
+    "description": "Help text for display_common_header_help option"
+  },
+  "download": {
+    "message": "Download",
+    "description": "Download button"
+  },
+  "download_rule": {
+    "message": "Download rule",
+    "description": "Title of the rule download area"
+  },
+  "edit": {
+    "message": "Edit",
+    "description": "Edit something"
+  },
+  "enable": {
+    "message": "Enable",
+    "description": "Switch one rule on/off in table title"
+  },
+  "enable_he": {
+    "message": "Enable Header Editor",
+    "description": "If not checked, all rules will take no effects"
+  },
+  "encoding": {
+    "message": "Encoding",
+    "description": "Label for responseBody's character encoding"
+  },
+  "enter_group_name": {
+    "message": "Please enter a group name",
+    "description": "Prompt the user when the user click add group button"
+  },
+  "env_info": {
+    "message": "Environment information",
+    "description": "Version info, etc"
+  },
+  "excludeRule": {
+    "message": "Exclude rule",
+    "description": "Label for exclude rule in modal"
+  },
+  "exec_function": {
+    "message": "Custom function",
+    "description": "Custom function in execute type"
+  },
+  "exec_normal": {
+    "message": "normal",
+    "description": "Normal option in execute type"
+  },
+  "exec_type": {
+    "message": "Execute type",
+    "description": "Label for execute type in modal"
+  },
+  "execution": {
+    "message": "Execution",
+    "description": "Execution settings of a rule"
+  },
+  "export": {
+    "message": "Export",
+    "description": "Button to export all rules as a json file"
+  },
+  "export_and_import": {
+    "message": "Export and Import",
+    "description": "The tab title in the top"
+  },
+  "extButtonTitle": {
+    "message": "Header Editor",
+    "description": "Toolbar tooltip"
+  },
+  "extName": {
+    "message": "Header Editor",
+    "description": "Extension name"
+  },
+  "ext_version": {
+    "message": "Extension version",
+    "description": "Extension version"
+  },
+  "group": {
+    "message": "Group",
+    "description": "Group button"
+  },
+  "headerName": {
+    "message": "Header name",
+    "description": "Label for header name in modal"
+  },
+  "headerValue": {
+    "message": "Header value",
+    "description": "Label for header value in modal"
+  },
+  "header_empty": {
+    "message": "Header name can not be empty",
+    "description": "Message for saving a rule without header name"
+  },
+  "help": {
+    "message": "Help",
+    "description": "Help link"
+  },
+  "import": {
+    "message": "Import",
+    "description": "Button to import rules from a file"
+  },
+  "import_drop": {
+    "message": "Do not import",
+    "description": "do not import a rule"
+  },
+  "import_new": {
+    "message": "Add",
+    "description": "Add a new rule"
+  },
+  "import_override": {
+    "message": "Overrides existing",
+    "description": "Overrides already existing rule"
+  },
+  "import_success": {
+    "message": "Successfully imported",
+    "description": "Displays when import successfully"
+  },
+  "include_header_in_custom_function": {
+    "message": "Include request headers in custom function",
+    "description": "An option to enable this feature"
+  },
+  "include_header_in_custom_function_help": {
+    "message": "Pass the request header into the custom function that processes the response header, it may reduce some performance",
+    "description": "Help text for include_header_in_custom_function option"
+  },
+  "lite_edit_tip": {
+    "message": "Some features are not supported in lite version",
+    "description": "Tip at the edit panel for lite version"
+  },
+  "lite_not_support": {
+    "message": "The lite version does not support this feature",
+    "description": "Message at the not support features"
+  },
+  "manage": {
+    "message": "Manage",
+    "description": "Manage rules, options and more"
+  },
+  "manage_collapse_group": {
+    "message": "Collapse groups by default",
+    "description": "All groups will be collapsed when open the management page"
+  },
+  "matchRule": {
+    "message": "Match rules",
+    "description": "Label for match rule in modal"
+  },
+  "matchType": {
+    "message": "Match type",
+    "description": "Label for match type in modal"
+  },
+  "match_all": {
+    "message": "All",
+    "description": "All option in modal"
+  },
+  "match_domain": {
+    "message": "Domain",
+    "description": "Domain option in modal"
+  },
+  "match_method": {
+    "message": "Method",
+    "description": "Request method"
+  },
+  "match_prefix": {
+    "message": "URL prefix",
+    "description": "URL prefix option in modal"
+  },
+  "match_regexp": {
+    "message": "Regular expression",
+    "description": "Regular expression option in modal"
+  },
+  "match_resourceType": {
+    "message": "Resource Type",
+    "description": "Request resource type"
+  },
+  "match_rule_empty": {
+    "message": "Match rule can not be empty",
+    "description": "Message for saving a rule without match rule"
+  },
+  "match_url": {
+    "message": "URL",
+    "description": "URL option in modal"
+  },
+  "modify_body": {
+    "message": "Modify response body (only supports Firefox)",
+    "description": "Option to enable/disable modify body"
+  },
+  "modify_body_help": {
+    "message": "Allow custom function modify response body, it may reduce some performance",
+    "description": "Help text for modify_body option"
+  },
+  "name": {
+    "message": "Name",
+    "description": "Label for name in modal"
+  },
+  "name_empty": {
+    "message": "Name can not be empty",
+    "description": "Message for saving a rule without name"
+  },
+  "no_update": {
+    "message": "No update",
+    "description": "No update"
+  },
+  "ok": {
+    "message": "OK",
+    "description": "OK Button"
+  },
+  "options": {
+    "message": "Options",
+    "description": "Heading for options section on manage page."
+  },
+  "pack_up_or_unfurl": {
+    "message": "Pack up or unfurl group",
+    "description": "Button to pack up or unfurl a group"
+  },
+  "quick_edit": {
+    "message": "Quick edit",
+    "description": "Display edit button on the popup panel"
+  },
+  "quick_edit_help": {
+    "message": "Display edit button on the popup panel",
+    "description": "Help text for quick_edit option"
+  },
+  "redirectTo": {
+    "message": "Redirect to",
+    "description": "Label for redirect to in modal"
+  },
+  "redirect_empty": {
+    "message": "Redirect target can not be empty",
+    "description": "Message for saving a rule without redirect target if rule type is redirect"
+  },
+  "rename": {
+    "message": "Rename",
+    "description": "Rename group"
+  },
+  "request_headers": {
+    "message": "Request headers",
+    "description": "Request headers"
+  },
+  "resourceType_csp_report": {
+    "message": "CSP Report (Given in the Content-Security-Policy header)",
+    "description": "Resource type"
+  },
+  "resourceType_font": {
+    "message": "Web fonts",
+    "description": "Resource type"
+  },
+  "resourceType_image": {
+    "message": "Images",
+    "description": "Resource type"
+  },
+  "resourceType_main_frame": {
+    "message": "Main frame (Top-level documents loaded into a tab)",
+    "description": "Resource type"
+  },
+  "resourceType_media": {
+    "message": "Media (video and audio)",
+    "description": "Resource type"
+  },
+  "resourceType_object": {
+    "message": "Object (Resources loaded by an <object> or <embed> element)",
+    "description": "Resource type"
+  },
+  "resourceType_other": {
+    "message": "Other",
+    "description": "Resource type"
+  },
+  "resourceType_ping": {
+    "message": "Ping (Given in a hyperlink's ping attribute)",
+    "description": "Resource type"
+  },
+  "resourceType_script": {
+    "message": "Scripts",
+    "description": "Resource type"
+  },
+  "resourceType_stylesheet": {
+    "message": "CSS stylesheets",
+    "description": "Resource type"
+  },
+  "resourceType_sub_frame": {
+    "message": "Sub frame (Documents loaded into an <iframe> or <frame> element)",
+    "description": "Resource type"
+  },
+  "resourceType_websocket": {
+    "message": "WebSocket",
+    "description": "Resource type"
+  },
+  "resourceType_xmlhttprequest": {
+    "message": "XMLHttpRequest / Fetch",
+    "description": "Resource type"
+  },
+  "response_headers": {
+    "message": "Response headers",
+    "description": "Response headers"
+  },
+  "ruleType": {
+    "message": "Rule type",
+    "description": "Label for rule type in modal"
+  },
+  "rule_cancel": {
+    "message": "Cancel request",
+    "description": "Cancel request option in modal"
+  },
+  "rule_history": {
+    "message": "Automatically record rule history",
+    "description": "If checked, rule history will automatically record to the switch list"
+  },
+  "rule_history_help": {
+    "message": "If checked, rule history will automatically record to the switch list",
+    "description": "Help text for rule_history option"
+  },
+  "rule_list": {
+    "message": "Rules list",
+    "description": "Title of the rules list"
+  },
+  "rule_modifyReceiveBody": {
+    "message": "Modify response body",
+    "description": "Response body option in modal"
+  },
+  "rule_modifyReceiveHeader": {
+    "message": "Modify response header",
+    "description": "Response header option in modal"
+  },
+  "rule_modifySendHeader": {
+    "message": "Modify request header",
+    "description": "Request header option in modal"
+  },
+  "rule_redirect": {
+    "message": "Redirect request",
+    "description": "Redirect option in modal"
+  },
+  "rule_switch": {
+    "message": "Enable rule quick switching",
+    "description": "Use the menu to switch rule content"
+  },
+  "rule_switch_help": {
+    "message": "Use the menu to switch rule content",
+    "description": "Help text for rule_switch option"
+  },
+  "rules_no_effect_for_he": {
+    "message": "Rules take no effect on Header Editor",
+    "description": "If checked, all rules will take no effect on pages in Header Editor"
+  },
+  "rules_no_effect_for_he_help": {
+    "message": "If checked, all rules will take no effect on pages in Header Editor",
+    "description": "Help text for rules_no_effect_for_he option"
+  },
+  "save": {
+    "message": "Save",
+    "description": "Button to save a rule"
+  },
+  "save_to": {
+    "message": "Save to",
+    "description": "Save rule to"
+  },
+  "saved": {
+    "message": "Saved",
+    "description": "Displays when rule saved successfully"
+  },
+  "select_all": {
+    "message": "Select/Unselect all",
+    "description": "Button to select or unselect all rules in batch management mode"
+  },
+  "select_or_download": {
+    "message": "Please import from a local file or download rules",
+    "description": "A notice in import card"
+  },
+  "share": {
+    "message": "Share",
+    "description": "Share button title"
+  },
+  "suggested_group": {
+    "message": "Suggested group",
+    "description": "The suggested group name provided by the rule author"
+  },
+  "switch_empty": {
+    "message": "No quick switch rules",
+    "description": "Description text"
+  },
+  "switch_success": {
+    "message": "Switch successfully",
+    "description": "Toast message when quick switch successfully"
+  },
+  "switch_title": {
+    "message": "Quick switch",
+    "description": "Title of the quick switch feature"
+  },
+  "test_custom_code": {
+    "message": "Does not support testing custom code now",
+    "description": "Label to test a redirect rule"
+  },
+  "test_exclude": {
+    "message": "Matched but excluded",
+    "description": "Label to test a redirect rule"
+  },
+  "test_invalid_regexp": {
+    "message": "Regular expression is invalid",
+    "description": "Label to test a redirect rule"
+  },
+  "test_match": {
+    "message": "Matched",
+    "description": "Label to test a redirect rule"
+  },
+  "test_mismatch": {
+    "message": "Mismatch",
+    "description": "Label to test a redirect rule"
+  },
+  "test_url": {
+    "message": "Test (Won't be saved)",
+    "description": "Label to test a redirect rule"
+  },
+  "third_party_rules": {
+    "message": "Third party rules",
+    "description": "Link to find more third party rules"
+  },
+  "ungrouped": {
+    "message": "Ungrouped",
+    "description": "The default group name"
+  },
+  "update_available": {
+    "message": "An update of the extension is available",
+    "description": "An update of the extension is available"
+  },
+  "update_throttled": {
+    "message": "Update is throttled",
+    "description": "Update is throttled"
+  },
+  "upload": {
+    "message": "Upload",
+    "description": "Upload button"
+  },
+  "url_cloud_backup": {
+    "message": "https://he.firefoxcn.net/en-US/guide/cloud-backup/",
+    "description": "URL of documentations, if not translated, please use english version"
+  },
+  "url_help": {
+    "message": "https://he.firefoxcn.net/en-US/guide",
+    "description": "URL of documentations, if not translated, please use english version"
+  },
+  "url_third_party_rules": {
+    "message": "https://he.firefoxcn.net/en-US/guide/third-party-rules/",
+    "description": "URL of documentations, if not translated, please use english version"
+  },
+  "view": {
+    "message": "View",
+    "description": "View rule or a link"
+  },
+  "request_stage": {
+    "message": "Request stage",
+    "description": "Request stage"
+  },
+  "encoding_desc": {
+    "message": "For decoding only",
+    "description": "encoding description"
+  },
+  "stage_request": {
+    "message": "Request",
+    "description": "Request stage"
+  },
+  "stage_response": {
+    "message": "Response",
+    "description": "Response stage"
+  }
 }

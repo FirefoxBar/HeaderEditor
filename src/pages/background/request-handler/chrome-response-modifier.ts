@@ -1,4 +1,4 @@
-import browser, { type Tabs } from 'webextension-polyfill';
+import browser from 'webextension-polyfill';
 import { IS_MATCH, RULE_TYPE, TABLE_NAMES } from '@/share/core/constant';
 import emitter from '@/share/core/emitter';
 import logger from '@/share/core/logger';
@@ -199,14 +199,13 @@ class ChromeResponseModifier {
       }
     });
     chrome.debugger.onEvent.addListener(async (source, method, params) => {
-      const { tabId } = source;
       if (method !== 'Fetch.requestPaused') {
         return;
       }
       const { requestId, responseHeaders, request } = params as any;
       const { url } = request;
       if (!isValidArray(this.rules)) {
-        chrome.debugger.sendCommand({ tabId }, 'Fetch.continueRequest', {
+        chrome.debugger.sendCommand(source, 'Fetch.continueRequest', {
           requestId,
         });
         return;
@@ -217,7 +216,7 @@ class ChromeResponseModifier {
       let resp: any;
       if (hasFunc) {
         resp = await chrome.debugger.sendCommand(
-          { tabId },
+          source,
           'Fetch.getResponseBody',
           { requestId },
         );
@@ -267,7 +266,7 @@ class ChromeResponseModifier {
           delete newHeaders[name];
         }
       }
-      return chrome.debugger.sendCommand({ tabId }, 'Fetch.fulfillRequest', {
+      return chrome.debugger.sendCommand(source, 'Fetch.fulfillRequest', {
         requestId,
         responseCode: 200,
         responseHeaders: finalHeaders,
