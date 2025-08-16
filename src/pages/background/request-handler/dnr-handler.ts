@@ -267,7 +267,7 @@ class DNRRequestHandler {
     emitter.on(
       emitter.INNER_RULE_UPDATE,
       ({ from, target }: { from: Rule; target: Rule }) => {
-        logger.debug('dnr rules update', from, target);
+        logger.debug('[dnr-handler] rules update', from, target);
         const command: DeclarativeNetRequest.UpdateSessionRulesOptionsType = {
           removeRuleIds: [],
           addRules: [],

@@ -1,22 +1,42 @@
 import { cloneDeep } from 'lodash-es';
-import { convertToRule, convertToBasicRule, isMatchUrl, upgradeRuleFormat, initRule } from '@/share/core/rule-utils';
-import { getLocal } from '@/share/core/storage';
-import { getTableName, getVirtualKey, isValidArray } from '@/share/core/utils';
-import { APIs, EVENTs, IS_MATCH, RULE_TYPE, TABLE_NAMES, TABLE_NAMES_ARR } from '@/share/core/constant';
-import type { InitdRule, RULE_ACTION_OBJ, Rule, RuleFilterOptions } from '@/share/core/types';
+import {
+  APIs,
+  EVENTs,
+  IS_MATCH,
+  RULE_TYPE,
+  type TABLE_NAMES,
+  TABLE_NAMES_ARR,
+} from '@/share/core/constant';
+import emitter from '@/share/core/emitter';
 import notify from '@/share/core/notify';
 import { prefs } from '@/share/core/prefs';
-import emitter from '@/share/core/emitter';
+import {
+  convertToBasicRule,
+  convertToRule,
+  initRule,
+  isMatchUrl,
+  upgradeRuleFormat,
+} from '@/share/core/rule-utils';
+import { getLocal } from '@/share/core/storage';
+import type {
+  InitdRule,
+  RULE_ACTION_OBJ,
+  Rule,
+  RuleFilterOptions,
+} from '@/share/core/types';
+import { getTableName, getVirtualKey, isValidArray } from '@/share/core/utils';
 import { getDatabase } from './db';
 
 let loaded = false;
 
 const cache: { [key: string]: null | InitdRule[] } = {};
-TABLE_NAMES_ARR.forEach((t) => {
+TABLE_NAMES_ARR.forEach(t => {
   cache[t] = null;
 });
 
-const updateCacheQueue: { [x: string]: Array<{ resolve: () => void; reject: (error: any) => void }> } = {};
+const updateCacheQueue: {
+  [x: string]: Array<{ resolve: () => void; reject: (error: any) => void }>;
+} = {};
 
 async function updateCache(type: TABLE_NAMES): Promise<void> {
   return new Promise((resolve, reject) => {
@@ -28,11 +48,11 @@ async function updateCache(type: TABLE_NAMES): Promise<void> {
       updateCacheQueue[type] = [{ resolve, reject }];
     }
     getDatabase()
-      .then((db) => {
+      .then(db => {
         const tx = db.transaction([type], 'readonly');
         const os = tx.objectStore(type);
         const all: InitdRule[] = [];
-        os.openCursor().onsuccess = (event) => {
+        os.openCursor().onsuccess = event => {
           // @ts-ignore
           const cursor = event.target.result;
           if (cursor) {
@@ -47,15 +67,15 @@ async function updateCache(type: TABLE_NAMES): Promise<void> {
             cursor.continue();
           } else {
             cache[type] = all;
-            updateCacheQueue[type].forEach((it) => {
+            updateCacheQueue[type].forEach(it => {
               it.resolve();
             });
             delete updateCacheQueue[type];
           }
         };
       })
-      .catch((e) => {
-        updateCacheQueue[type].forEach((it) => {
+      .catch(e => {
+        updateCacheQueue[type].forEach(it => {
           it.reject(e);
         });
         delete updateCacheQueue[type];
@@ -72,8 +92,11 @@ function filter(fromRules: InitdRule[], options?: RuleFilterOptions) {
 
   const url = typeof options.url !== 'undefined' ? options.url : null;
 
-  return rules.filter((rule) => {
-    if (typeof options.runner !== 'undefined' && rule._runner !== options.runner) {
+  return rules.filter(rule => {
+    if (
+      typeof options.runner !== 'undefined' &&
+      rule._runner !== options.runner
+    ) {
       return false;
     }
 
@@ -101,7 +124,10 @@ function filter(fromRules: InitdRule[], options?: RuleFilterOptions) {
       return false;
     }
 
-    if (typeof options.enable !== 'undefined' && rule.enable !== options.enable) {
+    if (
+      typeof options.enable !== 'undefined' &&
+      rule.enable !== options.enable
+    ) {
       return false;
     }
 
@@ -115,10 +141,16 @@ function filter(fromRules: InitdRule[], options?: RuleFilterOptions) {
 
     if (options.resourceType && rule.condition) {
       const { resourceTypes, excludeResourceTypes } = rule.condition;
-      if (isValidArray(resourceTypes) && !resourceTypes.includes(options.resourceType)) {
+      if (
+        isValidArray(resourceTypes) &&
+        !resourceTypes.includes(options.resourceType)
+      ) {
         return false;
       }
-      if (excludeResourceTypes && excludeResourceTypes.includes(options.resourceType)) {
+      if (
+        excludeResourceTypes &&
+        excludeResourceTypes.includes(options.resourceType)
+      ) {
         return false;
       }
     }
@@ -131,13 +163,21 @@ function saveRuleHistory(rule: Rule) {
   if (
     prefs.get('rule-history') &&
     !rule.isFunction &&
-    [RULE_TYPE.MODIFY_RECV_HEADER, RULE_TYPE.MODIFY_SEND_HEADER, RULE_TYPE.REDIRECT].includes(rule.ruleType)
+    [
+      RULE_TYPE.MODIFY_RECV_HEADER,
+      RULE_TYPE.MODIFY_SEND_HEADER,
+      RULE_TYPE.REDIRECT,
+    ].includes(rule.ruleType)
   ) {
     let writeValue: any;
     if (rule.ruleType === RULE_TYPE.REDIRECT) {
       writeValue = rule.to || '';
     }
-    if ([RULE_TYPE.MODIFY_RECV_HEADER, RULE_TYPE.MODIFY_SEND_HEADER].includes(rule.ruleType)) {
+    if (
+      [RULE_TYPE.MODIFY_RECV_HEADER, RULE_TYPE.MODIFY_SEND_HEADER].includes(
+        rule.ruleType,
+      )
+    ) {
       if (rule.headers) {
         writeValue = rule.headers;
       } else {
@@ -149,7 +189,7 @@ function saveRuleHistory(rule: Rule) {
     }
     const key = `rule_switch_${getVirtualKey(rule)}`;
     const engine = getLocal();
-    engine.get(key).then((result) => {
+    engine.get(key).then(result => {
       const arr = Array.isArray(result[key]) ? [...result[key]] : [];
       if (!arr.includes(writeValue)) {
         arr.push(writeValue);
@@ -165,8 +205,8 @@ async function save(o: Rule): Promise<Rule> {
     throw new Error(`Unknown type ${o.ruleType}`);
   }
   const rule = convertToRule(o);
-  return new Promise((resolve) => {
-    getDatabase().then((db) => {
+  return new Promise(resolve => {
+    getDatabase().then(db => {
       const tx = db.transaction([tableName], 'readwrite');
       const os = tx.objectStore(tableName);
       // Check base information
@@ -185,12 +225,21 @@ async function save(o: Rule): Promise<Rule> {
           }
           const req = os.put(existsRule);
           req.onsuccess = () => {
-            updateCache(tableName);
-            notify.other({ method: APIs.ON_EVENT, event: EVENTs.RULE_UPDATE, from: originalRule, target: existsRule });
-            // Write history
-            saveRuleHistory(originalRule);
-            emitter.emit(emitter.INNER_RULE_UPDATE, { from: originalRule, target: existsRule });
-            resolve(rule);
+            updateCache(tableName).then(() => {
+              notify.other({
+                method: APIs.ON_EVENT,
+                event: EVENTs.RULE_UPDATE,
+                from: originalRule,
+                target: existsRule,
+              });
+              // Write history
+              saveRuleHistory(originalRule);
+              emitter.emit(emitter.INNER_RULE_UPDATE, {
+                from: originalRule,
+                target: existsRule,
+              });
+              resolve(rule);
+            });
           };
         };
       } else {
@@ -199,14 +248,22 @@ async function save(o: Rule): Promise<Rule> {
         // @ts-ignore
         delete rule.id;
         const request = os.add(rule);
-        request.onsuccess = (event) => {
-          updateCache(tableName);
+        request.onsuccess = event => {
           // Give it the ID that was generated
-          // @ts-ignore
-          rule.id = event.target.result;
-          notify.other({ method: APIs.ON_EVENT, event: EVENTs.RULE_UPDATE, from: null, target: rule });
-          emitter.emit(emitter.INNER_RULE_UPDATE, { from: null, target: rule });
-          resolve(rule);
+          rule.id = (event.target as any).result;
+          updateCache(tableName).then(() => {
+            notify.other({
+              method: APIs.ON_EVENT,
+              event: EVENTs.RULE_UPDATE,
+              from: null,
+              target: rule,
+            });
+            emitter.emit(emitter.INNER_RULE_UPDATE, {
+              from: null,
+              target: rule,
+            });
+            resolve(rule);
+          });
         };
       }
     });
@@ -214,22 +271,33 @@ async function save(o: Rule): Promise<Rule> {
 }
 
 function remove(tableName: TABLE_NAMES, id: number): Promise<void> {
-  return new Promise((resolve) => {
-    getDatabase().then((db) => {
+  return new Promise(resolve => {
+    getDatabase().then(db => {
       const tx = db.transaction([tableName], 'readwrite');
       const os = tx.objectStore(tableName);
       const request = os.delete(Number(id));
       request.onsuccess = () => {
         updateCache(tableName);
-        notify.other({ method: APIs.ON_EVENT, event: EVENTs.RULE_DELETE, table: tableName, id: Number(id) });
-        emitter.emit(emitter.INNER_RULE_REMOVE, { table: tableName, id: Number(id) });
+        notify.other({
+          method: APIs.ON_EVENT,
+          event: EVENTs.RULE_DELETE,
+          table: tableName,
+          id: Number(id),
+        });
+        emitter.emit(emitter.INNER_RULE_REMOVE, {
+          table: tableName,
+          id: Number(id),
+        });
         getLocal().remove(`rule_switch_${tableName}-${id}`);
         // check common mark
         getLocal()
           .get('common_rule')
-          .then((result) => {
+          .then(result => {
             const key = `${tableName}-${id}`;
-            if (Array.isArray(result.common_rule) && result.common_rule.includes(key)) {
+            if (
+              Array.isArray(result.common_rule) &&
+              result.common_rule.includes(key)
+            ) {
               const newKeys = [...result.common_rule];
               newKeys.splice(newKeys.indexOf(key), 1);
               getLocal().set({
@@ -258,9 +326,11 @@ function getAll() {
 
 function init() {
   setTimeout(() => {
-    const queue: Array<Promise<void>> = TABLE_NAMES_ARR.map((tableName) => updateCache(tableName));
+    const queue: Array<Promise<void>> = TABLE_NAMES_ARR.map(tableName =>
+      updateCache(tableName),
+    );
     Promise.all(queue).then(() => {
-      if (TABLE_NAMES_ARR.some((tableName) => cache[tableName] === null)) {
+      if (TABLE_NAMES_ARR.some(tableName => cache[tableName] === null)) {
         init();
       } else {
         loaded = true;
@@ -271,7 +341,7 @@ function init() {
 }
 
 function waitLoad() {
-  return new Promise((resolve) => {
+  return new Promise(resolve => {
     if (loaded) {
       resolve(true);
     } else {

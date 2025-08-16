@@ -13,14 +13,17 @@ class Logger {
       return;
     }
     console.log(
-      ['%cHeader Editor%c [', dayjs().format('YYYY-MM-DD HH:mm:ss.SSS'), ']%c ', message].join(''),
+      [
+        '%cHeader Editor%c [',
+        dayjs().format('YYYY-MM-DD HH:mm:ss.SSS'),
+        ']%c ',
+        message,
+      ].join(''),
       'color:#5584ff;',
       'color:#ff9300;',
       '',
+      ...data,
     );
-    if (data && data.length > 0) {
-      console.log(data);
-    }
   }
 }
 

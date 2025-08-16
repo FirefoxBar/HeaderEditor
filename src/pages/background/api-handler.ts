@@ -1,11 +1,11 @@
 import browser from 'webextension-polyfill';
-import logger from '@/share/core/logger';
 import { APIs, TABLE_NAMES_ARR } from '@/share/core/constant';
-import { prefs } from '@/share/core/prefs';
 import emitter from '@/share/core/emitter';
+import logger from '@/share/core/logger';
+import { prefs } from '@/share/core/prefs';
+import { getDatabase } from './core/db';
 import * as rules from './core/rules';
 import { openURL } from './utils';
-import { getDatabase } from './core/db';
 
 function execute(request: any) {
   if (request.method === 'notifyBackground') {
@@ -14,7 +14,7 @@ function execute(request: any) {
   }
   switch (request.method) {
     case APIs.HEALTH_CHECK:
-      return new Promise((resolve) => {
+      return new Promise(resolve => {
         getDatabase()
           .then(() => resolve(true))
           .catch(() => resolve(false));
@@ -22,16 +22,22 @@ function execute(request: any) {
     case APIs.OPEN_URL:
       return openURL(request);
     case APIs.GET_RULES:
-      return rules.waitLoad().then(() => rules.get(request.type, request.options));
+      return rules
+        .waitLoad()
+        .then(() => rules.get(request.type, request.options));
     case APIs.SAVE_RULE:
       return rules.waitLoad().then(() => rules.save(request.rule));
     case APIs.DELETE_RULE:
-      return rules.waitLoad().then(() => rules.remove(request.type, request.id));
+      return rules
+        .waitLoad()
+        .then(() => rules.remove(request.type, request.id));
     case APIs.SET_PREFS:
       return prefs.set(request.key, request.value);
     case APIs.UPDATE_CACHE:
       if (request.type === 'all') {
-        return Promise.all(TABLE_NAMES_ARR.map((tableName) => rules.updateCache(tableName)));
+        return Promise.all(
+          TABLE_NAMES_ARR.map(tableName => rules.updateCache(tableName)),
+        );
       } else {
         return rules.updateCache(request.type);
       }
@@ -54,10 +60,10 @@ function updateIcon(disabled: boolean) {
 }
 
 export default function createApiHandler() {
-  browser.runtime.onMessage.addListener((request) => {
-    logger.debug('Background Receive Message', request);
+  browser.runtime.onMessage.addListener(request => {
+    logger.debug('[api-handler] onMessage', request);
     if (request.method === 'batchExecute') {
-      const queue = request.batch.map((item) => {
+      const queue = request.batch.map(item => {
         const res = execute(item);
         if (res) {
           return res;

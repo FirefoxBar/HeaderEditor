@@ -148,7 +148,7 @@ class WebRequestHandler {
     if (!this.beforeAll(e)) {
       return;
     }
-    logger.debug(`handle before request ${e.url}`, e);
+    logger.debug(`[web-request-handler] handle before request ${e.url}`, e);
     // 可用：重定向，阻止加载
     const rule = getRules(TABLE_NAMES.request, {
       url: e.url,
@@ -170,14 +170,16 @@ class WebRequestHandler {
         try {
           const r = item._func(redirectTo, detail);
           if (typeof r === 'string') {
-            logger.debug(`[rule: ${item.id}] redirect ${redirectTo} to ${r}`);
+            logger.debug(
+              `[web-request-handler] [rule: ${item.id}] redirect ${redirectTo} to ${r}`,
+            );
             redirectTo = r;
           }
           if (
             r === '_header_editor_cancel_' ||
             (item.action === 'cancel' && r === true)
           ) {
-            logger.debug(`[rule: ${item.id}] cancel`);
+            logger.debug(`[web-request-handler] [rule: ${item.id}] cancel`);
             return { cancel: true };
           }
         } catch (err) {
@@ -186,11 +188,13 @@ class WebRequestHandler {
       } else if (item.to) {
         if (item.condition?.regex || item.matchType === 'regexp') {
           const to = redirectTo.replace(item._reg, item.to);
-          logger.debug(`[rule: ${item.id}] redirect ${redirectTo} to ${to}`);
+          logger.debug(
+            `[web-request-handler] [rule: ${item.id}] redirect ${redirectTo} to ${to}`,
+          );
           redirectTo = to;
         } else {
           logger.debug(
-            `[rule: ${item.id}] redirect ${redirectTo} to ${item.to}`,
+            `[web-request-handler] [rule: ${item.id}] redirect ${redirectTo} to ${item.to}`,
           );
           redirectTo = item.to;
         }
@@ -216,7 +220,10 @@ class WebRequestHandler {
     if (!e.requestHeaders) {
       return;
     }
-    logger.debug(`handle before send ${e.url}`, e.requestHeaders);
+    logger.debug(
+      `[web-request-handler] handle before send ${e.url}`,
+      e.requestHeaders,
+    );
     const rule = getRules(TABLE_NAMES.sendHeader, {
       url: e.url,
       enable: true,
@@ -229,7 +236,10 @@ class WebRequestHandler {
       return;
     }
     this.modifyHeaders(e, REQUEST_TYPE.REQUEST, rule);
-    logger.debug(`handle before send:finish ${e.url}`, e.requestHeaders);
+    logger.debug(
+      `[web-request-handler] handle before send:finish ${e.url}`,
+      e.requestHeaders,
+    );
     return { requestHeaders: e.requestHeaders };
   }
 
@@ -266,7 +276,10 @@ class WebRequestHandler {
     if (!e.responseHeaders) {
       return;
     }
-    logger.debug(`handle received ${e.url}`, e.responseHeaders);
+    logger.debug(
+      `[web-request-handler] handle received ${e.url}`,
+      e.responseHeaders,
+    );
     const rule = getRules(TABLE_NAMES.receiveHeader, {
       url: e.url,
       enable: true,
@@ -287,7 +300,10 @@ class WebRequestHandler {
     if (respRule) {
       this.modifyHeaders(e, REQUEST_TYPE.RESPONSE, respRule, detail);
     }
-    logger.debug(`handle received:finish ${e.url}`, e.responseHeaders);
+    logger.debug(
+      `[web-request-handler] handle received:finish ${e.url}`,
+      e.responseHeaders,
+    );
     return { responseHeaders: e.responseHeaders };
   }
 

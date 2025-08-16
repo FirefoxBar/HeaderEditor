@@ -1,6 +1,7 @@
 import browser, { type Tabs } from 'webextension-polyfill';
 import { IS_MATCH, RULE_TYPE, TABLE_NAMES } from '@/share/core/constant';
 import emitter from '@/share/core/emitter';
+import logger from '@/share/core/logger';
 import { prefs } from '@/share/core/prefs';
 import { isMatchUrl } from '@/share/core/rule-utils';
 import type { InitdRule, Rule } from '@/share/core/types';
@@ -26,6 +27,8 @@ class ChromeResponseModifier {
   private isEnabled = false;
   private stage = 'Request';
   private rules: InitdRule[] = [];
+  private attached = new Set<number>();
+  private fetchEnabled = new Set<number>();
 
   constructor() {
     this.initRules();
@@ -49,21 +52,122 @@ class ChromeResponseModifier {
     this.checkStage();
   }
 
+  private async getAttached() {
+    const targets = await chrome.debugger.getTargets();
+    const res = targets.filter(x => Boolean(x.tabId) && x.attached);
+    this.attached = new Set(res.map(x => x.tabId!));
+    this.fetchEnabled.forEach(x => {
+      if (!this.attached.has(x)) {
+        this.fetchEnabled.delete(x);
+      }
+    });
+    return {
+      targets: res,
+      tabIds: this.attached,
+    };
+  }
+
+  private async detachTab(tabId?: number) {
+    if (typeof tabId === 'undefined') {
+      return;
+    }
+    if (!this.attached.has(tabId)) {
+      return;
+    }
+    try {
+      await chrome.debugger.detach({ tabId });
+      this.attached.delete(tabId);
+    } catch (e) {
+      console.error('detachTab failed:', e);
+    }
+  }
+
+  private async attachTab(tabId?: number) {
+    if (typeof tabId === 'undefined') {
+      return;
+    }
+    if (this.attached.has(tabId)) {
+      return;
+    }
+    try {
+      await chrome.debugger.attach({ tabId }, '1.3');
+      this.attached.add(tabId);
+    } catch (e) {
+      console.error('attachTab failed:', e);
+    }
+  }
+
+  private async enableFetch(tabId?: number) {
+    if (typeof tabId === 'undefined') {
+      return;
+    }
+    await this.attachTab(tabId);
+    if (this.fetchEnabled.has(tabId)) {
+      try {
+        await chrome.debugger.sendCommand({ tabId: tabId }, 'Fetch.disable');
+        this.fetchEnabled.delete(tabId);
+      } catch (e) {
+        console.error('Fetch.disable failed: ', e);
+      }
+    }
+    try {
+      await chrome.debugger.sendCommand({ tabId: tabId }, 'Fetch.enable', {
+        patterns: [
+          {
+            urlPattern: 'http://*',
+            requestStage: this.stage,
+          },
+          {
+            urlPattern: 'https://*',
+            requestStage: this.stage,
+          },
+        ],
+      });
+      this.fetchEnabled.add(tabId);
+    } catch (e) {
+      console.error('Fetch.enable failed: ', e);
+    }
+  }
+
+  private async disableFetch(tabId?: number) {
+    if (typeof tabId === 'undefined') {
+      return;
+    }
+    if (!this.fetchEnabled.has(tabId)) {
+      return;
+    }
+    try {
+      await chrome.debugger.sendCommand({ tabId: tabId }, 'Fetch.disable');
+      this.fetchEnabled.delete(tabId);
+    } catch (e) {
+      console.error('Fetch.disable failed: ', e);
+    }
+  }
+
   private async checkEnable() {
     const currentEnabled =
       isValidArray(this.rules) && this.modifyBody && !this.disableAll;
+    logger.debug(
+      '[chrome-response-modifier] checkEnable: ',
+      currentEnabled,
+      this.rules,
+      this.modifyBody,
+      this.disableAll,
+      this.isEnabled,
+    );
     // debugger;
     if (this.isEnabled === currentEnabled) {
       return;
     }
     this.isEnabled = currentEnabled;
     const tabs = await browser.tabs.query({});
+    const { targets } = await this.getAttached();
     if (currentEnabled) {
-      tabs.forEach(tab => this.handleTab(tab));
+      tabs.forEach(tab => this.attachTab(tab.id));
     } else {
-      tabs.forEach(async tab => {
-        await chrome.debugger.sendCommand({ tabId: tab.id }, 'Fetch.disable');
-        await chrome.debugger.detach({ tabId: tab.id });
+      targets.forEach(async target => {
+        await this.disableFetch(target.tabId);
+        await this.detachTab(target.tabId);
       });
     }
   }
@@ -76,35 +180,24 @@ class ChromeResponseModifier {
     const newStage = hasResponse ? 'Response' : 'Request';
     if (newStage !== this.stage) {
       this.stage = newStage;
-      const tabs = await browser.tabs.query({});
-      tabs.forEach(async tab => {
-        await chrome.debugger.sendCommand({ tabId: tab.id }, 'Fetch.disable');
-        await this.handleTab(tab);
-      });
+      const { targets } = await this.getAttached();
+      targets.forEach(target => this.enableFetch(target.tabId));
     }
-  }
-
-  private async handleTab(tab: Tabs.Tab) {
-    if (!this.isEnabled) {
-      return;
-    }
-    await chrome.debugger.attach({ tabId: tab.id }, '1.0');
-    await chrome.debugger.sendCommand({ tabId: tab.id }, 'Fetch.enable', {
-      patterns: [
-        {
-          urlPattern: 'http://*',
-          requestStage: this.stage,
-        },
-        {
-          urlPattern: 'https://*',
-          requestStage: this.stage,
-        },
-      ],
-    });
   }
 
   private initHook() {
-    browser.tabs.onCreated.addListener(tab => this.handleTab(tab));
+    browser.tabs.onCreated.addListener(tab => this.enableFetch(tab.id));
+    browser.tabs.onUpdated.addListener(tabId => this.enableFetch(tabId));
+    browser.tabs.onRemoved.addListener(tabId => {
+      this.attached.delete(tabId);
+      this.fetchEnabled.delete(tabId);
+    });
+    chrome.debugger.onDetach.addListener(({ tabId }) => {
+      if (tabId) {
+        this.attached.delete(tabId);
+        this.fetchEnabled.delete(tabId);
+      }
+    });
     chrome.debugger.onEvent.addListener(async (source, method, params) => {
       const { tabId } = source;
       if (method !== 'Fetch.requestPaused') {
