@@ -30,6 +30,8 @@ Please note that this encoding is only used for decoding. The modified response 
 
 If you don't know the encoding used by a webpage, open the console (press F12), switch to the Network tab, refresh the current page, and observe the Content-Type in the Response Headers.
 
+[Encoding list](https://developer.mozilla.org/en-US/docs/Web/API/Encoding_API/Encodings)
+
 ### Request Stage
 
 In Chrome, you can choose when to intercept the request.

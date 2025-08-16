@@ -23,6 +23,8 @@ HE 預設使用 UTF-8 解碼傳輸的內容。如果網站未使用 UTF-8 編碼
 
 如果您不知道網頁使用的編碼，請開啟控制台（按 F12），切換到「網路」選項卡，刷新目前頁面，然後觀察回應標頭中的 Content-Type。
 
+[編碼列表](https://developer.mozilla.org/en-US/docs/Web/API/Encoding_API/Encodings)
+
 ### 請求階段
 
 在 Chrome 中，您可以選擇何時攔截請求。

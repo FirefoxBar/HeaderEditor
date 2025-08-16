@@ -31,6 +31,8 @@ HE 默认使用 UTF-8 来解码传输的内容。如果网站并非 UTF-8 编码
 
 如果您不知道网页使用何种编码，请打开控制台（按F12），切换到 Network/网络 标签，刷新当前页面，观察 Response Headers/响应头 中的 Content-Type。
 
+[完整编码列表](https://developer.mozilla.org/en-US/docs/Web/API/Encoding_API/Encodings)
+
 ### 请求阶段
 
 在 Chrome 下，您可以选择在何时拦截请求。
