@@ -50,3 +50,7 @@ return val.replace(/baidu/g, 'Google');
 You can use `detail.browser` to get the browser type, which can be either `chrome` or `firefox`.
 * In Firefox, the detail object is the same as in the [custom function](./custom-function).
 * In Chrome, the detail object format is [Fetch.requestPaused](https://chromedevtools.github.io/devtools-protocol/tot/Fetch/#event-requestPaused).
+
+## Known Issues
+
+* On Chrome, response modifications do not take effect when accessing a site for the first time in a new tab.

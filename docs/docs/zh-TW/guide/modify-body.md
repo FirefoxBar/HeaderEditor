@@ -50,3 +50,7 @@ return val.replace(/baidu/g, 'Google');
 您可以使用 `detail.browser` 取得瀏覽器類型，可以是 `chrome` 或 `firefox`。
 * 在 Firefox 中，detail 物件與 [自訂函數](./custom-function) 中的相同。
 * 在 Chrome 中，detail 物件的格式為 [Fetch.requestPaused](https://chromedevtools.github.io/devtools-protocol/tot/Fetch/#event-requestPaused)。
+
+## 已知問題
+
+* 在 Chrome 中，在新分頁中首次造訪網站時，回應修改不會生效。

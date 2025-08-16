@@ -49,3 +49,7 @@ return val.replace(/baidu/g, 'Google');
 您可以通过`detail.browser`获取浏览器类型，取值为`chrome`或`firefox`。
 * 在 Firefox 下，detail 对象与[自定义函数](./custom-function)中一致。
 * 在 Chrome 下，detail 对象格式为[Fetch.requestPaused](https://chromedevtools.github.io/devtools-protocol/tot/Fetch/#event-requestPaused)。
+
+## 已知问题
+
+* 在 Chrome 上，当新标签页首次访问网站时，响应修改不会生效。
