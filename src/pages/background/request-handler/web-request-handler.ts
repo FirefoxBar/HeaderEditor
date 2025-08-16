@@ -1,14 +1,17 @@
 import { last } from 'lodash-es';
-import { TextDecoder } from 'text-encoding';
 import browser, { type WebRequest } from 'webextension-polyfill';
 import { RULE_TYPE, TABLE_NAMES } from '@/share/core/constant';
 import emitter from '@/share/core/emitter';
 import logger from '@/share/core/logger';
 import { prefs } from '@/share/core/prefs';
 import type { InitdRule, RULE_ACTION_OBJ } from '@/share/core/types';
-import { getGlobal, IS_SUPPORT_STREAM_FILTER } from '@/share/core/utils';
+import {
+  getGlobal,
+  IS_CHROME,
+  IS_SUPPORT_STREAM_FILTER,
+} from '@/share/core/utils';
 import { get as getRules } from '../core/rules';
-import { textDecode } from './decoder';
+import { textDecode } from './utils';
 
 // 最大修改8MB的Body
 const MAX_BODY_SIZE = 8 * 1024 * 1024;
@@ -73,9 +76,9 @@ class WebRequestHandler {
     const result = ['blocking'];
     result.push(type);
     if (
-      BROWSER_TYPE === 'chrome' &&
-      // @ts-ignore
-      chrome.webRequest.OnBeforeSendHeadersOptions.hasOwnProperty(
+      IS_CHROME &&
+      Object.hasOwn(
+        chrome.webRequest.OnBeforeSendHeadersOptions,
         'EXTRA_HEADERS',
       )
     ) {
@@ -274,6 +277,16 @@ class WebRequestHandler {
     if (rule) {
       this.modifyHeaders(e, REQUEST_TYPE.RESPONSE, rule, detail);
     }
+    // response also can modify headers
+    const respRule = getRules(TABLE_NAMES.receiveBody, {
+      url: e.url,
+      enable: true,
+      resourceType: e.type,
+    });
+    // Browser is starting up, pass all requests
+    if (respRule) {
+      this.modifyHeaders(e, REQUEST_TYPE.RESPONSE, respRule, detail);
+    }
     logger.debug(`handle received:finish ${e.url}`, e.responseHeaders);
     return { responseHeaders: e.responseHeaders };
   }
@@ -331,23 +344,24 @@ class WebRequestHandler {
       this.autoDeleteSavedHeader(request.requestId);
     }
     const newHeaders: { [key: string]: string } = {};
-    let hasFunction = false;
+    const functions: InitdRule[] = [];
     for (let i = 0; i < rule.length; i++) {
       const item = rule[i];
       if (item._runner === 'dnr' && ENABLE_DNR) {
         continue;
       }
-      if (!item.isFunction) {
-        if (item.headers) {
-          Object.assign(newHeaders, item.headers);
-        } else {
-          const { name, value } = item.action as RULE_ACTION_OBJ;
-          newHeaders[name] = value;
+      if (item.isFunction) {
+        if (item.ruleType !== RULE_TYPE.MODIFY_RECV_BODY) {
+          // skip body modification rules
+          functions.push(item);
+          continue;
         }
-        rule.splice(i, 1);
-        i--;
-      } else {
-        hasFunction = true;
+      }
+      if (item.headers) {
+        Object.assign(newHeaders, item.headers);
+      } else if (item.action) {
+        const { name, value } = item.action as RULE_ACTION_OBJ;
+        newHeaders[name] = value;
       }
     }
     for (let i = 0; i < headers.length; i++) {
@@ -372,9 +386,9 @@ class WebRequestHandler {
         value: newHeaders[k],
       });
     }
-    if (hasFunction) {
+    if (functions.length > 0) {
       const detail = presetDetail || this.makeDetails(request);
-      rule.forEach(item => {
+      functions.forEach(item => {
         try {
           item._func(headers, detail);
         } catch (e) {
@@ -436,7 +450,7 @@ class WebRequestHandler {
     if (!hasCustomFunction) {
       const filter = browser.webRequest.filterResponseData(e.requestId);
       filter.onstop = () => {
-        const finalBody = last(rule)?.bodyValue;
+        const finalBody = last(rule)?.body?.value;
         if (typeof finalBody !== 'undefined') {
           // 缓存实例，减少开销
           if (!this.textEncoder) {

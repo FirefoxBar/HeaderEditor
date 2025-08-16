@@ -50,7 +50,12 @@ export interface BasicRule {
     excludeResourceTypes: DeclarativeNetRequest.ResourceType[];
   }>;
   headers?: Record<string, string>;
-  bodyValue?: string;
+  body?: {
+    stage?: 'Request' | 'Response';
+    type?: 'text' | 'file';
+    fileName?: string;
+    value: string;
+  };
 }
 
 export function isBasicRule(obj: any): obj is BasicRule {

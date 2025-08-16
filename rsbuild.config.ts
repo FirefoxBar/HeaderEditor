@@ -54,12 +54,6 @@ export default defineConfig({
         ) {
           return callback(undefined, '{}', 'var');
         }
-        if (
-          !browserConfig.ENABLE_EVAL &&
-          ['text-encoding'].includes(request || '')
-        ) {
-          return callback(undefined, '{}', 'var');
-        }
         callback();
       },
       {

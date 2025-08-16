@@ -1,6 +1,7 @@
 import { TABLE_NAMES_ARR } from '../core/constant';
 import { getSync } from '../core/storage';
 import type { BasicRule } from '../core/types';
+import { IS_CHROME } from '../core/utils';
 
 function getTotalCount(rules: { [key: string]: BasicRule[] }) {
   let count = 0;
@@ -17,7 +18,7 @@ interface SyncMeta {
 
 class BrowserSync {
   save(rules: { [key: string]: BasicRule[] }) {
-    if (BROWSER_TYPE === 'chrome') {
+    if (IS_CHROME) {
       const toSave: { [key: string]: any } = {};
       // split
       // @ts-ignore

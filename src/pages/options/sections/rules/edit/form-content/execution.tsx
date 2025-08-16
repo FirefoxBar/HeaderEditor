@@ -1,9 +1,9 @@
 import { Form, useFormState } from '@douyinfe/semi-ui';
-import * as React from 'react';
+import React from 'react';
 import { BoolRadioGroupField } from '@/pages/options/components/bool-radio';
 import HeaderField from '@/share/components/header-field';
 import { RULE_TYPE } from '@/share/core/constant';
-import { t } from '@/share/core/utils';
+import { IS_ANDROID, IS_FIREFOX, t } from '@/share/core/utils';
 import usePref from '@/share/hooks/use-pref';
 import { CodeEditorField } from '../code-editor';
 import ENCODING_LIST from '../encoding';
@@ -27,6 +27,7 @@ const Execution = () => {
           filter
           field="encoding"
           label={t('encoding')}
+          helpText="For decoding only"
           optionList={ENCODING_LIST.map(x => ({ label: x, value: x }))}
         />
       )}
@@ -61,10 +62,29 @@ const Execution = () => {
           />
         </Form.Slot>
       )}
+      {ruleType === RULE_TYPE.MODIFY_RECV_BODY && !IS_FIREFOX && (
+        <Form.Select
+          label="Stage"
+          field="body.stage"
+          optionList={[
+            { label: 'Request', value: 'Request' },
+            { label: 'Response', value: 'Response' },
+          ]}
+        />
+      )}
+      {/* Modify body can also modify headers */}
+      {ruleType === RULE_TYPE.MODIFY_RECV_BODY && (
+        <Form.Slot label={t('response_headers')}>
+          <HeaderField
+            field="editHeader"
+            type={showCommonHeader ? 'response' : undefined}
+          />
+        </Form.Slot>
+      )}
       {/* Custom function */}
       {(isFunction || ruleType === RULE_TYPE.MODIFY_RECV_BODY) && (
         <CodeEditorField
-          field={isFunction ? 'code' : 'bodyValue'}
+          field={isFunction ? 'code' : 'body.value'}
           label={t('code')}
           height="200px"
         />

@@ -4,7 +4,7 @@ import { defaultPrefValue } from '@/share/core/constant';
 import emitter from '@/share/core/emitter';
 import { prefs } from '@/share/core/prefs';
 import type { PrefValue } from '@/share/core/types';
-import { IS_SUPPORT_STREAM_FILTER, t } from '@/share/core/utils';
+import { IS_FIREFOX, IS_SUPPORT_STREAM_FILTER, t } from '@/share/core/utils';
 import Api from '@/share/pages/api';
 
 interface PrefsState {
@@ -35,7 +35,7 @@ const prefItems: {
   'modify-body': {
     langKey: 'modify_body',
     type: 'switch',
-    disabled: BROWSER_TYPE === 'firefox' && !IS_SUPPORT_STREAM_FILTER,
+    disabled: IS_FIREFOX && !IS_SUPPORT_STREAM_FILTER,
   },
   'is-debug': {
     langKey: 'debug_mode_enable',
@@ -104,7 +104,7 @@ export default class Prefs extends React.Component<{}, PrefsState> {
     emitter.off(emitter.EVENT_PREFS_UPDATE, this.handleUpdate);
   }
 
-  handleUpdate(key: string, val: any) {
+  handleUpdate(key: keyof PrefValue, val: any) {
     if (this.state.prefs[key] === val) {
       return;
     }

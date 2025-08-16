@@ -1,12 +1,12 @@
 import browser, { type Tabs } from 'webextension-polyfill';
-import { RULE_TYPE, TABLE_NAMES } from '@/share/core/constant';
+import { IS_MATCH, RULE_TYPE, TABLE_NAMES } from '@/share/core/constant';
 import emitter from '@/share/core/emitter';
 import { prefs } from '@/share/core/prefs';
 import { isMatchUrl } from '@/share/core/rule-utils';
 import type { InitdRule, Rule } from '@/share/core/types';
 import { isValidArray } from '@/share/core/utils';
 import { get, waitLoad } from '../core/rules';
-import { textDecode } from './decoder';
+import { textDecode } from './utils';
 
 function safeBtoa(str: string) {
   const bytes = new TextEncoder().encode(str);
@@ -52,6 +52,7 @@ class ChromeResponseModifier {
   private async checkEnable() {
     const currentEnabled =
       isValidArray(this.rules) && this.modifyBody && !this.disableAll;
+    // debugger;
     if (this.isEnabled === currentEnabled) {
       return;
     }
@@ -71,8 +72,8 @@ class ChromeResponseModifier {
     if (!this.isEnabled) {
       return;
     }
-    const hasCustomFunction = this.rules.some(r => r.isFunction);
-    const newStage = hasCustomFunction ? 'Response' : 'Request';
+    const hasResponse = this.rules.some(r => r.body?.stage === 'Response');
+    const newStage = hasResponse ? 'Response' : 'Request';
     if (newStage !== this.stage) {
       this.stage = newStage;
       const tabs = await browser.tabs.query({});
@@ -109,13 +110,15 @@ class ChromeResponseModifier {
       if (method !== 'Fetch.requestPaused') {
         return;
       }
-      const { requestId, responseHeaders, url } = params as any;
+      const { requestId, responseHeaders, request } = params as any;
+      const { url } = request;
       if (!isValidArray(this.rules)) {
         chrome.debugger.sendCommand({ tabId }, 'Fetch.continueRequest', {
           requestId,
         });
         return;
       }
+      const newHeaders: Record<string, string> = {};
       const hasFunc = this.rules.some(item => item.isFunction);
       let finalBody: any;
       let resp: any;
@@ -127,7 +130,7 @@ class ChromeResponseModifier {
         );
       }
       for (const rule of this.rules) {
-        if (!isMatchUrl(rule, url)) {
+        if (isMatchUrl(rule, url) !== IS_MATCH.MATCH) {
           continue;
         }
         if (!finalBody) {
@@ -140,6 +143,9 @@ class ChromeResponseModifier {
             finalBody = resp?.body;
           }
         }
+        if (rule.headers) {
+          Object.assign(newHeaders, rule.headers);
+        }
         if (rule.isFunction) {
           const body = rule._func(finalBody, {
             ...params,
@@ -149,13 +155,29 @@ class ChromeResponseModifier {
             finalBody = body;
           }
         } else {
-          finalBody = rule.bodyValue;
+          finalBody = rule.body?.value;
+        }
+      }
+      const finalHeaders = responseHeaders || [];
+      if (!ENABLE_WEB_REQUEST) {
+        for (let i = 0; i < finalHeaders.length; i++) {
+          const name = finalHeaders[i].name.toLowerCase();
+          if (newHeaders[name] === undefined) {
+            continue;
+          }
+          if (newHeaders[name] === '_header_editor_remove_') {
+            finalHeaders.splice(i, 1);
+            i--;
+          } else {
+            finalHeaders[i].value = newHeaders[name];
+          }
+          delete newHeaders[name];
         }
       }
       return chrome.debugger.sendCommand({ tabId }, 'Fetch.fulfillRequest', {
         requestId,
         responseCode: 200,
-        responseHeaders,
+        responseHeaders: finalHeaders,
         body: safeBtoa(finalBody),
       });
     });
@@ -186,7 +208,7 @@ class ChromeResponseModifier {
       emitter.INNER_RULE_UPDATE,
       ({ from, target }: { from: Rule; target: Rule }) => {
         if (
-          from.ruleType === RULE_TYPE.MODIFY_RECV_BODY ||
+          from?.ruleType === RULE_TYPE.MODIFY_RECV_BODY ||
           target.ruleType === RULE_TYPE.MODIFY_RECV_BODY
         ) {
           this.initRules();

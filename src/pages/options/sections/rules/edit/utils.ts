@@ -23,7 +23,10 @@ export const EMPTY_ARR = [];
 export function getInput(rule: BasicRule) {
   const res: RuleInput = { ...rule };
   if (res.headers) {
-    res.editHeader = Object.entries(res.headers).map(([name, value]) => ({ name, value }));
+    res.editHeader = Object.entries(res.headers).map(([name, value]) => ({
+      name,
+      value,
+    }));
     delete res.headers;
   }
   if (res.condition) {
@@ -77,9 +80,15 @@ export function getInput(rule: BasicRule) {
 
 export function getRuleFromInput(input: RuleInput): BasicRule {
   const res = { ...input };
-  if (res.ruleType === 'modifySendHeader' || res.ruleType === 'modifyReceiveHeader') {
+  if (
+    res.ruleType === RULE_TYPE.MODIFY_SEND_HEADER ||
+    res.ruleType === RULE_TYPE.MODIFY_RECV_HEADER ||
+    res.ruleType === RULE_TYPE.MODIFY_RECV_BODY
+  ) {
     if (Array.isArray(res.editHeader)) {
-      res.headers = Object.fromEntries(res.editHeader.filter((x) => Boolean(x.name)).map((x) => [x.name, x.value]));
+      res.headers = Object.fromEntries(
+        res.editHeader.filter(x => Boolean(x.name)).map(x => [x.name, x.value]),
+      );
     }
     delete res.editHeader;
   }

@@ -1,3 +1,4 @@
+import { IS_CHROME } from '@/share/core/utils';
 import createApiHandler from './api-handler';
 import { createChromeResponseModifier } from './request-handler/chrome-response-modifier';
 import { createDNRHandler } from './request-handler/dnr-handler';
@@ -21,7 +22,7 @@ function init() {
   if (ENABLE_DNR) {
     createDNRHandler();
   }
-  if (BROWSER_TYPE === 'chrome') {
+  if (IS_CHROME) {
     createChromeResponseModifier();
   }
 }
