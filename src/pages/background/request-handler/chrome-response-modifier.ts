@@ -29,6 +29,7 @@ class ChromeResponseModifier {
   private rules: InitdRule[] = [];
   private attached = new Set<number>();
   private fetchEnabled = new Set<number>();
+  private pendingTabIds = new Set<number>();
 
   constructor() {
     this.initRules();
@@ -75,6 +76,7 @@ class ChromeResponseModifier {
       return;
     }
     try {
+      logger.debug('[chrome-response-modifier] detach tab', tabId);
       await chrome.debugger.detach({ tabId });
       this.attached.delete(tabId);
     } catch (e) {
@@ -86,15 +88,18 @@ class ChromeResponseModifier {
     if (typeof tabId === 'undefined') {
       return;
     }
-    if (this.attached.has(tabId)) {
+    if (this.attached.has(tabId) || this.pendingTabIds.has(tabId)) {
       return;
     }
     try {
+      this.pendingTabIds.add(tabId);
+      logger.debug('[chrome-response-modifier] attach tab', tabId);
       await chrome.debugger.attach({ tabId }, '1.3');
       this.attached.add(tabId);
     } catch (e) {
-      console.error('attachTab failed:', e);
+      logger.debug('[chrome-response-modifier] attach tab failed', tabId, e);
     }
+    this.pendingTabIds.delete(tabId);
   }
 
   private async enableFetch(tabId?: number) {
@@ -102,15 +107,12 @@ class ChromeResponseModifier {
       return;
     }
     await this.attachTab(tabId);
-    if (this.fetchEnabled.has(tabId)) {
-      try {
-        await chrome.debugger.sendCommand({ tabId: tabId }, 'Fetch.disable');
-        this.fetchEnabled.delete(tabId);
-      } catch (e) {
-        console.error('Fetch.disable failed: ', e);
-      }
+    if (this.fetchEnabled.has(tabId) || this.pendingTabIds.has(tabId)) {
+      return;
     }
     try {
+      this.pendingTabIds.add(tabId);
+      logger.debug('[chrome-response-modifier] enable fetch', tabId);
       await chrome.debugger.sendCommand({ tabId: tabId }, 'Fetch.enable', {
         patterns: [
           {
@@ -125,8 +127,9 @@ class ChromeResponseModifier {
       });
       this.fetchEnabled.add(tabId);
     } catch (e) {
-      console.error('Fetch.enable failed: ', e);
+      logger.debug('[chrome-response-modifier] enable fetch failed', tabId, e);
     }
+    this.pendingTabIds.delete(tabId);
   }
 
   private async disableFetch(tabId?: number) {
@@ -163,7 +166,7 @@ class ChromeResponseModifier {
     const tabs = await browser.tabs.query({});
     const { targets } = await this.getAttached();
     if (currentEnabled) {
-      tabs.forEach(tab => this.attachTab(tab.id));
+      tabs.forEach(tab => this.enableFetch(tab.id));
     } else {
       targets.forEach(async target => {
         await this.disableFetch(target.tabId);
@@ -181,19 +184,42 @@ class ChromeResponseModifier {
     if (newStage !== this.stage) {
       this.stage = newStage;
       const { targets } = await this.getAttached();
-      targets.forEach(target => this.enableFetch(target.tabId));
+      targets.forEach(async target => {
+        await this.disableFetch(target.tabId);
+        await this.enableFetch(target.tabId);
+      });
     }
   }
 
   private initHook() {
+    emitter.on(emitter.INNER_RULE_REMOVE, ({ table }) => {
+      if (table === TABLE_NAMES.receiveBody) {
+        this.initRules();
+      }
+    });
+
+    emitter.on(
+      emitter.INNER_RULE_UPDATE,
+      ({ from, target }: { from: Rule; target: Rule }) => {
+        if (
+          from?.ruleType === RULE_TYPE.MODIFY_RECV_BODY ||
+          target.ruleType === RULE_TYPE.MODIFY_RECV_BODY
+        ) {
+          this.initRules();
+        }
+      },
+    );
+
     browser.tabs.onCreated.addListener(tab => this.enableFetch(tab.id));
     browser.tabs.onUpdated.addListener(tabId => this.enableFetch(tabId));
     browser.tabs.onRemoved.addListener(tabId => {
+      logger.debug('[chrome-response-modifier] tab onRemoved', tabId);
       this.attached.delete(tabId);
       this.fetchEnabled.delete(tabId);
     });
     chrome.debugger.onDetach.addListener(({ tabId }) => {
       if (tabId) {
+        logger.debug('[chrome-response-modifier] onDetach', tabId);
         this.attached.delete(tabId);
         this.fetchEnabled.delete(tabId);
       }
@@ -289,24 +315,6 @@ class ChromeResponseModifier {
       }
       this.checkEnable();
     });
-
-    emitter.on(emitter.INNER_RULE_REMOVE, ({ table }) => {
-      if (table === TABLE_NAMES.receiveBody) {
-        this.initRules();
-      }
-    });
-
-    emitter.on(
-      emitter.INNER_RULE_UPDATE,
-      ({ from, target }: { from: Rule; target: Rule }) => {
-        if (
-          from?.ruleType === RULE_TYPE.MODIFY_RECV_BODY ||
-          target.ruleType === RULE_TYPE.MODIFY_RECV_BODY
-        ) {
-          this.initRules();
-        }
-      },
-    );
 
     prefs.ready(() => {
       this.disableAll = Boolean(prefs.get('disable-all'));
