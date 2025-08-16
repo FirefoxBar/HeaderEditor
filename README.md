@@ -36,6 +36,8 @@ Header Editor require those permissions:
 
 * `storage`, `unlimitedStorage`: Storage rules and settings
 
+* `debugger`: Modify response body in Chrome
+
 * `unsafe-eval`: Execute custom function, code at [src/share/core/rule-utils.ts#L30](https://github.com/FirefoxBar/HeaderEditor/blob/dev/src/share/core/rule-utils.ts#L30) (may change in the future, you can search for the newest location by `new Function`)
 
 ## Contribution
