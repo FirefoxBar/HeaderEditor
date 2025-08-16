@@ -3,7 +3,7 @@ import React from 'react';
 import { BoolRadioGroupField } from '@/pages/options/components/bool-radio';
 import HeaderField from '@/share/components/header-field';
 import { RULE_TYPE } from '@/share/core/constant';
-import { IS_ANDROID, IS_FIREFOX, t } from '@/share/core/utils';
+import { IS_FIREFOX, t } from '@/share/core/utils';
 import usePref from '@/share/hooks/use-pref';
 import { CodeEditorField } from '../code-editor';
 import ENCODING_LIST from '../encoding';
@@ -27,7 +27,7 @@ const Execution = () => {
           filter
           field="encoding"
           label={t('encoding')}
-          helpText="For decoding only"
+          helpText={t('encoding_desc')}
           optionList={ENCODING_LIST.map(x => ({ label: x, value: x }))}
         />
       )}
@@ -64,11 +64,11 @@ const Execution = () => {
       )}
       {ruleType === RULE_TYPE.MODIFY_RECV_BODY && !IS_FIREFOX && (
         <Form.Select
-          label="Stage"
+          label={t('request_stage')}
           field="body.stage"
           optionList={[
-            { label: 'Request', value: 'Request' },
-            { label: 'Response', value: 'Response' },
+            { label: t('stage_request'), value: 'Request' },
+            { label: t('stage_response'), value: 'Response' },
           ]}
         />
       )}
@@ -85,7 +85,7 @@ const Execution = () => {
       {(isFunction || ruleType === RULE_TYPE.MODIFY_RECV_BODY) && (
         <CodeEditorField
           field={isFunction ? 'code' : 'body.value'}
-          label={t('code')}
+          label={t(isFunction ? 'code' : 'response_content')}
           height="200px"
         />
       )}
