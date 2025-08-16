@@ -19,3 +19,11 @@ export function textDecode(encoding: string, buffer: Uint8Array) {
     return undefined;
   }
 }
+
+let textEncoder: TextEncoder;
+export function textEncode(text: string) {
+  if (!textEncoder) {
+    textEncoder = new TextEncoder();
+  }
+  return textEncoder.encode(text);
+}

@@ -21,7 +21,6 @@ class BrowserSync {
     if (IS_CHROME) {
       const toSave: { [key: string]: any } = {};
       // split
-      // @ts-ignore
       const limit = chrome.storage.sync.QUOTA_BYTES_PER_ITEM - 500;
       let index = 0;
       while (getTotalCount(rules) > 0) {
@@ -68,11 +67,11 @@ class BrowserSync {
   }
   async getMeta(): Promise<SyncMeta> {
     const e = await getSync().get('backup');
-    return e.backup;
+    return e.backup as SyncMeta;
   }
   async getContent(): Promise<{ [key: string]: BasicRule[] }> {
     const e = await getSync().get('backup');
-    const { index } = e.backup;
+    const { index } = e.backup as SyncMeta;
     const result: { [key: string]: BasicRule[] } = {};
     TABLE_NAMES_ARR.forEach(it => {
       result[it] = [];
@@ -93,7 +92,7 @@ class BrowserSync {
     const toRemove = ['backup'];
     const e = await getSync().get('backup');
     if (e.backup) {
-      const { index } = e.backup;
+      const { index } = e.backup as SyncMeta;
       const result: { [key: string]: BasicRule[] } = {};
       TABLE_NAMES_ARR.forEach(it => {
         result[it] = [];

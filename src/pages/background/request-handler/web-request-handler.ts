@@ -11,7 +11,7 @@ import {
   IS_SUPPORT_STREAM_FILTER,
 } from '@/share/core/utils';
 import { get as getRules } from '../core/rules';
-import { textDecode } from './utils';
+import { textDecode, textEncode } from './utils';
 
 // 最大修改8MB的Body
 const MAX_BODY_SIZE = 8 * 1024 * 1024;
@@ -56,7 +56,6 @@ class WebRequestHandler {
   private savedRequestHeader = new Map();
   private deleteHeaderTimer: ReturnType<typeof setTimeout> | null = null;
   private deleteHeaderQueue = new Map();
-  private textEncoder: TextEncoder | null = null;
 
   constructor() {
     this.initHook();
@@ -416,7 +415,7 @@ class WebRequestHandler {
 
   private autoDeleteSavedHeader(id?: string) {
     if (id) {
-      this.deleteHeaderQueue.set(id, new Date().getTime() / 100);
+      this.deleteHeaderQueue.set(id, Date.now() / 100);
     }
     if (this.deleteHeaderTimer !== null) {
       return;
@@ -428,7 +427,7 @@ class WebRequestHandler {
       }
       this.deleteHeaderTimer = null;
       // check time
-      const curTime = new Date().getTime() / 100;
+      const curTime = Date.now() / 100;
       // k: id, v: time
       const iter = this.deleteHeaderQueue.entries();
       for (const [k, v] of iter) {
@@ -468,11 +467,7 @@ class WebRequestHandler {
       filter.onstop = () => {
         const finalBody = last(rule)?.body?.value;
         if (typeof finalBody !== 'undefined') {
-          // 缓存实例，减少开销
-          if (!this.textEncoder) {
-            this.textEncoder = new TextEncoder();
-          }
-          filter.write(this.textEncoder.encode(finalBody));
+          filter.write(textEncode(finalBody));
         }
         filter.close();
       };
@@ -508,11 +503,6 @@ class WebRequestHandler {
         return;
       }
 
-      // 缓存实例，减少开销
-      if (!this.textEncoder) {
-        this.textEncoder = new TextEncoder();
-      }
-
       let finalBody: string | null = null;
       let hasChanged = false;
 
@@ -536,7 +526,7 @@ class WebRequestHandler {
       }
 
       if (hasChanged && finalBody) {
-        filter.write(this.textEncoder.encode(finalBody));
+        filter.write(textEncode(finalBody));
       } else {
         filter.write(buffers);
       }

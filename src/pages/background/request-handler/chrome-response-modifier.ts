@@ -7,10 +7,10 @@ import { isMatchUrl } from '@/share/core/rule-utils';
 import type { InitdRule, Rule } from '@/share/core/types';
 import { isValidArray } from '@/share/core/utils';
 import { get, waitLoad } from '../core/rules';
-import { textDecode } from './utils';
+import { textDecode, textEncode } from './utils';
 
 function safeBtoa(str: string) {
-  const bytes = new TextEncoder().encode(str);
+  const bytes = textEncode(str);
   const binary = Array.from(bytes, b => String.fromCharCode(b)).join('');
   return btoa(binary);
 }
