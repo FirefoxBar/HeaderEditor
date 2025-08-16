@@ -1,12 +1,12 @@
 import browser from 'webextension-polyfill';
-import { IS_MATCH, RULE_TYPE, TABLE_NAMES } from '@/share/core/constant';
+import type { DeclarativeNetRequest } from 'webextension-polyfill/namespaces/declarativeNetRequest';
+import { RULE_TYPE, TABLE_NAMES } from '@/share/core/constant';
 import emitter from '@/share/core/emitter';
 import logger from '@/share/core/logger';
 import { prefs } from '@/share/core/prefs';
-import { isMatchUrl } from '@/share/core/rule-utils';
 import type { InitdRule, Rule } from '@/share/core/types';
 import { isValidArray } from '@/share/core/utils';
-import { get, waitLoad } from '../core/rules';
+import { filter, get, waitLoad } from '../core/rules';
 import { textDecode, textEncode } from './utils';
 
 function safeBtoa(str: string) {
@@ -20,6 +20,20 @@ function safeAtob(encoding: string, base64: string) {
   const bytes = Uint8Array.from(binary, c => c.charCodeAt(0));
   return textDecode(encoding, bytes);
 }
+
+const resourceTypeMap: Record<string, DeclarativeNetRequest.ResourceType> = {
+  Document: 'main_frame',
+  Stylesheet: 'stylesheet',
+  Image: 'image',
+  Media: 'media',
+  Font: 'font',
+  Script: 'script',
+  XHR: 'xmlhttprequest',
+  Fetch: 'xmlhttprequest',
+  WebSocket: 'websocket',
+  Ping: 'ping',
+  CSPViolationReport: 'csp_report',
+};
 
 class ChromeResponseModifier {
   private disableAll = false;
@@ -228,7 +242,8 @@ class ChromeResponseModifier {
       if (method !== 'Fetch.requestPaused') {
         return;
       }
-      const { requestId, responseHeaders, request } = params as any;
+      const { requestId, responseHeaders, request, resourceType } =
+        params as any;
       const { url } = request;
       if (!isValidArray(this.rules)) {
         chrome.debugger.sendCommand(source, 'Fetch.continueRequest', {
@@ -247,10 +262,15 @@ class ChromeResponseModifier {
           { requestId },
         );
       }
-      for (const rule of this.rules) {
-        if (isMatchUrl(rule, url) !== IS_MATCH.MATCH) {
-          continue;
-        }
+      const rules = filter(this.rules, {
+        url,
+        method: request.method.toLowerCase(),
+        resourceType:
+          typeof resourceTypeMap[resourceType] === 'undefined'
+            ? 'other'
+            : resourceTypeMap[resourceType],
+      });
+      for (const rule of rules) {
         if (!finalBody) {
           if (resp?.base64Encoded) {
             const body = safeAtob(rule.encoding || 'utf-8', resp.body);

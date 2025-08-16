@@ -8,6 +8,7 @@ export interface RuleFilterOptions {
   name?: string;
   runner?: 'web_request' | 'dnr';
   type?: RULE_TYPE;
+  method?: string; // request method, lowercase
   resourceType?: DeclarativeNetRequest.ResourceType;
 }
 

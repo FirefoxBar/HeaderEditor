@@ -16,13 +16,6 @@ On Chrome, you may see a prompt indicating that `"Header Editor" started debuggi
 
 ## Configuration
 
-### Invalid Configurations
-In Chrome, the following configurations are invalid. We may fix those in the future:
-* Match types - method, resource type
-* Exclude rule - method, resource type
-
-In Firefox, all configurations are valid.
-
 ### Encoding
 HE uses UTF-8 to decode transmitted content by default. If the website is not encoded in UTF-8, you will need to manually specify the encoding.
 

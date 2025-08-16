@@ -154,6 +154,7 @@ class WebRequestHandler {
       enable: true,
       runner: 'web_request',
       resourceType: e.type,
+      method: e.method.toLowerCase(),
     });
     // Browser is starting up, pass all requests
     if (rule === null) {
@@ -229,6 +230,7 @@ class WebRequestHandler {
       runner: 'web_request',
       type: RULE_TYPE.MODIFY_SEND_HEADER,
       resourceType: e.type,
+      method: e.method.toLowerCase(),
     });
     // Browser is starting up, pass all requests
     if (rule === null) {
@@ -255,19 +257,12 @@ class WebRequestHandler {
     }
     // 修改响应体
     if (this.modifyBody) {
-      let canModifyBody = true;
       // 检查有没有Content-Length头，如有，则不能超过MAX_BODY_SIZE，否则不进行修改
-      if (e.responseHeaders) {
-        for (const it of e.responseHeaders) {
-          if (it.name.toLowerCase() === 'content-length') {
-            if (it.value && parseInt(it.value, 10) >= MAX_BODY_SIZE) {
-              canModifyBody = false;
-            }
-            break;
-          }
-        }
-      }
-      if (canModifyBody) {
+      const contentLength = Number(
+        e.responseHeaders?.find(x => x.name.toLowerCase() === 'content-length')
+          ?.value,
+      );
+      if (Number.isNaN(contentLength) || contentLength < MAX_BODY_SIZE) {
         this.modifyReceivedBody(e, detail);
       }
     }
@@ -284,6 +279,7 @@ class WebRequestHandler {
       enable: true,
       runner: 'web_request',
       resourceType: e.type,
+      method: e.method.toLowerCase(),
     });
     // Browser is starting up, pass all requests
     if (rule) {
@@ -294,6 +290,7 @@ class WebRequestHandler {
       url: e.url,
       enable: true,
       resourceType: e.type,
+      method: e.method.toLowerCase(),
     });
     // Browser is starting up, pass all requests
     if (respRule) {
@@ -381,7 +378,7 @@ class WebRequestHandler {
     }
     for (let i = 0; i < headers.length; i++) {
       const name = headers[i].name.toLowerCase();
-      if (newHeaders[name] === undefined) {
+      if (typeof newHeaders[name] === 'undefined') {
         continue;
       }
       if (newHeaders[name] === '_header_editor_remove_') {
@@ -389,8 +386,8 @@ class WebRequestHandler {
         i--;
       } else {
         headers[i].value = newHeaders[name];
+        delete newHeaders[name];
       }
-      delete newHeaders[name];
     }
     for (const k in newHeaders) {
       if (newHeaders[k] === '_header_editor_remove_') {
@@ -456,6 +453,7 @@ class WebRequestHandler {
       runner: 'web_request',
       type: RULE_TYPE.MODIFY_RECV_BODY,
       resourceType: e.type,
+      method: e.method.toLowerCase(),
     });
     if (rule === null) {
       return;

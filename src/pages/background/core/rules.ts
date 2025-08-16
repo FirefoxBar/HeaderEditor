@@ -135,6 +135,14 @@ function filter(fromRules: InitdRule[], options?: RuleFilterOptions) {
       return false;
     }
 
+    if (
+      options.method &&
+      isValidArray(rule.condition?.method) &&
+      !rule.condition.method.includes(options.method)
+    ) {
+      return false;
+    }
+
     if (url !== null && isMatchUrl(rule, url) !== IS_MATCH.MATCH) {
       return false;
     }
@@ -148,7 +156,7 @@ function filter(fromRules: InitdRule[], options?: RuleFilterOptions) {
         return false;
       }
       if (
-        excludeResourceTypes &&
+        isValidArray(excludeResourceTypes) &&
         excludeResourceTypes.includes(options.resourceType)
       ) {
         return false;
@@ -221,7 +229,7 @@ async function save(o: Rule): Promise<Rule> {
             if (prop === 'id') {
               continue;
             }
-            existsRule[prop] = rule[prop];
+            existsRule[prop] = rule[prop as keyof Rule];
           }
           const req = os.put(existsRule);
           req.onsuccess = () => {
