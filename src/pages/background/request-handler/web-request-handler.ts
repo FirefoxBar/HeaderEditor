@@ -507,7 +507,7 @@ class WebRequestHandler {
       let hasChanged = false;
 
       for (const item of rule!) {
-        const encoding = item.encoding || 'UTF-8';
+        const encoding = item.encoding || 'utf-8';
         try {
           if (!finalBody) {
             const body = textDecode(encoding, buffers);

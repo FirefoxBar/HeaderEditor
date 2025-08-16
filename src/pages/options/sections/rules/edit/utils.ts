@@ -75,6 +75,9 @@ export function getInput(rule: BasicRule) {
       res.editExcludeType.push('resourceType');
     }
   }
+  if (res.encoding) {
+    res.encoding = res.encoding.toLowerCase();
+  }
   return res;
 }
 
@@ -98,6 +101,10 @@ export function getRuleFromInput(input: RuleInput): BasicRule {
     if (res.editMatchType?.includes(RULE_MATCH_TYPE.ALL)) {
       res.condition.all = true;
     }
+  }
+
+  if (res.encoding) {
+    res.encoding = res.encoding.toLowerCase();
   }
 
   delete res.editMatchType;

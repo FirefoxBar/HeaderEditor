@@ -253,7 +253,7 @@ class ChromeResponseModifier {
         }
         if (!finalBody) {
           if (resp?.base64Encoded) {
-            const body = safeAtob(rule.encoding || 'UTF-8', resp.body);
+            const body = safeAtob(rule.encoding || 'utf-8', resp.body);
             if (body) {
               finalBody = body;
             }
