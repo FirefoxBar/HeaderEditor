@@ -14,7 +14,7 @@ async function packXpi({
 
   const fileName = getOutputFile(extensionConfig.browser, version, 'xpi');
   const outFile = join(releasePath, fileName);
-  await submitAddon(rootPath, true, {
+  await submitAddon(rootPath, false, {
     addonId: extensionConfig.id,
     addonVersion: version,
     channel: 'unlisted',
