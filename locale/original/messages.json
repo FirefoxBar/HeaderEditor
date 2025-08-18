@@ -152,6 +152,10 @@
     "message": "Encoding",
     "description": "Label for responseBody's character encoding"
   },
+  "encoding_desc": {
+    "message": "For decoding only",
+    "description": "encoding description"
+  },
   "enter_group_name": {
     "message": "Please enter a group name",
     "description": "Prompt the user when the user click add group button"
@@ -360,6 +364,10 @@
     "message": "Request headers",
     "description": "Request headers"
   },
+  "request_stage": {
+    "message": "Request stage",
+    "description": "Request stage"
+  },
   "resourceType_csp_report": {
     "message": "CSP Report (Given in the Content-Security-Policy header)",
     "description": "Resource type"
@@ -411,6 +419,10 @@
   "resourceType_xmlhttprequest": {
     "message": "XMLHttpRequest / Fetch",
     "description": "Resource type"
+  },
+  "response_content": {
+    "message": "Response content",
+    "description": "Response content"
   },
   "response_headers": {
     "message": "Response headers",
@@ -492,6 +504,14 @@
     "message": "Share",
     "description": "Share button title"
   },
+  "stage_request": {
+    "message": "Request",
+    "description": "Request stage"
+  },
+  "stage_response": {
+    "message": "Response",
+    "description": "Response stage"
+  },
   "suggested_group": {
     "message": "Suggested group",
     "description": "The suggested group name provided by the rule author"
@@ -567,25 +587,5 @@
   "view": {
     "message": "View",
     "description": "View rule or a link"
-  },
-  "request_stage": {
-    "message": "Request stage",
-    "description": "Request stage"
-  },
-  "encoding_desc": {
-    "message": "For decoding only",
-    "description": "encoding description"
-  },
-  "stage_request": {
-    "message": "Request",
-    "description": "Request stage"
-  },
-  "stage_response": {
-    "message": "Response",
-    "description": "Response stage"
-  },
-  "response_content": {
-    "message": "Response content",
-    "description": "Response content"
   }
 }
