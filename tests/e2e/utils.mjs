@@ -229,14 +229,17 @@ export function runTest(browserKey, cb) {
   return cb(client);
 }
 
-export async function saveRule(popup, rule) {
-  const action = {
-    method: 'save_rule',
-    rule,
-  };
-  const resp = await popup.evaluate(
+export function callBackgroundApi(popup, action) {
+  return popup.evaluate(
     `browser.runtime.sendMessage(${JSON.stringify(action)})`,
   );
+}
+
+export async function saveRule(popup, rule) {
+  const resp = await callBackgroundApi(popup, {
+    method: 'save_rule',
+    rule,
+  });
   let tabName = '';
   switch (rule.ruleType) {
     case 'cancel':
@@ -259,13 +262,11 @@ export async function saveRule(popup, rule) {
   return {
     id: resp.id,
     remove: () =>
-      popup.evaluate(
-        `browser.runtime.sendMessage(${JSON.stringify({
-          method: 'del_rule',
-          id: resp.id,
-          type: tabName,
-        })})`,
-      ),
+      callBackgroundApi(popup, {
+        method: 'del_rule',
+        id: resp.id,
+        type: tabName,
+      }),
   };
 }
 

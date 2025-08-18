@@ -9,6 +9,7 @@ import {
   getGlobal,
   IS_CHROME,
   IS_SUPPORT_STREAM_FILTER,
+  isValidArray,
 } from '@/share/core/utils';
 import { get as getRules } from '../core/rules';
 import { textDecode, textEncode } from './utils';
@@ -455,7 +456,7 @@ class WebRequestHandler {
       resourceType: e.type,
       method: e.method.toLowerCase(),
     });
-    if (rule === null) {
+    if (!isValidArray(rule)) {
       return;
     }
     const hasCustomFunction = rule.some(item => item.isFunction);

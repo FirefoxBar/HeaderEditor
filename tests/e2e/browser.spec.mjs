@@ -1,4 +1,5 @@
 import {
+  callBackgroundApi,
   cleanup,
   getBrowserClient,
   getHeader,
@@ -185,6 +186,46 @@ test.each([['edge_v2'], ['firefox_v2']])(
       const header = await getHeader(browser.browser);
 
       expect(header['X_CUSTOM_HEADER']).toBe(key);
+
+      await remove();
+    }),
+);
+
+test.each([['edge_v2'], ['chrome_v3'], ['firefox_v2']])(
+  '[%s] - Modify Response',
+  async browserKey =>
+    runTest(browserKey, async browser => {
+      const key = String(Math.random()).replace('.', '');
+
+      await callBackgroundApi(browser.popup, {
+        method: 'set_pref',
+        key: 'modify-body',
+        value: true,
+      });
+
+      const { remove } = await saveRule(browser.popup, {
+        enable: true,
+        ruleType: 'modifyReceiveBody',
+        isFunction: false,
+        name: 'test modify response',
+        condition: {
+          url: `${testServer}mock-js.php`,
+        },
+        body: {
+          stage: 'Response',
+          value: `document.getElementById("value").value='${key}';`,
+        },
+        encoding: 'UTF-8',
+      });
+
+      const value1 = await getPageValue(browser.browser, 'js-src.php');
+      expect(value1).toBe(key);
+
+      const value2 = await getPageValue(
+        browser.browser,
+        `js-src.php?value=${key}`,
+      );
+      expect(value2).toBe(JSON.stringify({ value: key }));
 
       await remove();
     }),

@@ -57,12 +57,7 @@ class ChromeResponseModifier {
       enable: true,
       type: RULE_TYPE.MODIFY_RECV_BODY,
     });
-    if (!rules) {
-      this.rules = [];
-      this.stage = 'Request';
-      return;
-    }
-    this.rules = rules;
+    this.rules = isValidArray(rules) ? rules : [];
     this.checkEnable();
     this.checkStage();
   }
@@ -163,7 +158,7 @@ class ChromeResponseModifier {
 
   private async checkEnable() {
     const currentEnabled =
-      isValidArray(this.rules) && this.modifyBody && !this.disableAll;
+      this.rules.length > 0 && this.modifyBody && !this.disableAll;
     logger.debug(
       '[chrome-response-modifier] checkEnable: ',
       currentEnabled,
@@ -172,7 +167,6 @@ class ChromeResponseModifier {
       this.disableAll,
       this.isEnabled,
     );
-    // debugger;
     if (this.isEnabled === currentEnabled) {
       return;
     }
@@ -190,7 +184,7 @@ class ChromeResponseModifier {
   }
 
   private async checkStage() {
-    if (!this.isEnabled) {
+    if (!this.isEnabled || this.rules.length === 0) {
       return;
     }
     const hasResponse = this.rules.some(r => r.body?.stage === 'Response');
@@ -239,17 +233,30 @@ class ChromeResponseModifier {
       }
     });
     chrome.debugger.onEvent.addListener(async (source, method, params) => {
+      logger.debug(
+        '[chrome-response-modifier] onEvent',
+        source,
+        method,
+        params,
+      );
       if (method !== 'Fetch.requestPaused') {
         return;
       }
       const { requestId, responseHeaders, request, resourceType } =
         params as any;
       const { url } = request;
-      if (!isValidArray(this.rules)) {
-        chrome.debugger.sendCommand(source, 'Fetch.continueRequest', {
+      const rules = filter(this.rules, {
+        url,
+        method: request.method.toLowerCase(),
+        resourceType:
+          typeof resourceTypeMap[resourceType] === 'undefined'
+            ? 'other'
+            : resourceTypeMap[resourceType],
+      });
+      if (!isValidArray(rules)) {
+        return chrome.debugger.sendCommand(source, 'Fetch.continueRequest', {
           requestId,
         });
-        return;
       }
       const newHeaders: Record<string, string> = {};
       const hasFunc = this.rules.some(item => item.isFunction);
@@ -262,14 +269,6 @@ class ChromeResponseModifier {
           { requestId },
         );
       }
-      const rules = filter(this.rules, {
-        url,
-        method: request.method.toLowerCase(),
-        resourceType:
-          typeof resourceTypeMap[resourceType] === 'undefined'
-            ? 'other'
-            : resourceTypeMap[resourceType],
-      });
       for (const rule of rules) {
         if (!finalBody) {
           if (resp?.base64Encoded) {

@@ -4,6 +4,7 @@ on:
   push:
     branches:
     - dev
+    - feat-chrome-response
   workflow_dispatch:
     inputs:
       platform:
@@ -103,8 +104,8 @@ jobs:
         EDGE_PATH: ${{ steps.install-edge.outputs.edge-path }}
       run: |
         npx puppeteer browsers install
-        php -S 0.0.0.0:8899 -t $GITHUB_WORKSPACE/tests/simple-server &
-        sleep 3
+        php -S 0.0.0.0:8899 -t $GITHUB_WORKSPACE/tests/simple-server > /dev/null 2>&1 &
+        sleep 2
         npm run test:e2e
     - name: Publish snapshot
       env:
