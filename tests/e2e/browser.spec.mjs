@@ -195,7 +195,8 @@ test.each([['edge_v2'], ['chrome_v3'], ['firefox_v2']])(
   '[%s] - Modify Response',
   async browserKey =>
     runTest(browserKey, async browser => {
-      const key = String(Math.random()).replace('.', '');
+      const key1 = String(Math.random()).replace('.', '');
+      const key2 = String(Math.random()).replace('.', '');
 
       await callBackgroundApi(browser.popup, {
         method: 'set_pref',
@@ -213,19 +214,57 @@ test.each([['edge_v2'], ['chrome_v3'], ['firefox_v2']])(
         },
         body: {
           stage: 'Response',
-          value: `document.getElementById("value").value='${key}';`,
+          value: `document.getElementById("value").value='${key1}';`,
         },
         encoding: 'UTF-8',
       });
 
       const value1 = await getPageValue(browser.browser, 'js-src.php');
-      expect(value1).toBe(key);
+      expect(value1).toBe(key1);
 
       const value2 = await getPageValue(
         browser.browser,
-        `js-src.php?value=${key}`,
+        `js-src.php?value=${key2}`,
       );
-      expect(value2).toBe(JSON.stringify({ value: key }));
+      expect(value2).toBe(key2);
+
+      await remove();
+    }),
+);
+
+test.each([['edge_v2'], ['firefox_v2']])(
+  '[%s] - Modify Response - Custom Function',
+  async browserKey =>
+    runTest(browserKey, async browser => {
+      const key1 = String(Math.random()).replace('.', '');
+      const key2 = String(Math.random()).replace('.', '');
+
+      await callBackgroundApi(browser.popup, {
+        method: 'set_pref',
+        key: 'modify-body',
+        value: true,
+      });
+
+      const { remove } = await saveRule(browser.popup, {
+        enable: true,
+        ruleType: 'modifyReceiveBody',
+        isFunction: true,
+        name: 'test modify response with custom function',
+        condition: {
+          urlPrefix: `${testServer}mock-js.php`,
+        },
+        body: {
+          stage: 'Response',
+        },
+        code: `return val.replace(/'(.*?)'/, '"${key1}$1${key1}$1"');`,
+        encoding: 'UTF-8',
+      });
+
+      const value = await getPageValue(
+        browser.browser,
+        `js-src.php?value=${key2}`,
+      );
+      expect(value).toBe(`${key1}${key2}${key1}${key2}`);
 
       await remove();
     }),

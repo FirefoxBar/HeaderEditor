@@ -1,7 +1,7 @@
 <?php
 $url = 'mock-js.php';
-if (!empty($_SERVER['QUERY_STRING'])) {
-  $url .= '?' . $_SERVER['QUERY_STRING'];
+if (!empty($_GET['value'])) {
+  $url .= '?value=' . $_GET['value'];
 }
 ?>
 <html>
