@@ -152,6 +152,10 @@
 		"message": "Encoding",
 		"description": "Label for responseBody's character encoding"
 	},
+	"encoding_desc": {
+		"message": "For decoding only",
+		"description": "encoding description"
+	},
 	"enter_group_name": {
 		"message": "Please enter a group name",
 		"description": "Prompt the user when the user click add group button"
@@ -305,11 +309,11 @@
 		"description": "URL option in modal"
 	},
 	"modify_body": {
-		"message": "Modify response body (only supports Firefox)",
+		"message": "Modify response body",
 		"description": "Option to enable/disable modify body"
 	},
 	"modify_body_help": {
-		"message": "Allow custom function modify response body, it may reduce some performance",
+		"message": "Allow modify response body, it may reduce some performance",
 		"description": "Help text for modify_body option"
 	},
 	"name": {
@@ -359,6 +363,10 @@
 	"request_headers": {
 		"message": "Request headers",
 		"description": "Request headers"
+	},
+	"request_stage": {
+		"message": "Request stage",
+		"description": "Request stage"
 	},
 	"resourceType_csp_report": {
 		"message": "CSP Report (Given in the Content-Security-Policy header)",
@@ -411,6 +419,10 @@
 	"resourceType_xmlhttprequest": {
 		"message": "XMLHttpRequest / Fetch",
 		"description": "Resource type"
+	},
+	"response_content": {
+		"message": "Response content",
+		"description": "Response content"
 	},
 	"response_headers": {
 		"message": "Response headers",
@@ -491,6 +503,14 @@
 	"share": {
 		"message": "Share",
 		"description": "Share button title"
+	},
+	"stage_request": {
+		"message": "Request",
+		"description": "Request stage"
+	},
+	"stage_response": {
+		"message": "Response",
+		"description": "Response stage"
 	},
 	"suggested_group": {
 		"message": "Suggested group",
