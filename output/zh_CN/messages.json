@@ -152,6 +152,10 @@
 		"message": "编码",
 		"description": "Label for responseBody's character encoding"
 	},
+	"encoding_desc": {
+		"message": "仅用于解码",
+		"description": "encoding description"
+	},
 	"enter_group_name": {
 		"message": "请输入组名称",
 		"description": "Prompt the user when the user click add group button"
@@ -305,11 +309,11 @@
 		"description": "URL option in modal"
 	},
 	"modify_body": {
-		"message": "修改响应体（仅支持Firefox）",
+		"message": "修改响应体",
 		"description": "Option to enable/disable modify body"
 	},
 	"modify_body_help": {
-		"message": "允许自定义函数修改响应体，开启后可能会降低性能",
+		"message": "允许修改响应体，开启后可能会降低性能",
 		"description": "Help text for modify_body option"
 	},
 	"name": {
@@ -359,6 +363,10 @@
 	"request_headers": {
 		"message": "请求头",
 		"description": "Request headers"
+	},
+	"request_stage": {
+		"message": "请求阶段",
+		"description": "Request stage"
 	},
 	"resourceType_csp_report": {
 		"message": "CSP报告（在Content-Security-Policy头中设置）",
@@ -411,6 +419,10 @@
 	"resourceType_xmlhttprequest": {
 		"message": "XMLHttpRequest / Fetch",
 		"description": "Resource type"
+	},
+	"response_content": {
+		"message": "响应体",
+		"description": "Response content"
 	},
 	"response_headers": {
 		"message": "响应头",
@@ -491,6 +503,14 @@
 	"share": {
 		"message": "分享",
 		"description": "Share button title"
+	},
+	"stage_request": {
+		"message": "请求",
+		"description": "Request stage"
+	},
+	"stage_response": {
+		"message": "响应",
+		"description": "Response stage"
 	},
 	"suggested_group": {
 		"message": "建议分组",
