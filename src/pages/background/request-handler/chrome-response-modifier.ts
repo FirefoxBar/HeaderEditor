@@ -35,6 +35,23 @@ const resourceTypeMap: Record<string, DeclarativeNetRequest.ResourceType> = {
   CSPViolationReport: 'csp_report',
 };
 
+const debuggerAPI = { ...chrome.debugger };
+// Polyfill debugger API
+['attach', 'detach', 'sendCommand', 'getTargets'].forEach(method => {
+  // @ts-ignore
+  debuggerAPI[method] = (...args) =>
+    new Promise((resolve, reject) => {
+      // @ts-ignore
+      chrome.debugger[method](...args, res => {
+        if (chrome.runtime.lastError) {
+          reject(chrome.runtime.lastError);
+        } else {
+          resolve(res);
+        }
+      });
+    });
+});
+
 class ChromeResponseModifier {
   private disableAll = false;
   private modifyBody = false;
@@ -63,7 +80,7 @@ class ChromeResponseModifier {
   }
 
   private async getAttached() {
-    const targets = await chrome.debugger.getTargets();
+    const targets = await debuggerAPI.getTargets();
     const res = targets.filter(x => Boolean(x.tabId) && x.attached);
     this.attached = new Set(res.map(x => x.tabId!));
     this.fetchEnabled.forEach(x => {
@@ -86,7 +103,7 @@ class ChromeResponseModifier {
     }
     try {
       logger.debug('[chrome-response-modifier] detach tab', tabId);
-      await chrome.debugger.detach({ tabId });
+      await debuggerAPI.detach({ tabId });
       this.attached.delete(tabId);
     } catch (e) {
       console.error('detachTab failed:', e);
@@ -94,7 +111,7 @@ class ChromeResponseModifier {
   }
 
   private async attachTab(tabId?: number) {
-    if (typeof tabId === 'undefined') {
+    if (typeof tabId === 'undefined' || !this.isEnabled) {
       return;
     }
     if (this.attached.has(tabId) || this.pendingTabIds.has(tabId)) {
@@ -103,7 +120,7 @@ class ChromeResponseModifier {
     try {
       this.pendingTabIds.add(tabId);
       logger.debug('[chrome-response-modifier] attach tab', tabId);
-      await chrome.debugger.attach({ tabId }, '1.3');
+      await debuggerAPI.attach({ tabId }, '1.3');
       this.attached.add(tabId);
     } catch (e) {
       logger.debug('[chrome-response-modifier] attach tab failed', tabId, e);
@@ -112,7 +129,7 @@ class ChromeResponseModifier {
   }
 
   private async enableFetch(tabId?: number) {
-    if (typeof tabId === 'undefined') {
+    if (typeof tabId === 'undefined' || !this.isEnabled) {
       return;
     }
     await this.attachTab(tabId);
@@ -122,7 +139,7 @@ class ChromeResponseModifier {
     try {
       this.pendingTabIds.add(tabId);
       logger.debug('[chrome-response-modifier] enable fetch', tabId);
-      await chrome.debugger.sendCommand({ tabId: tabId }, 'Fetch.enable', {
+      await debuggerAPI.sendCommand({ tabId: tabId }, 'Fetch.enable', {
         patterns: [
           {
             urlPattern: 'http://*',
@@ -149,7 +166,7 @@ class ChromeResponseModifier {
       return;
     }
     try {
-      await chrome.debugger.sendCommand({ tabId: tabId }, 'Fetch.disable');
+      await debuggerAPI.sendCommand({ tabId: tabId }, 'Fetch.disable');
       this.fetchEnabled.delete(tabId);
     } catch (e) {
       console.error('Fetch.disable failed: ', e);
@@ -254,7 +271,7 @@ class ChromeResponseModifier {
             : resourceTypeMap[resourceType],
       });
       if (!isValidArray(rules)) {
-        return chrome.debugger.sendCommand(source, 'Fetch.continueRequest', {
+        return debuggerAPI.sendCommand(source, 'Fetch.continueRequest', {
           requestId,
         });
       }
@@ -263,11 +280,9 @@ class ChromeResponseModifier {
       let finalBody: any;
       let resp: any;
       if (hasFunc) {
-        resp = await chrome.debugger.sendCommand(
-          source,
-          'Fetch.getResponseBody',
-          { requestId },
-        );
+        resp = await debuggerAPI.sendCommand(source, 'Fetch.getResponseBody', {
+          requestId,
+        });
       }
       for (const rule of rules) {
         if (!finalBody) {
@@ -311,7 +326,7 @@ class ChromeResponseModifier {
           delete newHeaders[name];
         }
       }
-      return chrome.debugger.sendCommand(source, 'Fetch.fulfillRequest', {
+      return debuggerAPI.sendCommand(source, 'Fetch.fulfillRequest', {
         requestId,
         responseCode: 200,
         responseHeaders: finalHeaders,

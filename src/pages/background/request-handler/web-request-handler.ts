@@ -372,7 +372,7 @@ class WebRequestHandler {
       }
       if (item.headers) {
         Object.assign(newHeaders, item.headers);
-      } else if (item.action) {
+      } else if (typeof item.action === 'object') {
         const { name, value } = item.action as RULE_ACTION_OBJ;
         newHeaders[name] = value;
       }
