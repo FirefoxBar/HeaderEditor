@@ -28,5 +28,4 @@ fs.writeFileSync(
     encoding: 'utf8',
   },
 );
-
 console.log('Sort success');
