@@ -54,6 +54,10 @@ jobs:
     if: ${{ needs.check_changes.outputs.src_changed == 'true' || github.event_name == 'workflow_dispatch' }}
     steps:
     - uses: actions/checkout@v4
+    - name: Inject Env
+      run: |
+        echo "INPUT_PLATFORM=${{ github.event.inputs.platform }}" >> $GITHUB_ENV
+        echo "INPUT_VERSION=${{ github.event.inputs.version }}" >> $GITHUB_ENV
     - uses: pnpm/action-setup@v4
       with:
         version: 9
@@ -69,43 +73,8 @@ jobs:
         TOKEN: ${{ secrets.SNAPSHOT_TOKEN }}
         GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
       run: node ./scripts/get-snapshot-version.mjs
-    - name: Build Firefox v2
-      run: npm run build:firefox_v2
-    - name: Build Firefox v3
-      run: npm run build:firefox_v3
-    - name: Build Chrome v2
-      run: npm run build:chrome_v2
-    - name: Build Chrome v3
-      run: npm run build:chrome_v3
-    - name: Upload bundle
-      uses: actions/upload-artifact@v4
-      with:
-        name: dist
-        retention-days: 7
-        path: |
-          dist_chrome_v2
-          dist_chrome_v3
-          dist_firefox_v2
-          dist_firefox_v3
-    - name: Install Edge
-      id: install-edge
-      run: |
-        sudo apt-get remove -y microsoft-edge-stable
-        sudo wget -qO- https://packages.microsoft.com/keys/microsoft.asc | sudo gpg --dearmor -o /etc/apt/trusted.gpg.d/microsoft.gpg
-        sudo add-apt-repository "deb [arch=amd64] https://packages.microsoft.com/repos/edge stable main"
-        sudo apt-get update
-        sudo apt-get install -y microsoft-edge-stable=138.0.3351.109-1
-        microsoft-edge --version
-        EDGE_PATH=$(which microsoft-edge)
-        echo "edge-path=$EDGE_PATH" >> $GITHUB_OUTPUT
-    - name: Test
-      env:
-        EDGE_PATH: ${{ steps.install-edge.outputs.edge-path }}
-      run: |
-        npx puppeteer browsers install
-        php -S 0.0.0.0:8899 -t $GITHUB_WORKSPACE/tests/simple-server > /dev/null 2>&1 &
-        sleep 2
-        npm run test:e2e
+    - name: Build And Test
+      uses: ./.github/actions/build-and-test
     - name: Publish snapshot
       env:
         AMO_KEY: ${{ secrets.AMO_KEY }}
