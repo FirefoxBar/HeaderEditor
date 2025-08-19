@@ -29,6 +29,6 @@ As I know, Chrome has limits on the number of operations per unit of time. It me
 ### Firefox
 
 * It seems that Firefox Sync is executed regularly, however if you want to force the cloud export you've to launch Firefox Sync manually.
-![](https://user-images.githubusercontent.com/886325/41821498-e081fe7e-77e1-11e8-81de-03a09d826cb9.png)
+![](https://img12.360buyimg.com/ddimg/jfs/t1/331038/40/854/2134/68a4ab75Fcd087439/c89009381abc82ea.jpg)
 * A new installation may cause cloud storage data to be blanked.
 * See [browser.storage API](https://developer.mozilla.org/en-US/docs/Mozilla/Add-ons/WebExtensions/API/storage) for more technical details.

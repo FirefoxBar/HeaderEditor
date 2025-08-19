@@ -29,6 +29,6 @@ Firefox和Chrome都有各自的空间限制，大约100KB。如果您的规则�
 ### Firefox
 
 * 据推测，Firefox会定期进行同步。但您可以通过手动运行，强行进行一次同步。
-![](https://user-images.githubusercontent.com/886325/41821498-e081fe7e-77e1-11e8-81de-03a09d826cb9.png)
+![](https://img12.360buyimg.com/ddimg/jfs/t1/331038/40/854/2134/68a4ab75Fcd087439/c89009381abc82ea.jpg)
 * 重新安装扩展可能导致同步内容丢失。
 * 请查看[browser.storage API](https://developer.mozilla.org/en-US/docs/Mozilla/Add-ons/WebExtensions/API/storage)获取更多技术细节。

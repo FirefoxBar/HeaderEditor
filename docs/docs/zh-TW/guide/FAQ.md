@@ -2,6 +2,31 @@
 title: FAQ
 ---
 
+## 提示`“Header Editor”已開始偵錯此瀏覽器`
+
+在 Chrome 瀏覽器中，啟用修改回應主體功能後，您會看到此提示。如果您不想看到此提示，您可以：
+* 在「選項」中停用「修改回應主體」。
+* 在執行 Chrome 瀏覽器時新增 `--silent-debugger-extension-api` 參數。
+
+## 所有規則均無效
+
+在極少數情況下，某些規則可能會因為語法錯誤而無法初始化，導致所有規則都無效。
+
+在這種情況下，您可以使用以下方法找到特定規則並修改或停用它：
+
+Chrome：
+* 開啟 `chrome://extensions/?id=eningockdidmgiojffjmkdblpjocbhgh`
+* 在右上角啟用“開發者模式”
+* 點選“檢查檢視”下的“Service Worker”
+* 找到錯誤訊息並檢查 ID、對應規則和錯誤訊息。
+![img](https://img11.360buyimg.com/ddimg/jfs/t1/333577/33/836/91910/68a4ab26F2b85cd64/8d6cd3da3b9af51a.jpg)
+
+Firefox：
+* 開啟 `about:debugging`
+* 找到“Header Editor”，然後點擊右側的“檢查”按鈕。
+* 找到對應的規則和錯誤訊息。
+![img](https://img13.360buyimg.com/ddimg/jfs/t1/289605/39/18012/32092/68a4ae2cFa61f9a6a/9be7525f36abe945.jpg)
+
 ## 为什么“头名称”变成小写了？
 
 [RFC 2616](https://tools.ietf.org/html/rfc2616.html#section-4.2)中写到:
