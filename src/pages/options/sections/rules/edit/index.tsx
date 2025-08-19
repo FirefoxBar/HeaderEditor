@@ -92,7 +92,7 @@ const Edit = ({ visible, rule: ruleProp, onClose }: EditProps) => {
       if (rule.ruleType === RULE_TYPE.MODIFY_RECV_BODY) {
         if (!prefs.get('modify-body')) {
           prefs.set('modify-body', true);
-          Toast.info(t('auto-enable-modify-body'));
+          Toast.info(t('auto_enable_modify_body'));
         }
       }
 

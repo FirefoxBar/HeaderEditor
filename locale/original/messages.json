@@ -12,7 +12,7 @@
     "description": "Auto detect dark mode"
   },
   "auto_enable_modify_body": {
-    "message": "Modify body has been automatically turned on, please turn it off manually if you don't need it",
+    "message": "Modify response body has been automatically enabled. Please disable it manually if not needed.",
     "description": "A message"
   },
   "basic_information": {
@@ -20,7 +20,7 @@
     "description": "Basic information of a rule"
   },
   "batch_delete": {
-    "message": "batch deletion",
+    "message": "Batch delete",
     "description": "Button to delete multiple rules"
   },
   "batch_mode": {
@@ -73,7 +73,7 @@
     "description": "Label for code section in modal"
   },
   "code_empty": {
-    "message": "Code can not be empty",
+    "message": "Code cannot be empty",
     "description": "Tips when a rule is custom function but code is empty"
   },
   "common_mark": {
@@ -93,7 +93,7 @@
     "description": "Dark mode select"
   },
   "dark_mode_help": {
-    "message": "Dark mode is experimental, refresh this page to see the effect",
+    "message": "Dark mode is experimental. Refresh the page to see the effect.",
     "description": "Dark help text"
   },
   "debug_mode_enable": {
@@ -101,7 +101,7 @@
     "description": "Enable debug mode"
   },
   "debug_mode_enable_help": {
-    "message": "When debug mode is turned on, some logs will be printed in the background page",
+    "message": "When debug mode is enabled, logs will be printed on the background page",
     "description": "Debug mode description"
   },
   "delete": {
@@ -113,7 +113,7 @@
     "description": "A confirmation box shows when user want to delete rules"
   },
   "description": {
-    "message": "Manage browser's requests, include modify the request headers and response headers, redirect requests, cancel requests",
+    "message": "Manage browser requests, including modifying request headers and response headers, response body, redirecting requests, and canceling requests.",
     "description": "Extension description"
   },
   "disable": {
@@ -121,11 +121,11 @@
     "description": "disable"
   },
   "display_common_header": {
-    "message": "Display common header",
+    "message": "Display common headers",
     "description": "An option to enable header auto-complete when editing rules"
   },
   "display_common_header_help": {
-    "message": "When editing rules, display common request & response header names",
+    "message": "Display common request and response header names when editing rules",
     "description": "Help text for display_common_header_help option"
   },
   "download": {
@@ -133,7 +133,7 @@
     "description": "Download button"
   },
   "download_rule": {
-    "message": "Download rule",
+    "message": "Download rules",
     "description": "Title of the rule download area"
   },
   "edit": {
@@ -173,7 +173,7 @@
     "description": "Custom function in execute type"
   },
   "exec_normal": {
-    "message": "normal",
+    "message": "Normal",
     "description": "Normal option in execute type"
   },
   "exec_type": {
@@ -217,7 +217,7 @@
     "description": "Label for header value in modal"
   },
   "header_empty": {
-    "message": "Header name can not be empty",
+    "message": "Header name cannot be empty",
     "description": "Message for saving a rule without header name"
   },
   "help": {
@@ -237,7 +237,7 @@
     "description": "Add a new rule"
   },
   "import_override": {
-    "message": "Overrides existing",
+    "message": "Override existing",
     "description": "Overrides already existing rule"
   },
   "import_success": {
@@ -249,15 +249,15 @@
     "description": "An option to enable this feature"
   },
   "include_header_in_custom_function_help": {
-    "message": "Pass the request header into the custom function that processes the response header, it may reduce some performance",
+    "message": "Pass request headers to the custom function that processes response headers. This may reduce performance.",
     "description": "Help text for include_header_in_custom_function option"
   },
   "lite_edit_tip": {
-    "message": "Some features are not supported in lite version",
+    "message": "Some features are not supported in the lite version",
     "description": "Tip at the edit panel for lite version"
   },
   "lite_not_support": {
-    "message": "The lite version does not support this feature",
+    "message": "This feature is not supported in the lite version",
     "description": "Message at the not support features"
   },
   "manage": {
@@ -297,11 +297,11 @@
     "description": "Regular expression option in modal"
   },
   "match_resourceType": {
-    "message": "Resource Type",
+    "message": "Resource type",
     "description": "Request resource type"
   },
   "match_rule_empty": {
-    "message": "Match rule can not be empty",
+    "message": "Match rule cannot be empty",
     "description": "Message for saving a rule without match rule"
   },
   "match_url": {
@@ -313,7 +313,7 @@
     "description": "Option to enable/disable modify body"
   },
   "modify_body_help": {
-    "message": "Allow modify response body, it may reduce some performance",
+    "message": "Allow modification of response body. This may reduce performance.",
     "description": "Help text for modify_body option"
   },
   "name": {
@@ -321,11 +321,11 @@
     "description": "Label for name in modal"
   },
   "name_empty": {
-    "message": "Name can not be empty",
+    "message": "Name cannot be empty",
     "description": "Message for saving a rule without name"
   },
   "no_update": {
-    "message": "No update",
+    "message": "No updates available",
     "description": "No update"
   },
   "ok": {
@@ -337,7 +337,7 @@
     "description": "Heading for options section on manage page."
   },
   "pack_up_or_unfurl": {
-    "message": "Pack up or unfurl group",
+    "message": "Collapse/expand group",
     "description": "Button to pack up or unfurl a group"
   },
   "quick_edit": {
@@ -353,7 +353,7 @@
     "description": "Label for redirect to in modal"
   },
   "redirect_empty": {
-    "message": "Redirect target can not be empty",
+    "message": "Redirect target cannot be empty",
     "description": "Message for saving a rule without redirect target if rule type is redirect"
   },
   "rename": {
@@ -369,7 +369,7 @@
     "description": "Request stage"
   },
   "resourceType_csp_report": {
-    "message": "CSP Report (Given in the Content-Security-Policy header)",
+    "message": "CSP Report (Specified in Content-Security-Policy header)",
     "description": "Resource type"
   },
   "resourceType_font": {
@@ -389,7 +389,7 @@
     "description": "Resource type"
   },
   "resourceType_object": {
-    "message": "Object (Resources loaded by an <object> or <embed> element)",
+    "message": "Object (Resources loaded by <object> or <embed> elements)",
     "description": "Resource type"
   },
   "resourceType_other": {
@@ -397,7 +397,7 @@
     "description": "Resource type"
   },
   "resourceType_ping": {
-    "message": "Ping (Given in a hyperlink's ping attribute)",
+    "message": "Ping (Specified in hyperlink's ping attribute)",
     "description": "Resource type"
   },
   "resourceType_script": {
@@ -409,7 +409,7 @@
     "description": "Resource type"
   },
   "resourceType_sub_frame": {
-    "message": "Sub frame (Documents loaded into an <iframe> or <frame> element)",
+    "message": "Sub frame (Documents loaded in <iframe> or <frame> elements)",
     "description": "Resource type"
   },
   "resourceType_websocket": {
@@ -441,7 +441,7 @@
     "description": "If checked, rule history will automatically record to the switch list"
   },
   "rule_history_help": {
-    "message": "If checked, rule history will automatically record to the switch list",
+    "message": "Automatically record rule history to the switch list",
     "description": "Help text for rule_history option"
   },
   "rule_list": {
@@ -472,14 +472,6 @@
     "message": "Use the menu to switch rule content",
     "description": "Help text for rule_switch option"
   },
-  "rules_no_effect_for_he": {
-    "message": "Rules take no effect on Header Editor",
-    "description": "If checked, all rules will take no effect on pages in Header Editor"
-  },
-  "rules_no_effect_for_he_help": {
-    "message": "If checked, all rules will take no effect on pages in Header Editor",
-    "description": "Help text for rules_no_effect_for_he option"
-  },
   "save": {
     "message": "Save",
     "description": "Button to save a rule"
@@ -493,7 +485,7 @@
     "description": "Displays when rule saved successfully"
   },
   "select_all": {
-    "message": "Select/Unselect all",
+    "message": "Select/Deselect all",
     "description": "Button to select or unselect all rules in batch management mode"
   },
   "select_or_download": {
@@ -521,7 +513,7 @@
     "description": "Description text"
   },
   "switch_success": {
-    "message": "Switch successfully",
+    "message": "Switched successfully",
     "description": "Toast message when quick switch successfully"
   },
   "switch_title": {
@@ -529,7 +521,7 @@
     "description": "Title of the quick switch feature"
   },
   "test_custom_code": {
-    "message": "Does not support testing custom code now",
+    "message": "Custom code testing not supported",
     "description": "Label to test a redirect rule"
   },
   "test_exclude": {
@@ -537,7 +529,7 @@
     "description": "Label to test a redirect rule"
   },
   "test_invalid_regexp": {
-    "message": "Regular expression is invalid",
+    "message": "Invalid regular expression",
     "description": "Label to test a redirect rule"
   },
   "test_match": {
@@ -545,11 +537,11 @@
     "description": "Label to test a redirect rule"
   },
   "test_mismatch": {
-    "message": "Mismatch",
+    "message": "No match",
     "description": "Label to test a redirect rule"
   },
   "test_url": {
-    "message": "Test (Won't be saved)",
+    "message": "Test (Not saved)",
     "description": "Label to test a redirect rule"
   },
   "third_party_rules": {
@@ -561,11 +553,11 @@
     "description": "The default group name"
   },
   "update_available": {
-    "message": "An update of the extension is available",
+    "message": "Extension update available",
     "description": "An update of the extension is available"
   },
   "update_throttled": {
-    "message": "Update is throttled",
+    "message": "Update rate limit exceeded",
     "description": "Update is throttled"
   },
   "upload": {

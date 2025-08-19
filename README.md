@@ -10,7 +10,7 @@ Header Editor
 [![Discussions](https://img.shields.io/github/discussions/FirefoxBar/HeaderEditor?label=Discussions)](https://github.com/FirefoxBar/HeaderEditor/discussions)
 [![Build Status](https://github.com/FirefoxBar/HeaderEditor/actions/workflows/dev.yml/badge.svg)](https://github.com/FirefoxBar/HeaderEditor/actions/workflows/dev.yml)
 
-An extension which can modify the request, include request headers, response headers, redirect requests, and cancel requests.
+An extension which can modify the request, include request headers, response headers, response body, redirect requests, and cancel requests.
 
 It's 100% FREE, no ADs, no data collection.
 

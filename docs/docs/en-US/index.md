@@ -4,7 +4,7 @@ pageType: home
 hero:
   name: Header Editor
   text:
-  tagline: Modify request headers, response headers, redirect requests, cancel requests
+  tagline: Modify request headers, response headers, response body, redirect requests, cancel requests
   actions:
     - theme: brand
       text: Setup
@@ -14,7 +14,7 @@ hero:
       link: https://github.com/FirefoxBar/HeaderEditor
 features:
   - title: Modify requests
-    details: Based on rules, modify request headers, response headers, and redirect
+    details: Based on rules, modify request headers, response headers, response body, and redirect
     icon: 🚥
   - title: Custom function
     details: Use custom functions to achieve more flexible functionality
