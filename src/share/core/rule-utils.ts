@@ -118,21 +118,22 @@ export function upgradeRuleFormat(s: OldRule) {
       s.ruleType === 'modifyReceiveHeader') &&
     !s.isFunction
   ) {
-    if (!s.headers && s.action) {
+    if (!s.headers && typeof s.action === 'object') {
       const { name, value } = s.action as RULE_ACTION_OBJ;
       s.headers = {
         [name]: value,
       };
-      delete s.action;
     }
-    if (typeof s.headers === 'object') {
-      s.headers = Object.fromEntries(
-        Object.entries(s.headers).map(([key, value]) => [
-          key.toLowerCase(),
-          value,
-        ]),
-      );
-    }
+    delete s.action;
+  }
+
+  if (typeof s.headers === 'object') {
+    s.headers = Object.fromEntries(
+      Object.entries(s.headers).map(([key, value]) => [
+        key.toLowerCase(),
+        value,
+      ]),
+    );
   }
 
   if (!s.condition) {

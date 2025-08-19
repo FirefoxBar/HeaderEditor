@@ -84,6 +84,7 @@ const Execution = () => {
       {/* Custom function */}
       {(isFunction || ruleType === RULE_TYPE.MODIFY_RECV_BODY) && (
         <CodeEditorField
+          key={isFunction ? 'code' : 'body.value'}
           field={isFunction ? 'code' : 'body.value'}
           label={t(isFunction ? 'code' : 'response_content')}
           height="200px"
