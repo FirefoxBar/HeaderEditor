@@ -110,7 +110,7 @@ export async function getBrowserClient(browserKey) {
     extDir = `dist_${browserKey.replace('edge_', 'chrome_')}`;
   }
 
-  const pathToExtension = path.join(__dirname, `../../${extDir}`);
+  const pathToExtension = path.join(__dirname, `../../../${extDir}`);
 
   const manifest = JSON.parse(
     readFileSync(path.join(pathToExtension, 'manifest.json'), 'utf8'),
@@ -221,12 +221,16 @@ export async function waitTestServer() {
   }
 }
 
-export function runTest(browserKey, cb) {
-  const client = browserList[browserKey];
-  if (!client) {
-    return Promise.resolve();
+export function runTest(keys, cb) {
+  for (const key of keys) {
+    it(key, () => {
+      const client = browserList[key];
+      if (!client) {
+        return Promise.resolve();
+      }
+      return cb(client);
+    });
   }
-  return cb(client);
 }
 
 export function callBackgroundApi(popup, action) {

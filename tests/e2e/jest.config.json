@@ -1,6 +1,0 @@
-{
-  "testMatch": [
-    "**/*.spec.mjs"
-  ],
-  "transform": {}
-}
