@@ -51,7 +51,7 @@ jobs:
   build:
     needs: check_changes
     runs-on: ubuntu-24.04
-    if: ${{ needs.check_changes.outputs.src_changed == 'true' }}
+    if: ${{ needs.check_changes.outputs.src_changed == 'true' || github.event_name == 'workflow_dispatch' }}
     steps:
     - uses: actions/checkout@v4
     - uses: pnpm/action-setup@v4
