@@ -13,6 +13,11 @@ async function main() {
     return;
   }
 
+  if (process.env.INPUT_VERSION) {
+    console.log('Has INPUT_VERSION, skip get snapshot');
+    return;
+  }
+
   const pkgJson = await readJSON(join(__dirname, '../package.json'));
   const { version: versionPrefix } = pkgJson;
   console.log('Get latest release version from package.json');
