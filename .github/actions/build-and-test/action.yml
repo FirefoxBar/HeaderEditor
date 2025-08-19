@@ -4,12 +4,16 @@ runs:
   using: "composite"
   steps:
     - name: Build Firefox v2
+      shell: bash
       run: npm run build:firefox_v2
     - name: Build Firefox v3
+      shell: bash
       run: npm run build:firefox_v3
     - name: Build Chrome v2
+      shell: bash
       run: npm run build:chrome_v2
     - name: Build Chrome v3
+      shell: bash
       run: npm run build:chrome_v3
     - name: Upload bundle
       uses: actions/upload-artifact@v4
@@ -23,6 +27,7 @@ runs:
           dist_firefox_v3
     - name: Install Edge
       id: install-edge
+      shell: bash
       run: |
         sudo apt-get remove -y microsoft-edge-stable
         sudo wget -qO- https://packages.microsoft.com/keys/microsoft.asc | sudo gpg --dearmor -o /etc/apt/trusted.gpg.d/microsoft.gpg
@@ -33,6 +38,7 @@ runs:
         EDGE_PATH=$(which microsoft-edge)
         echo "edge-path=$EDGE_PATH" >> $GITHUB_OUTPUT
     - name: Test
+      shell: bash
       env:
         EDGE_PATH: ${{ steps.install-edge.outputs.edge-path }}
       run: |
