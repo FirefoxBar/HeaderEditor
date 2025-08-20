@@ -24,7 +24,7 @@ The features of the full version (Header Editor) and the lite version (Header Ed
 | DNR mode | ✅ | ✅ |
 | Rules - Exclude - Regular Expression | ✅ | ✅ |
 | Custom functions | ✅ | ❌ |
-| Modify response body | ✅ | ❌ |
+| Modify response body | ✅ | ✅ |
 
 * Chrome/Edge browser
 
@@ -34,7 +34,7 @@ The features of the full version (Header Editor) and the lite version (Header Ed
 | DNR mode | ❌ | ✅ |
 | Rules - Exclude - Regular Expression | ✅ | ❌ |
 | Custom functions | ✅ | ❌ |
-| Modify response body | ❌ | ❌ |
+| Modify response body | ✅ | ✅ |
 
 Notes:
 * The Lite version has better performance. If there is no specific requirement, it is recommended to use the Lite version.

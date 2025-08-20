@@ -4,11 +4,13 @@ title: Install Full Version
 
 # Install Full Version
 
-> Firefox users can install the full version directly from AMO; Edge users can install the full version from Edge Addons. Chrome users please follow the steps below to install
+* Firefox can install the full version directly from AMO;
+* Edge can install the full version from Edge Addons;
+* Chrome users please follow the steps below to install;
 
 ## Install
 
-* Download the latest installation package (crx format) from [this address](https://github.com/FirefoxBar/HeaderEditor/issues/286)
+* Download the latest installation package (named `HeaderEditor-x.x.x-v2.crx`) from [this address](https://github.com/FirefoxBar/HeaderEditor/releases)
 * Open `chrome://extensions/`
 * Enable "Developer Mode"
 * Drag the downloaded crx file to the extension page
