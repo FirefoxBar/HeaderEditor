@@ -14,6 +14,11 @@ on:
         description: 'Version'
         required: true
         type: string
+      release_tag:
+        description: 'Release tag name'
+        required: false
+        type: string
+
 
 concurrency:
   group: ${{ github.workflow }}-${{ github.ref }}
@@ -60,8 +65,9 @@ jobs:
         name: release
         path: temp/release
     - name: Release
-      if: ${{ github.ref_type == 'tag' }}
+      if: ${{ github.ref_type == 'tag' || github.event.inputs.release_tag != '' }}
       env:
         GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         TOKEN: ${{ secrets.SNAPSHOT_TOKEN }}
+        INPUT_RELEASE_TAG: ${{ github.event.inputs.release_tag }}
       run: npm run release

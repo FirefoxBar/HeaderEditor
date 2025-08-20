@@ -57,9 +57,14 @@ async function main() {
     return;
   }
 
+  const tagName = process.env.INPUT_RELEASE_TAG || process.env.GITHUB_REF_NAME;
+  if (!tagName) {
+    console.log('No tag name');
+    return;
+  }
+
   // Git basic infos
   const gitName = repo.split('/');
-  const tagName = process.env.GITHUB_REF_NAME;
   const gitHubBaseURL =
     process.env.GITHUB_API_URL + '/repos/' + process.env.GITHUB_REPOSITORY;
   const gitHubToken = process.env.GITHUB_TOKEN;
