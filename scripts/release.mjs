@@ -1,9 +1,9 @@
+import { Blob } from 'node:buffer';
+import { createHash } from 'node:crypto';
+import { readdir, readFile } from 'node:fs/promises';
+import { join } from 'node:path';
 import axios from 'axios';
-import { Blob } from 'buffer';
-import { createHash } from 'crypto';
-import { readdir, readFile } from 'fs/promises';
-import { get } from 'lodash';
-import { join } from 'path';
+import { get } from 'lodash-es';
 import {
   path as _path,
   extension,
