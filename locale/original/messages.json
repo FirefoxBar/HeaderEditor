@@ -113,7 +113,7 @@
     "description": "A confirmation box shows when user want to delete rules"
   },
   "description": {
-    "message": "Manage browser requests, including modifying request headers and response headers, response body, redirecting requests, and canceling requests.",
+    "message": "Manage browser requests",
     "description": "Extension description"
   },
   "disable": {
