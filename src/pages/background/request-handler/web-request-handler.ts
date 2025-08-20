@@ -1,4 +1,4 @@
-import { TextDecoder, TextEncoder } from 'text-encoding';
+import { last } from 'lodash-es';
 import browser, { type WebRequest } from 'webextension-polyfill';
 import { RULE_TYPE, TABLE_NAMES } from '@/share/core/constant';
 import emitter from '@/share/core/emitter';
@@ -9,8 +9,10 @@ import {
   getGlobal,
   IS_CHROME,
   IS_SUPPORT_STREAM_FILTER,
+  isValidArray,
 } from '@/share/core/utils';
 import { get as getRules } from '../core/rules';
+import { textDecode, textEncode } from './utils';
 
 // 最大修改8MB的Body
 const MAX_BODY_SIZE = 8 * 1024 * 1024;
@@ -44,6 +46,7 @@ interface CustomFunctionDetail {
   responseHeaders: WebRequest.HttpHeaders | null;
   statusCode?: number;
   statusLine?: string;
+  browser: 'firefox' | 'chrome';
 }
 
 class WebRequestHandler {
@@ -54,8 +57,6 @@ class WebRequestHandler {
   private savedRequestHeader = new Map();
   private deleteHeaderTimer: ReturnType<typeof setTimeout> | null = null;
   private deleteHeaderQueue = new Map();
-  private textDecoder: Map<string, TextDecoder> = new Map();
-  private textEncoder: Map<string, TextEncoder> = new Map();
 
   constructor() {
     this.initHook();
@@ -76,8 +77,8 @@ class WebRequestHandler {
     result.push(type);
     if (
       IS_CHROME &&
-      // @ts-ignore
-      chrome.webRequest.OnBeforeSendHeadersOptions.hasOwnProperty(
+      Object.hasOwn(
+        chrome.webRequest.OnBeforeSendHeadersOptions,
         'EXTRA_HEADERS',
       )
     ) {
@@ -147,13 +148,14 @@ class WebRequestHandler {
     if (!this.beforeAll(e)) {
       return;
     }
-    logger.debug(`handle before request ${e.url}`, e);
+    logger.debug(`[web-request-handler] handle before request ${e.url}`, e);
     // 可用：重定向，阻止加载
     const rule = getRules(TABLE_NAMES.request, {
       url: e.url,
       enable: true,
       runner: 'web_request',
       resourceType: e.type,
+      method: e.method.toLowerCase(),
     });
     // Browser is starting up, pass all requests
     if (rule === null) {
@@ -169,14 +171,16 @@ class WebRequestHandler {
         try {
           const r = item._func(redirectTo, detail);
           if (typeof r === 'string') {
-            logger.debug(`[rule: ${item.id}] redirect ${redirectTo} to ${r}`);
+            logger.debug(
+              `[web-request-handler] [rule: ${item.id}] redirect ${redirectTo} to ${r}`,
+            );
             redirectTo = r;
           }
           if (
             r === '_header_editor_cancel_' ||
             (item.action === 'cancel' && r === true)
           ) {
-            logger.debug(`[rule: ${item.id}] cancel`);
+            logger.debug(`[web-request-handler] [rule: ${item.id}] cancel`);
             return { cancel: true };
           }
         } catch (err) {
@@ -185,11 +189,13 @@ class WebRequestHandler {
       } else if (item.to) {
         if (item.condition?.regex || item.matchType === 'regexp') {
           const to = redirectTo.replace(item._reg, item.to);
-          logger.debug(`[rule: ${item.id}] redirect ${redirectTo} to ${to}`);
+          logger.debug(
+            `[web-request-handler] [rule: ${item.id}] redirect ${redirectTo} to ${to}`,
+          );
           redirectTo = to;
         } else {
           logger.debug(
-            `[rule: ${item.id}] redirect ${redirectTo} to ${item.to}`,
+            `[web-request-handler] [rule: ${item.id}] redirect ${redirectTo} to ${item.to}`,
           );
           redirectTo = item.to;
         }
@@ -215,20 +221,27 @@ class WebRequestHandler {
     if (!e.requestHeaders) {
       return;
     }
-    logger.debug(`handle before send ${e.url}`, e.requestHeaders);
+    logger.debug(
+      `[web-request-handler] handle before send ${e.url}`,
+      e.requestHeaders,
+    );
     const rule = getRules(TABLE_NAMES.sendHeader, {
       url: e.url,
       enable: true,
       runner: 'web_request',
       type: RULE_TYPE.MODIFY_SEND_HEADER,
       resourceType: e.type,
+      method: e.method.toLowerCase(),
     });
     // Browser is starting up, pass all requests
     if (rule === null) {
       return;
     }
     this.modifyHeaders(e, REQUEST_TYPE.REQUEST, rule);
-    logger.debug(`handle before send:finish ${e.url}`, e.requestHeaders);
+    logger.debug(
+      `[web-request-handler] handle before send:finish ${e.url}`,
+      e.requestHeaders,
+    );
     return { requestHeaders: e.requestHeaders };
   }
 
@@ -245,19 +258,12 @@ class WebRequestHandler {
     }
     // 修改响应体
     if (this.modifyBody) {
-      let canModifyBody = true;
       // 检查有没有Content-Length头，如有，则不能超过MAX_BODY_SIZE，否则不进行修改
-      if (e.responseHeaders) {
-        for (const it of e.responseHeaders) {
-          if (it.name.toLowerCase() === 'content-length') {
-            if (it.value && parseInt(it.value, 10) >= MAX_BODY_SIZE) {
-              canModifyBody = false;
-            }
-            break;
-          }
-        }
-      }
-      if (canModifyBody) {
+      const contentLength = Number(
+        e.responseHeaders?.find(x => x.name.toLowerCase() === 'content-length')
+          ?.value,
+      );
+      if (Number.isNaN(contentLength) || contentLength < MAX_BODY_SIZE) {
         this.modifyReceivedBody(e, detail);
       }
     }
@@ -265,18 +271,36 @@ class WebRequestHandler {
     if (!e.responseHeaders) {
       return;
     }
-    logger.debug(`handle received ${e.url}`, e.responseHeaders);
+    logger.debug(
+      `[web-request-handler] handle received ${e.url}`,
+      e.responseHeaders,
+    );
     const rule = getRules(TABLE_NAMES.receiveHeader, {
       url: e.url,
       enable: true,
       runner: 'web_request',
       resourceType: e.type,
+      method: e.method.toLowerCase(),
     });
     // Browser is starting up, pass all requests
     if (rule) {
       this.modifyHeaders(e, REQUEST_TYPE.RESPONSE, rule, detail);
     }
-    logger.debug(`handle received:finish ${e.url}`, e.responseHeaders);
+    // response also can modify headers
+    const respRule = getRules(TABLE_NAMES.receiveBody, {
+      url: e.url,
+      enable: true,
+      resourceType: e.type,
+      method: e.method.toLowerCase(),
+    });
+    // Browser is starting up, pass all requests
+    if (respRule) {
+      this.modifyHeaders(e, REQUEST_TYPE.RESPONSE, respRule, detail);
+    }
+    logger.debug(
+      `[web-request-handler] handle received:finish ${e.url}`,
+      e.responseHeaders,
+    );
     return { responseHeaders: e.responseHeaders };
   }
 
@@ -296,6 +320,7 @@ class WebRequestHandler {
       documentUrl: request.documentUrl || '',
       requestHeaders: null,
       responseHeaders: null,
+      browser: BROWSER_TYPE,
     };
 
     ['statusCode', 'statusLine', 'requestHeaders', 'responseHeaders'].forEach(
@@ -308,52 +333,6 @@ class WebRequestHandler {
     );
 
     return details;
-  }
-
-  private textEncode(encoding: string, text: string) {
-    let encoder = this.textEncoder.get(encoding);
-    if (!encoder) {
-      // UTF-8使用原生API，性能更好
-      if (encoding === 'UTF-8' && getGlobal().TextEncoder) {
-        encoder = new (getGlobal().TextEncoder)();
-      } else {
-        encoder = new TextEncoder(encoding, {
-          NONSTANDARD_allowLegacyEncoding: true,
-        });
-      }
-      this.textEncoder.set(encoding, encoder);
-    }
-    // 防止解码失败导致整体错误
-    try {
-      return encoder.encode(text);
-    } catch (e) {
-      console.error(e);
-      return new Uint8Array(0);
-    }
-  }
-
-  private textDecode(encoding: string, buffer: Uint8Array) {
-    let encoder = this.textDecoder.get(encoding);
-    if (!encoder) {
-      // 如果原生支持的话，优先使用原生
-      if (getGlobal().TextDecoder) {
-        try {
-          encoder = new (getGlobal().TextDecoder)(encoding);
-        } catch (e) {
-          encoder = new TextDecoder(encoding);
-        }
-      } else {
-        encoder = new TextDecoder(encoding);
-      }
-      this.textDecoder.set(encoding, encoder);
-    }
-    // 防止解码失败导致整体错误
-    try {
-      return encoder.decode(buffer);
-    } catch (e) {
-      console.error(e);
-      return '';
-    }
   }
 
   private modifyHeaders(
@@ -378,28 +357,29 @@ class WebRequestHandler {
       this.autoDeleteSavedHeader(request.requestId);
     }
     const newHeaders: { [key: string]: string } = {};
-    let hasFunction = false;
+    const functions: InitdRule[] = [];
     for (let i = 0; i < rule.length; i++) {
       const item = rule[i];
       if (item._runner === 'dnr' && ENABLE_DNR) {
         continue;
       }
-      if (!item.isFunction) {
-        if (item.headers) {
-          Object.assign(newHeaders, item.headers);
-        } else {
-          const { name, value } = item.action as RULE_ACTION_OBJ;
-          newHeaders[name] = value;
+      if (item.isFunction) {
+        if (item.ruleType !== RULE_TYPE.MODIFY_RECV_BODY) {
+          // skip body modification rules
+          functions.push(item);
+          continue;
         }
-        rule.splice(i, 1);
-        i--;
-      } else {
-        hasFunction = true;
+      }
+      if (item.headers) {
+        Object.assign(newHeaders, item.headers);
+      } else if (typeof item.action === 'object') {
+        const { name, value } = item.action as RULE_ACTION_OBJ;
+        newHeaders[name] = value;
       }
     }
     for (let i = 0; i < headers.length; i++) {
       const name = headers[i].name.toLowerCase();
-      if (newHeaders[name] === undefined) {
+      if (typeof newHeaders[name] === 'undefined') {
         continue;
       }
       if (newHeaders[name] === '_header_editor_remove_') {
@@ -407,8 +387,8 @@ class WebRequestHandler {
         i--;
       } else {
         headers[i].value = newHeaders[name];
+        delete newHeaders[name];
       }
-      delete newHeaders[name];
     }
     for (const k in newHeaders) {
       if (newHeaders[k] === '_header_editor_remove_') {
@@ -419,9 +399,9 @@ class WebRequestHandler {
         value: newHeaders[k],
       });
     }
-    if (hasFunction) {
+    if (functions.length > 0) {
       const detail = presetDetail || this.makeDetails(request);
-      rule.forEach(item => {
+      functions.forEach(item => {
         try {
           item._func(headers, detail);
         } catch (e) {
@@ -433,7 +413,7 @@ class WebRequestHandler {
 
   private autoDeleteSavedHeader(id?: string) {
     if (id) {
-      this.deleteHeaderQueue.set(id, new Date().getTime() / 100);
+      this.deleteHeaderQueue.set(id, Date.now() / 100);
     }
     if (this.deleteHeaderTimer !== null) {
       return;
@@ -445,7 +425,7 @@ class WebRequestHandler {
       }
       this.deleteHeaderTimer = null;
       // check time
-      const curTime = new Date().getTime() / 100;
+      const curTime = Date.now() / 100;
       // k: id, v: time
       const iter = this.deleteHeaderQueue.entries();
       for (const [k, v] of iter) {
@@ -468,25 +448,35 @@ class WebRequestHandler {
       return;
     }
 
-    let rule = getRules(TABLE_NAMES.receiveBody, {
+    const rule = getRules(TABLE_NAMES.receiveBody, {
       url: e.url,
       enable: true,
       runner: 'web_request',
       type: RULE_TYPE.MODIFY_RECV_BODY,
       resourceType: e.type,
+      method: e.method.toLowerCase(),
     });
-    if (rule === null) {
+    if (!isValidArray(rule)) {
       return;
     }
-    rule = rule.filter(item => item.isFunction);
-    if (rule.length === 0) {
+    const hasCustomFunction = rule.some(item => item.isFunction);
+    // simple execute
+    if (!hasCustomFunction) {
+      const filter = browser.webRequest.filterResponseData(e.requestId);
+      filter.onstop = () => {
+        const finalBody = last(rule)?.body?.value;
+        if (typeof finalBody !== 'undefined') {
+          filter.write(textEncode(finalBody));
+        }
+        filter.close();
+      };
       return;
     }
 
     const filter = browser.webRequest.filterResponseData(e.requestId);
     let buffers: Uint8Array | null = null;
-    // @ts-ignore
-    filter.ondata = (event: WebRequest.StreamFilterEventData) => {
+
+    filter.ondata = event => {
       const { data } = event;
       if (buffers === null) {
         buffers = new Uint8Array(data);
@@ -512,24 +502,33 @@ class WebRequestHandler {
         return;
       }
 
-      // 缓存实例，减少开销
+      let finalBody: string | null = null;
+      let hasChanged = false;
+
       for (const item of rule!) {
-        const encoding = item.encoding || 'UTF-8';
+        const encoding = item.encoding || 'utf-8';
         try {
-          const _text = this.textDecode(
-            encoding,
-            new Uint8Array(buffers!.buffer),
-          );
-          const text = item._func(_text, detail);
-          if (typeof text === 'string' && text !== _text) {
-            buffers = this.textEncode(encoding, text);
+          if (!finalBody) {
+            const body = textDecode(encoding, buffers);
+            if (body) {
+              finalBody = body;
+            }
+          }
+          const text = item._func(finalBody, detail);
+          if (typeof text === 'string' && text !== finalBody) {
+            finalBody = text;
+            hasChanged = true;
           }
         } catch (err) {
           console.error(err);
         }
       }
 
-      filter.write(buffers.buffer);
+      if (hasChanged && finalBody) {
+        filter.write(textEncode(finalBody));
+      } else {
+        filter.write(buffers);
+      }
       buffers = null;
       filter.close();
     };

@@ -3,12 +3,11 @@ import { RULE_TYPE, TABLE_NAMES } from './constant';
 import type { Rule } from './types';
 
 export const IS_ANDROID = navigator.userAgent.includes('Android');
-export const IS_CHROME = /Chrome\/(\d+)\.(\d+)/.test(navigator.userAgent);
-export const IS_FIREFOX = !IS_CHROME;
+export const IS_FIREFOX = BROWSER_TYPE === 'firefox';
+export const IS_CHROME = BROWSER_TYPE === 'chrome';
 
 export const IS_SUPPORT_STREAM_FILTER =
   ENABLE_WEB_REQUEST &&
-  ENABLE_EVAL &&
   typeof browser.webRequest?.filterResponseData === 'function';
 
 export const isValidArray = <T = any>(v: any): v is T[] =>

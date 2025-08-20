@@ -4,24 +4,27 @@ Header Editor
 
 [![Release](https://img.shields.io/github/release/FirefoxBar/HeaderEditor.svg?label=Release)](https://github.com/FirefoxBar/HeaderEditor/releases)
 [![Chrome Web Store](https://img.shields.io/chrome-web-store/users/eningockdidmgiojffjmkdblpjocbhgh?label=Chrome)](https://chrome.google.com/webstore/detail/header-editor/eningockdidmgiojffjmkdblpjocbhgh)
-[![Mozilla Addons](https://img.shields.io/amo/users/header-editor?label=Firefox)](https://addons.mozilla.org/en-US/firefox/addon/header-editor/)
+[![Mozilla Add-ons](https://img.shields.io/amo/users/header-editor?label=Firefox)](https://addons.mozilla.org/en-US/firefox/addon/header-editor/)
+[![Mozilla Add-ons](https://img.shields.io/amo/users/header-editor-lite?label=Firefox(Lite))](https://addons.mozilla.org/en-US/firefox/addon/header-editor-lite/)
 [![license](https://img.shields.io/github/license/FirefoxBar/HeaderEditor.svg?label=License)](https://github.com/FirefoxBar/HeaderEditor/blob/master/LICENSE)
 [![Discussions](https://img.shields.io/github/discussions/FirefoxBar/HeaderEditor?label=Discussions)](https://github.com/FirefoxBar/HeaderEditor/discussions)
 [![Build Status](https://github.com/FirefoxBar/HeaderEditor/actions/workflows/dev.yml/badge.svg)](https://github.com/FirefoxBar/HeaderEditor/actions/workflows/dev.yml)
 
-An extension which can modify the request, include request headers, response headers, redirect requests, and cancel requests.
+An extension which can modify the request, include request headers, response headers, response body, redirect requests, and cancel requests.
 
 It's 100% FREE, no ADs, no data collection.
 
-For more documentations, Please visit [he.firefoxcn.net](https://he.firefoxcn.net)
+Visit [he.firefoxcn.net](https://he.firefoxcn.net) for more documentations.
 
 ## Get this extension
 
-| Browser | Lite Version | Full Version |
+| Browser | Lite | Full |
 | --- | --- | --- |
-| ![Firefox Logo](https://cdnjs.cloudflare.com/ajax/libs/browser-logos/75.0.1/firefox/firefox_16x16.png) Firefox | None | [Mozilla Add-on](https://addons.mozilla.org/en-US/firefox/addon/header-editor/) or our [self-distributed version](https://github.com/FirefoxBar/HeaderEditor/releases) |
+| ![Firefox Logo](https://cdnjs.cloudflare.com/ajax/libs/browser-logos/75.0.1/firefox/firefox_16x16.png) Firefox | [Mozilla Add-ons](https://addons.mozilla.org/en-US/firefox/addon/header-editor-lite/) | [Mozilla Add-ons](https://addons.mozilla.org/en-US/firefox/addon/header-editor/) or our [self-distributed version](https://github.com/FirefoxBar/HeaderEditor/releases) |
 | ![Chrome Logo](https://cdnjs.cloudflare.com/ajax/libs/browser-logos/75.0.1/chrome/chrome_16x16.png) Chrome | [Chrome Web Store](https://chrome.google.com/webstore/detail/header-editor/eningockdidmgiojffjmkdblpjocbhgh) | [Install full version](https://he.firefoxcn.net/en-US/guide/install-full-version) |
 | ![Edge Logo](https://cdnjs.cloudflare.com/ajax/libs/browser-logos/75.0.1/edge/edge_16x16.png) Edge | None | [Edge Addons](https://microsoftedge.microsoft.com/addons/detail/header-editor/afopnekiinpekooejpchnkgfffaeceko) |
+
+[Diff between Lite and Full Version](https://he.firefoxcn.net/en-US/guide/index.html)
 
 ## Permissions
 
@@ -32,6 +35,8 @@ Header Editor require those permissions:
 * `webRequest`, `webRequestBlocking`, `declarativeNetRequest`, `*://*/*`: Modify requests
 
 * `storage`, `unlimitedStorage`: Storage rules and settings
+
+* `debugger`: Modify response body in Chrome
 
 * `unsafe-eval`: Execute custom function, code at [src/share/core/rule-utils.ts#L30](https://github.com/FirefoxBar/HeaderEditor/blob/dev/src/share/core/rule-utils.ts#L30) (may change in the future, you can search for the newest location by `new Function`)
 
@@ -47,13 +52,13 @@ English: Please submit a issue or pull request to file `locale/original/messages
 
 Other language: Please translate them on [Transifex](https://app.transifex.com/sytec/header-editor/)
 
-Please note that some languages (such as zh-Hans) will not be translated on transifex because the browser does not support them, click [here](https://developer.chrome.com/docs/webstore/i18n/#choosing-locales-to-support) to view full list
+Please note that some languages (such as zh-Hans) will not be translated on transifex because the browser does not support them, [view full list](https://developer.chrome.com/docs/webstore/i18n/#choosing-locales-to-support).
 
 ## How to build
 
 ### Build
 
-* Install node (18+) and pnpm.
+* Install Node.js 20.x and pnpm 9.x.
 * Clone this project, or download the source code and extract it.
 * Run `pnpm i --frozen-lockfile`.
 * Run build command
@@ -75,7 +80,7 @@ Please note that some languages (such as zh-Hans) will not be translated on tran
 
 Copyright © 2017-2025 [FirefoxBar Team](https://team.firefoxcn.net)
 
-Open source licensed under [GPLv2](LICENSE).
+This project is licensed under the ​**GNU GPL v2.0 or later**.
 
 ## Technical Sponsorship
 

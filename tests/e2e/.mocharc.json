@@ -1,0 +1,7 @@
+{
+  "extension": ["mjs"],
+  "spec": "tests/e2e/**/*.spec.mjs",
+  "file": ["tests/e2e/scripts/setup.mjs"],
+  "exit": true,
+  "parallel": false
+}

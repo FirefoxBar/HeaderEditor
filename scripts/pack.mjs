@@ -9,7 +9,6 @@
  * 在这里，打包文件夹统一命名为pack
  */
 
-import cpr from 'cpr';
 import { mkdir, unlink } from 'fs/promises';
 import { join } from 'path';
 import { rimraf } from 'rimraf';
@@ -27,7 +26,7 @@ import crx from './pack-utils/crx.mjs';
 import cws from './pack-utils/cws.mjs';
 import edge from './pack-utils/edge.mjs';
 import xpi from './pack-utils/xpi.mjs';
-import { outputJSON, readJSON } from './utils.mjs';
+import { copyDir, outputJSON, readJSON } from './utils.mjs';
 import { createZip } from './zip.mjs';
 
 const packUtils = {
@@ -37,27 +36,6 @@ const packUtils = {
   edge,
   crx,
 };
-
-function copyDir(source, target) {
-  return new Promise((resolve, reject) => {
-    cpr(
-      source,
-      target,
-      {
-        deleteFirst: true,
-        overwrite: true,
-        confirm: false,
-      },
-      (err, files) => {
-        if (err) {
-          reject(err);
-        } else {
-          resolve(files);
-        }
-      },
-    );
-  });
-}
 
 /**
  * 打包一个平台的产物
@@ -92,18 +70,24 @@ async function packOnePlatform(name, browserConfig, extensionConfig) {
     console.log(`zip ${thisPack} -> ${zipPath}`);
     await createZip(thisPack, zipPath);
     // 执行上传等操作
-    console.log(`running ${name} pack...`);
+    console.log(`Running ${name} pack...`);
     const res = await packUtils[name]({
+      rootPath: _path.root,
       sourcePath: thisPack,
       zipPath,
       releasePath: _path.release,
       browserConfig,
       extensionConfig,
     });
-    console.log(`${name}: ${res}`);
-    await unlink(zipPath);
+    console.log(`Pack ${name} success: ${res}`);
   } catch (e) {
+    console.error(`Pack ${name} error`);
     console.error(e);
+  }
+  try {
+    await unlink(zipPath);
+  } catch (_) {
+    // ignore
   }
 }
 
@@ -119,10 +103,10 @@ async function main() {
   });
 
   let platform = [];
-  if (process.env.PACK_PLATFORM) {
-    platform = process.env.PACK_PLATFORM.split(',');
-  } else if (process.env.INPUT_PLATFORM) {
+  if (process.env.INPUT_PLATFORM) {
     platform = process.env.INPUT_PLATFORM.split(',');
+  } else if (process.env.PACK_PLATFORM) {
+    platform = process.env.PACK_PLATFORM.split(',');
   } else {
     platform = Object.keys(extension.auto).filter(x =>
       Boolean(extension.auto[x]),

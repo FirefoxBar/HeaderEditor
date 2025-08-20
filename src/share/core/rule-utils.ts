@@ -1,7 +1,12 @@
-import { getDomain, isValidArray } from './utils';
+import {
+  IS_MATCH,
+  RULE_MATCH_TYPE,
+  RULE_TYPE,
+  TABLE_NAMES_ARR,
+} from './constant';
+import type { BasicRule, InitdRule, RULE_ACTION_OBJ, Rule } from './types';
 import { isBasicRule } from './types';
-import { IS_MATCH, RULE_MATCH_TYPE, TABLE_NAMES_ARR } from './constant';
-import type { InitdRule, Rule, BasicRule, RULE_ACTION_OBJ } from './types';
+import { getDomain, isValidArray } from './utils';
 
 export function detectRunner(rule: BasicRule): 'web_request' | 'dnr' {
   if (rule.isFunction) {
@@ -13,10 +18,16 @@ export function detectRunner(rule: BasicRule): 'web_request' | 'dnr' {
   if (rule.condition?.excludeRegex) {
     return 'web_request';
   }
+  if (rule.ruleType === RULE_TYPE.MODIFY_RECV_BODY) {
+    return 'web_request';
+  }
   return 'dnr';
 }
 
-export function initRule(rule: BasicRule, forceUseWebRequest = false): InitdRule {
+export function initRule(
+  rule: BasicRule,
+  forceUseWebRequest = false,
+): InitdRule {
   // eslint-disable-next-line @typescript-eslint/consistent-type-assertions
   const initd: InitdRule = { ...rule } as InitdRule;
   initd._runner = detectRunner(rule);
@@ -48,8 +59,8 @@ export function initRule(rule: BasicRule, forceUseWebRequest = false): InitdRule
 
 export function createExport(arr: { [key: string]: Array<Rule | InitdRule> }) {
   const result: { [key: string]: BasicRule[] } = {};
-  Object.keys(arr).forEach((k) => {
-    result[k] = arr[k].map((e) => convertToBasicRule(e));
+  Object.keys(arr).forEach(k => {
+    result[k] = arr[k].map(e => convertToBasicRule(e));
   });
   return result;
 }
@@ -63,7 +74,9 @@ export function convertToRule(rule: InitdRule | Rule): Rule {
   return item;
 }
 
-export function convertToBasicRule(rule: InitdRule | Rule | BasicRule): BasicRule {
+export function convertToBasicRule(
+  rule: InitdRule | Rule | BasicRule,
+): BasicRule {
   if (isBasicRule(rule)) {
     return rule;
   }
@@ -74,7 +87,7 @@ export function convertToBasicRule(rule: InitdRule | Rule | BasicRule): BasicRul
 
 export function fromJson(str: string) {
   const list: { [key: string]: Rule[] } = JSON.parse(str);
-  TABLE_NAMES_ARR.forEach((e) => {
+  TABLE_NAMES_ARR.forEach(e => {
     if (list[e]) {
       list[e].map((ee: BasicRule) => {
         delete (ee as any).id;
@@ -95,21 +108,32 @@ export function upgradeRuleFormat(s: OldRule) {
     delete s.type;
   }
 
-  s.isFunction = typeof s.isFunction === 'undefined' ? false : Boolean(s.isFunction);
+  s.isFunction =
+    typeof s.isFunction === 'undefined' ? false : Boolean(s.isFunction);
 
   s.enable = typeof s.enable === 'undefined' ? true : Boolean(s.enable);
 
-  if ((s.ruleType === 'modifySendHeader' || s.ruleType === 'modifyReceiveHeader') && !s.isFunction) {
-    if (!s.headers && s.action) {
+  if (
+    (s.ruleType === 'modifySendHeader' ||
+      s.ruleType === 'modifyReceiveHeader') &&
+    !s.isFunction
+  ) {
+    if (!s.headers && typeof s.action === 'object') {
       const { name, value } = s.action as RULE_ACTION_OBJ;
       s.headers = {
         [name]: value,
       };
-      delete s.action;
     }
-    if (typeof s.headers === 'object') {
-      s.headers = Object.fromEntries(Object.entries(s.headers).map(([key, value]) => [key.toLowerCase(), value]));
-    }
+    delete s.action;
+  }
+
+  if (typeof s.headers === 'object') {
+    s.headers = Object.fromEntries(
+      Object.entries(s.headers).map(([key, value]) => [
+        key.toLowerCase(),
+        value,
+      ]),
+    );
   }
 
   if (!s.condition) {
@@ -148,7 +172,14 @@ export function isMatchUrl(rule: InitdRule, url: string): IS_MATCH {
 
   // new condition
   if (rule.condition) {
-    const { url: condUrl, urlPrefix, domain, excludeDomain, excludeRegex, regex } = rule.condition;
+    const {
+      url: condUrl,
+      urlPrefix,
+      domain,
+      excludeDomain,
+      excludeRegex,
+      regex,
+    } = rule.condition;
     if (condUrl) {
       result = result && url === condUrl;
     }
@@ -204,7 +235,9 @@ export function isMatchUrl(rule: InitdRule, url: string): IS_MATCH {
   }
 
   if (rule._exclude) {
-    return rule._exclude.test(url) ? IS_MATCH.MATCH_BUT_EXCLUDE : IS_MATCH.MATCH;
+    return rule._exclude.test(url)
+      ? IS_MATCH.MATCH_BUT_EXCLUDE
+      : IS_MATCH.MATCH;
   }
 
   return IS_MATCH.MATCH;

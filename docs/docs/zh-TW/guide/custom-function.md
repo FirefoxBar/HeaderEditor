@@ -22,7 +22,7 @@ function(val, detail) { //不包括這一行
 
 例如：
 
-![image](https://user-images.githubusercontent.com/5326684/54876966-6bd6c480-4e53-11e9-8e9d-6c950f8b5cd2.png)
+![image](https://img13.360buyimg.com/ddimg/jfs/t1/302163/31/25689/8426/68a4ab87Fffa8fbd6/4581fc50eaa1b2dc.jpg)
 
 自訂函數會傳入參數`val`和`detail`，其中`detail`是2.3.0版本新增的參數，請參見頁面下方說明。返回類型根據規則類型不同而不同。
 

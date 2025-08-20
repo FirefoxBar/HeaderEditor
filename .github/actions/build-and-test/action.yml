@@ -1,0 +1,48 @@
+name: "Build and Test"
+description: "Build and Test"
+runs:
+  using: "composite"
+  steps:
+    - name: Build Firefox v2
+      shell: bash
+      run: npm run build:firefox_v2
+    - name: Build Firefox v3
+      shell: bash
+      run: npm run build:firefox_v3
+    - name: Build Chrome v2
+      shell: bash
+      run: npm run build:chrome_v2
+    - name: Build Chrome v3
+      shell: bash
+      run: npm run build:chrome_v3
+    - name: Upload bundle
+      uses: actions/upload-artifact@v4
+      with:
+        name: dist
+        retention-days: 7
+        path: |
+          dist_chrome_v2
+          dist_chrome_v3
+          dist_firefox_v2
+          dist_firefox_v3
+    - name: Install Edge
+      id: install-edge
+      shell: bash
+      run: |
+        sudo apt-get remove -y microsoft-edge-stable
+        sudo wget -qO- https://packages.microsoft.com/keys/microsoft.asc | sudo gpg --dearmor -o /etc/apt/trusted.gpg.d/microsoft.gpg
+        sudo add-apt-repository "deb [arch=amd64] https://packages.microsoft.com/repos/edge stable main"
+        sudo apt-get update
+        sudo apt-get install -y microsoft-edge-stable=138.0.3351.109-1
+        microsoft-edge --version
+        EDGE_PATH=$(which microsoft-edge)
+        echo "edge-path=$EDGE_PATH" >> $GITHUB_OUTPUT
+    - name: Test
+      shell: bash
+      env:
+        EDGE_PATH: ${{ steps.install-edge.outputs.edge-path }}
+      run: |
+        npx puppeteer browsers install
+        php -S 0.0.0.0:8899 -t $GITHUB_WORKSPACE/tests/simple-server > /dev/null 2>&1 &
+        sleep 2
+        npm run test:e2e

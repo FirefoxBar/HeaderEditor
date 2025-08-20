@@ -1,7 +1,8 @@
 import axios from 'axios';
-import { mkdir, writeFile, readFile } from 'fs/promises';
-import { join, dirname } from 'path';
+import { mkdir, writeFile } from 'fs/promises';
+import { dirname, join } from 'path';
 import { fileURLToPath } from 'url';
+import { readJSON } from './utils.mjs';
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = dirname(__filename);
@@ -12,21 +13,25 @@ async function main() {
     return;
   }
 
-  const pkgJson = await readFile(join(__dirname, '../package.json'), {
-    encoding: 'utf8',
-  });
+  if (process.env.INPUT_VERSION) {
+    console.log('Has INPUT_VERSION, skip get snapshot');
+    return;
+  }
 
-  const { version: versionPrefix } = JSON.parse(pkgJson);
+  const pkgJson = await readJSON(join(__dirname, '../package.json'));
+  const { version: versionPrefix } = pkgJson;
+  console.log('Get latest release version from package.json');
 
   // Get latest release version
   // const gitHubToken = process.env.GITHUB_TOKEN;
-  // const gitHubBaseURL = process.env.GITHUB_API_URL + '/repos/' + process.env.GITHUB_REPOSITORY;
+  // const gitHubBaseURL =
+  //   process.env.GITHUB_API_URL + '/repos/' + process.env.GITHUB_REPOSITORY;
   // const latestRelease = await axios.get(gitHubBaseURL + '/releases/latest', {
   //   headers: {
-  //     'Accept': 'application/vnd.github+json',
-  //     'Authorization': 'Bearer ' + gitHubToken,
+  //     Accept: 'application/vnd.github+json',
+  //     Authorization: 'Bearer ' + gitHubToken,
   //     'X-GitHub-Api-Version': '2022-11-28',
-  //   }
+  //   },
   // });
   // const versionPrefix = latestRelease.data.tag_name.replace(/^v/, '');
 
@@ -36,7 +41,9 @@ async function main() {
   params.append('ver', versionPrefix);
   params.append('token', token);
 
-  const resp = await axios.get('https://server-api.sylibs.com/ext/snapshot.php?' + params.toString());
+  const resp = await axios.get(
+    'https://server-api.sylibs.com/ext/snapshot.php?' + params.toString(),
+  );
   const text = resp.data;
 
   const filePath = join(__dirname, '../temp/version.txt');

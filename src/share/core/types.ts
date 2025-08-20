@@ -1,5 +1,5 @@
-import type { RULE_MATCH_TYPE, RULE_TYPE } from './constant';
 import type { DeclarativeNetRequest } from 'webextension-polyfill/namespaces/declarativeNetRequest';
+import type { RULE_MATCH_TYPE, RULE_TYPE } from './constant';
 
 export interface RuleFilterOptions {
   enable?: boolean;
@@ -8,6 +8,7 @@ export interface RuleFilterOptions {
   name?: string;
   runner?: 'web_request' | 'dnr';
   type?: RULE_TYPE;
+  method?: string; // request method, lowercase
   resourceType?: DeclarativeNetRequest.ResourceType;
 }
 
@@ -50,6 +51,12 @@ export interface BasicRule {
     excludeResourceTypes: DeclarativeNetRequest.ResourceType[];
   }>;
   headers?: Record<string, string>;
+  body?: {
+    stage?: 'Request' | 'Response';
+    type?: 'text' | 'file';
+    fileName?: string;
+    value: string;
+  };
 }
 
 export function isBasicRule(obj: any): obj is BasicRule {

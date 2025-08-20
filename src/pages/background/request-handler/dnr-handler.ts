@@ -1,13 +1,18 @@
 import browser from 'webextension-polyfill';
-import { ALL_RESOURCE_TYPES, RULE_MATCH_TYPE, RULE_TYPE, TABLE_NAMES } from '@/share/core/constant';
+import type { DeclarativeNetRequest } from 'webextension-polyfill/namespaces/declarativeNetRequest';
+import {
+  ALL_RESOURCE_TYPES,
+  RULE_MATCH_TYPE,
+  RULE_TYPE,
+  TABLE_NAMES,
+} from '@/share/core/constant';
 import emitter from '@/share/core/emitter';
+import logger from '@/share/core/logger';
 import { prefs } from '@/share/core/prefs';
 import { detectRunner } from '@/share/core/rule-utils';
-import type { Rule, RULE_ACTION_OBJ } from '@/share/core/types';
-import logger from '@/share/core/logger';
+import type { RULE_ACTION_OBJ, Rule } from '@/share/core/types';
 import { getTableName, isValidArray } from '@/share/core/utils';
 import { getAll, waitLoad } from '../core/rules';
-import type { DeclarativeNetRequest } from 'webextension-polyfill/namespaces/declarativeNetRequest';
 
 type DNRRule = DeclarativeNetRequest.Rule;
 
@@ -110,42 +115,45 @@ function createDNR(rule: Rule, id: number) {
     }
   }
 
-  const mapHeaders = (): DeclarativeNetRequest.RuleActionResponseHeadersItemType[] =>
-    (rule.headers
-      ? Object.keys(rule.headers).map((key) => ({
-        header: key,
-        operation: rule.headers![key] === '_header_editor_remove_' ? 'remove' : 'set',
-        value: rule.headers![key] === '_header_editor_remove_' ? undefined : rule.headers![key],
-      }))
-      : []);
-  if (rule.ruleType === RULE_TYPE.MODIFY_SEND_HEADER) {
-    res.action.type = 'modifyHeaders';
-    if (rule.headers) {
-      res.action.requestHeaders = mapHeaders();
-    } else {
-      const action = rule.action as RULE_ACTION_OBJ;
-      res.action.requestHeaders = [
-        {
-          header: action.name,
-          operation: action.value === '_header_editor_remove_' ? 'remove' : 'set',
-          value: action.value === '_header_editor_remove_' ? undefined : action.value,
-        },
-      ];
+  const createHeaderItem = (
+    header: string,
+    value: any,
+  ): DeclarativeNetRequest.RuleActionResponseHeadersItemType => {
+    if (
+      value === '_header_editor_remove_' ||
+      value === '' ||
+      value === null ||
+      typeof value === 'undefined'
+    ) {
+      return {
+        header,
+        operation: 'remove',
+      };
     }
-  }
-  if (rule.ruleType === RULE_TYPE.MODIFY_RECV_HEADER) {
+    return {
+      header,
+      operation: 'set',
+      value,
+    };
+  };
+
+  if (
+    [RULE_TYPE.MODIFY_SEND_HEADER, RULE_TYPE.MODIFY_RECV_HEADER].includes(
+      rule.ruleType,
+    )
+  ) {
     res.action.type = 'modifyHeaders';
+    const key =
+      rule.ruleType === RULE_TYPE.MODIFY_SEND_HEADER
+        ? 'requestHeaders'
+        : 'responseHeaders';
     if (rule.headers) {
-      res.action.responseHeaders = mapHeaders();
-    } else {
+      res.action[key] = Object.keys(rule.headers).map(key =>
+        createHeaderItem(key, rule.headers![key]),
+      );
+    } else if (typeof rule.action === 'object') {
       const action = rule.action as RULE_ACTION_OBJ;
-      res.action.responseHeaders = [
-        {
-          header: action.name,
-          operation: action.value === '_header_editor_remove_' ? 'remove' : 'set',
-          value: action.value === '_header_editor_remove_' ? undefined : action.value,
-        },
-      ];
+      res.action[key] = [createHeaderItem(action.name, action.value)];
     }
   }
 
@@ -197,7 +205,7 @@ class DNRRequestHandler {
   private async clearRules() {
     const current = await browser.declarativeNetRequest.getSessionRules();
     await browser.declarativeNetRequest.updateSessionRules({
-      removeRuleIds: current.map((x) => x.id),
+      removeRuleIds: current.map(x => x.id),
     });
   }
 
@@ -207,10 +215,12 @@ class DNRRequestHandler {
     const v = Object.values(getAll());
 
     // if service worker restart, get exists rules
-    const current = (await browser.declarativeNetRequest.getSessionRules()).map((x) => x.id);
+    const current = (await browser.declarativeNetRequest.getSessionRules()).map(
+      x => x.id,
+    );
     const allRules = v.reduce((a, b) => [...a!, ...b!], []) || [];
     const addRules: DNRRule[] = [];
-    allRules.forEach((rule) => {
+    allRules.forEach(rule => {
       if (rule._runner !== 'dnr') {
         return;
       }
@@ -228,9 +238,13 @@ class DNRRequestHandler {
       console.log('init dnr rules', addRules);
     }
     if (addRules.length > 0) {
-      browser.declarativeNetRequest.updateSessionRules({
-        addRules,
-      });
+      try {
+        await browser.declarativeNetRequest.updateSessionRules({
+          addRules,
+        });
+      } catch (e) {
+        console.error(e, addRules);
+      }
     }
   }
 
@@ -242,25 +256,39 @@ class DNRRequestHandler {
       });
     });
 
-    emitter.on(emitter.INNER_RULE_UPDATE, ({ from, target }: { from: Rule; target: Rule }) => {
-      logger.debug('dnr rules update', from, target);
-      const command: DeclarativeNetRequest.UpdateSessionRulesOptionsType = {
-        removeRuleIds: [],
-        addRules: [],
-      };
-      if (from) {
-        const old = getRuleId(from.id, undefined, from.ruleType);
-        command.removeRuleIds!.push(old);
-      }
-      // detect new rule is DNR or not
-      if (detectRunner(target) === 'dnr' && target.enable) {
-        command.addRules!.push(createDNR(target, getRuleId(target.id, undefined, target.ruleType)));
-      }
-      if (IS_DEV) {
-        console.log('dnr rules update', command);
-      }
-      browser.declarativeNetRequest.updateSessionRules(command);
-    });
+    emitter.on(
+      emitter.INNER_RULE_UPDATE,
+      async ({ from, target }: { from: Rule; target: Rule }) => {
+        logger.debug('[dnr-handler] rules update', from, target);
+        const command: DeclarativeNetRequest.UpdateSessionRulesOptionsType = {
+          removeRuleIds: [],
+          addRules: [],
+        };
+        if (from) {
+          const old = getRuleId(from.id, undefined, from.ruleType);
+          command.removeRuleIds!.push(old);
+        }
+        // detect new rule is DNR or not
+        if (detectRunner(target) === 'dnr' && target.enable) {
+          command.addRules!.push(
+            createDNR(target, getRuleId(target.id, undefined, target.ruleType)),
+          );
+        }
+        if (IS_DEV) {
+          console.log('dnr rules update', command);
+        }
+        if (
+          isValidArray(command.addRules) ||
+          isValidArray(command.removeRuleIds)
+        ) {
+          try {
+            await browser.declarativeNetRequest.updateSessionRules(command);
+          } catch (e) {
+            console.error(e, command);
+          }
+        }
+      },
+    );
   }
 
   private loadPrefs() {

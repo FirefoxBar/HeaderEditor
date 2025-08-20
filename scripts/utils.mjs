@@ -1,5 +1,22 @@
+import cpr from 'cpr';
 import fs from 'fs/promises';
 import path from 'path';
+import resolve from 'resolve';
+import { promisify } from 'util';
+
+/**
+ * Check if a file exists
+ * @param {*} fullPath
+ * @returns
+ */
+export async function fileExists(fullPath) {
+  try {
+    await fs.access(fullPath, fs.constants.R_OK);
+    return true;
+  } catch (e) {
+    return false;
+  }
+}
 
 /**
  * Read a JSON file
@@ -29,4 +46,25 @@ export async function outputJSON(file, data, options = {}) {
 
   // Write the file
   await fs.writeFile(file, jsonData, options.encoding || 'utf8');
+}
+
+export function copyDir(source, target) {
+  return new Promise((resolve, reject) => {
+    cpr(
+      source,
+      target,
+      {
+        deleteFirst: true,
+        overwrite: true,
+        confirm: false,
+      },
+      (err, files) => {
+        if (err) {
+          reject(err);
+        } else {
+          resolve(files);
+        }
+      },
+    );
+  });
 }

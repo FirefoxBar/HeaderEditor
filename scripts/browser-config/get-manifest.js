@@ -86,7 +86,7 @@ function getManifest(browser, options) {
     }
   }
 
-  if (browser.startsWith('firefox')) {
+  if (config.BROWSER_TYPE === 'firefox') {
     if (options && options.amo) {
       const id = extensionConfig.amo.find(x => x.browser === browser).id;
       manifest.browser_specific_settings = {
@@ -108,7 +108,10 @@ function getManifest(browser, options) {
         },
       };
     }
-  } else {
+  }
+
+  if (config.BROWSER_TYPE === 'chrome') {
+    manifest.permissions.push('debugger');
     if (config.MANIFEST_VER === 'v2') {
       manifest.update_url =
         'https://ext.firefoxcn.net/header-editor/install/update.xml';

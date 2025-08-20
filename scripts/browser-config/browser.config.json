@@ -4,6 +4,7 @@
     "ENABLE_DNR": true,
     "ENABLE_WEB_REQUEST": true,
     "ENABLE_EVAL": true,
+    "BROWSER_TYPE": "firefox",
     "IS_LITE_VER": false
   },
   "firefox_v3": {
@@ -11,6 +12,7 @@
     "ENABLE_DNR": true,
     "ENABLE_WEB_REQUEST": true,
     "ENABLE_EVAL": false,
+    "BROWSER_TYPE": "firefox",
     "IS_LITE_VER": true
   },
   "chrome_v2": {
@@ -18,6 +20,7 @@
     "ENABLE_DNR": false,
     "ENABLE_WEB_REQUEST": true,
     "ENABLE_EVAL": true,
+    "BROWSER_TYPE": "chrome",
     "IS_LITE_VER": false
   },
   "chrome_v3": {
@@ -25,6 +28,7 @@
     "ENABLE_DNR": true,
     "ENABLE_WEB_REQUEST": false,
     "ENABLE_EVAL": false,
+    "BROWSER_TYPE": "chrome",
     "IS_LITE_VER": true
   }
 }

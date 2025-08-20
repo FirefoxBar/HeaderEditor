@@ -22,7 +22,7 @@ function(val, detail) { //不包括这一行
 
 例如：
 
-![image](https://user-images.githubusercontent.com/5326684/54876966-6bd6c480-4e53-11e9-8e9d-6c950f8b5cd2.png)
+![image](https://img13.360buyimg.com/ddimg/jfs/t1/302163/31/25689/8426/68a4ab87Fffa8fbd6/4581fc50eaa1b2dc.jpg)
 
 自定义函数会传入参数`val`和`detail`，其中`detail`是2.3.0版本新增的参数，请参见页面下方说明。返回类型根据规则类型不同而不同。
 

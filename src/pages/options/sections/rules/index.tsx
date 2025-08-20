@@ -16,7 +16,7 @@ import {
   Spin,
   Typography,
 } from '@douyinfe/semi-ui';
-import { cx, css } from '@emotion/css';
+import { css, cx } from '@emotion/css';
 import * as React from 'react';
 import { selectGroup } from '@/pages/options/utils';
 import {
@@ -26,6 +26,7 @@ import {
   VIRTUAL_KEY,
 } from '@/share/core/constant';
 import emitter from '@/share/core/emitter';
+import logger from '@/share/core/logger';
 import notify from '@/share/core/notify';
 import { prefs } from '@/share/core/prefs';
 import type { Rule } from '@/share/core/types';
@@ -84,19 +85,24 @@ export default class Rules extends React.Component<RulesProps, RulesState> {
 
     prefs.ready(() => {
       this.isCollapse = Boolean(prefs.get('manage-collapse-group'));
-      this.load();
     });
+  }
+
+  componentDidMount() {
+    prefs.ready(() => this.load());
     notify.event.on(EVENTs.RULE_UPDATE, this.handleRuleUpdateEvent);
     notify.event.on(EVENTs.RULE_DELETE, this.handleRuleDeleteEvent);
   }
 
   componentWillUnmount() {
+    // console.log()
     notify.event.off(EVENTs.RULE_UPDATE, this.handleRuleUpdateEvent);
     notify.event.off(EVENTs.RULE_DELETE, this.handleRuleDeleteEvent);
   }
 
   // 事件响应 - 通知 - 规则更新
   handleRuleUpdateEvent(request: any) {
+    logger.debug('[options/rules] rules update', request);
     const rule: Rule = request.target;
     // 寻找ID相同的
     let sameItem: Rule | null = null;

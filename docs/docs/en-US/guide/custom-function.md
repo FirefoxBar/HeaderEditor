@@ -22,7 +22,7 @@ function(val, detail) { // does not include this line
 
 For example:
 
-![image](https://user-images.githubusercontent.com/5326684/54876966-6bd6c480-4e53-11e9-8e9d-6c950f8b5cd2.png)
+![image](https://img13.360buyimg.com/ddimg/jfs/t1/302163/31/25689/8426/68a4ab87Fffa8fbd6/4581fc50eaa1b2dc.jpg)
 
 The custom function passes the arguments `val` and `detail`, where `detail` is the new parameter in version 2.3.0, see the description below. The return type varies depending on the rule type.
 
