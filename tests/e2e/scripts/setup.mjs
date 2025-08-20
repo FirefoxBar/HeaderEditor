@@ -1,10 +1,10 @@
 import { after, before } from 'mocha';
-import { cleanup, getBrowserClient, sleep, waitTestServer } from './utils.mjs';
+import { cleanup, getBrowserClient, waitTestServer } from './utils.mjs';
 
 before(async function () {
   this.timeout(20000);
-  // const browserKeys = ['edge_v2', 'chrome_v3', 'firefox_v2', 'firefox_v3'];
-  const browserKeys = ['chrome_v3'];
+  const browserKeys = ['edge_v2', 'chrome_v3', 'firefox_v2', 'firefox_v3'];
+  // const browserKeys = ['chrome_v3'];
   console.log('🚀 starting browser...');
   const browserPromises = browserKeys.map(async browserKey => {
     const timeoutPromise = new Promise((_, reject) => {
