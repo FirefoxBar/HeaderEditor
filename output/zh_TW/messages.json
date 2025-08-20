@@ -113,7 +113,7 @@
     "description": "A confirmation box shows when user want to delete rules"
   },
   "description": {
-    "message": "管理瀏覽器要求，包括修改要求標頭和回應標頭、重新導向要求、取消要求",
+    "message": "管理瀏覽器要求",
     "description": "Extension description"
   },
   "disable": {
