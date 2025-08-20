@@ -113,7 +113,7 @@
     "description": "A confirmation box shows when user want to delete rules"
   },
   "description": {
-    "message": "管理浏览器请求，包括修改请求头、响应头、响应体，重定向请求、取消请求",
+    "message": "管理浏览器请求",
     "description": "Extension description"
   },
   "disable": {
