@@ -142,6 +142,7 @@ function createDNR(rule: Rule, id: number) {
       rule.ruleType,
     )
   ) {
+    res.action.type = 'modifyHeaders';
     const key =
       rule.ruleType === RULE_TYPE.MODIFY_SEND_HEADER
         ? 'requestHeaders'
