@@ -29,7 +29,8 @@ runs:
       id: install-edge
       shell: bash
       run: |
-        sudo dpkg --no-triggers -r microsoft-edge-stable
+        sudo dpkg-divert --divert /usr/share/doc/man-db/disabled.trigger --rename /usr/share/doc/man-db
+        sudo apt-get remove -y microsoft-edge-stable
         sudo wget -qO- https://packages.microsoft.com/keys/microsoft.asc | sudo gpg --dearmor -o /etc/apt/trusted.gpg.d/microsoft.gpg
         sudo add-apt-repository "deb [arch=amd64] https://packages.microsoft.com/repos/edge stable main"
         sudo apt-get update
