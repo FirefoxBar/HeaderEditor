@@ -1,8 +1,6 @@
+import fs from 'node:fs/promises';
+import path from 'node:path';
 import cpr from 'cpr';
-import fs from 'fs/promises';
-import path from 'path';
-import resolve from 'resolve';
-import { promisify } from 'util';
 
 /**
  * Check if a file exists
