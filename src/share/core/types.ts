@@ -91,4 +91,5 @@ export interface PrefValue {
   'rule-switch': boolean; // Enable rule quick switch
   'rule-history': boolean; // Auto save rule history into quick switch
   'quick-edit': boolean; // Quick edit rule in popup panel
+  'popup-show-rules': 'all' | 'common'; // Which rules to show in popup panel
 }

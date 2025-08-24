@@ -2,11 +2,11 @@ import { IconEdit, IconItalic, IconPlusCircle } from '@douyinfe/semi-icons';
 import { Button, Form, Input, Modal, Tabs } from '@douyinfe/semi-ui';
 import { css } from '@emotion/css';
 import { useLatest } from 'ahooks';
-import React, { type ReactNode, useCallback, useEffect, useState } from 'react';
+import { type ReactNode, useCallback, useEffect, useState } from 'react';
 import { RULE_TYPE } from '@/share/core/constant';
 import type { Rule } from '@/share/core/types';
 import { t } from '@/share/core/utils';
-import useOption from '@/share/hooks/use-option';
+import usePref from '@/share/hooks/use-pref';
 import Api from '@/share/pages/api';
 import { Toast } from '@/share/pages/toast';
 
@@ -112,7 +112,7 @@ const QuickEdit = ({ rule }: QuickEditProps) => {
   const { isFunction, ruleType } = rule;
   const ruleRef = useLatest(rule);
 
-  const isEnable = useOption('quick-edit', false);
+  const [isEnable] = usePref('quick-edit');
 
   const handleEdit = useCallback(() => {
     const newRule = { ...ruleRef.current };
@@ -169,7 +169,7 @@ const QuickEdit = ({ rule }: QuickEditProps) => {
           await Api.saveRule(newRule);
           Toast().success(t('saved'));
         } catch (e) {
-          Toast().error(e.message);
+          Toast().error((e as Error).message);
         }
       },
     });

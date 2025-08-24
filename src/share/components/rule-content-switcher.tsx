@@ -1,25 +1,33 @@
-import { ArrayField, Button, Dropdown, Form, Modal, Space, Tag } from '@douyinfe/semi-ui';
 import { IconDelete, IconPlus } from '@douyinfe/semi-icons';
+import {
+  ArrayField,
+  Button,
+  Dropdown,
+  Form,
+  Modal,
+  Space,
+  Tag,
+} from '@douyinfe/semi-ui';
+import type { DropdownProps } from '@douyinfe/semi-ui/lib/es/dropdown';
 import { css, cx } from '@emotion/css';
 import { useLatest } from 'ahooks';
-import React, { FC, useMemo } from 'react';
+import React, { type FC, useMemo } from 'react';
 import { RULE_TYPE } from '@/share/core/constant';
 import type { Rule } from '@/share/core/types';
+import { getVirtualKey, t } from '@/share/core/utils';
 import useStorage from '@/share/hooks/use-storage';
 import Api from '@/share/pages/api';
-import { getVirtualKey, t } from '@/share/core/utils';
 import { Toast } from '@/share/pages/toast';
-import useOption from '../hooks/use-option';
+import usePref from '../hooks/use-pref';
 import { tagList } from '../pages/styles';
 import HeaderField from './header-field';
-import type { DropdownProps } from '@douyinfe/semi-ui/lib/es/dropdown';
 
 interface RuleContentSwitcherEditProps {
   isHeader: boolean;
   initValue: Array<string | Record<string, string>>;
   onChange: (v: Array<string | Record<string, string>>) => void;
 }
-const RuleContentSwitcherEdit: FC<RuleContentSwitcherEditProps> = (props) => {
+const RuleContentSwitcherEdit: FC<RuleContentSwitcherEditProps> = props => {
   const { initValue = [''], onChange, isHeader } = props;
 
   const basicStyle = css`
@@ -48,17 +56,33 @@ const RuleContentSwitcherEdit: FC<RuleContentSwitcherEditProps> = (props) => {
   `;
 
   return (
-    <Form initValues={{ value: initValue }} onValueChange={(v) => onChange(v.value)}>
+    <Form
+      initValues={{ value: initValue }}
+      onValueChange={v => onChange(v.value)}
+    >
       <ArrayField field="value" initValue={initValue}>
         {({ add, arrayFields }) => (
           <div className={cx(basicStyle, { [headerEditStyle]: isHeader })}>
             {arrayFields.map(({ key, field, remove }) => (
               <Space key={key}>
-                {isHeader ? <HeaderField field={field} /> : <Form.Input field={field} noLabel />}
-                <Button type="tertiary" icon={<IconDelete />} onClick={remove} />
+                {isHeader ? (
+                  <HeaderField field={field} />
+                ) : (
+                  <Form.Input field={field} noLabel />
+                )}
+                <Button
+                  type="tertiary"
+                  icon={<IconDelete />}
+                  onClick={remove}
+                />
               </Space>
             ))}
-            <Button icon={<IconPlus />} type="primary" theme="solid" onClick={() => add()}>
+            <Button
+              icon={<IconPlus />}
+              type="primary"
+              theme="solid"
+              onClick={() => add()}
+            >
               {t('add')}
             </Button>
           </div>
@@ -83,43 +107,48 @@ const smallStyle = css`
   }
 `;
 
-const RuleContentSwitcher: FC<RuleContentSwitcherProps> = (props) => {
+const RuleContentSwitcher: FC<RuleContentSwitcherProps> = props => {
   const { add = false, type, children, rule, size } = props;
 
   const newestRule = useLatest(rule);
   const key = useMemo(() => getVirtualKey(rule), [rule]);
-  const { value, setValue } = useStorage<Array<string | Record<string, string>>>(`rule_switch_${key}`, []);
+  const { value, setValue } = useStorage<
+    Array<string | Record<string, string>>
+  >(`rule_switch_${key}`, []);
 
-  const isEnable = useOption('rule-switch', false);
+  const [isEnable] = usePref('rule-switch');
 
   const menu = useMemo(() => {
-    const updateRule = async (k: string, v: any) => {
+    const updateRule = async (k: keyof Rule, v: any) => {
       const newRule = { ...newestRule.current };
-      newRule[k] = v;
+      newRule[k] = v as never;
       try {
         await Api.saveRule(newRule);
         Toast().success(t('switch_success'));
       } catch (e) {
-        Toast().error(e.message);
+        Toast().error((e as Error).message);
       }
     };
 
-    const isHeader = [RULE_TYPE.MODIFY_RECV_HEADER, RULE_TYPE.MODIFY_SEND_HEADER].includes(rule.ruleType);
+    const isHeader = [
+      RULE_TYPE.MODIFY_RECV_HEADER,
+      RULE_TYPE.MODIFY_SEND_HEADER,
+    ].includes(rule.ruleType);
 
-    const result: DropdownProps['menu'] = value.map((x) => ({
+    const result: DropdownProps['menu'] = value.map(x => ({
       node: 'item',
       name:
-        typeof x === 'string' ? (
-          x
-        ) : ((
-          <div className={tagList}>
-            {Object.keys(x).map((k) => (
-              <Tag color="grey" key={k} size="small" shape="circle">
-                {k}: {x[k]}
-              </Tag>
-            ))}
-          </div>
-        ) as any),
+        typeof x === 'string'
+          ? x
+          : ((
+              <div className={tagList}>
+                {Object.keys(x).map(k => (
+                  <Tag color="grey" key={k} size="small" shape="circle">
+                    {k}: {x[k]}
+                  </Tag>
+                ))}
+              </div>
+            ) as any),
       onClick: () => {
         if (isHeader) {
           updateRule('headers', x);
@@ -147,7 +176,9 @@ const RuleContentSwitcher: FC<RuleContentSwitcherProps> = (props) => {
         onClick: () => {
           let currentValue: any = [...value];
           if (isHeader) {
-            currentValue = currentValue.map((x) => Object.entries(x).map(([name, v]) => ({ name, value: v })));
+            currentValue = currentValue.map((x: any) =>
+              Object.entries(x).map(([name, v]) => ({ name, value: v })),
+            );
           }
           Modal.info({
             title: t('switch_title'),
@@ -156,14 +187,16 @@ const RuleContentSwitcher: FC<RuleContentSwitcherProps> = (props) => {
               <RuleContentSwitcherEdit
                 isHeader={isHeader}
                 initValue={currentValue}
-                onChange={(v) => (currentValue = v)}
+                onChange={v => (currentValue = v)}
               />
             ),
             onOk: () => {
-              let finalValue = currentValue.filter((x) => Boolean(x));
+              let finalValue = currentValue.filter((x: any) => Boolean(x));
               if (isHeader) {
                 finalValue = Object.fromEntries(
-                  currentValue.filter((x) => Boolean(x.name)).map(({ name, v }) => [name, v]),
+                  currentValue
+                    .filter((x: any) => Boolean(x.name))
+                    .map(({ name, v }) => [name, v]),
                 );
               }
               setValue(finalValue);
@@ -181,7 +214,11 @@ const RuleContentSwitcher: FC<RuleContentSwitcherProps> = (props) => {
   }
 
   if (
-    ![RULE_TYPE.MODIFY_SEND_HEADER, RULE_TYPE.MODIFY_RECV_HEADER, RULE_TYPE.REDIRECT].includes(type) ||
+    ![
+      RULE_TYPE.MODIFY_SEND_HEADER,
+      RULE_TYPE.MODIFY_RECV_HEADER,
+      RULE_TYPE.REDIRECT,
+    ].includes(type) ||
     rule.isFunction
   ) {
     return null;

@@ -1,5 +1,5 @@
-import { PrefValue } from './types';
 import type { DeclarativeNetRequest } from 'webextension-polyfill/namespaces/declarativeNetRequest';
+import type { PrefValue } from './types';
 
 export enum TABLE_NAMES {
   request = 'request',
@@ -43,6 +43,7 @@ export const defaultPrefValue: PrefValue = {
   'rule-switch': true,
   'rule-history': true,
   'quick-edit': true,
+  'popup-show-rules': 'common',
 };
 
 export enum APIs {

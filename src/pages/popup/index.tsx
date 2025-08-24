@@ -1,5 +1,5 @@
 import { IconMenu, IconSetting } from '@douyinfe/semi-icons';
-import { Nav, Switch, Tooltip, Typography } from '@douyinfe/semi-ui';
+import { Nav, Switch, Tooltip } from '@douyinfe/semi-ui';
 import type { OnSelectedData } from '@douyinfe/semi-ui/lib/es/navigation';
 import { css, cx } from '@emotion/css';
 import React, { useCallback, useEffect, useState } from 'react';
@@ -10,8 +10,7 @@ import { prefs } from '@/share/core/prefs';
 import { IS_ANDROID, t } from '@/share/core/utils';
 import Api from '@/share/pages/api';
 import isDarkMode from '@/share/pages/is-dark-mode';
-import Group from './rule/group';
-import Rules from './rule/rules';
+import Rules from './rules';
 
 const basicStyle = css`
   min-width: 340px;
@@ -136,14 +135,6 @@ const Popup = () => {
         />
         <main className="main-content">
           <Rules />
-          <Group />
-          <div style={{ flexGrow: 1, minHeight: '20px' }} />
-          <Typography.Text
-            type="tertiary"
-            style={{ textAlign: 'center', padding: '12px', fontSize: '12px' }}
-          >
-            {t('common_mark_tip')}
-          </Typography.Text>
         </main>
       </div>
     </SemiLocale>

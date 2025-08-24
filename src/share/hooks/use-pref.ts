@@ -1,8 +1,8 @@
 import { useCallback, useEffect, useState } from 'react';
 import { defaultPrefValue } from '../core/constant';
-import { PrefValue } from '../core/types';
-import { prefs } from '../core/prefs';
 import emitter from '../core/emitter';
+import { prefs } from '../core/prefs';
+import type { PrefValue } from '../core/types';
 
 const usePref = <K extends keyof PrefValue>(key: K) => {
   const [state, setState] = useState(defaultPrefValue[key]);

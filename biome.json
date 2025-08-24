@@ -25,7 +25,8 @@
       "suspicious": {
         "noDuplicateFontNames": "off",
         "noExplicitAny": "off",
-        "noAssignInExpressions": "off"
+        "noAssignInExpressions": "off",
+        "noArrayIndexKey": "warn"
       },
       "correctness": {
         "useExhaustiveDependencies": "info"

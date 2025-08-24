@@ -71,11 +71,25 @@ const prefItems: {
       },
     ],
   },
+  'popup-show-rules': {
+    langKey: 'show_rules_on_popup',
+    type: 'select',
+    optionList: [
+      {
+        label: t('marked_as_common'),
+        value: 'common',
+      },
+      {
+        label: t('all_rules'),
+        value: 'all',
+      },
+    ],
+  },
 };
 
 const allPrefs = Object.keys(prefItems);
 
-export default class Prefs extends React.Component<{}, PrefsState> {
+export default class Prefs extends React.Component<void, PrefsState> {
   constructor(props: any) {
     super(props);
 
@@ -91,7 +105,7 @@ export default class Prefs extends React.Component<{}, PrefsState> {
     prefs.ready(() => {
       const newPrefs = { ...this.state.prefs };
       Object.keys(newPrefs).forEach(it => {
-        newPrefs[it] = prefs.get(it as keyof PrefValue);
+        (newPrefs as any)[it] = prefs.get(it as keyof PrefValue);
       });
       this.setState({
         prefs: newPrefs,
@@ -151,12 +165,14 @@ export default class Prefs extends React.Component<{}, PrefsState> {
                   <Select
                     optionList={item.optionList}
                     onChange={v => this.handleChange(key, v)}
-                    value={this.state.prefs[key]}
+                    value={this.state.prefs[key as keyof PrefValue] as any}
                     disabled={item.disabled}
                   />
                 ) : (
                   <Switch
-                    checked={this.state.prefs[key]}
+                    checked={
+                      this.state.prefs[key as keyof PrefValue] as boolean
+                    }
                     onChange={v => this.handleChange(key, Boolean(v))}
                     disabled={item.disabled}
                   />

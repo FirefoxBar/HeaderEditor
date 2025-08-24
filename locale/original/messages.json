@@ -579,5 +579,21 @@
   "view": {
     "message": "View",
     "description": "View rule or a link"
+  },
+  "get_support": {
+    "message": "Get support",
+    "description": "Get support link"
+  },
+  "show_rules_on_popup": {
+    "message": "Display these rules on a popup",
+    "description": "Options"
+  },
+  "all_rules": {
+    "message": "All rules",
+    "description": "Options"
+  },
+  "marked_as_common": {
+    "message": "Marked as commonly used",
+    "description": "Options"
   }
 }

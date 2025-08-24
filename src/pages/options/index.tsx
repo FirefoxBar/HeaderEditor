@@ -1,4 +1,5 @@
 import {
+  IconCustomerSupport,
   IconFolderOpen,
   IconHelpCircle,
   IconMenu,
@@ -15,6 +16,7 @@ import { prefs } from '@/share/core/prefs';
 import { convertToRule } from '@/share/core/rule-utils';
 import type { Rule } from '@/share/core/types';
 import { t } from '@/share/core/utils';
+import Api from '@/share/pages/api';
 import isDarkMode from '@/share/pages/is-dark-mode';
 import GroupSelect from './sections/group-select';
 import ImportAndExportSection from './sections/import-and-export';
@@ -43,6 +45,10 @@ const Options = () => {
 
   const handleSwitch = useCallback((data: OnSelectedData) => {
     const newActive = data.itemKey as string;
+    if (newActive === 'get_support') {
+      Api.openURL('https://github.com/FirefoxBar/HeaderEditor/issues');
+      return;
+    }
     if (newActive && newActive !== getActive()) {
       if (newActive === 'help') {
         isCollapsedRef.current = getNavCollapse();
@@ -129,6 +135,11 @@ const Options = () => {
               icon: <IconFolderOpen />,
             },
             { itemKey: 'help', text: t('help'), icon: <IconHelpCircle /> },
+            {
+              itemKey: 'get_support',
+              text: t('get_support'),
+              icon: <IconCustomerSupport />,
+            },
           ]}
           isCollapsed={navCollapse}
           onCollapseChange={setNavCollapse}
