@@ -181,9 +181,9 @@ class DNRRequestHandler {
   private _disableAll = false;
 
   constructor() {
+    this.loadPrefs();
     this.initHook();
     this.initRules();
-    this.loadPrefs();
   }
 
   get disableAll() {
@@ -194,11 +194,16 @@ class DNRRequestHandler {
     if (this._disableAll === to) {
       return;
     }
+    logger.debug('[dnr-handler] disableAll', to);
+    this._disableAll = to;
+    if (IS_DEV) {
+      console.log('[dnr-handler] disableAll', to);
+    }
     if (to) {
-      // enable all
-      this.initRules();
-    } else {
+      // disable all
       this.clearRules();
+    } else {
+      this.initRules();
     }
   }
 
@@ -210,6 +215,10 @@ class DNRRequestHandler {
   }
 
   private async initRules() {
+    if (this.disableAll) {
+      return;
+    }
+
     await waitLoad();
 
     const v = Object.values(getAll());
@@ -234,8 +243,11 @@ class DNRRequestHandler {
       }
       addRules.push(createDNR(rule, ruleId));
     });
+    if (this.disableAll) {
+      return;
+    }
     if (IS_DEV) {
-      console.log('init dnr rules', addRules);
+      console.log('init dnr rules', addRules, this.disableAll);
     }
     if (addRules.length > 0) {
       try {
@@ -259,6 +271,9 @@ class DNRRequestHandler {
     emitter.on(
       emitter.INNER_RULE_UPDATE,
       async ({ from, target }: { from: Rule; target: Rule }) => {
+        if (this.disableAll) {
+          return;
+        }
         logger.debug('[dnr-handler] rules update', from, target);
         const command: DeclarativeNetRequest.UpdateSessionRulesOptionsType = {
           removeRuleIds: [],

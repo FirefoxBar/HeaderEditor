@@ -269,6 +269,14 @@ export async function saveRule(popup, rule) {
   };
 }
 
+export function setPref(popup, key, value) {
+  return callBackgroundApi(popup, {
+    method: 'set_pref',
+    key,
+    value,
+  });
+}
+
 export async function getPageValue(browser, url) {
   const page = await browser.newPage();
   await page.goto(`${testServer}${url}`);

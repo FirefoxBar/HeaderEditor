@@ -1,9 +1,9 @@
 import assert from 'node:assert';
 import {
-  callBackgroundApi,
   getPageValue,
   runTest,
   saveRule,
+  setPref,
   testServer,
 } from './scripts/utils.mjs';
 
@@ -28,11 +28,7 @@ describe('Disable Modify Response', () =>
     });
 
     try {
-      await callBackgroundApi(browser.popup, {
-        method: 'set_pref',
-        key: 'modify-body',
-        value: false,
-      });
+      await setPref('modify-body', false);
 
       const value = await getPageValue(
         browser.browser,
@@ -49,11 +45,7 @@ describe('Modify Response', () =>
     const key1 = String(Math.random()).replace('.', '');
     const key2 = String(Math.random()).replace('.', '');
 
-    await callBackgroundApi(browser.popup, {
-      method: 'set_pref',
-      key: 'modify-body',
-      value: true,
-    });
+    await setPref('modify-body', true);
 
     const { remove } = await saveRule(browser.popup, {
       enable: true,
@@ -89,11 +81,7 @@ describe('Modify Response - Custom Function', () =>
     const key1 = String(Math.random()).replace('.', '');
     const key2 = String(Math.random()).replace('.', '');
 
-    await callBackgroundApi(browser.popup, {
-      method: 'set_pref',
-      key: 'modify-body',
-      value: true,
-    });
+    await setPref('modify-body', true);
 
     const { remove } = await saveRule(browser.popup, {
       enable: true,

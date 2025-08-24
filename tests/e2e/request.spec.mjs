@@ -1,5 +1,6 @@
 import assert from 'node:assert';
 import {
+  callBackgroundApi,
   getHeader,
   getPageValue,
   runTest,
@@ -84,7 +85,7 @@ describe('Exclude regex', () =>
 
     try {
       const header1 = await getHeader(browser.browser, 't123=1');
-      assert.notStrictEqual(header1['X_EXCLUDE'], key);
+      assert.strictEqual(header1['X_EXCLUDE'], undefined);
       const header2 = await getHeader(browser.browser);
       assert.strictEqual(header2['X_EXCLUDE'], key);
     } finally {
@@ -172,6 +173,38 @@ describe('Modify Response Header', () =>
         );
 
         assert.strictEqual(value, key);
+      } finally {
+        await remove();
+      }
+    },
+  ));
+
+describe('Disable All', () =>
+  runTest(
+    ['edge_v2', 'chrome_v3', 'firefox_v2', 'firefox_v3'],
+    async browser => {
+      const key = String(Math.random()).replace('.', '');
+
+      const { remove } = await saveRule(browser.popup, {
+        name: 'test disable all',
+        ruleType: 'modifySendHeader',
+        pattern: '^' + testServer,
+        matchType: 'regexp',
+        isFunction: false,
+        enable: true,
+        action: {
+          name: 'X-Test-Disable',
+          value: key,
+        },
+      });
+
+      try {
+        await setPref('disable-all', true);
+        const header1 = await getHeader(browser.browser);
+        assert.strictEqual(header1['X_TEST_DISABLE'], undefined);
+        await setPref('disable-all', false);
+        const header2 = await getHeader(browser.browser);
+        assert.notStrictEqual(header2['X_TEST_DISABLE'], key);
       } finally {
         await remove();
       }
