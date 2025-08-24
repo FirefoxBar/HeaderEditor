@@ -7,6 +7,10 @@
     "message": "Add",
     "description": "Button to add somethings"
   },
+  "all_rules": {
+    "message": "All rules",
+    "description": "Options"
+  },
   "auto": {
     "message": "Auto",
     "description": "Auto detect dark mode"
@@ -204,6 +208,10 @@
     "message": "Extension version",
     "description": "Extension version"
   },
+  "get_support": {
+    "message": "Get support",
+    "description": "Get support link"
+  },
   "group": {
     "message": "Group",
     "description": "Group button"
@@ -267,6 +275,10 @@
   "manage_collapse_group": {
     "message": "Collapse groups by default",
     "description": "All groups will be collapsed when open the management page"
+  },
+  "marked_as_common": {
+    "message": "Marked as commonly used",
+    "description": "Options"
   },
   "matchRule": {
     "message": "Match rules",
@@ -496,6 +508,10 @@
     "message": "Share",
     "description": "Share button title"
   },
+  "show_rules_on_popup": {
+    "message": "Display these rules on a popup",
+    "description": "Options"
+  },
   "stage_request": {
     "message": "Request",
     "description": "Request stage"
@@ -579,21 +595,5 @@
   "view": {
     "message": "View",
     "description": "View rule or a link"
-  },
-  "get_support": {
-    "message": "Get support",
-    "description": "Get support link"
-  },
-  "show_rules_on_popup": {
-    "message": "Display these rules on a popup",
-    "description": "Options"
-  },
-  "all_rules": {
-    "message": "All rules",
-    "description": "Options"
-  },
-  "marked_as_common": {
-    "message": "Marked as commonly used",
-    "description": "Options"
   }
 }
