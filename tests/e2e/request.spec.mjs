@@ -1,4 +1,5 @@
 import assert from 'node:assert';
+import { setTimeout as sleep } from 'node:timers/promises';
 import {
   getHeader,
   getPageValue,
@@ -200,11 +201,13 @@ describe('Disable All', () =>
 
       try {
         await setPref(browser.popup, 'disable-all', true);
+        await sleep(100);
         const header1 = await getHeader(browser.browser);
         assert.strictEqual(header1['X_TEST_DISABLE'], undefined);
         await setPref(browser.popup, 'disable-all', false);
+        await sleep(100);
         const header2 = await getHeader(browser.browser);
-        assert.notStrictEqual(header2['X_TEST_DISABLE'], key);
+        assert.strictEqual(header2['X_TEST_DISABLE'], key);
       } finally {
         await remove();
       }
