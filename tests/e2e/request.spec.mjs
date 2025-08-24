@@ -1,10 +1,10 @@
 import assert from 'node:assert';
 import {
-  callBackgroundApi,
   getHeader,
   getPageValue,
   runTest,
   saveRule,
+  setPref,
   testServer,
 } from './scripts/utils.mjs';
 
