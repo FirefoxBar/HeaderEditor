@@ -281,7 +281,7 @@ export async function getPageValue(browser, url) {
   const page = await browser.newPage();
   await page.goto(`${testServer}${url}`);
   await page.waitForSelector('#value');
-  await sleep(500);
+  await sleep(200);
   const value = await page.$eval('#value', el => el.value);
   await page.close();
   return value;
