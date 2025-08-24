@@ -28,7 +28,7 @@ describe('Disable Modify Response', () =>
     });
 
     try {
-      await setPref('modify-body', false);
+      await setPref(browser.popup, 'modify-body', false);
 
       const value = await getPageValue(
         browser.browser,
@@ -45,7 +45,7 @@ describe('Modify Response', () =>
     const key1 = String(Math.random()).replace('.', '');
     const key2 = String(Math.random()).replace('.', '');
 
-    await setPref('modify-body', true);
+    await setPref(browser.popup, 'modify-body', true);
 
     const { remove } = await saveRule(browser.popup, {
       enable: true,
@@ -81,7 +81,7 @@ describe('Modify Response - Custom Function', () =>
     const key1 = String(Math.random()).replace('.', '');
     const key2 = String(Math.random()).replace('.', '');
 
-    await setPref('modify-body', true);
+    await setPref(browser.popup, 'modify-body', true);
 
     const { remove } = await saveRule(browser.popup, {
       enable: true,

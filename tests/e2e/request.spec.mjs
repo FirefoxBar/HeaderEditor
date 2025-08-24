@@ -199,10 +199,10 @@ describe('Disable All', () =>
       });
 
       try {
-        await setPref('disable-all', true);
+        await setPref(browser.popup, 'disable-all', true);
         const header1 = await getHeader(browser.browser);
         assert.strictEqual(header1['X_TEST_DISABLE'], undefined);
-        await setPref('disable-all', false);
+        await setPref(browser.popup, 'disable-all', false);
         const header2 = await getHeader(browser.browser);
         assert.notStrictEqual(header2['X_TEST_DISABLE'], key);
       } finally {
