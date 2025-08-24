@@ -7,6 +7,10 @@
     "message": "添加",
     "description": "Button to add somethings"
   },
+  "all_rules": {
+    "message": "所有规则",
+    "description": "Options"
+  },
   "auto": {
     "message": "自动",
     "description": "Auto detect dark mode"
@@ -204,6 +208,10 @@
     "message": "扩展版本",
     "description": "Extension version"
   },
+  "get_support": {
+    "message": "获取支持",
+    "description": "Get support link"
+  },
   "group": {
     "message": "分组",
     "description": "Group button"
@@ -267,6 +275,10 @@
   "manage_collapse_group": {
     "message": "默认折叠分组",
     "description": "All groups will be collapsed when open the management page"
+  },
+  "marked_as_common": {
+    "message": "已标记为常用",
+    "description": "Options"
   },
   "matchRule": {
     "message": "匹配规则",
@@ -495,6 +507,10 @@
   "share": {
     "message": "分享",
     "description": "Share button title"
+  },
+  "show_rules_on_popup": {
+    "message": "在弹出面板上显示规则",
+    "description": "Options"
   },
   "stage_request": {
     "message": "请求",
