@@ -73,9 +73,8 @@ describe('Exclude regex', () =>
       ruleType: 'modifySendHeader',
       isFunction: false,
       enable: true,
-      action: {
-        name: 'X-Test-Header',
-        value: key,
+      headers: {
+        'x-exclude': key,
       },
       condition: {
         regex: '^' + testServer,
@@ -84,8 +83,10 @@ describe('Exclude regex', () =>
     });
 
     try {
-      const header = await getHeader(browser.browser, 't123=1');
-      assert.notStrictEqual(header['X_TEST_HEADER'], key);
+      const header1 = await getHeader(browser.browser, 't123=1');
+      assert.notStrictEqual(header1['X_EXCLUDE'], key);
+      const header2 = await getHeader(browser.browser);
+      assert.strictEqual(header2['X_EXCLUDE'], key);
     } finally {
       await remove();
     }
