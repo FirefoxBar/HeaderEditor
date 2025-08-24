@@ -62,8 +62,7 @@ async function packOnePlatform(name, browserConfig, extensionConfig) {
       getManifest(extensionConfig.browser, {
         dev: false,
         version,
-        amo: name === 'amo',
-        xpi: name === 'xpi',
+        packer: name,
       }),
     );
     // 打包成zip

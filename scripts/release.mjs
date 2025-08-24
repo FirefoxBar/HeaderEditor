@@ -100,6 +100,11 @@ async function main() {
     });
   }
 
+  if (assets.length === 0) {
+    console.log('No assets found');
+    return;
+  }
+
   // Check if release is exists
   console.log('Get release info...', tagName);
   const res = await axios.get(`${gitHubBaseURL}/releases`, {

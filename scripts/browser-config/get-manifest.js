@@ -27,6 +27,7 @@ const action = {
 };
 
 function getManifest(browser, options) {
+  const { packer, dev, version } = options || {};
   const config = browserConfig[browser];
   // copy
   const manifest = JSON.parse(JSON.stringify(baseManifest));
@@ -79,7 +80,7 @@ function getManifest(browser, options) {
     manifest.short_name = 'Header Editor';
   }
 
-  if (options && options.dev && browser.startsWith('chrome')) {
+  if (dev && browser.startsWith('chrome')) {
     const ext = extensionConfig.crx.find(x => x.browser === browser);
     if (ext && ext.public_key) {
       manifest.key = ext.public_key;
@@ -87,7 +88,7 @@ function getManifest(browser, options) {
   }
 
   if (config.BROWSER_TYPE === 'firefox') {
-    if (options && options.amo) {
+    if (packer === 'amo') {
       const id = extensionConfig.amo.find(x => x.browser === browser).id;
       manifest.browser_specific_settings = {
         gecko: {
@@ -112,14 +113,14 @@ function getManifest(browser, options) {
 
   if (config.BROWSER_TYPE === 'chrome') {
     manifest.permissions.push('debugger');
-    if (config.MANIFEST_VER === 'v2') {
+    if (packer === 'crx') {
       manifest.update_url =
         'https://ext.firefoxcn.net/header-editor/install/update.xml';
     }
   }
 
-  if (options && options.version) {
-    manifest.version = options.version;
+  if (version) {
+    manifest.version = version;
   }
 
   return manifest;
