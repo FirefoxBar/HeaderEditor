@@ -279,8 +279,8 @@ export async function getPageValue(browser, url) {
   return value;
 }
 
-export async function getHeader(browser) {
-  const value = await getPageValue(browser, 'get-header.php');
+export async function getHeader(browser, extraQuery = '') {
+  const value = await getPageValue(browser, 'get-header.php?' + extraQuery);
   return JSON.parse(value);
 }
 
