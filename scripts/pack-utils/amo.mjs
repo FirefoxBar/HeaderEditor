@@ -107,6 +107,8 @@ export async function submitAddon(
     } else {
       waitSubmit.push(time);
     }
+  } else {
+    waitSubmit.push(time);
   }
 
   const opts = {
@@ -129,6 +131,7 @@ export async function submitAddon(
     opts.sourceFile = await packingSourceCode;
   }
 
+  console.log('[amo] start signAddon');
   return signAddon(opts);
 }
 

@@ -94,7 +94,7 @@ async function main() {
       path: fullPath,
       hash: hash(fileContent),
       content: fileContent,
-      config,
+      config: info,
       url: `https://github.com/${repo}/releases/download/${tagName}/${file}`,
     });
   }

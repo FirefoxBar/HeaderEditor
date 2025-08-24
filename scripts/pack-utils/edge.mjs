@@ -19,7 +19,9 @@ export default async function ({ zipPath, extensionConfig }) {
   console.log('[edge] upload done', uploadResp);
   const uploadStatus = await client.waitForUpload(uploadResp);
   console.log('[edge] upload check success', uploadStatus);
-  const publishResp = await client.publish(notes);
+  const publishResp = await client.publish(
+    'https://github.com/FirefoxBar/HeaderEditor/blob/master/README.md',
+  );
   console.log('[edge] publish done', publishResp);
   return client.getPublishStatus(publishResp);
 }
