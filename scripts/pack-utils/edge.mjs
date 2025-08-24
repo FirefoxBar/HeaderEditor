@@ -23,5 +23,5 @@ export default async function ({ zipPath, extensionConfig }) {
     'https://github.com/FirefoxBar/HeaderEditor/blob/master/README.md',
   );
   console.log('[edge] publish done', publishResp);
-  return client.getPublishStatus(publishResp);
+  return JSON.stringify(await client.getPublishStatus(publishResp));
 }
