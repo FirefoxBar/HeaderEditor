@@ -2,6 +2,7 @@ import { Blob } from 'node:buffer';
 import { createHash } from 'node:crypto';
 import { readdir, readFile } from 'node:fs/promises';
 import { join } from 'node:path';
+import { URLSearchParams } from 'node:url';
 import axios from 'axios';
 import { get } from 'lodash-es';
 import {
@@ -196,12 +197,16 @@ async function main() {
     min_version: get(x, 'config.extension.min_version'),
   }));
   console.log('notify the update server', notifyAssets);
-  await axios.post('https://server-api.sylibs.com/ext/update.php', {
+  const params = new URLSearchParams({
     token: token,
     name: 'header-editor',
     version,
     assets: JSON.stringify(notifyAssets),
   });
+  await axios.post(
+    'https://server-api.sylibs.com/ext/update.php',
+    params.toString(),
+  );
 }
 
 main();
