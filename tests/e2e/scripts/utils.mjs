@@ -1,12 +1,13 @@
+import { existsSync, readFileSync } from 'node:fs';
+import { readFile } from 'node:fs/promises';
+import path from 'node:path';
+import { setTimeout as sleep } from 'node:timers/promises';
+import { fileURLToPath } from 'node:url';
+import { promisify } from 'node:util';
 import axios from 'axios';
-import { existsSync, readFileSync } from 'fs';
-import { readFile } from 'fs/promises';
 import getPort from 'get-port';
-import path from 'path';
 import puppeteer from 'puppeteer';
 import resolve from 'resolve';
-import { fileURLToPath } from 'url';
-import { promisify } from 'util';
 
 export const testServer = 'http://127.0.0.1:8899/';
 export const fxAddonUUID = 'f492d714-700a-4402-8b96-4ec9e829332d';
@@ -33,12 +34,6 @@ function getExecutablePath(name) {
       return fullPath;
     }
   }
-}
-
-export async function sleep(ms) {
-  return new Promise(resolve => {
-    setTimeout(resolve, ms);
-  });
 }
 
 async function createBrowser(browserKey, pathToExtension) {
@@ -284,8 +279,8 @@ export async function getPageValue(browser, url) {
   return value;
 }
 
-export async function getHeader(browser) {
-  const value = await getPageValue(browser, 'get-header.php');
+export async function getHeader(browser, extraQuery = '') {
+  const value = await getPageValue(browser, 'get-header.php?' + extraQuery);
   return JSON.parse(value);
 }
 

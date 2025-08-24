@@ -23,14 +23,15 @@ describe('Redirect', () =>
         to: `${testServer}get-query.php?id=$1&value=$2`,
       });
 
-      const query = JSON.parse(
-        await getPageValue(browser.browser, `get123/test${key}`),
-      );
-
-      assert.strictEqual(query['id'], '123');
-      assert.strictEqual(query['value'], `test${key}`);
-
-      await remove();
+      try {
+        const query = JSON.parse(
+          await getPageValue(browser.browser, `get123/test${key}`),
+        );
+        assert.strictEqual(query['id'], '123');
+        assert.strictEqual(query['value'], `test${key}`);
+      } finally {
+        await remove();
+      }
     },
   ));
 
@@ -53,13 +54,43 @@ describe('Modify Request Header', () =>
         },
       });
 
-      const header = await getHeader(browser.browser);
+      try {
+        const header = await getHeader(browser.browser);
 
-      assert.strictEqual(header['X_TEST_HEADER'], key);
-
-      await remove();
+        assert.strictEqual(header['X_TEST_HEADER'], key);
+      } finally {
+        await remove();
+      }
     },
   ));
+
+describe('Exclude regex', () =>
+  runTest(['edge_v2', 'firefox_v2'], async browser => {
+    const key = String(Math.random()).replace('.', '');
+
+    const { remove } = await saveRule(browser.popup, {
+      name: 'test exclude regex',
+      ruleType: 'modifySendHeader',
+      isFunction: false,
+      enable: true,
+      headers: {
+        'x-exclude': key,
+      },
+      condition: {
+        regex: '^' + testServer,
+        excludeRegex: 't\\d+',
+      },
+    });
+
+    try {
+      const header1 = await getHeader(browser.browser, 't123=1');
+      assert.notStrictEqual(header1['X_EXCLUDE'], key);
+      const header2 = await getHeader(browser.browser);
+      assert.strictEqual(header2['X_EXCLUDE'], key);
+    } finally {
+      await remove();
+    }
+  }));
 
 describe('Disable rule', () =>
   runTest(
@@ -105,11 +136,13 @@ describe('Remove Response Header', () =>
         },
       });
 
-      const value = await getPageValue(browser.browser, 'csp.php');
+      try {
+        const value = await getPageValue(browser.browser, 'csp.php');
 
-      assert.strictEqual(value, 'Executed');
-
-      await remove();
+        assert.strictEqual(value, 'Executed');
+      } finally {
+        await remove();
+      }
     },
   ));
 
@@ -132,11 +165,16 @@ describe('Modify Response Header', () =>
         },
       });
 
-      const value = await getPageValue(browser.browser, 'csp.php?nonce=' + key);
+      try {
+        const value = await getPageValue(
+          browser.browser,
+          'csp.php?nonce=' + key,
+        );
 
-      assert.strictEqual(value, key);
-
-      await remove();
+        assert.strictEqual(value, key);
+      } finally {
+        await remove();
+      }
     },
   ));
 
@@ -154,9 +192,11 @@ describe('Custom Function', () =>
       code: `val.push({ "name": "X-Custom-Header", "value": "${key}" })`,
     });
 
-    const header = await getHeader(browser.browser);
+    try {
+      const header = await getHeader(browser.browser);
 
-    assert.strictEqual(header['X_CUSTOM_HEADER'], key);
-
-    await remove();
+      assert.strictEqual(header['X_CUSTOM_HEADER'], key);
+    } finally {
+      await remove();
+    }
   }));

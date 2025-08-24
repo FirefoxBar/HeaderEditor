@@ -1,6 +1,6 @@
-import { execFile } from 'child_process';
-import fs from 'fs/promises';
-import path from 'path';
+import { execFile } from 'node:child_process';
+import fs from 'node:fs/promises';
+import path from 'node:path';
 
 function quotePath(p) {
   return '"' + p + '"';

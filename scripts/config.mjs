@@ -1,5 +1,5 @@
-import { dirname, join } from 'path';
-import { fileURLToPath } from 'url';
+import { dirname, join } from 'node:path';
+import { fileURLToPath } from 'node:url';
 import extension from '../extension.json' with { type: 'json' };
 import { getDistDir, getOutputFile } from './browser-config/get-path.js';
 import { readJSON } from './utils.mjs';

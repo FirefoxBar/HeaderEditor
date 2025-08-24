@@ -9,8 +9,8 @@
  * 在这里，打包文件夹统一命名为pack
  */
 
-import { mkdir, unlink } from 'fs/promises';
-import { join } from 'path';
+import { mkdir, unlink } from 'node:fs/promises';
+import { join } from 'node:path';
 import { rimraf } from 'rimraf';
 import getManifest from './browser-config/get-manifest.js';
 import {

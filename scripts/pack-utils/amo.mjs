@@ -1,6 +1,8 @@
+import fs from 'node:fs/promises';
+import path from 'node:path';
+import { setTimeout as sleep } from 'node:timers/promises';
 import { signAddon } from 'amo-upload';
-import fs from 'fs/promises';
-import path from 'path';
+import { last } from 'lodash-es';
 import { path as _path, getVersion } from '../config.mjs';
 import { copyDir, fileExists } from '../utils.mjs';
 import { createZip } from '../zip.mjs';
@@ -83,6 +85,7 @@ async function packSourceCode(rootPath) {
   }
 }
 
+const waitSubmit = [];
 export async function submitAddon(
   rootPath,
   uploadSourceCode = false,
@@ -93,6 +96,17 @@ export async function submitAddon(
   }
   if (!process.env.AMO_SECRET) {
     return Promise.reject(new Error('AMO_SECRET not found'));
+  }
+
+  const time = Date.now();
+  if (waitSubmit.length !== 0) {
+    const s = last(waitSubmit) + 6000;
+    if (s > time) {
+      waitSubmit.push(s);
+      await sleep(s - time);
+    } else {
+      waitSubmit.push(time);
+    }
   }
 
   const opts = {

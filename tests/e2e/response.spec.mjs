@@ -27,19 +27,21 @@ describe('Disable Modify Response', () =>
       encoding: 'UTF-8',
     });
 
-    await callBackgroundApi(browser.popup, {
-      method: 'set_pref',
-      key: 'modify-body',
-      value: false,
-    });
+    try {
+      await callBackgroundApi(browser.popup, {
+        method: 'set_pref',
+        key: 'modify-body',
+        value: false,
+      });
 
-    const value = await getPageValue(
-      browser.browser,
-      `js-src.php?value=${key2}`,
-    );
-    assert.strictEqual(value, key2);
-
-    await remove();
+      const value = await getPageValue(
+        browser.browser,
+        `js-src.php?value=${key2}`,
+      );
+      assert.strictEqual(value, key2);
+    } finally {
+      await remove();
+    }
   }));
 
 describe('Modify Response', () =>
@@ -68,16 +70,18 @@ describe('Modify Response', () =>
       encoding: 'UTF-8',
     });
 
-    const value1 = await getPageValue(browser.browser, 'js-src.php');
-    assert.strictEqual(value1, key1);
+    try {
+      const value1 = await getPageValue(browser.browser, 'js-src.php');
+      assert.strictEqual(value1, key1);
 
-    const value2 = await getPageValue(
-      browser.browser,
-      `js-src.php?value=${key2}`,
-    );
-    assert.strictEqual(value2, key2);
-
-    await remove();
+      const value2 = await getPageValue(
+        browser.browser,
+        `js-src.php?value=${key2}`,
+      );
+      assert.strictEqual(value2, key2);
+    } finally {
+      await remove();
+    }
   }));
 
 describe('Modify Response - Custom Function', () =>
@@ -106,11 +110,13 @@ describe('Modify Response - Custom Function', () =>
       encoding: 'UTF-8',
     });
 
-    const value = await getPageValue(
-      browser.browser,
-      `js-src.php?value=${key2}`,
-    );
-    assert.strictEqual(value, `${key1}${key2}${key1}${key2}`);
-
-    await remove();
+    try {
+      const value = await getPageValue(
+        browser.browser,
+        `js-src.php?value=${key2}`,
+      );
+      assert.strictEqual(value, `${key1}${key2}${key1}${key2}`);
+    } finally {
+      await remove();
+    }
   }));

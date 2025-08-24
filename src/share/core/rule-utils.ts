@@ -71,6 +71,7 @@ export function convertToRule(rule: InitdRule | Rule): Rule {
   delete item._func;
   delete item._v_key;
   delete item._runner;
+  delete item._exclude;
   return item;
 }
 
@@ -204,7 +205,7 @@ export function isMatchUrl(rule: InitdRule, url: string): IS_MATCH {
     if (excludeRegex) {
       const reg = rule._exclude || new RegExp(excludeRegex, 'g');
       reg.lastIndex = 0;
-      if (!reg.test(url)) {
+      if (reg.test(url)) {
         return IS_MATCH.MATCH_BUT_EXCLUDE;
       }
     }
