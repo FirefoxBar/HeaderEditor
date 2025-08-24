@@ -45,7 +45,7 @@ const Options = () => {
 
   const handleSwitch = useCallback((data: OnSelectedData) => {
     const newActive = data.itemKey as string;
-    if (newActive === 'get_support') {
+    if (newActive === 'feedback') {
       Api.openURL('https://github.com/FirefoxBar/HeaderEditor/issues');
       return;
     }
@@ -136,8 +136,8 @@ const Options = () => {
             },
             { itemKey: 'help', text: t('help'), icon: <IconHelpCircle /> },
             {
-              itemKey: 'get_support',
-              text: t('get_support'),
+              itemKey: 'feedback',
+              text: t('feedback'),
               icon: <IconCustomerSupport />,
             },
           ]}

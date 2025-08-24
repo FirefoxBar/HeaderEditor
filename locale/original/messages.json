@@ -208,9 +208,9 @@
     "message": "Extension version",
     "description": "Extension version"
   },
-  "get_support": {
-    "message": "Get support",
-    "description": "Get support link"
+  "feedback": {
+    "message": "Feedback",
+    "description": "Feedback link"
   },
   "group": {
     "message": "Group",
