@@ -100,7 +100,7 @@ export async function submitAddon(
 
   const time = Date.now();
   if (waitSubmit.length !== 0) {
-    const s = last(waitSubmit) + 6000;
+    const s = last(waitSubmit) + 10000;
     if (s > time) {
       waitSubmit.push(s);
       await sleep(s - time);
