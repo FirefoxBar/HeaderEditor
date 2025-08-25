@@ -1,8 +1,9 @@
 import { IconBranch } from '@douyinfe/semi-icons';
 import { Button, Popover, Spin, Switch } from '@douyinfe/semi-ui';
-import { cx } from '@emotion/css';
+import { css, cx } from '@emotion/css';
 import { useRequest } from 'ahooks';
-import { useEffect } from 'react';
+import { flatten } from 'lodash-es';
+import { Fragment, useEffect } from 'react';
 import RuleContentSwitcher from '@/share/components/rule-content-switcher';
 import RuleDetail from '@/share/components/rule-detail';
 import { EVENTs, VIRTUAL_KEY } from '@/share/core/constant';
@@ -13,6 +14,16 @@ import Api from '@/share/pages/api';
 import { textEllipsis } from '@/share/pages/styles';
 import QuickEdit from './quick-edit';
 
+const titleStyle = css`
+  font-size: 12px;
+  font-weight: 500;
+  line-height: 24px;
+  padding: 0 8px;
+  overflow: hidden;
+  white-space: nowrap;
+  text-overflow: ellipsis;
+`;
+
 const AllRules = () => {
   const {
     data = [],
@@ -21,8 +32,8 @@ const AllRules = () => {
   } = useRequest(
     async () => {
       const res = await Api.getAllRules();
-      return Object.values(res)
-        .flat()
+      return flatten(Object.values(res))
+        .sort((a, b) => a.group.localeCompare(b.group))
         .map(x => ({ ...x, [VIRTUAL_KEY]: getVirtualKey(x) }));
     },
     {
@@ -62,47 +73,61 @@ const AllRules = () => {
     return null;
   }
 
+  const renderedGroup = new Set<string>();
+
   return (
     <Spin spinning={loading}>
       <div className="item-block">
-        {data.map(item => (
-          <div className="item" key={item[VIRTUAL_KEY]}>
-            <Switch
-              size="small"
-              checked={item.enable}
-              onChange={checked =>
-                Api.saveRule({
-                  ...item,
-                  enable: checked,
-                })
-              }
-            />
-            <Popover
-              showArrow
-              position="top"
-              content={<RuleDetail rule={item} size="small" />}
-              style={{ maxWidth: '300px' }}
-            >
-              <div className={cx(textEllipsis, 'name')}>{item.name}</div>
-            </Popover>
-            <div className="actions">
-              <QuickEdit rule={item} />
-              <RuleContentSwitcher
-                rule={item}
-                type={item.ruleType}
+        {data.map(item => {
+          const itemDOM = (
+            <div className="item" key={item[VIRTUAL_KEY]}>
+              <Switch
                 size="small"
-                add={false}
+                checked={item.enable}
+                onChange={checked =>
+                  Api.saveRule({
+                    ...item,
+                    enable: checked,
+                  })
+                }
+              />
+              <Popover
+                showArrow
+                position="top"
+                content={<RuleDetail rule={item} size="small" />}
+                style={{ maxWidth: '300px' }}
               >
-                <Button
-                  theme="borderless"
-                  type="tertiary"
+                <div className={cx(textEllipsis, 'name')}>{item.name}</div>
+              </Popover>
+              <div className="actions">
+                <QuickEdit rule={item} />
+                <RuleContentSwitcher
+                  rule={item}
+                  type={item.ruleType}
                   size="small"
-                  icon={<IconBranch />}
-                />
-              </RuleContentSwitcher>
+                  add={false}
+                >
+                  <Button
+                    theme="borderless"
+                    type="tertiary"
+                    size="small"
+                    icon={<IconBranch />}
+                  />
+                </RuleContentSwitcher>
+              </div>
             </div>
-          </div>
-        ))}
+          );
+
+          if (renderedGroup.has(item.group)) {
+            return itemDOM;
+          }
+          return (
+            <Fragment key={item.group}>
+              <div className={titleStyle}>{item.group}</div>
+              {itemDOM}
+            </Fragment>
+          );
+        })}
       </div>
     </Spin>
   );
