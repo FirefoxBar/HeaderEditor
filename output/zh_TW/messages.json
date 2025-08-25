@@ -7,6 +7,10 @@
     "message": "新增",
     "description": "Button to add somethings"
   },
+  "all_rules": {
+    "message": "所有規則",
+    "description": "Options"
+  },
   "auto": {
     "message": "自動",
     "description": "Auto detect dark mode"
@@ -204,6 +208,10 @@
     "message": "套件版本",
     "description": "Extension version"
   },
+  "feedback": {
+    "message": "意見反應",
+    "description": "Feedback link"
+  },
   "group": {
     "message": "分組",
     "description": "Group button"
@@ -267,6 +275,10 @@
   "manage_collapse_group": {
     "message": "預設摺疊分組",
     "description": "All groups will be collapsed when open the management page"
+  },
+  "marked_as_common": {
+    "message": "已設為常用",
+    "description": "Options"
   },
   "matchRule": {
     "message": "比對規則",
@@ -495,6 +507,10 @@
   "share": {
     "message": "分享",
     "description": "Share button title"
+  },
+  "show_rules_on_popup": {
+    "message": "在彈出式視窗中顯示規則",
+    "description": "Options"
   },
   "stage_request": {
     "message": "要求",
