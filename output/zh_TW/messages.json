@@ -357,7 +357,7 @@
     "description": "Display edit button on the popup panel"
   },
   "quick_edit_help": {
-    "message": "在彈出面板上顯示編輯按鈕",
+    "message": "在彈出式視窗中顯示編輯按鈕",
     "description": "Help text for quick_edit option"
   },
   "redirectTo": {
