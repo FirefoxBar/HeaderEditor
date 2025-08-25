@@ -86,7 +86,7 @@
   },
   "common_mark_tip": {
     "message": "將任意規則或分組設為常用後，會在此處顯示",
-    "description": "If user didn't mark anything as common, this message will display at the popup panel"
+    "description": "Display at the popup panel"
   },
   "common_unmark": {
     "message": "取消常用",
