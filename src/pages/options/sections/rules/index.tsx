@@ -1,4 +1,3 @@
-/* eslint-disable max-lines */
 import {
   IconCheckList,
   IconDelete,
@@ -29,7 +28,7 @@ import emitter from '@/share/core/emitter';
 import logger from '@/share/core/logger';
 import notify from '@/share/core/notify';
 import { prefs } from '@/share/core/prefs';
-import type { Rule } from '@/share/core/types';
+import type { Rule, RuleWithVirtualKey } from '@/share/core/types';
 import { getVirtualKey, t } from '@/share/core/utils';
 import Api from '@/share/pages/api';
 import Float from './float';
@@ -43,7 +42,7 @@ interface RulesProps {
 
 interface GroupItem {
   name: string;
-  rules: Rule[];
+  rules: RuleWithVirtualKey[];
 }
 
 interface RulesState {
@@ -51,7 +50,7 @@ interface RulesState {
   group: { [key: string]: GroupItem };
   isEnableSelect: boolean;
   selectedKeys: string[];
-  float: Rule[];
+  float: RuleWithVirtualKey[];
   collapsed: string[];
 }
 
@@ -198,14 +197,14 @@ export default class Rules extends React.Component<RulesProps, RulesState> {
   }
 
   // 多选相关
-  handleSelect(selectedRowKeys: any[]) {
+  handleSelect(selectedRowKeys?: any[]) {
     this.setState({
-      selectedKeys: selectedRowKeys,
+      selectedKeys: selectedRowKeys || [],
     });
   }
 
   // 预览
-  handlePreview(item: Rule) {
+  handlePreview(item: RuleWithVirtualKey) {
     this.setState(prevState => {
       const newFloat = [...prevState.float];
       if (!newFloat.includes(item)) {
@@ -232,7 +231,7 @@ export default class Rules extends React.Component<RulesProps, RulesState> {
       return [];
     }
     // 通过 VIRTUAL_KEY 筛选出所需要的
-    const batch = ([] as Rule[])
+    const batch = ([] as RuleWithVirtualKey[])
       .concat(...Object.values(group).map(it => it.rules))
       .filter(it => selectedKeys.includes(it[VIRTUAL_KEY]));
     return batch;
@@ -320,7 +319,7 @@ export default class Rules extends React.Component<RulesProps, RulesState> {
     const result = {
       [t('ungrouped')]: {
         name: t('ungrouped'),
-        rules: [] as Rule[],
+        rules: [] as RuleWithVirtualKey[],
       },
     };
     // 记录总数
@@ -338,8 +337,8 @@ export default class Rules extends React.Component<RulesProps, RulesState> {
             rules: [],
           };
         }
-        item[VIRTUAL_KEY] = getVirtualKey(item);
-        result[item.group].rules.push(item);
+        (item as RuleWithVirtualKey)[VIRTUAL_KEY] = getVirtualKey(item);
+        result[item.group].rules.push(item as RuleWithVirtualKey);
       });
       // 加载完成啦
       if (++finishCount >= TABLE_NAMES_ARR.length) {

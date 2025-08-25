@@ -12,38 +12,50 @@ import {
   IconStar,
   IconUnlock,
 } from '@douyinfe/semi-icons';
-import { Button, ButtonGroup, Card, Dropdown, Modal, Popover, Switch, Table, Tooltip } from '@douyinfe/semi-ui';
+import {
+  Button,
+  ButtonGroup,
+  Card,
+  Dropdown,
+  Modal,
+  Popover,
+  Switch,
+  Table,
+  Tooltip,
+} from '@douyinfe/semi-ui';
+import type {
+  ColumnProps,
+  RowSelectionProps,
+} from '@douyinfe/semi-ui/lib/es/table';
 import { css } from '@emotion/css';
 import { useResponsive } from 'ahooks';
-import React from 'react';
 import { getExportName, selectGroup } from '@/pages/options/utils';
+import RuleContentSwitcher from '@/share/components/rule-content-switcher';
 import RuleDetail from '@/share/components/rule-detail';
+import { TABLE_NAMES_ARR, VIRTUAL_KEY } from '@/share/core/constant';
+import { convertToBasicRule, createExport } from '@/share/core/rule-utils';
+import type { RuleWithVirtualKey } from '@/share/core/types';
+import { getTableName, t } from '@/share/core/utils';
+import useMarkCommon from '@/share/hooks/use-mark-common';
 import Api from '@/share/pages/api';
 import file from '@/share/pages/file';
-import { convertToBasicRule, createExport } from '@/share/core/rule-utils';
-import { getTableName, t } from '@/share/core/utils';
-import type { InitdRule, Rule } from '@/share/core/types';
-import { VIRTUAL_KEY, TABLE_NAMES_ARR } from '@/share/core/constant';
-import useMarkCommon from '@/share/hooks/use-mark-common';
-import RuleContentSwitcher from '@/share/components/rule-content-switcher';
 import { textEllipsis } from '@/share/pages/styles';
 import { remove, toggleRule } from './utils';
-import type { ColumnProps, RowSelectionProps } from '@douyinfe/semi-ui/lib/es/table';
 
 interface RuleCardProps {
   name: string;
   collapsed: boolean;
 
-  rules: Rule[];
+  rules: RuleWithVirtualKey[];
 
   isEnableSelect: boolean;
-  onSelect?: RowSelectionProps<Rule>['onChange'];
+  onSelect?: RowSelectionProps<RuleWithVirtualKey>['onChange'];
   selectedKeys: string[];
 
   onCollapse: () => void;
 
-  onRuleEdit: (rule: Rule) => void;
-  onRulePreview: (rule: Rule) => void;
+  onRuleEdit: (rule: RuleWithVirtualKey) => void;
+  onRulePreview: (rule: RuleWithVirtualKey) => void;
 }
 
 const RuleGroupCard = (props: RuleCardProps) => {
@@ -61,25 +73,39 @@ const RuleGroupCard = (props: RuleCardProps) => {
 
   const responsive = useResponsive();
 
-  const { keys: commonRuleKeys, add: addCommonRule, remove: removeCommonRule } = useMarkCommon('rule');
-  const { keys: commonGroup, add: addCommonGroup, remove: removeCommonGroup } = useMarkCommon('group');
+  const {
+    keys: commonRuleKeys,
+    add: addCommonRule,
+    remove: removeCommonRule,
+  } = useMarkCommon('rule');
+  const {
+    keys: commonGroup,
+    add: addCommonGroup,
+    remove: removeCommonGroup,
+  } = useMarkCommon('group');
   const isGroupMarked = commonGroup.includes(name);
 
-  const rowSelection = isEnableSelect ? {
-    onChange: onSelect,
-    selectedRowKeys: selectedKeys,
-  } : undefined;
+  const rowSelection = isEnableSelect
+    ? {
+        onChange: onSelect,
+        selectedRowKeys: selectedKeys,
+      }
+    : undefined;
 
-  const tableColumns: Array<ColumnProps<Rule>> = [
+  const tableColumns: Array<ColumnProps<RuleWithVirtualKey>> = [
     {
       title: t('enable'),
       className: 'cell-enable',
       dataIndex: 'enable',
       align: 'center',
       width: 80,
-      render: (value: boolean, item: InitdRule) => (
+      render: (value: boolean, item) => (
         <div className="switch-container">
-          <Switch size="small" checked={value} onChange={(checked) => toggleRule(item, checked)} />
+          <Switch
+            size="small"
+            checked={value}
+            onChange={checked => toggleRule(item, checked)}
+          />
         </div>
       ),
     },
@@ -87,8 +113,13 @@ const RuleGroupCard = (props: RuleCardProps) => {
       title: t('name'),
       className: 'cell-name',
       dataIndex: 'name',
-      render: (value: string, item: InitdRule) => (
-        <Popover showArrow position="top" content={<RuleDetail rule={item} />} style={{ maxWidth: '300px' }}>
+      render: (value: string, item) => (
+        <Popover
+          showArrow
+          position="top"
+          content={<RuleDetail rule={item} />}
+          style={{ maxWidth: '300px' }}
+        >
           <div className={textEllipsis}>{value}</div>
         </Popover>
       ),
@@ -105,18 +136,32 @@ const RuleGroupCard = (props: RuleCardProps) => {
       className: 'cell-action',
       dataIndex: 'action',
       width: 160,
-      render: (v, item: InitdRule) => {
+      render: (v, item) => {
         const isMarked = commonRuleKeys.includes(item[VIRTUAL_KEY]);
         return (
           <ButtonGroup>
             <Tooltip content={t('edit')}>
-              <Button theme="borderless" type="tertiary" onClick={() => onRuleEdit(item)} icon={<IconEdit />} />
+              <Button
+                theme="borderless"
+                type="tertiary"
+                onClick={() => onRuleEdit(item)}
+                icon={<IconEdit />}
+              />
             </Tooltip>
             <Tooltip content={t('view')}>
-              <Button theme="borderless" type="tertiary" onClick={() => onRulePreview(item)} icon={<IconSearch />} />
+              <Button
+                theme="borderless"
+                type="tertiary"
+                onClick={() => onRulePreview(item)}
+                icon={<IconSearch />}
+              />
             </Tooltip>
             <RuleContentSwitcher rule={item} type={item.ruleType} add>
-              <Button theme="borderless" type="tertiary" icon={<IconBranch />} />
+              <Button
+                theme="borderless"
+                type="tertiary"
+                icon={<IconBranch />}
+              />
             </RuleContentSwitcher>
             <Dropdown
               position="bottomRight"
@@ -131,7 +176,13 @@ const RuleGroupCard = (props: RuleCardProps) => {
                       addCommonRule(item[VIRTUAL_KEY]);
                     }
                   },
-                  icon: <IconStar style={isMarked ? { color: 'rgb(var(--semi-amber-5))' } : {}} />,
+                  icon: (
+                    <IconStar
+                      style={
+                        isMarked ? { color: 'rgb(var(--semi-amber-5))' } : {}
+                      }
+                    />
+                  ),
                 },
                 {
                   node: 'item',
@@ -183,7 +234,7 @@ const RuleGroupCard = (props: RuleCardProps) => {
   ];
 
   if (!responsive.lg) {
-    const index = tableColumns.findIndex((x) => x.dataIndex === 'ruleType');
+    const index = tableColumns.findIndex(x => x.dataIndex === 'ruleType');
     tableColumns.splice(index, 1);
   }
 
@@ -229,31 +280,40 @@ const RuleGroupCard = (props: RuleCardProps) => {
                     addCommonGroup(name);
                   }
                 },
-                icon: <IconStar style={isGroupMarked ? { color: 'rgb(var(--semi-amber-5))' } : {}} />,
+                icon: (
+                  <IconStar
+                    style={
+                      isGroupMarked ? { color: 'rgb(var(--semi-amber-5))' } : {}
+                    }
+                  />
+                ),
               },
               {
                 node: 'item',
                 name: t('share'),
                 onClick: () => {
                   const result: any = {};
-                  TABLE_NAMES_ARR.forEach((tb) => {
+                  TABLE_NAMES_ARR.forEach(tb => {
                     result[tb] = [];
                   });
-                  rules.forEach((e) => result[getTableName(e.ruleType)].push(e));
-                  file.save(JSON.stringify(createExport(result), null, '\t'), getExportName());
+                  rules.forEach(e => result[getTableName(e.ruleType)].push(e));
+                  file.save(
+                    JSON.stringify(createExport(result), null, '\t'),
+                    getExportName(),
+                  );
                 },
                 icon: <IconSend />,
               },
               {
                 node: 'item',
                 name: t('enable'),
-                onClick: () => rules.forEach((item) => toggleRule(item, true)),
+                onClick: () => rules.forEach(item => toggleRule(item, true)),
                 icon: <IconUnlock />,
               },
               {
                 node: 'item',
                 name: t('disable'),
-                onClick: () => rules.forEach((item) => toggleRule(item, false)),
+                onClick: () => rules.forEach(item => toggleRule(item, false)),
                 icon: <IconLock />,
               },
               {
@@ -266,7 +326,7 @@ const RuleGroupCard = (props: RuleCardProps) => {
                   }
                   // 更新规则
                   return Promise.all(
-                    rules.map((item) => {
+                    rules.map(item => {
                       item.group = newGroup;
                       return Api.saveRule(item);
                     }),
@@ -284,7 +344,7 @@ const RuleGroupCard = (props: RuleCardProps) => {
                 onClick: () => {
                   Modal.confirm({
                     title: t('delete_confirm'),
-                    onOk: () => Promise.all(rules.map((item) => remove(item))),
+                    onOk: () => Promise.all(rules.map(item => remove(item))),
                   });
                 },
                 type: 'danger',
@@ -312,7 +372,7 @@ const RuleGroupCard = (props: RuleCardProps) => {
             onClick={onCollapse}
           />
         </ButtonGroup>
-    }
+      }
     >
       <Table
         rowKey={VIRTUAL_KEY}

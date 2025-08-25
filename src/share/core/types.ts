@@ -1,5 +1,5 @@
 import type { DeclarativeNetRequest } from 'webextension-polyfill/namespaces/declarativeNetRequest';
-import type { RULE_MATCH_TYPE, RULE_TYPE } from './constant';
+import type { RULE_MATCH_TYPE, RULE_TYPE, VIRTUAL_KEY } from './constant';
 
 export interface RuleFilterOptions {
   enable?: boolean;
@@ -65,6 +65,10 @@ export function isBasicRule(obj: any): obj is BasicRule {
 
 export interface Rule extends BasicRule {
   id: number;
+}
+
+export interface RuleWithVirtualKey extends Rule {
+  [VIRTUAL_KEY]: string;
 }
 
 export interface ImportRule extends Rule {
