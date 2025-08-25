@@ -2,6 +2,7 @@ import { Form, useFormApi } from '@douyinfe/semi-ui';
 import * as React from 'react';
 import { RULE_TYPE } from '@/share/core/constant';
 import { IS_FIREFOX, IS_SUPPORT_STREAM_FILTER, t } from '@/share/core/utils';
+import Group from './group';
 
 interface BasicProps {
   isEdit: boolean;
@@ -50,6 +51,7 @@ const Basic = ({ isEdit }: BasicProps) => {
           }
         }}
       />
+      <Group />
     </>
   );
 };

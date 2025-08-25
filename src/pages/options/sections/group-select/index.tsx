@@ -1,5 +1,5 @@
-import * as React from 'react';
 import { Input, Modal, Select } from '@douyinfe/semi-ui';
+import * as React from 'react';
 import emitter from '@/share/core/emitter';
 import { t } from '@/share/core/utils';
 
@@ -10,7 +10,10 @@ interface GroupSelectState {
   newName: string;
 }
 
-export default class GroupSelect extends React.Component<any, GroupSelectState> {
+export default class GroupSelect extends React.Component<
+  any,
+  GroupSelectState
+> {
   private newValue = `_new_${Math.random().toString()}`;
 
   constructor(props: any) {
@@ -53,6 +56,7 @@ export default class GroupSelect extends React.Component<any, GroupSelectState> 
   componentWillUnmount() {
     emitter.off(emitter.EVENT_GROUP_UPDATE, this.handleEventUpdate);
     emitter.off(emitter.ACTION_SELECT_GROUP, this.handleEventShow);
+    emitter.removeAllListeners(emitter.INNER_GROUP_SELECTED);
   }
 
   handleNew(value: string) {
@@ -61,7 +65,10 @@ export default class GroupSelect extends React.Component<any, GroupSelectState> 
     });
   }
 
-  handleChange(value: string) {
+  handleChange(value?: any) {
+    if (!value) {
+      return;
+    }
     this.setState({
       selected: value,
     });
@@ -110,7 +117,7 @@ export default class GroupSelect extends React.Component<any, GroupSelectState> 
             value={this.state.selected}
             onChange={this.handleChange}
             optionList={[
-              ...this.state.group.map((x) => ({ label: x, value: x })),
+              ...this.state.group.map(x => ({ label: x, value: x })),
               { label: t('add'), value: this.newValue },
             ]}
           />

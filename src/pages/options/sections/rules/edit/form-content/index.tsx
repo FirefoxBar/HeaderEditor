@@ -1,11 +1,10 @@
-import {
-  Collapse,
-} from '@douyinfe/semi-ui';
+import { Collapse } from '@douyinfe/semi-ui';
 import * as React from 'react';
 import { t } from '@/share/core/utils';
 import Basic from './basic';
 import Exclude from './exclude';
 import Execution from './execution';
+import Group from './group';
 import Match from './match';
 import Test from './test';
 
@@ -14,7 +13,10 @@ interface FormContentProps {
 }
 
 const FormContent = ({ isEdit }: FormContentProps) => (
-  <Collapse defaultActiveKey={['basic', 'match', 'exclude', 'execution', 'test']} keepDOM>
+  <Collapse
+    defaultActiveKey={['basic', 'match', 'exclude', 'execution', 'test']}
+    keepDOM
+  >
     <Collapse.Panel header={t('basic_information')} itemKey="basic">
       <Basic isEdit={isEdit} />
     </Collapse.Panel>
