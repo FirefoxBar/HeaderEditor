@@ -277,7 +277,7 @@
     "description": "All groups will be collapsed when open the management page"
   },
   "marked_as_common": {
-    "message": "已标记为常用",
+    "message": "已设为常用",
     "description": "Options"
   },
   "matchRule": {
