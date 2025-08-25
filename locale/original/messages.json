@@ -86,7 +86,7 @@
   },
   "common_mark_tip": {
     "message": "When you mark any rule or group as common, you'll see it here",
-    "description": "If user didn't mark anything as common, this message will display at the popup panel"
+    "description": "Display at the popup panel"
   },
   "common_unmark": {
     "message": "Unmark",
@@ -277,7 +277,7 @@
     "description": "All groups will be collapsed when open the management page"
   },
   "marked_as_common": {
-    "message": "Marked as commonly used",
+    "message": "Marked as common",
     "description": "Options"
   },
   "matchRule": {
