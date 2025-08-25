@@ -14,7 +14,7 @@ import { useLatest } from 'ahooks';
 import { type FC, useMemo } from 'react';
 import { RULE_TYPE } from '@/share/core/constant';
 import type { Rule } from '@/share/core/types';
-import { getVirtualKey, t } from '@/share/core/utils';
+import { getVirtualKey, isValidArray, t } from '@/share/core/utils';
 import useStorage from '@/share/hooks/use-storage';
 import Api from '@/share/pages/api';
 import { Toast } from '@/share/pages/toast';
@@ -139,7 +139,9 @@ const RuleContentSwitcher: FC<RuleContentSwitcherProps> = props => {
       RULE_TYPE.MODIFY_SEND_HEADER,
     ].includes(rule.ruleType);
 
-    const result: DropdownProps['menu'] = value.map(x => ({
+    const result: DropdownProps['menu'] = (
+      isValidArray(value) ? value : []
+    ).map(x => ({
       node: 'item',
       name:
         typeof x === 'string'
