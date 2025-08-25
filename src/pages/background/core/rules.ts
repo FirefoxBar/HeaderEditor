@@ -1,4 +1,4 @@
-import { cloneDeep } from 'lodash-es';
+import { cloneDeep, isEqual } from 'lodash-es';
 import {
   APIs,
   EVENTs,
@@ -199,7 +199,11 @@ function saveRuleHistory(rule: Rule) {
     const engine = getLocal();
     engine.get(key).then(result => {
       const arr = Array.isArray(result[key]) ? [...result[key]] : [];
-      if (!arr.includes(writeValue)) {
+      const exists =
+        typeof writeValue === 'string'
+          ? arr.includes(writeValue)
+          : arr.some(it => isEqual(it, writeValue));
+      if (!exists) {
         arr.push(writeValue);
         engine.set({ [key]: arr });
       }

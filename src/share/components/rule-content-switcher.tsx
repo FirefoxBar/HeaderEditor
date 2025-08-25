@@ -11,7 +11,7 @@ import {
 import type { DropdownProps } from '@douyinfe/semi-ui/lib/es/dropdown';
 import { css, cx } from '@emotion/css';
 import { useLatest } from 'ahooks';
-import React, { type FC, useMemo } from 'react';
+import { type FC, useMemo } from 'react';
 import { RULE_TYPE } from '@/share/core/constant';
 import type { Rule } from '@/share/core/types';
 import { getVirtualKey, t } from '@/share/core/utils';
@@ -22,10 +22,14 @@ import usePref from '../hooks/use-pref';
 import { tagList } from '../pages/styles';
 import HeaderField from './header-field';
 
+interface HeaderValueItem {
+  name: string;
+  value: string;
+}
 interface RuleContentSwitcherEditProps {
   isHeader: boolean;
-  initValue: Array<string | Record<string, string>>;
-  onChange: (v: Array<string | Record<string, string>>) => void;
+  initValue: Array<string | Array<HeaderValueItem>>;
+  onChange: (v: Array<string | Array<HeaderValueItem>>) => void;
 }
 const RuleContentSwitcherEdit: FC<RuleContentSwitcherEditProps> = props => {
   const { initValue = [''], onChange, isHeader } = props;
@@ -193,10 +197,14 @@ const RuleContentSwitcher: FC<RuleContentSwitcherProps> = props => {
             onOk: () => {
               let finalValue = currentValue.filter((x: any) => Boolean(x));
               if (isHeader) {
-                finalValue = Object.fromEntries(
-                  currentValue
-                    .filter((x: any) => Boolean(x.name))
-                    .map(({ name, v }) => [name, v]),
+                finalValue = (
+                  currentValue as Array<Array<HeaderValueItem>>
+                ).map(item =>
+                  Object.fromEntries(
+                    item
+                      .filter((x: HeaderValueItem) => Boolean(x.name))
+                      .map(({ name, value }) => [name, value]),
+                  ),
                 );
               }
               setValue(finalValue);
@@ -231,6 +239,7 @@ const RuleContentSwitcher: FC<RuleContentSwitcherProps> = props => {
       })}
       style={{ minWidth: '120px' }}
       menu={menu}
+      position="bottomRight"
     >
       {children}
     </Dropdown>
