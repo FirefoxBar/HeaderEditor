@@ -64,10 +64,10 @@ export default defineConfig({
     liveReload: false,
   },
   performance: {
-    bundleAnalyze: {
-      analyzerMode: 'static',
-      openAnalyzer: false,
-    },
+    // bundleAnalyze: {
+    //   analyzerMode: 'static',
+    //   openAnalyzer: false,
+    // },
   },
   tools: {
     swc: {
