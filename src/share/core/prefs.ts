@@ -1,7 +1,7 @@
-import equal from 'fast-deep-equal';
+import isEqual from 'fast-deep-equal';
 import browser from 'webextension-polyfill';
-import emitter from './emitter';
 import { defaultPrefValue } from './constant';
+import emitter from './emitter';
 import { getSync } from './storage';
 import type { PrefValue } from './types';
 
@@ -15,13 +15,13 @@ class Prefs {
   constructor() {
     this.values = { ...defaultPrefValue };
 
-    Object.entries(defaultPrefValue).forEach((it) => {
+    Object.entries(defaultPrefValue).forEach(it => {
       this.set(it[0], it[1], true);
     });
 
     getSync()
       .get('settings')
-      .then((result) => {
+      .then(result => {
         const synced: any = result.settings;
         for (const key in defaultPrefValue) {
           if (synced && key in synced) {
@@ -49,7 +49,10 @@ class Prefs {
     });
   }
 
-  get<K extends keyof PrefValue>(key: K, defaultValue?: PrefValue[K]): PrefValue[K] {
+  get<K extends keyof PrefValue>(
+    key: K,
+    defaultValue?: PrefValue[K],
+  ): PrefValue[K] {
     if (key in this.boundMethods) {
       if (key in this.boundWrappers) {
         return this.boundWrappers[key];
@@ -72,9 +75,9 @@ class Prefs {
   }
 
   set(key: string, value: any, noSync = false) {
-    const oldValue = this.values[key];
-    if (!equal(value, oldValue)) {
-      this.values[key] = value;
+    const oldValue = this.values[key as keyof PrefValue];
+    if (!isEqual(value, oldValue)) {
+      (this.values as any)[key] = value;
       emitter.emit(emitter.EVENT_PREFS_UPDATE, key, value);
       if (!noSync) {
         getSync().set({

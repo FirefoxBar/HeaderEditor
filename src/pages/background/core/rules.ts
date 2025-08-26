@@ -1,4 +1,5 @@
-import { cloneDeep, isEqual } from 'lodash-es';
+import isEqual from 'fast-deep-equal';
+import { cloneDeep } from 'lodash-es';
 import {
   APIs,
   EVENTs,

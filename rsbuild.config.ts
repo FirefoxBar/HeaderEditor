@@ -56,10 +56,6 @@ export default defineConfig({
         }
         callback();
       },
-      {
-        react: 'React',
-        'react-dom': 'ReactDOM',
-      },
     ],
   },
   dev: {
@@ -68,10 +64,10 @@ export default defineConfig({
     liveReload: false,
   },
   performance: {
-    // bundleAnalyze: {
-    //   analyzerMode: 'static',
-    //   openAnalyzer: false,
-    // },
+    bundleAnalyze: {
+      analyzerMode: 'static',
+      openAnalyzer: false,
+    },
   },
   tools: {
     swc: {
@@ -123,18 +119,6 @@ export default defineConfig({
           popup: './src/pages/popup/index.tsx',
         },
       },
-      output: {
-        copy: [
-          {
-            from: `./node_modules/react/umd/react.${isDev ? 'development' : 'production.min'}.js`,
-            to: 'external/react.js',
-          },
-          {
-            from: `./node_modules/react-dom/umd/react-dom.${isDev ? 'development' : 'production.min'}.js`,
-            to: 'external/react-dom.js',
-          },
-        ],
-      },
       performance: {
         chunkSplit: {
           strategy: 'split-by-experience',
@@ -161,22 +145,6 @@ export default defineConfig({
             tag: 'style',
             children:
               'body{margin:0;background-color:var(--semi-color-bg-0);color:var(--semi-color-text-0)}',
-          },
-          {
-            tag: 'script',
-            head: true,
-            append: false,
-            attrs: {
-              src: 'external/react.js',
-            },
-          },
-          {
-            tag: 'script',
-            head: true,
-            append: false,
-            attrs: {
-              src: 'external/react-dom.js',
-            },
           },
         ],
       },
