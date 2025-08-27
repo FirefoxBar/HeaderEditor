@@ -43,7 +43,7 @@ const basicStyle = css`
         flex-direction: row;
         gap: 8px;
         align-items: center;
-        background-color: #fff;
+        background-color: var(--semi-color-bg-1);
         border-top: 1px solid var(--semi-color-border);
         padding-left: 8px;
         padding-right: 8px;

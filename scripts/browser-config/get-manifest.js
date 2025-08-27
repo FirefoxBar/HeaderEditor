@@ -80,7 +80,7 @@ function getManifest(browser, options) {
     manifest.short_name = 'Header Editor';
   }
 
-  if (dev && browser.startsWith('chrome')) {
+  if (dev && config.BROWSER_TYPE === 'chrome') {
     const ext = extensionConfig.crx.find(x => x.browser === browser);
     if (ext && ext.public_key) {
       manifest.key = ext.public_key;
