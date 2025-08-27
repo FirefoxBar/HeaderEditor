@@ -8,10 +8,11 @@ title: 安裝
 
 | | 瀏覽器 | 精簡版(Lite) | 完整版 |
 | --- | --- | --- | --- |
-| ![Firefox Logo](https://cdnjs.cloudflare.com/ajax/libs/browser-logos/75.0.1/firefox/firefox_16x16.png) | Firefox | [Mozilla Add-ons](https://addons.mozilla.org/en-US/firefox/addon/header-editor-lite/) 或我們的[自發行版本](https://github.com/FirefoxBar/HeaderEditor/releases) | [Mozilla Add-ons](https://addons.mozilla.org/en-US/firefox/addon/header-editor/) 或 我們的[自發行版本](https://github.com/FirefoxBar/HeaderEditor/releases) |
+| ![Firefox Logo](https://cdnjs.cloudflare.com/ajax/libs/browser-logos/75.0.1/firefox/firefox_16x16.png) | Firefox | [官方下載](https://github.com/FirefoxBar/HeaderEditor/releases) 或 [Mozilla Add-ons](https://addons.mozilla.org/en-US/firefox/addon/header-editor-lite/) | [官方下載](https://github.com/FirefoxBar/HeaderEditor/releases) 或 [Mozilla Add-ons](https://addons.mozilla.org/en-US/firefox/addon/header-editor/) |
 | ![Chrome Logo](https://cdnjs.cloudflare.com/ajax/libs/browser-logos/75.0.1/chrome/chrome_16x16.png) | Chrome | [Chrome Web Store](https://chrome.google.com/webstore/detail/header-editor/eningockdidmgiojffjmkdblpjocbhgh) | [安裝完整版](./install-full-version) |
 | ![Edge Logo](https://cdnjs.cloudflare.com/ajax/libs/browser-logos/75.0.1/edge/edge_16x16.png) | Edge | 暫無 | [Edge Addons](https://microsoftedge.microsoft.com/addons/detail/header-editor/afopnekiinpekooejpchnkgfffaeceko) |
 
+* 官方下載和 Mozilla Add-ons 完全一樣，但是 Mozilla Add-ons 的審核非常慢，通常需要一周以上的時間，你可能無法獲得最新版本。
 * `HeaderEditor-xxx-v2` 為完整版，`HeaderEditor-xxx-v3` 為精簡版。
 
 ## 功能比較

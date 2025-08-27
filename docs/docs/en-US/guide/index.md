@@ -8,10 +8,11 @@ Please choose a different installation method depending on your browser:
 
 | | Browser | Lite Version | Full Version |
 | --- | --- | --- | --- |
-| ![Firefox Logo](https://cdnjs.cloudflare.com/ajax/libs/browser-logos/75.0.1/firefox/firefox_16x16.png) | Firefox | [Mozilla Add-ons](https://addons.mozilla.org/en-US/firefox/addon/header-editor-lite/) or our [self-distributed version](https://github.com/FirefoxBar/HeaderEditor/releases) | [Mozilla Add-ons](https://addons.mozilla.org/en-US/firefox/addon/header-editor/) or our [self-distributed version](https://github.com/FirefoxBar/HeaderEditor/releases) |
+| ![Firefox Logo](https://cdnjs.cloudflare.com/ajax/libs/browser-logos/75.0.1/firefox/firefox_16x16.png) | Firefox | [Official Download](https://github.com/FirefoxBar/HeaderEditor/releases) or [Mozilla Add-ons](https://addons.mozilla.org/en-US/firefox/addon/header-editor-lite/)  | [Official Download](https://github.com/FirefoxBar/HeaderEditor/releases) or [Mozilla Add-ons](https://addons.mozilla.org/en-US/firefox/addon/header-editor/) |
 | ![Chrome Logo](https://cdnjs.cloudflare.com/ajax/libs/browser-logos/75.0.1/chrome/chrome_16x16.png) | Chrome | [Chrome Web Store](https://chrome.google.com/webstore/detail/header-editor/eningockdidmgiojffjmkdblpjocbhgh) | [Install full version](./install-full-version) |
 | ![Edge Logo](https://cdnjs.cloudflare.com/ajax/libs/browser-logos/75.0.1/edge/edge_16x16.png) | Edge | None | [Edge Addons](https://microsoftedge.microsoft.com/addons/detail/header-editor/afopnekiinpekooejpchnkgfffaeceko) |
 
+* The official download is exactly the same as Mozilla Add-ons, but the Mozilla Add-ons review is very slow, usually taking more than a week, and you may not be able to get the latest version.
 * `HeaderEditor-xxx-v2` is full version, `HeaderEditor-xxx-v3` is lite version.
 
 ## Features Comparison
