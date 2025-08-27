@@ -41,7 +41,7 @@ Header Editor require those permissions:
 
 * `debugger`: Modify response body in Chrome
 
-* `unsafe-eval`: Execute custom function, code at [src/share/core/rule-utils.ts#L30](https://github.com/FirefoxBar/HeaderEditor/blob/dev/src/share/core/rule-utils.ts#L30) (may change in the future, you can search for the newest location by `new Function`)
+* `unsafe-eval`: Execute custom function, code at [src/share/core/rule-utils.ts#L41](https://github.com/FirefoxBar/HeaderEditor/blob/dev/src/share/core/rule-utils.ts#L41) (may change in the future, you can search for the newest location by `new Function`)
 
 ## Contribution
 
