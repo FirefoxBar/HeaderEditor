@@ -8,9 +8,11 @@ title: 安裝
 
 | | 瀏覽器 | 精簡版(Lite) | 完整版 |
 | --- | --- | --- | --- |
-| ![Firefox Logo](https://cdnjs.cloudflare.com/ajax/libs/browser-logos/75.0.1/firefox/firefox_16x16.png) | Firefox | [Mozilla Add-ons](https://addons.mozilla.org/en-US/firefox/addon/header-editor-lite/) | [Mozilla Add-ons](https://addons.mozilla.org/en-US/firefox/addon/header-editor/) 或 我們的[自發行版本](https://github.com/FirefoxBar/HeaderEditor/releases) |
+| ![Firefox Logo](https://cdnjs.cloudflare.com/ajax/libs/browser-logos/75.0.1/firefox/firefox_16x16.png) | Firefox | [Mozilla Add-ons](https://addons.mozilla.org/en-US/firefox/addon/header-editor-lite/) 或我們的[自發行版本](https://github.com/FirefoxBar/HeaderEditor/releases) | [Mozilla Add-ons](https://addons.mozilla.org/en-US/firefox/addon/header-editor/) 或 我們的[自發行版本](https://github.com/FirefoxBar/HeaderEditor/releases) |
 | ![Chrome Logo](https://cdnjs.cloudflare.com/ajax/libs/browser-logos/75.0.1/chrome/chrome_16x16.png) | Chrome | [Chrome Web Store](https://chrome.google.com/webstore/detail/header-editor/eningockdidmgiojffjmkdblpjocbhgh) | [安裝完整版](./install-full-version) |
 | ![Edge Logo](https://cdnjs.cloudflare.com/ajax/libs/browser-logos/75.0.1/edge/edge_16x16.png) | Edge | 暫無 | [Edge Addons](https://microsoftedge.microsoft.com/addons/detail/header-editor/afopnekiinpekooejpchnkgfffaeceko) |
+
+* `HeaderEditor-xxx-v2` 為完整版，`HeaderEditor-xxx-v3` 為精簡版。
 
 ## 功能比較
 
@@ -37,7 +39,7 @@ title: 安裝
 | 修改回應主體 | ✅ | ✅ |
 
 筆記：
-* Lite 版本效能較佳，如無特殊需求，建議使用 Lite 版本。
+* DNR 模式性能更佳，如無特殊需求，建議使用 Lite 版本。
 * Chrome/Edge 瀏覽器的「排除」功能將在後續版本中以其他方式支持，但與目前的支援方式不完全一致，可能需要手動遷移。
 * 如果不支援相應的功能，**整個規則**將不會生效，但仍會保留。您可以等待後續版本支持，或透過「匯入匯出」手動遷移到其他瀏覽器。
 
