@@ -71,7 +71,7 @@ export function getNote() {
   const repo = process.env.GITHUB_REPOSITORY;
   const runId = process.env.GITHUB_RUN_ID;
   if (repo && runId) {
-    return `https://github.com/${repo}/actions/runs/${runId}`;
+    return `Submit via GitHub Actions: https://github.com/${repo}/actions/runs/${runId}`;
   }
   return 'https://github.com/FirefoxBar/HeaderEditor/blob/master/README.md';
 }
