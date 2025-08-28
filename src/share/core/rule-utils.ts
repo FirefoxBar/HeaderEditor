@@ -164,6 +164,7 @@ export function upgradeRuleFormat(s: OldRule) {
   }
 
   delete s.matchType;
+  delete s.action;
 
   return s;
 }
