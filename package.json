@@ -80,10 +80,22 @@
       "biome check --write --files-ignore-unknown=true"
     ]
   },
+  "engines": {
+    "node": ">=20",
+    "pnpm": ">=10"
+  },
   "pnpm": {
     "patchedDependencies": {
       "lodash-es": "patches/lodash-es.patch",
       "lodash": "patches/lodash.patch"
-    }
+    },
+    "ignoredBuiltDependencies": [
+      "core-js"
+    ],
+    "onlyBuiltDependencies": [
+      "puppeteer",
+      "simple-git-hooks",
+      "spawn-sync"
+    ]
   }
 }
