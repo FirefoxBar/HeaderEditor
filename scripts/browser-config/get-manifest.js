@@ -88,15 +88,7 @@ function getManifest(browser, options) {
   }
 
   if (config.BROWSER_TYPE === 'firefox') {
-    if (packer === 'amo') {
-      const id = extensionConfig.amo.find(x => x.browser === browser).id;
-      manifest.browser_specific_settings = {
-        gecko: {
-          id,
-          strict_min_version: '113.0',
-        },
-      };
-    } else {
+    if (packer === 'xpi') {
       const id = extensionConfig.xpi.find(x => x.browser === browser).id;
       manifest.browser_specific_settings = {
         gecko: {
@@ -106,6 +98,14 @@ function getManifest(browser, options) {
             config.MANIFEST_VER === 'v2'
               ? 'https://ext.firefoxcn.net/header-editor/install/update.json'
               : 'https://ext.firefoxcn.net/header-editor/install-v3/update.json',
+        },
+      };
+    } else {
+      const id = extensionConfig.amo.find(x => x.browser === browser).id;
+      manifest.browser_specific_settings = {
+        gecko: {
+          id,
+          strict_min_version: '113.0',
         },
       };
     }
