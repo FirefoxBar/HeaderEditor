@@ -35,7 +35,7 @@ export interface BasicRule {
   group: string;
   encoding?: string;
   to?: string;
-  /** @deprecated deprecated for headers */
+  /** @deprecated deprecated */
   action?: RULE_ACTION;
   condition?: Partial<{
     all: boolean;

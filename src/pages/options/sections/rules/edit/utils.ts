@@ -15,7 +15,6 @@ export const EMPTY_RULE: BasicRule = {
   ruleType: RULE_TYPE.CANCEL,
   isFunction: false,
   code: '',
-  action: 'cancel',
 };
 
 export const EMPTY_ARR = [];
@@ -107,6 +106,7 @@ export function getRuleFromInput(input: RuleInput): BasicRule {
     res.encoding = res.encoding.toLowerCase();
   }
 
+  delete res.action;
   delete res.editMatchType;
   delete res.editExcludeType;
   return res;

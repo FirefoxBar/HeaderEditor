@@ -21,11 +21,13 @@ Visit [he.firefoxcn.net](https://he.firefoxcn.net) for more documentations.
 
 | Browser | Lite | Full |
 | --- | --- | --- |
-| ![Firefox Logo](https://cdnjs.cloudflare.com/ajax/libs/browser-logos/75.0.1/firefox/firefox_16x16.png) Firefox | [Mozilla Add-ons](https://addons.mozilla.org/en-US/firefox/addon/header-editor-lite/) | [Mozilla Add-ons](https://addons.mozilla.org/en-US/firefox/addon/header-editor/) or our [self-distributed version](https://github.com/FirefoxBar/HeaderEditor/releases) |
+| ![Firefox Logo](https://cdnjs.cloudflare.com/ajax/libs/browser-logos/75.0.1/firefox/firefox_16x16.png) Firefox | [Official Download](https://github.com/FirefoxBar/HeaderEditor/releases) or [Mozilla Add-ons](https://addons.mozilla.org/en-US/firefox/addon/header-editor-lite/) | [Official Download](https://github.com/FirefoxBar/HeaderEditor/releases) or [Mozilla Add-ons](https://addons.mozilla.org/en-US/firefox/addon/header-editor/) |
 | ![Chrome Logo](https://cdnjs.cloudflare.com/ajax/libs/browser-logos/75.0.1/chrome/chrome_16x16.png) Chrome | [Chrome Web Store](https://chrome.google.com/webstore/detail/header-editor/eningockdidmgiojffjmkdblpjocbhgh) | [Install full version](https://he.firefoxcn.net/en-US/guide/install-full-version) |
 | ![Edge Logo](https://cdnjs.cloudflare.com/ajax/libs/browser-logos/75.0.1/edge/edge_16x16.png) Edge | None | [Edge Addons](https://microsoftedge.microsoft.com/addons/detail/header-editor/afopnekiinpekooejpchnkgfffaeceko) |
 
-[Diff between Lite and Full Version](https://he.firefoxcn.net/en-US/guide/index.html)
+* The official download is exactly the same as Mozilla Add-ons, but the Mozilla Add-ons review is very slow, usually taking more than a week, and you may not be able to get the latest version.
+* `HeaderEditor-xxx-v2` is full version, `HeaderEditor-xxx-v3` is lite version.
+* [Diff between lite and full version](https://he.firefoxcn.net/en-US/guide/index.html)
 
 ## Permissions
 
@@ -39,7 +41,7 @@ Header Editor require those permissions:
 
 * `debugger`: Modify response body in Chrome
 
-* `unsafe-eval`: Execute custom function, code at [src/share/core/rule-utils.ts#L30](https://github.com/FirefoxBar/HeaderEditor/blob/dev/src/share/core/rule-utils.ts#L30) (may change in the future, you can search for the newest location by `new Function`)
+* `unsafe-eval`: Execute custom function, code at [src/share/core/rule-utils.ts#L41](https://github.com/FirefoxBar/HeaderEditor/blob/dev/src/share/core/rule-utils.ts#L41) (may change in the future, you can search for the newest location by `new Function`)
 
 ## Contribution
 

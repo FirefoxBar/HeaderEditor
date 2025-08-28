@@ -164,7 +164,7 @@ class WebRequestHandler {
     let redirectTo = e.url;
     const detail = this.makeDetails(e);
     for (const item of rule) {
-      if (item.action === 'cancel' && !item.isFunction) {
+      if (item.ruleType === RULE_TYPE.CANCEL && !item.isFunction) {
         return { cancel: true };
       }
       if (item.isFunction) {
@@ -178,7 +178,7 @@ class WebRequestHandler {
           }
           if (
             r === '_header_editor_cancel_' ||
-            (item.action === 'cancel' && r === true)
+            (item.ruleType === RULE_TYPE.CANCEL && r === true)
           ) {
             logger.debug(`[web-request-handler] [rule: ${item.id}] cancel`);
             return { cancel: true };

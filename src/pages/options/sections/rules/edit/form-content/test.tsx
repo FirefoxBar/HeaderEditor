@@ -1,9 +1,9 @@
 import { Input, useFormState } from '@douyinfe/semi-ui';
-import { useDebounceEffect } from 'ahooks';
+import { useDebounceEffect, useGetState } from 'ahooks';
 import { RE2JS } from 're2js';
-import React, { useRef, useState } from 'react';
+import { useRef, useState } from 'react';
 import { IS_MATCH } from '@/share/core/constant';
-import { detectRunner, initRule, isMatchUrl } from '@/share/core/rule-utils';
+import { initRule, isMatchUrl } from '@/share/core/rule-utils';
 import type { InitdRule } from '@/share/core/types';
 import { t } from '@/share/core/utils';
 import { getRuleFromInput } from '../utils';
@@ -13,12 +13,14 @@ const Test = () => {
   const lastValue = useRef<any>();
   const { values } = useFormState();
   const [url, setUrl] = useState('');
-  const [result, setResult] = useState('');
+  const [result, setResult, getResult] = useGetState('');
 
   useDebounceEffect(
     () => {
       if (url === '') {
-        setResult('');
+        if (getResult() !== '') {
+          setResult('');
+        }
         return;
       }
 
@@ -32,7 +34,7 @@ const Test = () => {
           rule.current = initRule(ruleContent, true);
         } catch (e) {
           // 出错
-          setResult(e.message);
+          setResult((e as Error).message);
           return;
         }
       }
@@ -73,7 +75,7 @@ const Test = () => {
         setResult(t('test_match'));
       }
     },
-    [url, values],
+    undefined,
     {
       wait: 300,
     },
