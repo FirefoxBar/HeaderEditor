@@ -1,5 +1,6 @@
 import { createReadStream } from 'node:fs';
 import { EdgeAddonsAPI } from '@plasmohq/edge-addons-api';
+import { getNote } from '../utils.mjs';
 
 export default async function ({ zipPath, extensionConfig }) {
   if (!process.env.MS_CLIENT_ID) {
@@ -19,9 +20,7 @@ export default async function ({ zipPath, extensionConfig }) {
   console.log('[edge] upload done', uploadResp);
   const uploadStatus = await client.waitForUpload(uploadResp);
   console.log('[edge] upload check success', uploadStatus);
-  const publishResp = await client.publish(
-    'https://github.com/FirefoxBar/HeaderEditor/blob/master/README.md',
-  );
+  const publishResp = await client.publish(getNote());
   console.log('[edge] publish done', publishResp);
   return JSON.stringify(await client.getPublishStatus(publishResp));
 }

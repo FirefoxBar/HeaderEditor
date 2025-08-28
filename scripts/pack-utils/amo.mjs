@@ -4,7 +4,7 @@ import { setTimeout as sleep } from 'node:timers/promises';
 import { signAddon } from 'amo-upload';
 import { last } from 'lodash-es';
 import { path as _path, getVersion } from '../config.mjs';
-import { copyDir, fileExists } from '../utils.mjs';
+import { copyDir, fileExists, getNote } from '../utils.mjs';
 import { createZip } from '../zip.mjs';
 
 let packingSourceCode = null;
@@ -114,8 +114,7 @@ export async function submitAddon(
   const opts = {
     apiKey: process.env.AMO_KEY,
     apiSecret: process.env.AMO_SECRET,
-    approvalNotes:
-      'https://github.com/FirefoxBar/HeaderEditor/blob/master/README.md',
+    approvalNotes: getNote(),
     override: false,
     pollInterval: 8000,
     pollRetry: 9999,
