@@ -10,7 +10,6 @@ import {
 import {
   Button,
   ButtonGroup,
-  Modal,
   Space,
   Spin,
   Typography,
@@ -18,6 +17,7 @@ import {
 import { css, cx } from '@emotion/css';
 import * as React from 'react';
 import { selectGroup } from '@/pages/options/utils';
+import Modal from '@/share/components/modal';
 import {
   EVENTs,
   type TABLE_NAMES,
