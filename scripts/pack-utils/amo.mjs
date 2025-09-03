@@ -85,7 +85,7 @@ async function packSourceCode(rootPath) {
   }
 }
 
-const waitSubmit = [];
+export const waitSubmit = [];
 export async function submitAddon(
   rootPath,
   uploadSourceCode = false,
