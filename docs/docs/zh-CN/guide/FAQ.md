@@ -8,6 +8,22 @@ title: FAQ
 * 在“选项”中禁用“修改响应体”。
 * 运行 Chrome 时，添加`--silent-debugger-extension-api`参数。
 
+## 为什么“头名称”变成小写了？
+
+[RFC 2616](https://tools.ietf.org/html/rfc2616.html#section-4.2)中写到:
+
+> Each header field consists of a name followed by a colon `(":")` and the field value. Field names are case-insensitive.
+
+因此，从4.0.0开始，Header Editor会将“头名称”变为小写。但自定义函数除外：除了已被其他规则修改的头外，自定义函数获取到的仍然是原始头
+
+## 响应头修改不生效
+
+开发者工具中不会显示修改后的响应头，此结果不准确，请以实际结果为准。
+
+例如将`content-type`修改为`text/plain`可以让网页显示为纯文本，可以看出实际已经修改成功，但开发者工具中仍然显示为`text/html`。
+
+![2025-09-03_115619.png](https://img10.360buyimg.com/ddimg/jfs/t1/325127/5/15269/85767/68b7bc80F3d770c5e/45cdb64f42625693.jpg)
+
 ## 所有规则都不生效
 
 极少数情况下，部分规则因为存在语法问题，会导致初始化失败，致使所有规则都不生效。
@@ -26,14 +42,6 @@ Firefox:
 * 找到“Header Editor”，点击右侧的“检查”按钮
 * 找到报错提示，查看规则、错误信息。
 ![img](https://img13.360buyimg.com/ddimg/jfs/t1/289605/39/18012/32092/68a4ae2cFa61f9a6a/9be7525f36abe945.jpg)
-
-## 为什么“头名称”变成小写了？
-
-[RFC 2616](https://tools.ietf.org/html/rfc2616.html#section-4.2)中写到:
-
-> Each header field consists of a name followed by a colon `(":")` and the field value. Field names are case-insensitive.
-
-因此，从4.0.0开始，Header Editor会将“头名称”变为小写。但自定义函数除外：除了已被其他规则修改的头外，自定义函数获取到的仍然是原始头
 
 ## 我能以简单的方式删除头吗?
 

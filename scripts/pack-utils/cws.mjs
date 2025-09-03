@@ -20,9 +20,11 @@ async function packCws({ zipPath, extensionConfig }) {
     clientSecret: process.env.CWS_CLIENT_SECRET,
   });
 
-  return client.submit({
+  const res = await client.submit({
     filePath: zipPath,
   });
+
+  return JSON.stringify(res);
 }
 
 export default packCws;
