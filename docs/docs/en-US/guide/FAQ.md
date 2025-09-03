@@ -18,9 +18,9 @@ So, since 4.0.0, Header Editor will reduce "header name" to lowercase. Except fo
 
 ## Response header modification not taking effect
 
-The modified response header will not be displayed in the developer tools. This result is inaccurate. Please refer to the actual result for accuracy.
+Developer tools (including Chrome and Firefox) do not display modified response headers. This result is inaccurate, so please refer to the actual results.
 
-For example, modify `content-type` to `text/plain` will make the webpage display as plain text. This indicates that the modification has been successful, but the developer tools still display `text/html`.
+For example, modifying `content-type` to `text/plain` can make a webpage display as plain text, indicating that the modification was successful. However, the developer tools still show `text/html`.
 
 ![2025-09-03_115619.png](https://img10.360buyimg.com/ddimg/jfs/t1/325127/5/15269/85767/68b7bc80F3d770c5e/45cdb64f42625693.jpg)
 
