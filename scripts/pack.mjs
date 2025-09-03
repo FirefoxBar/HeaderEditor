@@ -44,7 +44,7 @@ const packUtils = {
  * @param {*} extensionConfig 对应extension.json中的配置
  * @returns
  */
-async function packOnePlatform(name, browserConfig, extensionConfig) {
+async function prepareOnePlatform(name, extensionConfig) {
   if (typeof packUtils[name] === 'undefined') {
     console.error(`pack-utils for ${name} not found`);
     return;
@@ -68,8 +68,19 @@ async function packOnePlatform(name, browserConfig, extensionConfig) {
     // 打包成zip
     console.log(`zip ${thisPack} -> ${zipPath}`);
     await createZip(thisPack, zipPath);
-    // 执行上传等操作
-    console.log(`Running ${name} pack...`);
+  } catch (e) {
+    console.error(`Prepare ${name} error`);
+    console.error(e);
+  }
+  return { dirName, thisPack, zipPath };
+}
+async function packOnePlatform(name, prepare, browserConfig, extensionConfig) {
+  const { thisPack, zipPath } = prepare;
+  if (typeof packUtils[name] === 'undefined') {
+    console.error(`pack-utils for ${name} not found`);
+    return;
+  }
+  try {
     const res = await packUtils[name]({
       rootPath: _path.root,
       sourcePath: thisPack,
@@ -122,7 +133,8 @@ async function main() {
     const platformConfig = extension[name];
     for (const item of platformConfig) {
       const browser = browserConfig[item.browser];
-      queue.push(packOnePlatform(name, browser, item));
+      const prepare = await prepareOnePlatform(name, item);
+      queue.push(packOnePlatform(name, { ...prepare }, browser, item));
     }
   }
 
