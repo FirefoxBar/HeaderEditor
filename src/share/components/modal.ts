@@ -5,7 +5,7 @@ const modalLocale = currentLocale.Modal || {};
 
 const Modal = { ...SemiModal };
 
-['confirm', 'warning', 'info', 'success', 'error', ''].forEach(key => {
+['confirm', 'warning', 'info', 'success', 'error'].forEach(key => {
   (Modal as any)[key] = (props: any) =>
     (SemiModal as any)[key]({
       okText: modalLocale.confirm,
