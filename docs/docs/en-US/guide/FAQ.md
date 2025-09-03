@@ -8,6 +8,22 @@ On Chrome, you'll see this prompt when the response body modification feature is
 * Disable "Modify Response Body" in "Options".
 * Add the `--silent-debugger-extension-api` parameter when running Chrome.
 
+## Why is "header name" reduced to lowercase?
+
+[RFC 2616](https://tools.ietf.org/html/rfc2616.html#section-4.2) says:
+
+> Each header field consists of a name followed by a colon `(":")` and the field value. Field names are case-insensitive.
+
+So, since 4.0.0, Header Editor will reduce "header name" to lowercase. Except for custom functions: the custom function will still get the original header (except that it has been modified by other rules)
+
+## Response header modification not taking effect
+
+The modified response header will not be displayed in the developer tools. This result is inaccurate. Please refer to the actual result for accuracy.
+
+For example, modify `content-type` to `text/plain` will make the webpage display as plain text. This indicates that the modification has been successful, but the developer tools still display `text/html`.
+
+![2025-09-03_115619.png](https://img10.360buyimg.com/ddimg/jfs/t1/325127/5/15269/85767/68b7bc80F3d770c5e/45cdb64f42625693.jpg)
+
 ## All rules are ineffective
 
 In rare cases, some rules may fail to initialize due to syntax errors, resulting in all rules being ineffective.
@@ -26,14 +42,6 @@ Firefox:
 * Find "Header Editor" and click the "Inspect" button on the right.
 * Find the corresponding rule and error message.
 ![img](https://img13.360buyimg.com/ddimg/jfs/t1/289605/39/18012/32092/68a4ae2cFa61f9a6a/9be7525f36abe945.jpg)
-
-## Why is "header name" reduced to lowercase?
-
-[RFC 2616](https://tools.ietf.org/html/rfc2616.html#section-4.2) says:
-
-> Each header field consists of a name followed by a colon `(":")` and the field value. Field names are case-insensitive.
-
-So, since 4.0.0, Header Editor will reduce "header name" to lowercase. Except for custom functions: the custom function will still get the original header (except that it has been modified by other rules)
 
 ## Can I delete a header in a simple way?
 

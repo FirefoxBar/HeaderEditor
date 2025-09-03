@@ -8,6 +8,22 @@ title: FAQ
 * 在「選項」中停用「修改回應主體」。
 * 在執行 Chrome 瀏覽器時新增 `--silent-debugger-extension-api` 參數。
 
+## 為什麼“標頭名稱”會被縮減為小寫？
+
+[RFC 2616](https://tools.ietf.org/html/rfc2616.html#section-4.2) 規定：
+
+> Each header field consists of a name followed by a colon `(":")` and the field value. Field names are case-insensitive.
+
+因此，從 4.0.0 版本開始，Header Editor 會將“標頭名稱”縮減為小寫。自訂函數除外：自訂函數仍將取得原始 header（除非它已被其他規則修改）。
+
+## 修改回應頭不生效
+
+修改後的回應頭不會顯示在開發者工具中。此結果不準確，請以實際結果為準。
+
+例如，將“content-type”變更為“text/plain”會導致網頁顯示為純文字。這表示修改成功，但開發者工具仍然顯示“text/html”。
+
+![2025-09-03_115619.png](https://img10.360buyimg.com/ddimg/jfs/t1/325127/5/15269/85767/68b7bc80F3d770c5e/45cdb64f42625693.jpg)
+
 ## 所有規則均無效
 
 在極少數情況下，某些規則可能會因為語法錯誤而無法初始化，導致所有規則都無效。
