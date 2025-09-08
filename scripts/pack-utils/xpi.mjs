@@ -24,7 +24,13 @@ async function packXpi({
   if (waitSubmit.length > 0) {
     const last = waitSubmit[waitSubmit.length - 1];
     // wait 60s for AMO submit
-    await sleep(last + 60000);
+    const nextRun = last + 60000;
+    if (Date.now() < nextRun) {
+      console.log(
+        `[xpi] [${extensionConfig.id}] wait ${nextRun - Date.now()}ms`,
+      );
+      await sleep(nextRun - Date.now());
+    }
   }
 
   console.log(`[xpi] [${extensionConfig.id}] start signAddon`);
