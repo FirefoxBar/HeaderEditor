@@ -1,8 +1,9 @@
 import { IconEdit, IconItalic, IconPlusCircle } from '@douyinfe/semi-icons';
-import { Button, Form, Input, Modal, Tabs } from '@douyinfe/semi-ui';
+import { Button, Form, Input, Tabs } from '@douyinfe/semi-ui';
 import { css } from '@emotion/css';
 import { useLatest } from 'ahooks';
 import { type ReactNode, useCallback, useEffect, useState } from 'react';
+import Modal from '@/share/components/modal';
 import { RULE_TYPE } from '@/share/core/constant';
 import type { Rule } from '@/share/core/types';
 import { t } from '@/share/core/utils';

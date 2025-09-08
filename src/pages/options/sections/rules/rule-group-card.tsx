@@ -17,7 +17,6 @@ import {
   ButtonGroup,
   Card,
   Dropdown,
-  Modal,
   Popover,
   Switch,
   Table,
@@ -30,6 +29,7 @@ import type {
 import { css } from '@emotion/css';
 import { useResponsive } from 'ahooks';
 import { getExportName, selectGroup } from '@/pages/options/utils';
+import Modal from '@/share/components/modal';
 import RuleContentSwitcher from '@/share/components/rule-content-switcher';
 import RuleDetail from '@/share/components/rule-detail';
 import { TABLE_NAMES_ARR, VIRTUAL_KEY } from '@/share/core/constant';

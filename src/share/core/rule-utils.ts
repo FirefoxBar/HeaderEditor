@@ -193,9 +193,13 @@ export function isMatchUrl(rule: InitdRule, url: string): IS_MATCH {
       result = result && domain.includes(urlDomain);
     }
     if (regex) {
-      const reg = rule._reg || new RegExp(regex, 'g');
-      reg.lastIndex = 0;
-      result = result && reg.test(url);
+      if (detectRunner(rule) === 'dnr' && rule._re2 && ENABLE_DNR) {
+        result = rule._re2.matches(url);
+      } else {
+        const reg = rule._reg || new RegExp(regex, 'g');
+        reg.lastIndex = 0;
+        result = result && reg.test(url);
+      }
     }
     if (!result) {
       return IS_MATCH.NOT_MATCH;

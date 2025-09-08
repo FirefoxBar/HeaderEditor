@@ -1,7 +1,9 @@
 import { rename } from 'node:fs/promises';
+import { setTimeout as sleep } from 'node:timers/promises';
 import { signAddon } from 'sign-addon';
 import { getOutputFile, getVersion, join } from '../config.mjs';
 import { outputJSON } from '../utils.mjs';
+import { waitSubmit } from './amo.mjs';
 
 async function packXpi({
   sourcePath,
@@ -18,6 +20,12 @@ async function packXpi({
   }
 
   const version = await getVersion(sourcePath);
+
+  if (waitSubmit.length > 0) {
+    const last = waitSubmit[waitSubmit.length - 1];
+    // wait 60s for AMO submit
+    await sleep(last + 60000);
+  }
 
   const { success, downloadedFiles } = await signAddon({
     xpiPath: zipPath,

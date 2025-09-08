@@ -1,11 +1,11 @@
 {
   "dist": "HeaderEditor-{VER}",
   "auto": {
-    "xpi": true,
     "amo": true,
     "cws": true,
     "crx": true,
-    "edge": true
+    "edge": true,
+    "xpi": true
   },
   "crx": [
     {

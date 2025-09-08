@@ -1,3 +1,4 @@
+import type { RE2JS } from 're2js';
 import type { DeclarativeNetRequest } from 'webextension-polyfill/namespaces/declarativeNetRequest';
 import type { RULE_MATCH_TYPE, RULE_TYPE, VIRTUAL_KEY } from './constant';
 
@@ -81,6 +82,7 @@ export interface InitdRule extends Rule {
   _reg: RegExp;
   _exclude?: RegExp;
   _func: (val: any, detail: any) => any;
+  _re2?: RE2JS;
 }
 
 export interface PrefValue {

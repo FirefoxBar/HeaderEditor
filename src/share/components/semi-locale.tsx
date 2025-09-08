@@ -1,11 +1,15 @@
-import { i18n } from 'webextension-polyfill';
 import { LocaleProvider } from '@douyinfe/semi-ui';
 import React from 'react';
+import { i18n } from 'webextension-polyfill';
 
-const allLocales = {};
+const allLocales: any = {};
 
 // @ts-ignore
-const context = require.context('@douyinfe/semi-ui/lib/es/locale/source', false, /\.js$/);
+const context = require.context(
+  '@douyinfe/semi-ui/lib/es/locale/source',
+  false,
+  /\.js$/,
+);
 context.keys().forEach((key: string) => {
   const locale = context(key);
   if (locale.default) {
@@ -18,12 +22,12 @@ context.keys().forEach((key: string) => {
 
 // 默认使用 en-US
 const lang = i18n.getUILanguage();
-const currentLocale = typeof allLocales[lang] === 'object' ? allLocales[lang] : allLocales['en-US'];
+const currentLocale =
+  typeof allLocales[lang] === 'object' ? allLocales[lang] : allLocales['en-US'];
 
 const SemiLocale = (props: any) => (
-  <LocaleProvider locale={currentLocale}>
-    {props.children}
-  </LocaleProvider>
+  <LocaleProvider locale={currentLocale}>{props.children}</LocaleProvider>
 );
 
+export { currentLocale };
 export default SemiLocale;
