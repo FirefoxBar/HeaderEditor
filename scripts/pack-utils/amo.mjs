@@ -130,7 +130,7 @@ export async function submitAddon(
     opts.sourceFile = await packingSourceCode;
   }
 
-  console.log('[amo] start signAddon');
+  console.log(`[amo] [${options.addonId}] start signAddon`);
   return signAddon(opts);
 }
 

@@ -27,6 +27,7 @@ async function packXpi({
     await sleep(last + 60000);
   }
 
+  console.log(`[xpi] [${extensionConfig.id}] start signAddon`);
   const { success, downloadedFiles } = await signAddon({
     xpiPath: zipPath,
     version,
@@ -42,12 +43,14 @@ async function packXpi({
   if (downloadedFiles.length === 0) {
     throw new Error('No signed addon found');
   }
-  console.log(`[xpi] Downloaded: ${downloadedFiles.join(', ')}`);
+  console.log(
+    `[xpi] [${extensionConfig.id}] Downloaded: ${downloadedFiles.join(', ')}`,
+  );
   const fileName = getOutputFile(extensionConfig.browser, version, 'xpi');
   const outFile = join(releasePath, fileName);
   // Move download file to output dir
   await rename(downloadedFiles[0], outFile);
-  console.log(`[xpi] move to ${outFile}`);
+  console.log(`[xpi] [${extensionConfig.id}] move to ${outFile}`);
   const infoFile = join(releasePath, `${fileName}-config.json`);
   await outputJSON(infoFile, {
     id: extensionConfig.id,
