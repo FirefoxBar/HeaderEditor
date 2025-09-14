@@ -484,6 +484,22 @@
     "message": "通过菜单快捷切换规则内容",
     "description": "Help text for rule_switch option"
   },
+  "run_mode": {
+    "message": "运行模式",
+    "description": "Run mode for rule"
+  },
+  "run_mode_auto": {
+    "message": "自动",
+    "description": "auto mode"
+  },
+  "run_mode_dnr": {
+    "message": "declarativeNetRequest",
+    "description": "DNR mode"
+  },
+  "run_mode_web_request": {
+    "message": "Web Request",
+    "description": "web_request mode"
+  },
   "save": {
     "message": "保存",
     "description": "Button to save a rule"
