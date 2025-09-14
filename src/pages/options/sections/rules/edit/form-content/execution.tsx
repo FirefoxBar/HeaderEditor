@@ -1,5 +1,5 @@
 import { Form, useFormState } from '@douyinfe/semi-ui';
-import React from 'react';
+import React, { useEffect } from 'react';
 import { BoolRadioGroupField } from '@/pages/options/components/bool-radio';
 import HeaderField from '@/share/components/header-field';
 import { RULE_TYPE } from '@/share/core/constant';
@@ -14,13 +14,29 @@ const Execution = () => {
 
   const [showCommonHeader] = usePref('show-common-header');
 
-  const { ruleType, isFunction } = values as RuleInput;
+  const { ruleType, isFunction, condition } = values as RuleInput;
   const isHeaderSend = values.ruleType === 'modifySendHeader';
   const isHeaderReceive = values.ruleType === 'modifyReceiveHeader';
   const isHeader = isHeaderSend || isHeaderReceive;
 
+  const showRunMode =
+    ENABLE_DNR && ENABLE_WEB_REQUEST && !isFunction && !condition?.excludeRegex;
+
   return (
     <>
+      {/* Run mode */}
+      {showRunMode && (
+        <Form.Select
+          filter
+          field="forceRunner"
+          label={t('run_mode')}
+          optionList={[
+            { label: t('run_mode_auto'), value: 'auto' },
+            { label: t('run_mode_dnr'), value: 'dnr' },
+            { label: t('run_mode_web_request'), value: 'web_request' },
+          ]}
+        />
+      )}
       {/* Response body encoding */}
       {ruleType === RULE_TYPE.MODIFY_RECV_BODY && (
         <Form.Select

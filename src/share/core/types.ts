@@ -22,6 +22,7 @@ export interface RULE_ACTION_OBJ {
 export type RULE_ACTION = 'cancel' | RULE_ACTION_OBJ;
 
 export interface BasicRule {
+  forceRunner?: 'auto' | 'web_request' | 'dnr';
   enable: boolean;
   name: string;
   ruleType: RULE_TYPE;

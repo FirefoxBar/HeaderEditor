@@ -1,10 +1,9 @@
 import { Collapse } from '@douyinfe/semi-ui';
-import * as React from 'react';
+import React from 'react';
 import { t } from '@/share/core/utils';
 import Basic from './basic';
 import Exclude from './exclude';
 import Execution from './execution';
-import Group from './group';
 import Match from './match';
 import Test from './test';
 

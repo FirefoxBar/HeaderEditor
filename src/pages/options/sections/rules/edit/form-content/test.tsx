@@ -71,8 +71,10 @@ const Test = () => {
         } else {
           redirect = initdRule.to;
         }
-        if (/^(http|https|ftp|file)%3A/.test(redirect)) {
-          redirect = decodeURIComponent(redirect);
+        if (detectRunner(initdRule) === 'web_request') {
+          if (/^(http|https|ftp|file)%3A/.test(redirect)) {
+            redirect = decodeURIComponent(redirect);
+          }
         }
         setResult(redirect);
       } else {

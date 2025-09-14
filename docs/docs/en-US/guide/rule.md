@@ -32,6 +32,13 @@ Regardless of whether the matching rules are met, as long as any exclusion condi
 Through a custom function to realize a more flexible function, the specific use please see [here](./custom-function)
 * This feature is not supported in the Lite version.
 
+### Run Mode
+
+Rules have two run modes: DNR mode (declarativeNetRequest) and Web Request mode.
+
+* DNR mode: offers better performance, but does not support automatic decoding, custom function, regular expression exclusions.
+* Web Request mode: Offers slightly lower performance but provides comprehensive functionality.
+
 ## Other special features
 
 * When using "Modify request header" or "Modify response header", set the header content to `_header_editor_remove_` will remove this header (valid since 3.0.5)

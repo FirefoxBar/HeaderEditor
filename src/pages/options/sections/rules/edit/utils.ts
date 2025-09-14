@@ -15,6 +15,7 @@ export const EMPTY_RULE: BasicRule = {
   ruleType: RULE_TYPE.CANCEL,
   isFunction: false,
   code: '',
+  forceRunner: 'auto',
 };
 
 export const EMPTY_ARR = [];

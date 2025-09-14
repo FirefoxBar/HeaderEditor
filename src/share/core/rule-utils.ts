@@ -9,6 +9,14 @@ import { isBasicRule } from './types';
 import { getDomain, isValidArray } from './utils';
 
 export function detectRunner(rule: BasicRule): 'web_request' | 'dnr' {
+  if (rule.forceRunner && rule.forceRunner !== 'auto') {
+    if (rule.forceRunner === 'web_request' && ENABLE_WEB_REQUEST) {
+      return 'web_request';
+    }
+    if (rule.forceRunner === 'dnr' && ENABLE_DNR) {
+      return 'dnr';
+    }
+  }
   if (rule.isFunction) {
     return 'web_request';
   }
