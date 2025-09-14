@@ -32,18 +32,16 @@ const Execution = () => {
   return (
     <>
       {/* Run mode */}
-      {showRunMode && (
-        <Form.Select
-          field="forceRunner"
-          label={t('run_mode')}
-          optionList={[
-            { label: t('run_mode_auto'), value: 'auto' },
-            { label: t('run_mode_dnr'), value: 'dnr' },
-            { label: t('run_mode_web_request'), value: 'web_request' },
-          ]}
-          disabled={!showRunMode}
-        />
-      )}
+      <Form.Select
+        field="forceRunner"
+        label={t('run_mode')}
+        optionList={[
+          { label: t('run_mode_auto'), value: 'auto' },
+          { label: t('run_mode_dnr'), value: 'dnr' },
+          { label: t('run_mode_web_request'), value: 'web_request' },
+        ]}
+        disabled={!showRunMode}
+      />
       {/* Response body encoding */}
       {ruleType === RULE_TYPE.MODIFY_RECV_BODY && (
         <Form.Select
