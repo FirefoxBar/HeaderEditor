@@ -1,4 +1,4 @@
-import { Form, useFormState } from '@douyinfe/semi-ui';
+import { Form, useFormApi, useFormState } from '@douyinfe/semi-ui';
 import React, { useEffect } from 'react';
 import { BoolRadioGroupField } from '@/pages/options/components/bool-radio';
 import HeaderField from '@/share/components/header-field';
@@ -11,6 +11,7 @@ import type { RuleInput } from '../utils';
 
 const Execution = () => {
   const { values } = useFormState();
+  const formApi = useFormApi();
 
   const [showCommonHeader] = usePref('show-common-header');
 
@@ -22,12 +23,17 @@ const Execution = () => {
   const showRunMode =
     ENABLE_DNR && ENABLE_WEB_REQUEST && !isFunction && !condition?.excludeRegex;
 
+  useEffect(() => {
+    if (!showRunMode) {
+      formApi.setValue('forceRunner', 'auto');
+    }
+  }, [showRunMode]);
+
   return (
     <>
       {/* Run mode */}
       {showRunMode && (
         <Form.Select
-          filter
           field="forceRunner"
           label={t('run_mode')}
           optionList={[
@@ -35,6 +41,7 @@ const Execution = () => {
             { label: t('run_mode_dnr'), value: 'dnr' },
             { label: t('run_mode_web_request'), value: 'web_request' },
           ]}
+          disabled={!showRunMode}
         />
       )}
       {/* Response body encoding */}
