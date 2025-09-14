@@ -70,21 +70,24 @@ const Edit = ({ visible, rule: ruleProp, onClose }: EditProps) => {
         rule.encoding = 'UTF-8';
       }
 
-      if (rule.isFunction && rule.code === '') {
-        throw new Error(t('code_empty'));
-      }
-      if (rule.ruleType === 'redirect' && (!rule.to || rule.to === '')) {
-        throw new Error(t('redirect_empty'));
-      }
-      if (
-        rule.ruleType === 'modifySendHeader' ||
-        rule.ruleType === 'modifyReceiveHeader'
-      ) {
-        const validateValue = Object.entries(rule.headers || {}).filter(([k]) =>
-          Boolean(k),
-        );
-        if (validateValue.length === 0) {
-          throw new Error(t('header_empty'));
+      if (rule.isFunction) {
+        if (rule.code === '') {
+          throw new Error(t('code_empty'));
+        }
+      } else {
+        if (rule.ruleType === 'redirect' && (!rule.to || rule.to === '')) {
+          throw new Error(t('redirect_empty'));
+        }
+        if (
+          rule.ruleType === 'modifySendHeader' ||
+          rule.ruleType === 'modifyReceiveHeader'
+        ) {
+          const validateValue = Object.entries(rule.headers || {}).filter(
+            ([k]) => Boolean(k),
+          );
+          if (validateValue.length === 0) {
+            throw new Error(t('header_empty'));
+          }
         }
       }
 
