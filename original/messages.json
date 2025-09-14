@@ -484,6 +484,22 @@
     "message": "Use the menu to switch rule content",
     "description": "Help text for rule_switch option"
   },
+  "run_mode": {
+    "message": "Run mode",
+    "description": "Run mode for rule"
+  },
+  "run_mode_auto": {
+    "message": "Auto",
+    "description": "auto mode"
+  },
+  "run_mode_dnr": {
+    "message": "declarativeNetRequest",
+    "description": "DNR mode"
+  },
+  "run_mode_web_request": {
+    "message": "Web Request",
+    "description": "web_request mode"
+  },
   "save": {
     "message": "Save",
     "description": "Button to save a rule"
