@@ -4,7 +4,6 @@ import {
   Button,
   Dropdown,
   Form,
-  Modal,
   Space,
   Tag,
 } from '@douyinfe/semi-ui';
@@ -21,6 +20,7 @@ import { Toast } from '@/share/pages/toast';
 import usePref from '../hooks/use-pref';
 import { tagList } from '../pages/styles';
 import HeaderField from './header-field';
+import Modal from './modal';
 
 interface HeaderValueItem {
   name: string;
