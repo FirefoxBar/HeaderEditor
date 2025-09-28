@@ -233,16 +233,17 @@ class WebRequestHandler {
       resourceType: e.type,
       method: e.method.toLowerCase(),
     });
-    // Browser is starting up, pass all requests
-    if (rule === null) {
-      return;
+    if (this.modifyHeaders(e, REQUEST_TYPE.REQUEST, rule)) {
+      logger.debug(
+        `[web-request-handler] handle before send:finish ${e.url}`,
+        e.requestHeaders,
+      );
+      return { requestHeaders: e.requestHeaders };
     }
-    this.modifyHeaders(e, REQUEST_TYPE.REQUEST, rule);
     logger.debug(
-      `[web-request-handler] handle before send:finish ${e.url}`,
+      `[web-request-handler] handle before send:finish ${e.url}, no modify`,
       e.requestHeaders,
     );
-    return { requestHeaders: e.requestHeaders };
   }
 
   handleReceived(e: WebRequest.OnHeadersReceivedDetailsType) {
@@ -282,10 +283,12 @@ class WebRequestHandler {
       resourceType: e.type,
       method: e.method.toLowerCase(),
     });
-    // Browser is starting up, pass all requests
-    if (rule) {
-      this.modifyHeaders(e, REQUEST_TYPE.RESPONSE, rule, detail);
-    }
+    const hasModified1 = this.modifyHeaders(
+      e,
+      REQUEST_TYPE.RESPONSE,
+      rule,
+      detail,
+    );
     // response also can modify headers
     const respRule = getRules(TABLE_NAMES.receiveBody, {
       url: e.url,
@@ -293,15 +296,23 @@ class WebRequestHandler {
       resourceType: e.type,
       method: e.method.toLowerCase(),
     });
-    // Browser is starting up, pass all requests
-    if (respRule) {
-      this.modifyHeaders(e, REQUEST_TYPE.RESPONSE, respRule, detail);
+    const hasModified2 = this.modifyHeaders(
+      e,
+      REQUEST_TYPE.RESPONSE,
+      respRule,
+      detail,
+    );
+    if (hasModified1 || hasModified2) {
+      logger.debug(
+        `[web-request-handler] handle received:finish ${e.url}`,
+        e.responseHeaders,
+      );
+      return { responseHeaders: e.responseHeaders };
     }
     logger.debug(
-      `[web-request-handler] handle received:finish ${e.url}`,
+      `[web-request-handler] handle received:finish ${e.url}, no modify`,
       e.responseHeaders,
     );
-    return { responseHeaders: e.responseHeaders };
   }
 
   private makeDetails(request: AnyRequestDetails): CustomFunctionDetail {
@@ -338,15 +349,18 @@ class WebRequestHandler {
   private modifyHeaders(
     request: HeaderRequestDetails,
     type: REQUEST_TYPE,
-    rule: InitdRule[],
+    rule: InitdRule[] | null,
     presetDetail?: CustomFunctionDetail,
   ) {
+    if (!rule || rule.length === 0) {
+      return false;
+    }
     const headers =
       type === REQUEST_TYPE.REQUEST
         ? (request as WebRequest.OnBeforeSendHeadersDetailsType).requestHeaders
         : (request as WebRequest.OnHeadersReceivedDetailsType).responseHeaders;
     if (!headers) {
-      return;
+      return false;
     }
     if (this.includeHeaders && type === REQUEST_TYPE.REQUEST) {
       // 暂存headers
@@ -409,6 +423,7 @@ class WebRequestHandler {
         }
       });
     }
+    return true;
   }
 
   private autoDeleteSavedHeader(id?: string) {
