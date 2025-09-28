@@ -7,7 +7,7 @@ import { getVirtualKey, isValidArray } from '@/share/core/utils';
 import { getDatabase } from './core/db';
 import { getAll, save, updateCache, waitLoad } from './core/rules';
 
-async function doUpgrade() {
+export async function doUpgrade() {
   if (typeof localStorage !== 'undefined') {
     const downloadHistory = localStorage.getItem('dl_history');
     if (downloadHistory) {
@@ -130,13 +130,4 @@ async function doUpgrade() {
       version_mark: 2,
     });
   }
-}
-
-// is chromium-like browser in v3 mode
-if (MANIFEST_VER === 'v3' && typeof window === 'undefined') {
-  browser.runtime.onInstalled.addListener(() => {
-    doUpgrade();
-  });
-} else {
-  doUpgrade();
 }

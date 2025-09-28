@@ -25,7 +25,12 @@ import type {
   Rule,
   RuleFilterOptions,
 } from '@/share/core/types';
-import { getTableName, getVirtualKey, isValidArray } from '@/share/core/utils';
+import {
+  getTableName,
+  getVirtualKey,
+  isValidArray,
+  sleep,
+} from '@/share/core/utils';
 import { getDatabase } from './db';
 
 let loaded = false;
@@ -337,20 +342,24 @@ function getAll() {
   return cache;
 }
 
-function init() {
-  setTimeout(() => {
-    const queue: Array<Promise<void>> = TABLE_NAMES_ARR.map(tableName =>
-      updateCache(tableName),
-    );
-    Promise.all(queue).then(() => {
-      if (TABLE_NAMES_ARR.some(tableName => cache[tableName] === null)) {
-        init();
-      } else {
-        loaded = true;
-        emitter.emit(emitter.INNER_RULE_LOADED);
-      }
-    });
-  });
+async function init(isRetry = false) {
+  if (isRetry) {
+    await sleep(10);
+  }
+  const queue: Array<Promise<void>> = TABLE_NAMES_ARR.map(tableName =>
+    updateCache(tableName),
+  );
+  try {
+    await Promise.all(queue);
+    if (TABLE_NAMES_ARR.some(tableName => cache[tableName] === null)) {
+      init(true);
+    } else {
+      loaded = true;
+      emitter.emit(emitter.INNER_RULE_LOADED);
+    }
+  } catch (e) {
+    init(true);
+  }
 }
 
 function waitLoad() {
@@ -363,8 +372,6 @@ function waitLoad() {
   });
 }
 
-init();
-
 export {
   get,
   getAll,
@@ -375,4 +382,5 @@ export {
   convertToBasicRule,
   waitLoad,
   loaded,
+  init,
 };

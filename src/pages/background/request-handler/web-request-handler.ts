@@ -49,6 +49,18 @@ interface CustomFunctionDetail {
   browser: 'firefox' | 'chrome';
 }
 
+function createHeaderListener(type: string): any {
+  const result = ['blocking'];
+  result.push(type);
+  if (
+    IS_CHROME &&
+    Object.hasOwn(chrome.webRequest.OnBeforeSendHeadersOptions, 'EXTRA_HEADERS')
+  ) {
+    result.push('extraHeaders');
+  }
+  return result;
+}
+
 class WebRequestHandler {
   private _disableAll = false;
   private excludeHe = true;
@@ -59,50 +71,61 @@ class WebRequestHandler {
   private deleteHeaderQueue = new Map();
 
   constructor() {
+    this.handleBeforeRequest = this.handleBeforeRequest.bind(this);
+    this.handleBeforeSend = this.handleBeforeSend.bind(this);
+    this.handleReceived = this.handleReceived.bind(this);
     this.initHook();
     this.loadPrefs();
   }
+
   get disableAll() {
     return this._disableAll;
   }
+
   set disableAll(to) {
     if (this._disableAll === to) {
       return;
     }
     this._disableAll = to;
-  }
-
-  private createHeaderListener(type: string): any {
-    const result = ['blocking'];
-    result.push(type);
-    if (
-      IS_CHROME &&
-      Object.hasOwn(
-        chrome.webRequest.OnBeforeSendHeadersOptions,
-        'EXTRA_HEADERS',
-      )
-    ) {
-      result.push('extraHeaders');
+    if (!to) {
+      this.removeHook();
+    } else {
+      this.initHook();
     }
-    return result;
   }
 
   private initHook() {
-    browser.webRequest.onBeforeRequest.addListener(
-      this.handleBeforeRequest.bind(this),
-      { urls: ['<all_urls>'] },
-      ['blocking'],
+    const { onBeforeRequest, onBeforeSendHeaders, onHeadersReceived } =
+      browser.webRequest;
+    if (!onBeforeRequest.hasListener(this.handleBeforeRequest)) {
+      onBeforeRequest.addListener(
+        this.handleBeforeRequest,
+        { urls: ['<all_urls>'] },
+        ['blocking'],
+      );
+    }
+    if (!onBeforeSendHeaders.hasListener(this.handleBeforeSend)) {
+      onBeforeSendHeaders.addListener(
+        this.handleBeforeSend,
+        { urls: ['<all_urls>'] },
+        createHeaderListener('requestHeaders'),
+      );
+    }
+    if (!onHeadersReceived.hasListener(this.handleReceived)) {
+      onHeadersReceived.addListener(
+        this.handleReceived,
+        { urls: ['<all_urls>'] },
+        createHeaderListener('responseHeaders'),
+      );
+    }
+  }
+
+  private removeHook() {
+    browser.webRequest.onBeforeRequest.removeListener(this.handleBeforeRequest);
+    browser.webRequest.onBeforeSendHeaders.removeListener(
+      this.handleBeforeSend,
     );
-    browser.webRequest.onBeforeSendHeaders.addListener(
-      this.handleBeforeSend.bind(this),
-      { urls: ['<all_urls>'] },
-      this.createHeaderListener('requestHeaders'),
-    );
-    browser.webRequest.onHeadersReceived.addListener(
-      this.handleReceived.bind(this),
-      { urls: ['<all_urls>'] },
-      this.createHeaderListener('responseHeaders'),
-    );
+    browser.webRequest.onHeadersReceived.removeListener(this.handleReceived);
   }
 
   private loadPrefs() {

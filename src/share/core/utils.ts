@@ -150,3 +150,9 @@ export function parseVirtualKey(key: string) {
     id: Number(id),
   };
 }
+
+export function sleep(ms: number) {
+  return new Promise(resolve => {
+    setTimeout(resolve, ms);
+  });
+}
