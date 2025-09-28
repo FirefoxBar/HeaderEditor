@@ -127,6 +127,5 @@ if (detail.type === "media") {
 
 All custom functions are run in the background page, so to debug custom functions, open the console of the background page
 
-Chrome: Enable developer mode in `chrome://extensions/`, then click the "Inspect views" - "background page" at the bottom of Header Editor
-
-Firefox: Open `about:debugging`, enable add-on debugging, click the "Debug" at the bottom of Header Editor
+* Chrome: Enable developer mode in `chrome://extensions/`, then click the "Inspect views" - "background page" or "Service Worker" at the bottom of Header Editor.
+* Firefox: Open `about:debugging`, enable add-on debugging, click the "Inspect" next to Header Editor.

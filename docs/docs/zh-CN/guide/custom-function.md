@@ -125,6 +125,5 @@ if (detail.type === "media") {
 
 所有自定义函数的运行均位于后台页面，因此，要调试自定义函数，请打开后台页面的控制台
 
-Chrome：在`chrome://extensions/`中，启用“开发者模式”，点击Header Editor下方的“检查视图”-“背景页”
-
-Firefox：打开`about:debugging`，启用附加组件调试，点击Header Editor下方的“调试”
+* Chrome：在`chrome://extensions/`中，启用“开发者模式”，点击 Header Editor 下方的“检查视图”-“背景页”或“Service Worker”
+* Firefox：打开`about:debugging`，启用附加组件调试，点击 Header Editor 旁边的“检查”
