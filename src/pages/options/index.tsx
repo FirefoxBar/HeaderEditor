@@ -18,6 +18,7 @@ import type { Rule } from '@/share/core/types';
 import { t } from '@/share/core/utils';
 import Api from '@/share/pages/api';
 import isDarkMode from '@/share/pages/is-dark-mode';
+import { Message } from './message';
 import GroupSelect from './sections/group-select';
 import ImportAndExportSection from './sections/import-and-export';
 import OptionsSection from './sections/options';
@@ -170,6 +171,7 @@ const Options = () => {
         </main>
         <GroupSelect />
         <Edit visible={editShow} rule={editRule} onClose={handleEditClose} />
+        <Message />
       </div>
     </SemiLocale>
   );
