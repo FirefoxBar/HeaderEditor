@@ -178,7 +178,7 @@ function getRuleId(id: number, table?: TABLE_NAMES, ruleType?: RULE_TYPE) {
 }
 
 class DNRRequestHandler {
-  private _disableAll = false;
+  private disableAll = false;
 
   constructor() {
     this.loadPrefs();
@@ -186,16 +186,12 @@ class DNRRequestHandler {
     this.initRules();
   }
 
-  get disableAll() {
-    return this._disableAll;
-  }
-
-  set disableAll(to) {
-    if (this._disableAll === to) {
+  private setDisableAll(to: boolean) {
+    if (this.disableAll === to) {
       return;
     }
     logger.debug('[dnr-handler] disableAll', to);
-    this._disableAll = to;
+    this.disableAll = to;
     if (IS_DEV) {
       console.log('[dnr-handler] disableAll', to);
     }
@@ -310,7 +306,7 @@ class DNRRequestHandler {
     emitter.on(emitter.EVENT_PREFS_UPDATE, (key: string, val: any) => {
       switch (key) {
         case 'disable-all':
-          this.disableAll = val;
+          this.setDisableAll(Boolean(val));
           break;
         default:
           break;
@@ -318,7 +314,7 @@ class DNRRequestHandler {
     });
 
     prefs.ready(() => {
-      this.disableAll = Boolean(prefs.get('disable-all'));
+      this.setDisableAll(Boolean(prefs.get('disable-all')));
     });
   }
 }

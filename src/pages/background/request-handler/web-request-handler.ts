@@ -62,7 +62,7 @@ function createHeaderListener(type: string): any {
 }
 
 class WebRequestHandler {
-  private _disableAll = false;
+  private disableAll = false;
   private excludeHe = true;
   private includeHeaders = false;
   private modifyBody = false;
@@ -74,23 +74,18 @@ class WebRequestHandler {
     this.handleBeforeRequest = this.handleBeforeRequest.bind(this);
     this.handleBeforeSend = this.handleBeforeSend.bind(this);
     this.handleReceived = this.handleReceived.bind(this);
-    this.initHook();
     this.loadPrefs();
   }
 
-  get disableAll() {
-    return this._disableAll;
-  }
-
-  set disableAll(to) {
-    if (this._disableAll === to) {
-      return;
-    }
-    this._disableAll = to;
-    if (!to) {
-      this.removeHook();
-    } else {
-      this.initHook();
+  private setDisableAll(to: boolean, forceCheckHook = false) {
+    logger.debug(`[web-request-handler] disableAll`, this.disableAll, to);
+    if (this.disableAll !== to || forceCheckHook) {
+      this.disableAll = to;
+      if (to) {
+        this.removeHook();
+      } else {
+        this.initHook();
+      }
     }
   }
 
@@ -132,13 +127,13 @@ class WebRequestHandler {
     emitter.on(emitter.EVENT_PREFS_UPDATE, (key: string, val: any) => {
       switch (key) {
         case 'disable-all':
-          this.disableAll = val;
+          this.setDisableAll(Boolean(val), true);
           break;
         case 'include-headers':
-          this.includeHeaders = val;
+          this.includeHeaders = Boolean(val);
           break;
         case 'modify-body':
-          this.modifyBody = val;
+          this.modifyBody = Boolean(val);
           break;
         default:
           break;
@@ -146,7 +141,7 @@ class WebRequestHandler {
     });
 
     prefs.ready(() => {
-      this.disableAll = Boolean(prefs.get('disable-all'));
+      this.setDisableAll(Boolean(prefs.get('disable-all')), true);
       this.includeHeaders = Boolean(prefs.get('include-headers'));
       this.modifyBody = Boolean(prefs.get('modify-body'));
     });
