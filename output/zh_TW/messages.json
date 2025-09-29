@@ -260,6 +260,10 @@
     "message": "向處理回應標頭的自訂函數中傳入要求標頭，開啟後可能會降低性能",
     "description": "Help text for include_header_in_custom_function option"
   },
+  "init_rule_failed": {
+    "message": "初始化規則失敗",
+    "description": "Failed to initialize rule"
+  },
   "lite_edit_tip": {
     "message": "精簡版不支援某些功能",
     "description": "Tip at the edit panel for lite version"
@@ -327,6 +331,10 @@
   "modify_body_help": {
     "message": "允許變更回應本文，開啟後可能會降低性能",
     "description": "Help text for modify_body option"
+  },
+  "more_information": {
+    "message": "詳細資訊",
+    "description": "More Information"
   },
   "name": {
     "message": "名稱",
