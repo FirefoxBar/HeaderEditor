@@ -9,7 +9,7 @@
     "url": "https://github.com/FirefoxBar/HeaderEditor.git"
   },
   "scripts": {
-    "start": "cross-env TARGET_BROWSER=chrome_v3 rsbuild dev",
+    "start": "cross-env TARGET_BROWSER=firefox_v2 rsbuild dev",
     "build": "npm run build:firefox_v3",
     "build:firefox_v2": "cross-env TARGET_BROWSER=firefox_v2 rsbuild build",
     "build:firefox_v3": "cross-env TARGET_BROWSER=firefox_v3 rsbuild build",

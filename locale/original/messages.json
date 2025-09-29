@@ -611,5 +611,13 @@
   "view": {
     "message": "View",
     "description": "View rule or a link"
+  },
+  "init_rule_failed": {
+    "message": "Initialization rule failed",
+    "description": "Failed to initialize rule"
+  },
+  "more_information": {
+    "message": "More Information",
+    "description": "More Information"
   }
 }

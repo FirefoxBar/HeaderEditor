@@ -11,9 +11,8 @@ import logger from '@/share/core/logger';
 import { prefs } from '@/share/core/prefs';
 import { detectRunner } from '@/share/core/rule-utils';
 import SessionMessage from '@/share/core/session-message';
-import { getSession } from '@/share/core/storage';
 import type { RULE_ACTION_OBJ, Rule } from '@/share/core/types';
-import { getTableName, isValidArray } from '@/share/core/utils';
+import { getTableName, isValidArray, t } from '@/share/core/utils';
 import { getAll, waitLoad } from '../core/rules';
 
 type DNRRule = DeclarativeNetRequest.Rule;
@@ -226,6 +225,7 @@ class DNRRequestHandler {
       x => x.id,
     );
     const allRules = v.reduce((a, b) => [...a!, ...b!], []) || [];
+    const addOriginalRules: Rule[] = [];
     const addRules: DNRRule[] = [];
     allRules.forEach(rule => {
       if (rule._runner !== 'dnr') {
@@ -239,6 +239,7 @@ class DNRRequestHandler {
       if (!rule.enable) {
         return;
       }
+      addOriginalRules.push(rule);
       addRules.push(createDNR(rule, ruleId));
     });
     if (this.disableAll) {
@@ -248,7 +249,7 @@ class DNRRequestHandler {
       console.log('init dnr rules', addRules, this.disableAll);
     }
     if (isValidArray(addRules)) {
-      this.addRules(addRules);
+      this.addRules(addRules, addOriginalRules);
     }
   }
 
@@ -267,28 +268,19 @@ class DNRRequestHandler {
           return;
         }
         logger.debug('[dnr-handler] rules update', from, target);
-        const addRules = [];
-        const removeRuleIds = [];
         if (from) {
           const old = getRuleId(from.id, undefined, from.ruleType);
-          removeRuleIds.push(old);
+          await browser.declarativeNetRequest.updateSessionRules({
+            removeRuleIds: [old],
+          });
         }
         // detect new rule is DNR or not
         if (detectRunner(target) === 'dnr' && target.enable) {
-          addRules.push(
+          this.addRule(
             createDNR(target, getRuleId(target.id, undefined, target.ruleType)),
+
+            target,
           );
-        }
-        if (IS_DEV) {
-          console.log('dnr rules update', addRules, removeRuleIds);
-        }
-        if (isValidArray(removeRuleIds)) {
-          await browser.declarativeNetRequest.updateSessionRules({
-            removeRuleIds,
-          });
-        }
-        if (isValidArray(addRules)) {
-          await this.addRules(addRules);
         }
       },
     );
@@ -310,26 +302,37 @@ class DNRRequestHandler {
     });
   }
 
-  private async addRules(rules: DNRRule[]) {
+  private async addRule(rule: DNRRule, originalRule: Rule) {
+    try {
+      await browser.declarativeNetRequest.updateSessionRules({
+        addRules: [rule],
+      });
+    } catch (e) {
+      console.error('Add DNR rule failed', e, rule, originalRule);
+      SessionMessage.add({
+        type: 'warning',
+        title: t('init_rule_failed'),
+        content: `Rule: [${originalRule.id}] ${originalRule.name}\nError: ${(e as Error).message}`,
+        more: `Rule: ${JSON.stringify(rule)}\nDNR Rule: ${JSON.stringify(rule)}`,
+      });
+    }
+  }
+
+  private async addRules(rules: DNRRule[], originalRules: Rule[]) {
     if (rules.length === 0) {
       return;
+    }
+    if (rules.length === 1) {
+      return this.addRule(rules[0], originalRules[0]);
     }
     try {
       await browser.declarativeNetRequest.updateSessionRules({
         addRules: rules,
       });
-    } catch (e) {
-      if (rules.length > 1) {
-        // try to add one by one
-        rules.forEach(rule => this.addRules([rule]));
-      } else {
-        console.error('Add DNR rule failed', e, rules);
-        SessionMessage.add(
-          'warning',
-          'Setup rule failed',
-          `${(e as Error).message} ${JSON.stringify(rules[0])}`,
-        );
-      }
+    } catch (_) {
+      return Promise.all(
+        rules.map((rule, idx) => this.addRule(rule, originalRules[idx])),
+      );
     }
   }
 }
