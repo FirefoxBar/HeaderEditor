@@ -260,6 +260,10 @@
     "message": "向处理响应头的自定义函数中传入请求头，开启后可能会降低性能",
     "description": "Help text for include_header_in_custom_function option"
   },
+  "init_rule_failed": {
+    "message": "初始化规则失败",
+    "description": "Failed to initialize rule"
+  },
   "lite_edit_tip": {
     "message": "Lite版本不支持部分功能",
     "description": "Tip at the edit panel for lite version"
@@ -327,6 +331,10 @@
   "modify_body_help": {
     "message": "允许修改响应体，开启后可能会降低性能",
     "description": "Help text for modify_body option"
+  },
+  "more_information": {
+    "message": "详细信息",
+    "description": "More Information"
   },
   "name": {
     "message": "名称",
