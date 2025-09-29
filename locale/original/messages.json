@@ -260,6 +260,10 @@
     "message": "Pass request headers to the custom function that processes response headers. This may reduce performance.",
     "description": "Help text for include_header_in_custom_function option"
   },
+  "init_rule_failed": {
+    "message": "Initialization rule failed",
+    "description": "Failed to initialize rule"
+  },
   "lite_edit_tip": {
     "message": "Some features are not supported in the lite version",
     "description": "Tip at the edit panel for lite version"
@@ -327,6 +331,10 @@
   "modify_body_help": {
     "message": "Allow modification of response body. This may reduce performance.",
     "description": "Help text for modify_body option"
+  },
+  "more_information": {
+    "message": "More Information",
+    "description": "More Information"
   },
   "name": {
     "message": "Name",
@@ -611,13 +619,5 @@
   "view": {
     "message": "View",
     "description": "View rule or a link"
-  },
-  "init_rule_failed": {
-    "message": "Initialization rule failed",
-    "description": "Failed to initialize rule"
-  },
-  "more_information": {
-    "message": "More Information",
-    "description": "More Information"
   }
 }
