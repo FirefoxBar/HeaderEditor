@@ -313,7 +313,7 @@ class DNRRequestHandler {
         type: 'warning',
         title: t('init_rule_failed'),
         content: `Rule: [${originalRule.id}] ${originalRule.name}\nError: ${(e as Error).message}`,
-        more: `Rule: ${JSON.stringify(rule)}\nDNR Rule: ${JSON.stringify(rule)}`,
+        more: `Rule: ${JSON.stringify(originalRule)}\nDNR Rule: ${JSON.stringify(rule)}`,
       });
     }
   }

@@ -40,19 +40,14 @@ TABLE_NAMES_ARR.forEach(t => {
   cache[t] = null;
 });
 
-const updateCacheQueue: {
-  [x: string]: Array<{ resolve: () => void; reject: (error: any) => void }>;
-} = {};
+const updateCacheQueue: Record<string, Promise<void>> = {};
 
-async function updateCache(type: TABLE_NAMES): Promise<void> {
-  return new Promise((resolve, reject) => {
-    // 如果正在Update，则放到回调组里面
-    if (typeof updateCacheQueue[type] !== 'undefined') {
-      updateCacheQueue[type].push({ resolve, reject });
-      return;
-    } else {
-      updateCacheQueue[type] = [{ resolve, reject }];
-    }
+function updateCache(type: TABLE_NAMES): Promise<void> {
+  if (typeof updateCacheQueue[type] !== 'undefined') {
+    return updateCacheQueue[type];
+  }
+
+  const p = new Promise<void>((resolve, reject) => {
     getDatabase()
       .then(db => {
         const tx = db.transaction([type], 'readonly');
@@ -73,20 +68,21 @@ async function updateCache(type: TABLE_NAMES): Promise<void> {
             cursor.continue();
           } else {
             cache[type] = all;
-            updateCacheQueue[type].forEach(it => {
-              it.resolve();
-            });
-            delete updateCacheQueue[type];
+            resolve();
           }
         };
       })
       .catch(e => {
-        updateCacheQueue[type].forEach(it => {
-          it.reject(e);
-        });
+        reject(e);
+      })
+      .finally(() => {
         delete updateCacheQueue[type];
       });
   });
+
+  updateCacheQueue[type] = p;
+
+  return p;
 }
 
 function filter(fromRules: InitdRule[], options?: RuleFilterOptions) {
