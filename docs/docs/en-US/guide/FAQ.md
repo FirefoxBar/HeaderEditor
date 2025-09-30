@@ -24,25 +24,6 @@ For example, modifying `content-type` to `text/plain` can make a webpage display
 
 ![2025-09-03_115619.png](https://img10.360buyimg.com/ddimg/jfs/t1/325127/5/15269/85767/68b7bc80F3d770c5e/45cdb64f42625693.jpg)
 
-## All rules are ineffective
-
-In rare cases, some rules may fail to initialize due to syntax errors, resulting in all rules being ineffective.
-
-In this case, you can find the specific rule and modify or disable it using the following methods:
-
-Chrome:
-* Open `chrome://extensions/?id=eningockdidmgiojffjmkdblpjocbhgh`
-* Enable "Developer Mode" in the upper right corner
-* Click "Service Worker" under "Inspect View"
-* Find the error message and check the ID, corresponding rule, and error message.
-![img](https://img11.360buyimg.com/ddimg/jfs/t1/333577/33/836/91910/68a4ab26F2b85cd64/8d6cd3da3b9af51a.jpg)
-
-Firefox:
-* Open `about:debugging`
-* Find "Header Editor" and click the "Inspect" button on the right.
-* Find the corresponding rule and error message.
-![img](https://img13.360buyimg.com/ddimg/jfs/t1/289605/39/18012/32092/68a4ae2cFa61f9a6a/9be7525f36abe945.jpg)
-
 ## Can I delete a header in a simple way?
 
 Yes, just modify it to `_header_editor_remove_`

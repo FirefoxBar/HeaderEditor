@@ -24,25 +24,6 @@ title: FAQ
 
 ![2025-09-03_115619.png](https://img10.360buyimg.com/ddimg/jfs/t1/325127/5/15269/85767/68b7bc80F3d770c5e/45cdb64f42625693.jpg)
 
-## 所有规则都不生效
-
-极少数情况下，部分规则因为存在语法问题，会导致初始化失败，致使所有规则都不生效。
-
-此时，您可以通过下列方式找到具体规则，并对其进行修改或禁用：
-
-Chrome:
-* 打开`chrome://extensions/?id=eningockdidmgiojffjmkdblpjocbhgh`
-* 在右上角开启“开发者模式”
-* 点击“检查视图”下方的“Service Worker”
-* 找到报错提示，查看错误信息中的ID和对应的规则、错误信息。
-![img](https://img11.360buyimg.com/ddimg/jfs/t1/333577/33/836/91910/68a4ab26F2b85cd64/8d6cd3da3b9af51a.jpg)
-
-Firefox:
-* 打开`about:debugging`
-* 找到“Header Editor”，点击右侧的“检查”按钮
-* 找到报错提示，查看规则、错误信息。
-![img](https://img13.360buyimg.com/ddimg/jfs/t1/289605/39/18012/32092/68a4ae2cFa61f9a6a/9be7525f36abe945.jpg)
-
 ## 我能以简单的方式删除头吗?
 
 可以，只需将其修改为`_header_editor_remove_`

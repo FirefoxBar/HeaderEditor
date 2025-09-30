@@ -27,10 +27,11 @@ export const Message = () => {
               <Button
                 theme="borderless"
                 onClick={() =>
-                  Modal.info({
+                  Modal[item.type]({
                     title: item.title,
                     content: item.more,
                     zIndex: 1015,
+                    hasCancel: false,
                     className: css`
                       .semi-modal-confirm-content {
                         word-break: break-all;
