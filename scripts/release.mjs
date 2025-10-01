@@ -174,14 +174,8 @@ async function main() {
     await axios.patch(
       `${gitHubBaseURL}/releases/${releaseId}`,
       {
-        owner: gitName[0],
-        repo: gitName[1],
-        release_id: tagName,
         tag_name: tagName,
         name: version,
-        body: assets
-          .map(item => `> ${item.name} SHA256: ${item.hash} \n`)
-          .join('\n'),
         draft: false,
         prerelease: false,
       },
