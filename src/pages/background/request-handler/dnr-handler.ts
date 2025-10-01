@@ -278,7 +278,6 @@ class DNRRequestHandler {
         if (detectRunner(target) === 'dnr' && target.enable) {
           this.addRule(
             createDNR(target, getRuleId(target.id, undefined, target.ruleType)),
-
             target,
           );
         }
