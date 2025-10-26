@@ -172,6 +172,9 @@ export function upgradeRuleFormat(s: OldRule) {
       default:
         break;
     }
+    if (s.exclude) {
+      s.condition.excludeRegex = s.exclude;
+    }
   }
 
   delete s.matchType;
