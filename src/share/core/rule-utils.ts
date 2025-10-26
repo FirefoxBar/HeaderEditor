@@ -49,17 +49,21 @@ export function initRule(
       initd._func = new Function('val', 'detail', initd.code) as any;
     }
     // Init regexp
-    if (initd.condition?.regex) {
-      initd._reg = new RegExp(initd.condition.regex, 'g');
-    }
-    if (initd.matchType === 'regexp' && initd.pattern) {
-      initd._reg = new RegExp(initd.pattern, 'g');
-    }
-    if (initd.condition?.excludeRegex) {
-      initd._exclude = new RegExp(initd.condition.excludeRegex);
-    }
-    if (typeof initd.exclude === 'string' && initd.exclude.length > 0) {
-      initd._exclude = new RegExp(initd.exclude);
+    if (rule.condition) {
+      const { regex, excludeRegex } = rule.condition;
+      if (regex) {
+        initd._reg = new RegExp(regex, 'g');
+      }
+      if (excludeRegex) {
+        initd._exclude = new RegExp(excludeRegex);
+      }
+    } else {
+      if (initd.matchType === 'regexp' && initd.pattern) {
+        initd._reg = new RegExp(initd.pattern, 'g');
+      }
+      if (typeof initd.exclude === 'string' && initd.exclude.length > 0) {
+        initd._exclude = new RegExp(initd.exclude);
+      }
     }
   }
   return initd;
@@ -168,11 +172,12 @@ export function upgradeRuleFormat(s: OldRule) {
       default:
         break;
     }
-    delete s.pattern;
   }
 
   delete s.matchType;
   delete s.action;
+  delete s.pattern;
+  delete s.exclude;
 
   return s;
 }

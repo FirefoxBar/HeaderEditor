@@ -18,6 +18,7 @@ import {
   isMatchUrl,
   upgradeRuleFormat,
 } from '@/share/core/rule-utils';
+import SessionMessage from '@/share/core/session-message';
 import { getLocal } from '@/share/core/storage';
 import type {
   InitdRule,
@@ -30,6 +31,7 @@ import {
   getVirtualKey,
   isValidArray,
   sleep,
+  t,
 } from '@/share/core/utils';
 import { getDatabase } from './db';
 
@@ -63,7 +65,13 @@ function updateCache(type: TABLE_NAMES): Promise<void> {
             try {
               all.push(initRule(s));
             } catch (e) {
-              console.error('Cannot init rule', s, e);
+              console.error('Init rule failed', s, e);
+              SessionMessage.add({
+                type: 'warning',
+                title: t('init_rule_failed'),
+                content: `Rule: [${s.id}] ${s.name}\nError: ${(e as Error).message}`,
+                more: `Rule: ${JSON.stringify(s)}`,
+              });
             }
             cursor.continue();
           } else {

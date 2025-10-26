@@ -6,7 +6,6 @@ import logger from '@/share/core/logger';
 import { prefs } from '@/share/core/prefs';
 import type { InitdRule, RULE_ACTION_OBJ } from '@/share/core/types';
 import {
-  getGlobal,
   IS_CHROME,
   IS_SUPPORT_STREAM_FILTER,
   isValidArray,
@@ -63,12 +62,11 @@ function createHeaderListener(type: string): any {
 
 class WebRequestHandler {
   private disableAll = false;
-  private excludeHe = true;
   private includeHeaders = false;
   private modifyBody = false;
   private savedRequestHeader = new Map();
   private deleteHeaderTimer: ReturnType<typeof setTimeout> | null = null;
-  private deleteHeaderQueue = new Map();
+  private deleteHeaderQueue = new Map<string, number>();
 
   constructor() {
     this.handleBeforeRequest = this.handleBeforeRequest.bind(this);
@@ -123,6 +121,59 @@ class WebRequestHandler {
     browser.webRequest.onHeadersReceived.removeListener(this.handleReceived);
   }
 
+  // Current not work
+  private checkHooks() {
+    const { onBeforeRequest, onBeforeSendHeaders, onHeadersReceived } =
+      browser.webRequest;
+
+    if (this.disableAll) {
+      return;
+    }
+
+    if (!onBeforeRequest.hasListener(this.handleBeforeRequest)) {
+      const rules = getRules(TABLE_NAMES.request, {
+        runner: 'web_request',
+      });
+      if (isValidArray(rules)) {
+        onBeforeRequest.addListener(
+          this.handleBeforeRequest,
+          { urls: ['<all_urls>'] },
+          ['blocking'],
+        );
+      }
+    }
+
+    if (!onBeforeSendHeaders.hasListener(this.handleBeforeSend)) {
+      const rules = getRules(TABLE_NAMES.sendHeader, {
+        runner: 'web_request',
+      });
+      if (isValidArray(rules)) {
+        onBeforeSendHeaders.addListener(
+          this.handleBeforeSend,
+          { urls: ['<all_urls>'] },
+          createHeaderListener('requestHeaders'),
+        );
+      }
+    }
+
+    if (!onHeadersReceived.hasListener(this.handleReceived)) {
+      const rules = getRules(TABLE_NAMES.receiveHeader, {
+        runner: 'web_request',
+      });
+      // response also can modify headers
+      const respRules = getRules(TABLE_NAMES.receiveBody, {
+        runner: 'web_request',
+      });
+      if (isValidArray(rules) || isValidArray(respRules)) {
+        onHeadersReceived.addListener(
+          this.handleReceived,
+          { urls: ['<all_urls>'] },
+          createHeaderListener('responseHeaders'),
+        );
+      }
+    }
+  }
+
   private loadPrefs() {
     emitter.on(emitter.EVENT_PREFS_UPDATE, (key: string, val: any) => {
       switch (key) {
@@ -151,8 +202,10 @@ class WebRequestHandler {
     if (this.disableAll) {
       return false;
     }
-    // 判断是否是HE自身
-    if (this.excludeHe && e.url.indexOf(browser.runtime.getURL('')) === 0) {
+    if (
+      e.url.startsWith('chrome-extension://') ||
+      e.url.startsWith('moz-extension://')
+    ) {
       return false;
     }
     return true;
@@ -446,23 +499,22 @@ class WebRequestHandler {
 
   private autoDeleteSavedHeader(id?: string) {
     if (id) {
-      this.deleteHeaderQueue.set(id, Date.now() / 100);
+      this.deleteHeaderQueue.set(id, Date.now());
     }
     if (this.deleteHeaderTimer !== null) {
       return;
     }
-    this.deleteHeaderTimer = getGlobal().setTimeout(() => {
+    this.deleteHeaderTimer = setTimeout(() => {
       // clear timeout
       if (this.deleteHeaderTimer) {
         clearTimeout(this.deleteHeaderTimer);
       }
       this.deleteHeaderTimer = null;
-      // check time
-      const curTime = Date.now() / 100;
+      const curTime = Date.now();
       // k: id, v: time
       const iter = this.deleteHeaderQueue.entries();
       for (const [k, v] of iter) {
-        if (curTime - v >= 90) {
+        if (curTime - v >= 9000) {
           this.savedRequestHeader.delete(k);
           this.deleteHeaderQueue.delete(k);
         }
