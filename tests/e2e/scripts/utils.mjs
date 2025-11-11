@@ -53,10 +53,14 @@ async function createBrowser(browserKey, pathToExtension) {
     );
 
     const rppPort = await getPort();
+    const executablePath = config.firefoxPath ? config.firefoxPath : undefined;
+    console.log(
+      `📱 launch ${browserKey} from ${executablePath || 'default path'}`,
+    );
     const browser = await puppeteer.launch({
       // headless: false,
       browser: 'firefox',
-      executablePath: config.firefoxPath ? config.firefoxPath : undefined,
+      executablePath,
       args: [`--start-debugger-server=${rppPort}`],
       extraPrefsFirefox: {
         'devtools.chrome.enabled': true,
@@ -83,6 +87,9 @@ async function createBrowser(browserKey, pathToExtension) {
       executablePath = config.chromePath;
     }
 
+    console.log(
+      `📱 launch ${browserKey} from ${executablePath || 'default path'}`,
+    );
     return puppeteer.launch({
       executablePath,
       // headless: false,
