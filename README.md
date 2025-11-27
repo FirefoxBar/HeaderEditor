@@ -1,92 +1,16 @@
-<h1 align="center">
-Header Editor
-</h1>
+## WebDAV 备份/恢复
 
-[![Release](https://img.shields.io/github/release/FirefoxBar/HeaderEditor.svg?label=Release)](https://github.com/FirefoxBar/HeaderEditor/releases)
-[![Chrome Web Store](https://img.shields.io/chrome-web-store/users/eningockdidmgiojffjmkdblpjocbhgh?label=Chrome)](https://chrome.google.com/webstore/detail/header-editor/eningockdidmgiojffjmkdblpjocbhgh)
-[![Edge](https://img.shields.io/badge/dynamic/json?label=Edge&query=%24.activeInstallCount&url=https%3A%2F%2Fmicrosoftedge.microsoft.com%2Faddons%2Fgetproductdetailsbycrxid%2Fafopnekiinpekooejpchnkgfffaeceko)](https://microsoftedge.microsoft.com/addons/detail/header-editor/afopnekiinpekooejpchnkgfffaeceko)
-[![Mozilla Add-ons](https://img.shields.io/amo/users/header-editor?label=Firefox)](https://addons.mozilla.org/en-US/firefox/addon/header-editor/)
-[![Mozilla Add-ons](https://img.shields.io/amo/users/header-editor-lite?label=Firefox(Lite))](https://addons.mozilla.org/en-US/firefox/addon/header-editor-lite/)
-[![license](https://img.shields.io/github/license/FirefoxBar/HeaderEditor.svg?label=License)](https://github.com/FirefoxBar/HeaderEditor/blob/master/LICENSE)
-[![Discussions](https://img.shields.io/github/discussions/FirefoxBar/HeaderEditor?label=Discussions)](https://github.com/FirefoxBar/HeaderEditor/discussions)
-[![Build Status](https://github.com/FirefoxBar/HeaderEditor/actions/workflows/dev.yml/badge.svg)](https://github.com/FirefoxBar/HeaderEditor/actions/workflows/dev.yml)
+新增：WebDAV 备份/恢复
 
-An extension which can modify the request, include request headers, response headers, response body, redirect requests, and cancel requests.
+- 在导入/导出对话中增加 WebDAV 选项：可以上传备份文件到用户指定的 WebDAV 服务器，或从 WebDAV 列表中下载并恢复。
+- 需要在 manifest 中添加 host_permissions（或使用 optional_permissions），并声明 storage 权限用于保存（可选）服务器配置。
+- 安全提示：建议不要明文存储用户名/密码；可使用 Web Crypto 对凭证加密或要求用户每次输入密码。
 
-It's 100% FREE, no ADs, no data collection.
+使用示例：
+1. 在导出时选择“WebDAV”，填写服务器地址、用户名与密码/Token，点击上传，备份会被 PUT 到服务器。
+2. 在导入时选择“WebDAV”，列出远端文件，选择一个文件下载并恢复。
 
-Visit [he.firefoxcn.net](https://he.firefoxcn.net) for more documentations.
-
-## Get this extension
-
-| Browser | Lite | Full |
-| --- | --- | --- |
-| ![Firefox Logo](https://cdnjs.cloudflare.com/ajax/libs/browser-logos/75.0.1/firefox/firefox_16x16.png) Firefox | [Official Download](https://github.com/FirefoxBar/HeaderEditor/releases) or [Mozilla Add-ons](https://addons.mozilla.org/en-US/firefox/addon/header-editor-lite/) | [Official Download](https://github.com/FirefoxBar/HeaderEditor/releases) or [Mozilla Add-ons](https://addons.mozilla.org/en-US/firefox/addon/header-editor/) |
-| ![Chrome Logo](https://cdnjs.cloudflare.com/ajax/libs/browser-logos/75.0.1/chrome/chrome_16x16.png) Chrome | [Chrome Web Store](https://chrome.google.com/webstore/detail/header-editor/eningockdidmgiojffjmkdblpjocbhgh) | [Install full version](https://he.firefoxcn.net/en-US/guide/install-full-version) |
-| ![Edge Logo](https://cdnjs.cloudflare.com/ajax/libs/browser-logos/75.0.1/edge/edge_16x16.png) Edge | None | [Edge Addons](https://microsoftedge.microsoft.com/addons/detail/header-editor/afopnekiinpekooejpchnkgfffaeceko) |
-
-* The official download is exactly the same as Mozilla Add-ons, but the Mozilla Add-ons review is very slow, usually taking more than a week, and you may not be able to get the latest version.
-* `HeaderEditor-xxx-v2` is full version, `HeaderEditor-xxx-v3` is lite version.
-* [Diff between lite and full version](https://he.firefoxcn.net/en-US/guide/index.html)
-
-## Permissions
-
-Header Editor require those permissions:
-
-* `tabs`: Open links (such as the options page)
-
-* `webRequest`, `webRequestBlocking`, `declarativeNetRequest`, `*://*/*`: Modify requests
-
-* `storage`, `unlimitedStorage`: Storage rules and settings
-
-* `debugger`: Modify response body in Chrome
-
-* `unsafe-eval`: Execute custom function, code at [src/share/core/rule-utils.ts#L41](https://github.com/FirefoxBar/HeaderEditor/blob/dev/src/share/core/rule-utils.ts#L41) (may change in the future, you can search for the newest location by `new Function`)
-
-## Contribution
-
-Contribute codes: [Submitting a pull request](https://github.com/FirefoxBar/HeaderEditor/compare)
-
-Thanks to them for their contribution: [YFdyh000](https://github.com/yfdyh000) [iNaru](https://github.com/Inaru)
-
-### Translation
-
-English: Please submit a issue or pull request to file `locale/original/messages.json`
-
-Other language: Please translate them on [Transifex](https://app.transifex.com/sytec/header-editor/)
-
-Please note that some languages (such as zh-Hans) will not be translated on transifex because the browser does not support them, [view full list](https://developer.chrome.com/docs/webstore/i18n/#choosing-locales-to-support).
-
-## How to build
-
-### Build
-
-* Install Node.js 20.x and pnpm 10.x.
-* Clone this project, or download the source code and extract it.
-* Run `pnpm i --frozen-lockfile`.
-* Run build command
-  * For chrome full version, run `npm run build:chrome_v2`
-  * For chrome lite version, run `npm run build:chrome_v3`
-  * For firefox full version, run `npm run build:firefox_v2`
-  * For firefox lite version, run `npm run build:firefox_v3`
-* Find build result at `/dist_*`
-
-#### Development
-
-* Modify `start` command's `TARGET_BROWSER` to the version you want to build
-
-* Run `npm run start`
-
-* Open browser, load extension from `/dist_*` directory or `/dist_*/manifest.json`
-
-## Licenses
-
-Copyright © 2017-2025 [FirefoxBar Team](https://team.firefoxcn.net)
-
-This project is licensed under the ​**GNU GPL v2.0 or later**.
-
-## Technical Sponsorship
-
-CDN acceleration and security protection for this project are sponsored by Tencent EdgeOne.
-
-[![edgeone-logo](https://edgeone.ai/media/34fe3a45-492d-4ea4-ae5d-ea1087ca7b4b.png)](https://edgeone.ai/?from=github)
+实现细节：
+- 客户端实现位于 src/services/webdav.ts，提供 list/upload/download/remove, 支持 Basic 和 Bearer token。
+- UI 示例在 src/ui/WebDAVPanel.tsx，父组件需要注入 getLocalBackupContent 与 restoreFromJsonString 两个函数来完成本地数据导出/恢复调用。
+- 注意：fetch 的 PROPFIND/PUT/DELETE 等请求在浏览器环境下仍受远端服务器 CORS 限制，建议在 manifest 中声明合适 host_permissions 或在 background script 中代理请求.
