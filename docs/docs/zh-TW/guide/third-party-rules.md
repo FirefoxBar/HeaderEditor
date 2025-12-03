@@ -9,8 +9,8 @@ title: 第三方規則
 
 ## 列表
 
-* [dupontjoy](https://github.com/dupontjoy/customization/tree/master/Rules/HeaderEditor) 主要为中文站点
+* [dupontjoy](https://github.com/dupontjoy/customization/tree/main/Rules/HeaderEditor) 主要为中文站点
 
 ## 提交规则
 
-如果您希望您维护的规则出现在此处，请[提交issue](https://github.com/FirefoxBar/HeaderEditor/issues/new)
+如果您希望您维护的规则出现在此处，请[提交issue](https://github.com/FirefoxBar/HeaderEditor/issues/new?template=rule-submit-cn.md)

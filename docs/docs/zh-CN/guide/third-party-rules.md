@@ -9,9 +9,9 @@ title: 第三方规则
 
 ## 列表
 
-* [dupontjoy](https://github.com/dupontjoy/customization/tree/master/Rules/HeaderEditor) 主要为中文站点
+* [dupontjoy](https://github.com/dupontjoy/customization/tree/main/Rules/HeaderEditor) 主要为中文站点
 * [azurezeng/GoogleRedirect](https://github.azurezeng.com/static/HE-GoogleRedirect.json) Google资源重定向
 
 ## 提交规则
 
-如果您希望您维护的规则出现在此处，请[提交issue](https://github.com/FirefoxBar/HeaderEditor/issues/new)
+如果您希望您维护的规则出现在此处，请[提交issue](https://github.com/FirefoxBar/HeaderEditor/issues/new?template=rule-submit-cn.md)或[提交问卷](https://wj.qq.com/s2/25101758/f53d/)

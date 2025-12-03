@@ -12,4 +12,4 @@ The following rules are maintained by a third party. Header Editor does not guar
 
 ## Submitting rules here
 
-If you want your maintenance rules to appear here, please [submit an issue](https://github.com/FirefoxBar/HeaderEditor/issues/new)
+If you want your maintenance rules to appear here, please [submit an issue](https://github.com/FirefoxBar/HeaderEditor/issues/new?template=rule-submit.md)
