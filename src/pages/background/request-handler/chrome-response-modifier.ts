@@ -7,7 +7,7 @@ import { prefs } from '@/share/core/prefs';
 import type { InitdRule, Rule } from '@/share/core/types';
 import { isValidArray } from '@/share/core/utils';
 import { filter, get, waitLoad } from '../core/rules';
-import { textDecode, textEncode } from './utils';
+import { parseJSONPath, textDecode, textEncode } from './utils';
 
 function safeBtoa(str: string) {
   const bytes = textEncode(str);
@@ -307,7 +307,7 @@ class ChromeResponseModifier {
             finalBody = body;
           }
         } else {
-          finalBody = rule.body?.value;
+          finalBody = parseJSONPath(rule.body?.value || '');
         }
       }
       const finalHeaders = responseHeaders || [];

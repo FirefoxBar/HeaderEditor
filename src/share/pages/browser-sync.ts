@@ -1,5 +1,5 @@
 import { TABLE_NAMES_ARR } from '../core/constant';
-import { getSync } from '../core/storage';
+import { getSync, readStorage } from '../core/storage';
 import type { BasicRule } from '../core/types';
 import { IS_CHROME } from '../core/utils';
 
@@ -70,8 +70,11 @@ class BrowserSync {
     return e.backup as SyncMeta;
   }
   async getContent(): Promise<{ [key: string]: BasicRule[] }> {
-    const e = await getSync().get('backup');
-    const { index } = e.backup as SyncMeta;
+    const meta = await readStorage<SyncMeta>(getSync(), 'backup');
+    if (!meta) {
+      return {};
+    }
+    const { index } = meta;
     const result: { [key: string]: BasicRule[] } = {};
     TABLE_NAMES_ARR.forEach(it => {
       result[it] = [];
@@ -83,16 +86,16 @@ class BrowserSync {
     const res = await getSync().get(toGet);
     toGet.forEach(name => {
       TABLE_NAMES_ARR.forEach(it => {
-        result[it] = result[it].concat(res[name][it]);
+        result[it] = result[it].concat((res[name] as Record<string, any>)[it]);
       });
     });
     return result;
   }
   async clear() {
     const toRemove = ['backup'];
-    const e = await getSync().get('backup');
-    if (e.backup) {
-      const { index } = e.backup as SyncMeta;
+    const meta = await readStorage<SyncMeta>(getSync(), 'backup');
+    if (meta) {
+      const { index } = meta;
       const result: { [key: string]: BasicRule[] } = {};
       TABLE_NAMES_ARR.forEach(it => {
         result[it] = [];

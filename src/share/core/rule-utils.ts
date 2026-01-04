@@ -45,7 +45,6 @@ export function initRule(
   }
   if (initd._runner === 'web_request' || forceUseWebRequest) {
     if (initd.isFunction && ENABLE_EVAL) {
-      // eslint-disable-next-line no-new-func
       initd._func = new Function('val', 'detail', initd.code) as any;
     }
     // Init regexp

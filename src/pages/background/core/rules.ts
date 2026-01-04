@@ -19,7 +19,7 @@ import {
   upgradeRuleFormat,
 } from '@/share/core/rule-utils';
 import SessionMessage from '@/share/core/session-message';
-import { getLocal } from '@/share/core/storage';
+import { getLocal, readStorage } from '@/share/core/storage';
 import type {
   InitdRule,
   RULE_ACTION_OBJ,
@@ -300,21 +300,15 @@ async function remove(tableName: TABLE_NAMES, id: number): Promise<void> {
   });
   getLocal().remove(`rule_switch_${tableName}-${id}`);
   // check common mark
-  getLocal()
-    .get('common_rule')
-    .then(result => {
-      const key = `${tableName}-${id}`;
-      if (
-        Array.isArray(result.common_rule) &&
-        result.common_rule.includes(key)
-      ) {
-        const newKeys = [...result.common_rule];
-        newKeys.splice(newKeys.indexOf(key), 1);
-        getLocal().set({
-          common_rule: newKeys,
-        });
-      }
+  const commonRes = await readStorage(getLocal(), 'common_rule');
+  const commonKey = `${tableName}-${id}`;
+  if (Array.isArray(commonRes) && commonRes.includes(commonKey)) {
+    const newKeys = [...commonRes];
+    newKeys.splice(newKeys.indexOf(commonKey), 1);
+    getLocal().set({
+      common_rule: newKeys,
     });
+  }
 }
 
 function get(type: TABLE_NAMES, options?: RuleFilterOptions) {

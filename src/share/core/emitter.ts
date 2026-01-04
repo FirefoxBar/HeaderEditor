@@ -15,6 +15,7 @@ class Emitter extends EventEmitter {
 
   INNER_TASK_UPDATE = 'd1';
   INNER_TASK_REMOVE = 'd2';
+  INNER_TASK_RUN = 'd3';
 }
 const emitter = new Emitter();
 

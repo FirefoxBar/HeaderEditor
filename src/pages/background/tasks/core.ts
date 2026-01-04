@@ -1,6 +1,7 @@
 import { apply as applyJsonLogic } from 'json-logic-js';
 import { TABLE_NAME_TASKS } from '@/share/core/constant';
-import { getSession } from '@/share/core/storage';
+import emitter from '@/share/core/emitter';
+import { getSession, readStorage } from '@/share/core/storage';
 import type { Task, TaskRun } from '@/share/core/types';
 import { getDatabase } from '../core/db';
 import { pifyIDBRequest } from '../utils';
@@ -46,11 +47,8 @@ export async function getTask(key: string): Promise<Task | null> {
 }
 
 export async function loadTaskRun(key: string): Promise<TaskRun | undefined> {
-  const st = getSession();
-  const k = `taskRun_${key}`;
-  const res = await st.get(k);
-  if (k in res) {
-    const run = res[k] as TaskRun;
+  const run = await readStorage<TaskRun>(getSession(), `taskRun_${key}`);
+  if (run) {
     if (run.status === 'done') {
       validTaskRun[key] = run;
     }
@@ -67,12 +65,13 @@ export async function runTask(task: Task) {
   };
   lastTaskRun[task.key] = result;
 
-  if (task.isFunction && task.code) {
+  if (task.isFunction && task.code && ENABLE_EVAL) {
     try {
       const fn = new Function(`return async function() { ${task.code} }`)();
       result.result = await fn();
       result.status = 'done';
       validTaskRun[task.key] = result;
+      emitter.emit(emitter.INNER_TASK_RUN, task, result);
     } catch (e) {
       result.status = 'error';
       result.error = (e as Error).message;
@@ -108,6 +107,7 @@ export async function runTask(task: Task) {
       }
       result.status = 'done';
       validTaskRun[task.key] = result;
+      emitter.emit(emitter.INNER_TASK_RUN, task, result);
     } catch (e) {
       result.status = 'error';
       result.error = (e as Error).message;

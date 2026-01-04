@@ -1,5 +1,5 @@
 import type Browser from 'webextension-polyfill';
-import { getSession } from './storage';
+import { getSession, readStorage } from './storage';
 import { isValidArray } from './utils';
 
 export interface SessionMessageItem {
@@ -19,7 +19,7 @@ const get = async (): Promise<SessionMessageItem[]> => {
 
 const add = async (msg: Omit<SessionMessageItem, 'id' | 'time'>) => {
   const s = getSession();
-  const { message } = await s.get('message');
+  const message = await readStorage(s, 'message');
   const m = isValidArray(message) ? message : [];
   m.push({
     ...msg,
@@ -31,7 +31,7 @@ const add = async (msg: Omit<SessionMessageItem, 'id' | 'time'>) => {
 
 const remove = async (id: string) => {
   const s = getSession();
-  const { message } = await s.get('message');
+  const message = await readStorage(s, 'message');
   const m = isValidArray(message) ? message : [];
   const m2 = m.filter(item => item.id !== id);
   await s.set({ message: m2 });
