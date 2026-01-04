@@ -1,86 +1,15 @@
-import browser from 'webextension-polyfill';
 import { type TABLE_NAMES, TABLE_NAMES_ARR } from '@/share/core/constant';
-import notify from '@/share/core/notify';
 import * as storage from '@/share/core/storage';
 import type { RULE_ACTION_OBJ } from '@/share/core/types';
 import { getVirtualKey, isValidArray } from '@/share/core/utils';
-import { getDatabase } from './core/db';
 import { getAll, save, updateCache, waitLoad } from './core/rules';
 
 export async function doUpgrade() {
-  if (typeof localStorage !== 'undefined') {
-    const downloadHistory = localStorage.getItem('dl_history');
-    if (downloadHistory) {
-      storage.getLocal().set({ dl_history: JSON.parse(downloadHistory) });
-      localStorage.removeItem('dl_history');
-    }
-  }
-
   // Put a version mark
   const currentVersionMark: any = await storage.getLocal().get('version_mark');
   let version = Number(currentVersionMark.version_mark);
   if (Number.isNaN(version)) {
     version = 0;
-  }
-  if (version < 1) {
-    // Upgrade groups
-    const rebindRuleWithGroup = group => {
-      return new Promise(resolve => {
-        const cacheQueue: Array<Promise<void>> = [];
-        function findGroup(type, id) {
-          let result = browser.i18n.getMessage('ungrouped');
-          for (const k in group) {
-            if (group[k].includes(`${type}-${id}`)) {
-              result = k;
-              break;
-            }
-          }
-          return result;
-        }
-        TABLE_NAMES_ARR.forEach(k => {
-          getDatabase().then(db => {
-            const tx = db.transaction([k], 'readwrite');
-            const os = tx.objectStore(k);
-            os.openCursor().onsuccess = e => {
-              const cursor: IDBCursorWithValue = (e.target as any)?.result;
-              if (!cursor) {
-                cacheQueue.push(
-                  notify.other({ method: 'updateCache', type: k }),
-                );
-                return;
-              }
-              const s = cursor.value;
-              s.id = cursor.key;
-              if (typeof s.group === 'undefined') {
-                s.group = findGroup(k, s.id);
-                os.put(s);
-              }
-              cursor.continue();
-            };
-          });
-        });
-        Promise.all(cacheQueue).then(resolve);
-      });
-    };
-
-    if (typeof localStorage !== 'undefined') {
-      const groups = localStorage.getItem('groups');
-      if (groups) {
-        const g = JSON.parse(groups);
-        localStorage.removeItem('groups');
-        await rebindRuleWithGroup(g);
-      } else {
-        const r = await storage.getLocal().get('groups');
-        if (r.groups !== undefined) {
-          await rebindRuleWithGroup(r.groups);
-          await storage.getLocal().remove('groups');
-        } else {
-          const g = {};
-          g[browser.i18n.getMessage('ungrouped')] = [];
-          await rebindRuleWithGroup(g);
-        }
-      }
-    }
   }
 
   if (version < 2) {

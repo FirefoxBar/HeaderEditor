@@ -5,6 +5,17 @@ import type { Task, TaskRun } from '@/share/core/types';
 import { getDatabase } from '../core/db';
 import { pifyIDBRequest } from '../utils';
 
+const validTaskRun: Record<string, TaskRun> = {};
+const lastTaskRun: Record<string, TaskRun> = {};
+
+export function getValidTaskRun(key: string) {
+  return validTaskRun[key];
+}
+
+export function getLastTaskRun(key: string) {
+  return lastTaskRun[key];
+}
+
 export async function getTasks(): Promise<Task[]> {
   const db = await getDatabase();
 
@@ -34,11 +45,18 @@ export async function getTask(key: string): Promise<Task | null> {
   return pifyIDBRequest(os.get(key));
 }
 
-export async function getTaskRun(key: string): Promise<TaskRun | undefined> {
+export async function loadTaskRun(key: string): Promise<TaskRun | undefined> {
   const st = getSession();
   const k = `taskRun_${key}`;
   const res = await st.get(k);
-  return k in res ? (res[k] as TaskRun) : undefined;
+  if (k in res) {
+    const run = res[k] as TaskRun;
+    if (run.status === 'done') {
+      validTaskRun[key] = run;
+    }
+    return run;
+  }
+  return undefined;
 }
 
 export async function runTask(task: Task) {
@@ -47,12 +65,14 @@ export async function runTask(task: Task) {
     time: Date.now(),
     status: 'running',
   };
+  lastTaskRun[task.key] = result;
 
   if (task.isFunction && task.code) {
     try {
-      const fn = new Function(task.code);
+      const fn = new Function(`return async function() { ${task.code} }`)();
       result.result = await fn();
       result.status = 'done';
+      validTaskRun[task.key] = result;
     } catch (e) {
       result.status = 'error';
       result.error = (e as Error).message;
@@ -87,6 +107,7 @@ export async function runTask(task: Task) {
         }
       }
       result.status = 'done';
+      validTaskRun[task.key] = result;
     } catch (e) {
       result.status = 'error';
       result.error = (e as Error).message;
@@ -105,6 +126,9 @@ export function removeTaskRun(taskKey: string) {
 
 export async function runTaskAndSave(task: Task) {
   const result = await runTask(task);
+  if (result.status === 'done') {
+    validTaskRun[task.key] = result;
+  }
   await getSession().set({
     [`taskRun_${task.key}`]: result,
   });

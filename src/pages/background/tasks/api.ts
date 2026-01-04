@@ -5,8 +5,8 @@ import type { Task } from '@/share/core/types';
 import { getDatabase } from '../core/db';
 import { pifyIDBRequest } from '../utils';
 import {
+  getLastTaskRun,
   getTask,
-  getTaskRun,
   getTasks as innerGetTasks,
   runTaskAndSave,
 } from './core';
@@ -61,11 +61,7 @@ export async function removeTask(key: string) {
 export async function getTasks() {
   const result = await innerGetTasks();
 
-  const run = (await Promise.all(result.map(x => getTaskRun(x.key)))).filter(
-    Boolean,
-  );
-
-  result.forEach(task => (task.lastRun = run.find(x => x!.key === task.key)));
+  result.forEach(task => (task.lastRun = getLastTaskRun(task.key)));
 
   return result;
 }

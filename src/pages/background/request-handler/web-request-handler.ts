@@ -11,7 +11,7 @@ import {
   isValidArray,
 } from '@/share/core/utils';
 import { get as getRules } from '../core/rules';
-import { textDecode, textEncode } from './utils';
+import { parseJSONPath, textDecode, textEncode } from './utils';
 
 // 最大修改8MB的Body
 const MAX_BODY_SIZE = 8 * 1024 * 1024;
@@ -259,7 +259,7 @@ class WebRequestHandler {
         }
       } else if (item.to) {
         if (item.condition?.regex || item.matchType === 'regexp') {
-          const to = redirectTo.replace(item._reg, item.to);
+          const to = redirectTo.replace(item._reg, parseJSONPath(item.to));
           logger.debug(
             `[web-request-handler] [rule: ${item.id}] redirect ${redirectTo} to ${to}`,
           );
@@ -268,7 +268,7 @@ class WebRequestHandler {
           logger.debug(
             `[web-request-handler] [rule: ${item.id}] redirect ${redirectTo} to ${item.to}`,
           );
-          redirectTo = item.to;
+          redirectTo = parseJSONPath(item.to);
         }
       }
     }
@@ -456,7 +456,9 @@ class WebRequestHandler {
         }
       }
       if (item.headers) {
-        Object.assign(newHeaders, item.headers);
+        for (const k in item.headers) {
+          newHeaders[k] = parseJSONPath(item.headers[k]);
+        }
       } else if (typeof item.action === 'object') {
         const { name, value } = item.action as RULE_ACTION_OBJ;
         newHeaders[name] = value;
@@ -549,7 +551,7 @@ class WebRequestHandler {
     if (!hasCustomFunction) {
       const filter = browser.webRequest.filterResponseData(e.requestId);
       filter.onstop = () => {
-        const finalBody = last(rule)?.body?.value;
+        const finalBody = parseJSONPath(last(rule)?.body?.value || '');
         if (typeof finalBody !== 'undefined') {
           filter.write(textEncode(finalBody));
         }

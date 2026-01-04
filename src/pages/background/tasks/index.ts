@@ -4,19 +4,20 @@ import emitter from '@/share/core/emitter';
 import type { Task } from '@/share/core/types';
 import {
   getTask,
-  getTaskRun,
   getTasks,
+  loadTaskRun,
   removeTaskRun,
   runTaskAndSave,
 } from './core';
 
 export async function checkOneTask(task: Task) {
-  const data = await getTaskRun(task.key);
+  const data = await loadTaskRun(task.key);
   if (!data) {
-    runTaskAndSave(task);
+    return runTaskAndSave(task);
   }
 
   if (task.execute === 'once') {
+    // once task do not need alarm
     return;
   }
 
@@ -32,6 +33,7 @@ export async function checkOneTask(task: Task) {
       periodInMinutes: task.interval,
     });
   }
+
   if (task.execute === 'cron' && task.cron) {
     const cron = new Cron(task.cron);
     const nextDate = cron.nextRun();
