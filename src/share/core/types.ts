@@ -1,3 +1,4 @@
+import type { RulesLogic } from 'json-logic-js';
 import type { RE2JS } from 're2js';
 import type { DeclarativeNetRequest } from 'webextension-polyfill/namespaces/declarativeNetRequest';
 import type { RULE_MATCH_TYPE, RULE_TYPE, VIRTUAL_KEY } from './constant';
@@ -99,4 +100,38 @@ export interface PrefValue {
   'rule-history': boolean; // Auto save rule history into quick switch
   'quick-edit': boolean; // Quick edit rule in popup panel
   'popup-show-rules': 'all' | 'common'; // Which rules to show in popup panel
+}
+
+export interface TaskRun {
+  key: string;
+  time: number;
+  status: 'running' | 'done' | 'error';
+  error?: string;
+  result?: any;
+}
+
+export interface Task {
+  key: string;
+  name: string;
+
+  execute: 'once' | 'interval' | 'cron';
+  cron?: string;
+  interval?: number; // minutes
+
+  lastRun?: TaskRun;
+
+  isFunction: boolean;
+
+  // define
+  fetch?: {
+    url: string;
+    method?: string;
+    headers?: Record<string, string>;
+    body?: string;
+    responseType?: 'json' | 'text';
+    validator?: RulesLogic;
+  };
+
+  // function code
+  code?: string;
 }

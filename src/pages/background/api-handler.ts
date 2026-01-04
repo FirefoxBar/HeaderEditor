@@ -5,6 +5,7 @@ import logger from '@/share/core/logger';
 import { prefs } from '@/share/core/prefs';
 import { getDatabase } from './core/db';
 import * as rules from './core/rules';
+import * as taskApi from './tasks/api';
 import { openURL } from './utils';
 
 function execute(request: any) {
@@ -41,6 +42,14 @@ function execute(request: any) {
       } else {
         return rules.updateCache(request.type);
       }
+    case APIs.TASK_RUN:
+      return taskApi.runTask(request.key);
+    case APIs.TASK_SAVE:
+      return taskApi.saveTask(request.task);
+    case APIs.TASK_DELETE:
+      return taskApi.removeTask(request.key);
+    case APIs.TASK_LIST:
+      return taskApi.getTasks();
     default:
       break;
   }
@@ -60,10 +69,10 @@ function updateIcon(disabled: boolean) {
 }
 
 export default function createApiHandler() {
-  browser.runtime.onMessage.addListener(request => {
+  browser.runtime.onMessage.addListener((request: any) => {
     logger.debug('[api-handler] onMessage', request);
     if (request.method === 'batchExecute') {
-      const queue = request.batch.map(item => {
+      const queue = request.batch.map((item: any) => {
         const res = execute(item);
         if (res) {
           return res;

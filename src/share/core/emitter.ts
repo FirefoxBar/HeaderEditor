@@ -12,6 +12,9 @@ class Emitter extends EventEmitter {
 
   INNER_RULE_UPDATE = 'c1';
   INNER_RULE_REMOVE = 'c2';
+
+  INNER_TASK_UPDATE = 'd1';
+  INNER_TASK_REMOVE = 'd2';
 }
 const emitter = new Emitter();
 

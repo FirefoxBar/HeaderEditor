@@ -37,6 +37,9 @@ importers:
       ahooks:
         specifier: ^3.7.5
         version: 3.7.5(react@18.3.1)
+      croner:
+        specifier: ^9.1.0
+        version: 9.1.0
       dayjs:
         specifier: ^1.9.5
         version: 1.11.7
@@ -46,6 +49,9 @@ importers:
       fast-deep-equal:
         specifier: ^2.0.1
         version: 2.0.1
+      json-logic-js:
+        specifier: ^2.0.5
+        version: 2.0.5
       lodash-es:
         specifier: ^4.17.21
         version: 4.17.21(patch_hash=87739c1de481c0b0069b3c5cfcc3a63a3080e12ad9027e4cfb44f04521d3c4d7)
@@ -89,6 +95,9 @@ importers:
       '@types/chrome':
         specifier: ^0.1.4
         version: 0.1.4
+      '@types/json-logic-js':
+        specifier: ^2.0.8
+        version: 2.0.8
       '@types/lodash-es':
         specifier: ^4.17.6
         version: 4.17.6
@@ -651,6 +660,9 @@ packages:
 
   '@types/js-cookie@2.2.7':
     resolution: {integrity: sha512-aLkWa0C0vO5b4Sr798E26QgOkss68Un0bLjs7u9qxzPT5CG+8DuNTffWES58YzJs3hrVAOs1wonycqEBqNJubA==}
+
+  '@types/json-logic-js@2.0.8':
+    resolution: {integrity: sha512-WgNsDPuTPKYXl0Jh0IfoCoJoAGGYZt5qzpmjuLSEg7r0cKp/kWtWp0HAsVepyPSPyXiHo6uXp/B/kW/2J1fa2Q==}
 
   '@types/lodash-es@4.17.6':
     resolution: {integrity: sha512-R+zTeVUKDdfoRxpAryaQNRKk3105Rrgx2CFRClIgRGaqDTdjsm8h6IYA8ir584W3ePzkZfst5xIgDwYrlh9HLg==}
@@ -1233,6 +1245,10 @@ packages:
 
   crelt@1.0.5:
     resolution: {integrity: sha512-+BO9wPPi+DWTDcNYhr/W90myha8ptzftZT+LwcmUbbok0rcP/fequmFYCw8NMoH7pkAZQzU78b3kYrlua5a9eA==}
+
+  croner@9.1.0:
+    resolution: {integrity: sha512-p9nwwR4qyT5W996vBZhdvBCnMhicY5ytZkR4D1Xj0wuTDEiMnjwR57Q3RXYY/s0EpX6Ay3vgIcfaR+ewGHsi+g==}
+    engines: {node: '>=18.0'}
 
   cross-env@7.0.3:
     resolution: {integrity: sha512-+/HKd6EgcQCJGh2PSjZuUitQBQynKor4wrFbRg4DtAgS1aWO+gU52xpH7M9ScGgXSYmAVS9bIJ8EzuaGw0oNAw==}
@@ -2084,6 +2100,9 @@ packages:
 
   json-buffer@3.0.1:
     resolution: {integrity: sha512-4bV5BfR2mqfQTJm+V5tPPdf+ZpuhiIvTuAB5g8kcrXOZpTT/QwwVRWBywX1ozr6lEuPdbHxwaJlm9G6mI2sfSQ==}
+
+  json-logic-js@2.0.5:
+    resolution: {integrity: sha512-rTT2+lqcuUmj4DgWfmzupZqQDA64AdmYqizzMPWj3DxGdfFNsxPpcNVSaTj4l8W2tG/+hg7/mQhxjU3aPacO6g==}
 
   json-merge-patch@1.0.2:
     resolution: {integrity: sha512-M6Vp2GN9L7cfuMXiWOmHj9bEFbeC250iVtcKQbqVgEsDVYnIsrNsbU+h/Y/PkbBQCtEa4Bez+Ebv0zfbC8ObLg==}
@@ -4221,6 +4240,8 @@ snapshots:
 
   '@types/js-cookie@2.2.7': {}
 
+  '@types/json-logic-js@2.0.8': {}
+
   '@types/lodash-es@4.17.6':
     dependencies:
       '@types/lodash': 4.14.191
@@ -4855,6 +4876,8 @@ snapshots:
       buffer: 5.7.1
 
   crelt@1.0.5: {}
+
+  croner@9.1.0: {}
 
   cross-env@7.0.3:
     dependencies:
@@ -5703,6 +5726,8 @@ snapshots:
   jsbn@1.1.0: {}
 
   json-buffer@3.0.1: {}
+
+  json-logic-js@2.0.5: {}
 
   json-merge-patch@1.0.2:
     dependencies:

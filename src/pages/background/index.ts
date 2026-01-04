@@ -5,6 +5,7 @@ import { init as initRules } from './core/rules';
 import { createChromeResponseModifier } from './request-handler/chrome-response-modifier';
 import { createDNRHandler } from './request-handler/dnr-handler';
 import { createWebRequestHandler } from './request-handler/web-request-handler';
+import { init as initTasks } from './tasks';
 import { doUpgrade } from './upgrade';
 
 let initd = false;
@@ -14,6 +15,7 @@ function init() {
   }
   doUpgrade();
   initRules();
+  initTasks();
   initd = true;
   if (IS_DEV) {
     console.log('init:', ENABLE_WEB_REQUEST, ENABLE_DNR);

@@ -8,6 +8,8 @@ export enum TABLE_NAMES {
   receiveBody = 'receiveBody',
 }
 
+export const TABLE_NAME_TASKS = 'tasks';
+
 export const TABLE_NAMES_ARR = Object.values(TABLE_NAMES);
 
 export const VIRTUAL_KEY = '_v_key';
@@ -49,12 +51,18 @@ export const defaultPrefValue: PrefValue = {
 export enum APIs {
   HEALTH_CHECK = 'check',
   OPEN_URL = 'open_url',
+  SET_PREFS = 'set_pref',
+  ON_EVENT = 'event',
+
   GET_RULES = 'get_rules',
   SAVE_RULE = 'save_rule',
   DELETE_RULE = 'del_rule',
   UPDATE_CACHE = 'update_cache',
-  SET_PREFS = 'set_pref',
-  ON_EVENT = 'event',
+
+  TASK_RUN = 'task_run',
+  TASK_LIST = 'task_list',
+  TASK_SAVE = 'task_save',
+  TASK_DELETE = 'task_del',
 }
 
 export enum IS_MATCH {

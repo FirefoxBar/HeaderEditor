@@ -33,6 +33,7 @@ import {
   sleep,
   t,
 } from '@/share/core/utils';
+import { pifyIDBRequest } from '../utils';
 import { getDatabase } from './db';
 
 let loaded = false;
@@ -58,26 +59,26 @@ function updateCache(type: TABLE_NAMES): Promise<void> {
         os.openCursor().onsuccess = event => {
           // @ts-ignore
           const cursor = event.target.result;
-          if (cursor) {
-            const s: InitdRule = cursor.value;
-            s.id = cursor.key;
-            // Init function here
-            try {
-              all.push(initRule(s));
-            } catch (e) {
-              console.error('Init rule failed', s, e);
-              SessionMessage.add({
-                type: 'warning',
-                title: t('init_rule_failed'),
-                content: `Rule: [${s.id}] ${s.name}\nError: ${(e as Error).message}`,
-                more: `Rule: ${JSON.stringify(s)}`,
-              });
-            }
-            cursor.continue();
-          } else {
+          if (!cursor) {
             cache[type] = all;
             resolve();
+            return;
           }
+          const s: InitdRule = cursor.value;
+          s.id = cursor.key;
+          // Init function here
+          try {
+            all.push(initRule(s));
+          } catch (e) {
+            console.error('Init rule failed', s, e);
+            SessionMessage.add({
+              type: 'warning',
+              title: t('init_rule_failed'),
+              content: `Rule: [${s.id}] ${s.name}\nError: ${(e as Error).message}`,
+              more: `Rule: ${JSON.stringify(s)}`,
+            });
+          }
+          cursor.continue();
         };
       })
       .catch(e => {
@@ -227,110 +228,93 @@ async function save(o: Rule): Promise<Rule> {
     throw new Error(`Unknown type ${o.ruleType}`);
   }
   const rule = convertToRule(o);
-  return new Promise(resolve => {
-    getDatabase().then(db => {
-      const tx = db.transaction([tableName], 'readwrite');
-      const os = tx.objectStore(tableName);
-      // Check base information
-      upgradeRuleFormat(rule);
-      // Update
-      if (rule.id && rule.id !== -1) {
-        const request = os.get(Number(rule.id));
-        request.onsuccess = () => {
-          const existsRule = request.result || {};
-          const originalRule = cloneDeep(existsRule);
-          for (const prop in rule) {
-            if (prop === 'id') {
-              continue;
-            }
-            existsRule[prop] = rule[prop as keyof Rule];
-          }
-          const req = os.put(existsRule);
-          req.onsuccess = () => {
-            updateCache(tableName).then(() => {
-              notify.other({
-                method: APIs.ON_EVENT,
-                event: EVENTs.RULE_UPDATE,
-                from: originalRule,
-                target: existsRule,
-              });
-              // Write history
-              saveRuleHistory(originalRule);
-              emitter.emit(emitter.INNER_RULE_UPDATE, {
-                from: originalRule,
-                target: existsRule,
-              });
-              resolve(rule);
-            });
-          };
-        };
-      } else {
-        // Create
-        // Make sure it's not null - that makes indexeddb sad
-        // @ts-ignore
-        delete rule.id;
-        const request = os.add(rule);
-        request.onsuccess = event => {
-          // Give it the ID that was generated
-          rule.id = (event.target as any).result;
-          updateCache(tableName).then(() => {
-            notify.other({
-              method: APIs.ON_EVENT,
-              event: EVENTs.RULE_UPDATE,
-              from: null,
-              target: rule,
-            });
-            emitter.emit(emitter.INNER_RULE_UPDATE, {
-              from: null,
-              target: rule,
-            });
-            resolve(rule);
-          });
-        };
+  const db = await getDatabase();
+  const tx = db.transaction([tableName], 'readwrite');
+  const os = tx.objectStore(tableName);
+  // Check base information
+  upgradeRuleFormat(rule);
+  // Update
+  if (rule.id && rule.id !== -1) {
+    const existsRule = await pifyIDBRequest(os.get(Number(rule.id)));
+    if (!existsRule) {
+      throw new Error(`Rule ${rule.id} not exists`);
+    }
+    const originalRule = cloneDeep(existsRule);
+    for (const prop in rule) {
+      if (prop === 'id') {
+        continue;
       }
+      existsRule[prop] = rule[prop as keyof Rule];
+    }
+    await pifyIDBRequest(os.put(existsRule));
+    await updateCache(tableName);
+    notify.other({
+      method: APIs.ON_EVENT,
+      event: EVENTs.RULE_UPDATE,
+      from: originalRule,
+      target: existsRule,
     });
+    // Write history
+    saveRuleHistory(originalRule);
+    emitter.emit(emitter.INNER_RULE_UPDATE, {
+      from: originalRule,
+      target: existsRule,
+    });
+    return rule;
+  }
+
+  // Create
+  // Make sure it's not null - that makes indexeddb sad
+  // @ts-ignore
+  delete rule.id;
+  rule.id = (await pifyIDBRequest(os.add(rule))) as number;
+  await updateCache(tableName);
+  notify.other({
+    method: APIs.ON_EVENT,
+    event: EVENTs.RULE_UPDATE,
+    from: null,
+    target: rule,
   });
+  emitter.emit(emitter.INNER_RULE_UPDATE, {
+    from: null,
+    target: rule,
+  });
+  return rule;
 }
 
-function remove(tableName: TABLE_NAMES, id: number): Promise<void> {
-  return new Promise(resolve => {
-    getDatabase().then(db => {
-      const tx = db.transaction([tableName], 'readwrite');
-      const os = tx.objectStore(tableName);
-      const request = os.delete(Number(id));
-      request.onsuccess = () => {
-        updateCache(tableName);
-        notify.other({
-          method: APIs.ON_EVENT,
-          event: EVENTs.RULE_DELETE,
-          table: tableName,
-          id: Number(id),
-        });
-        emitter.emit(emitter.INNER_RULE_REMOVE, {
-          table: tableName,
-          id: Number(id),
-        });
-        getLocal().remove(`rule_switch_${tableName}-${id}`);
-        // check common mark
-        getLocal()
-          .get('common_rule')
-          .then(result => {
-            const key = `${tableName}-${id}`;
-            if (
-              Array.isArray(result.common_rule) &&
-              result.common_rule.includes(key)
-            ) {
-              const newKeys = [...result.common_rule];
-              newKeys.splice(newKeys.indexOf(key), 1);
-              getLocal().set({
-                common_rule: newKeys,
-              });
-            }
-          });
-        resolve();
-      };
-    });
+async function remove(tableName: TABLE_NAMES, id: number): Promise<void> {
+  const db = await getDatabase();
+  const tx = db.transaction([tableName], 'readwrite');
+  const os = tx.objectStore(tableName);
+  await pifyIDBRequest(os.delete(Number(id)));
+  updateCache(tableName);
+  notify.other({
+    method: APIs.ON_EVENT,
+    event: EVENTs.RULE_DELETE,
+    table: tableName,
+    id: Number(id),
   });
+  emitter.emit(emitter.INNER_RULE_REMOVE, {
+    table: tableName,
+    id: Number(id),
+  });
+  getLocal().remove(`rule_switch_${tableName}-${id}`);
+  // check common mark
+  getLocal()
+    .get('common_rule')
+    .then(result => {
+      const key = `${tableName}-${id}`;
+      if (
+        Array.isArray(result.common_rule) &&
+        result.common_rule.includes(key)
+      ) {
+        const newKeys = [...result.common_rule];
+        newKeys.splice(newKeys.indexOf(key), 1);
+        getLocal().set({
+          common_rule: newKeys,
+        });
+      }
+    });
 }
 
 function get(type: TABLE_NAMES, options?: RuleFilterOptions) {

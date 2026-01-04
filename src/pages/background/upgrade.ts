@@ -42,23 +42,20 @@ export async function doUpgrade() {
             const tx = db.transaction([k], 'readwrite');
             const os = tx.objectStore(k);
             os.openCursor().onsuccess = e => {
-              if (!e.target) {
-                return;
-              }
-              const cursor = (e.target as any).result;
-              if (cursor) {
-                const s = cursor.value;
-                s.id = cursor.key;
-                if (typeof s.group === 'undefined') {
-                  s.group = findGroup(k, s.id);
-                  os.put(s);
-                }
-                cursor.continue();
-              } else {
+              const cursor: IDBCursorWithValue = (e.target as any)?.result;
+              if (!cursor) {
                 cacheQueue.push(
                   notify.other({ method: 'updateCache', type: k }),
                 );
+                return;
               }
+              const s = cursor.value;
+              s.id = cursor.key;
+              if (typeof s.group === 'undefined') {
+                s.group = findGroup(k, s.id);
+                os.put(s);
+              }
+              cursor.continue();
             };
           });
         });
