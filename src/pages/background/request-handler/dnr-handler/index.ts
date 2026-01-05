@@ -1,4 +1,4 @@
-import { debounce, uniq } from 'lodash-es';
+import { debounce } from 'lodash-es';
 import browser from 'webextension-polyfill';
 import type { DeclarativeNetRequest } from 'webextension-polyfill/namespaces/declarativeNetRequest';
 import emitter from '@/share/core/emitter';
@@ -7,7 +7,7 @@ import { prefs } from '@/share/core/prefs';
 import { detectRunner } from '@/share/core/rule-utils';
 import SessionMessage from '@/share/core/session-message';
 import { getSession, readStorage } from '@/share/core/storage';
-import type { Rule, Task, TaskRun } from '@/share/core/types';
+import type { Rule, Task } from '@/share/core/types';
 import {
   getVirtualKey,
   isValidArray,

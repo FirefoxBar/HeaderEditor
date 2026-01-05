@@ -89,7 +89,7 @@ const prefItems: {
 
 const allPrefs = Object.keys(prefItems);
 
-export default class Prefs extends React.Component<void, PrefsState> {
+export default class Prefs extends React.Component<{}, PrefsState> {
   constructor(props: any) {
     super(props);
 

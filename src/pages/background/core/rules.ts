@@ -339,7 +339,7 @@ async function init(isRetry = false) {
       loaded = true;
       emitter.emit(emitter.INNER_RULE_LOADED);
     }
-  } catch (e) {
+  } catch (_) {
     init(true);
   }
 }

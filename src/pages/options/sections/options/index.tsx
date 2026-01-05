@@ -5,10 +5,6 @@ import { t } from '@/share/core/utils';
 import Env from './env';
 import Prefs from './prefs';
 
-interface OptionsProps {
-  visible: boolean;
-}
-
 const style = css`
   width: 800px;
   max-width: 100%;
@@ -27,8 +23,8 @@ const style = css`
   }
 `;
 
-const Options = ({ visible }: OptionsProps) => (
-  <section className={`section-options ${visible ? 'visible' : 'in-visible'}`}>
+const Options = () => (
+  <section className="section-options">
     <Card title={t('options')} className={style}>
       <Prefs />
     </Card>

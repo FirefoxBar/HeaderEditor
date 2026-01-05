@@ -14,7 +14,7 @@ import {
   Spin,
   Typography,
 } from '@douyinfe/semi-ui';
-import { css, cx } from '@emotion/css';
+import { css } from '@emotion/css';
 import * as React from 'react';
 import { selectGroup } from '@/pages/options/utils';
 import Modal from '@/share/components/modal';
@@ -36,7 +36,6 @@ import RuleGroupCard from './rule-group-card';
 import { batchShare, remove } from './utils';
 
 interface RulesProps {
-  visible: boolean;
   onEdit: (rule?: Rule) => void;
 }
 
@@ -364,12 +363,7 @@ export default class Rules extends React.Component<RulesProps, RulesState> {
     const { collapsed } = this.state;
 
     return (
-      <section
-        className={cx('section-rules', {
-          visible: this.props.visible,
-          'in-visible': !this.props.visible,
-        })}
-      >
+      <section className="section-rules">
         <div
           className={css`
             display: flex;

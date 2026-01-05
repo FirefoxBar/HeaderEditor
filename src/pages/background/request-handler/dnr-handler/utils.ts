@@ -5,7 +5,6 @@ import {
   RULE_TYPE,
   TABLE_NAMES,
 } from '@/share/core/constant';
-import { getSession, readStorage } from '@/share/core/storage';
 import type { RULE_ACTION_OBJ, Rule } from '@/share/core/types';
 import { getTableName, isValidArray } from '@/share/core/utils';
 import { parseJSONPath } from '../utils';

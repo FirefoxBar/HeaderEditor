@@ -18,10 +18,6 @@ import file from '@/share/pages/file';
 import Cloud from './cloud';
 import ImportDrawer from './import-drawer';
 
-interface IEProps {
-  visible: boolean;
-}
-
 interface IEState {
   downloadUrl: string;
   downloading: boolean;
@@ -29,7 +25,7 @@ interface IEState {
   downloadHistory: string[];
 }
 
-export default class ImportAndExport extends React.Component<IEProps, IEState> {
+export default class ImportAndExport extends React.Component<{}, IEState> {
   private importRef: React.RefObject<ImportDrawer> = React.createRef();
   constructor(props: any) {
     super(props);
@@ -89,7 +85,7 @@ export default class ImportAndExport extends React.Component<IEProps, IEState> {
         });
       }
     } catch (e) {
-      Toast.error(e.message);
+      Toast.error((e as Error).message);
     }
     this.setState({ downloading: false });
   }
@@ -98,7 +94,7 @@ export default class ImportAndExport extends React.Component<IEProps, IEState> {
     try {
       this.importRef.current!.show(res);
     } catch (e) {
-      Toast.error(e.message);
+      Toast.error((e as Error).message);
     }
   }
 
@@ -118,9 +114,7 @@ export default class ImportAndExport extends React.Component<IEProps, IEState> {
 
   render() {
     return (
-      <section
-        className={`section-ie ${this.props.visible ? 'visible' : 'in-visible'}`}
-      >
+      <section className="section-ie">
         <Card title={t('export_and_import')}>
           <Space>
             <Button onClick={this.handleExport} icon={<IconSave />}>
