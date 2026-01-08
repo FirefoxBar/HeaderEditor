@@ -1,14 +1,11 @@
-import {
-  Form,
-  useFormApi,
-  useFormState,
-} from '@douyinfe/semi-ui';
+import { Form, useFormApi, useFormState } from '@douyinfe/semi-ui';
 import * as React from 'react';
+import { METHOD_LIST } from '@/pages/options/constant';
 import { RULE_MATCH_TYPE } from '@/share/core/constant';
 import { isValidArray, t } from '@/share/core/utils';
 import Domains from '../domains';
-import { METHOD_LIST, RESOURCE_TYPE_LIST } from '../options';
-import { RuleInput } from '../utils';
+import { RESOURCE_TYPE_LIST } from '../options';
+import type { RuleInput } from '../utils';
 
 const Match = () => {
   const formApi = useFormApi();
@@ -30,13 +27,16 @@ const Match = () => {
               RULE_MATCH_TYPE.DOMAIN,
               RULE_MATCH_TYPE.PREFIX,
               RULE_MATCH_TYPE.URL,
-            ].some((x) => editMatchType.includes(x)),
+            ].some(x => editMatchType.includes(x)),
           },
           {
             label: t('match_regexp'),
             value: RULE_MATCH_TYPE.REGEXP,
-            disabled: [RULE_MATCH_TYPE.ALL, RULE_MATCH_TYPE.PREFIX, RULE_MATCH_TYPE.URL].some((x) =>
-              editMatchType.includes(x)),
+            disabled: [
+              RULE_MATCH_TYPE.ALL,
+              RULE_MATCH_TYPE.PREFIX,
+              RULE_MATCH_TYPE.URL,
+            ].some(x => editMatchType.includes(x)),
           },
           {
             label: t('match_domain'),
@@ -46,14 +46,20 @@ const Match = () => {
           {
             label: t('match_prefix'),
             value: RULE_MATCH_TYPE.PREFIX,
-            disabled: [RULE_MATCH_TYPE.ALL, RULE_MATCH_TYPE.REGEXP, RULE_MATCH_TYPE.URL].some((x) =>
-              editMatchType.includes(x)),
+            disabled: [
+              RULE_MATCH_TYPE.ALL,
+              RULE_MATCH_TYPE.REGEXP,
+              RULE_MATCH_TYPE.URL,
+            ].some(x => editMatchType.includes(x)),
           },
           {
             label: t('match_url'),
             value: RULE_MATCH_TYPE.URL,
-            disabled: [RULE_MATCH_TYPE.ALL, RULE_MATCH_TYPE.REGEXP, RULE_MATCH_TYPE.PREFIX].some((x) =>
-              editMatchType.includes(x)),
+            disabled: [
+              RULE_MATCH_TYPE.ALL,
+              RULE_MATCH_TYPE.REGEXP,
+              RULE_MATCH_TYPE.PREFIX,
+            ].some(x => editMatchType.includes(x)),
           },
           {
             label: t('match_method'),
@@ -66,7 +72,7 @@ const Match = () => {
             disabled: editExcludeType.includes('resourceType'),
           },
         ]}
-        onChange={(value) => {
+        onChange={value => {
           if (value.includes(RULE_MATCH_TYPE.DOMAIN)) {
             const a = formApi.getValue('condition.domain');
             if (!isValidArray(a)) {
@@ -86,9 +92,16 @@ const Match = () => {
       {editMatchType.includes(RULE_MATCH_TYPE.PREFIX) && (
         <Form.Input label={t('match_prefix')} field="condition.urlPrefix" />
       )}
-      {editMatchType.includes(RULE_MATCH_TYPE.URL) && <Form.Input label={t('match_url')} field="condition.url" />}
+      {editMatchType.includes(RULE_MATCH_TYPE.URL) && (
+        <Form.Input label={t('match_url')} field="condition.url" />
+      )}
       {editMatchType.includes(RULE_MATCH_TYPE.METHOD) && (
-        <Form.Select multiple label={t('match_method')} field="condition.method" optionList={METHOD_LIST} />
+        <Form.Select
+          multiple
+          label={t('match_method')}
+          field="condition.method"
+          optionList={METHOD_LIST}
+        />
       )}
       {editMatchType.includes(RULE_MATCH_TYPE.RESOURCE_TYPE) && (
         <Form.Select

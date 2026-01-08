@@ -7,14 +7,9 @@ import {
   IconSend,
   IconUnlock,
 } from '@douyinfe/semi-icons';
-import {
-  Button,
-  ButtonGroup,
-  Space,
-  Spin,
-  Typography,
-} from '@douyinfe/semi-ui';
+import { Button, ButtonGroup, Space, Spin } from '@douyinfe/semi-ui';
 import { css } from '@emotion/css';
+import { cloneDeep } from 'lodash-es';
 import * as React from 'react';
 import { selectGroup } from '@/pages/options/utils';
 import Modal from '@/share/components/modal';
@@ -28,16 +23,15 @@ import emitter from '@/share/core/emitter';
 import logger from '@/share/core/logger';
 import notify from '@/share/core/notify';
 import { prefs } from '@/share/core/prefs';
-import type { Rule, RuleWithVirtualKey } from '@/share/core/types';
+import type { BasicRule, Rule, RuleWithVirtualKey } from '@/share/core/types';
 import { getVirtualKey, t } from '@/share/core/utils';
 import Api from '@/share/pages/api';
+import { Layout } from '../layout';
+import Edit from './edit';
+import { EMPTY_RULE } from './edit/utils';
 import Float from './float';
 import RuleGroupCard from './rule-group-card';
 import { batchShare, remove } from './utils';
-
-interface RulesProps {
-  onEdit: (rule?: Rule) => void;
-}
 
 interface GroupItem {
   name: string;
@@ -51,9 +45,10 @@ interface RulesState {
   selectedKeys: string[];
   float: RuleWithVirtualKey[];
   collapsed: string[];
+  edit?: BasicRule;
 }
 
-export default class Rules extends React.Component<RulesProps, RulesState> {
+export default class Rules extends React.Component<{}, RulesState> {
   // 默认展开/收起
   private isCollapse = true;
 
@@ -363,16 +358,9 @@ export default class Rules extends React.Component<RulesProps, RulesState> {
     const { collapsed } = this.state;
 
     return (
-      <section className="section-rules">
-        <div
-          className={css`
-            display: flex;
-            flex-direction: row;
-            padding-bottom: 16px;
-          `}
-        >
-          <Typography.Title heading={2}>{t('rule_list')}</Typography.Title>
-          <div style={{ flexGrow: 1 }} />
+      <Layout
+        title={t('rule_list')}
+        extra={
           <Space>
             <ButtonGroup>
               {this.state.isEnableSelect && (
@@ -431,13 +419,14 @@ export default class Rules extends React.Component<RulesProps, RulesState> {
             <Button
               type="primary"
               theme="solid"
-              onClick={() => this.props.onEdit()}
+              onClick={() => this.setState({ edit: cloneDeep(EMPTY_RULE) })}
               icon={<IconPlusCircle />}
             >
               {t('add')}
             </Button>
           </Space>
-        </div>
+        }
+      >
         <Spin size="large" spinning={this.state.loading}>
           <div
             className={css`
@@ -457,13 +446,18 @@ export default class Rules extends React.Component<RulesProps, RulesState> {
                   onSelect={this.handleSelect}
                   selectedKeys={this.state.selectedKeys}
                   onCollapse={() => this.handleCollapse(name)}
-                  onRuleEdit={this.props.onEdit}
+                  onRuleEdit={rule => this.setState({ edit: rule })}
                   onRulePreview={this.handlePreview}
                 />
               );
             })}
           </div>
         </Spin>
+        <Edit
+          visible={Boolean(this.state.edit)}
+          rule={this.state.edit}
+          onClose={() => this.setState({ edit: undefined })}
+        />
         {this.state.float.map(it => (
           <Float
             key={it[VIRTUAL_KEY]}
@@ -471,7 +465,7 @@ export default class Rules extends React.Component<RulesProps, RulesState> {
             onClose={() => this.handlePreview(it)}
           />
         ))}
-      </section>
+      </Layout>
     );
   }
 }

@@ -15,6 +15,7 @@ import type { BasicRule } from '@/share/core/types';
 import { fetchUrl, t } from '@/share/core/utils';
 import Api from '@/share/pages/api';
 import file from '@/share/pages/file';
+import { Layout } from '../layout';
 import Cloud from './cloud';
 import ImportDrawer from './import-drawer';
 
@@ -114,23 +115,27 @@ export default class ImportAndExport extends React.Component<{}, IEState> {
 
   render() {
     return (
-      <section className="section-ie">
-        <Card title={t('export_and_import')}>
-          <Space>
-            <Button onClick={this.handleExport} icon={<IconSave />}>
-              {t('export')}
-            </Button>
-            <Button onClick={this.handleImport} icon={<IconFolderOpen />}>
-              {t('import')}
-            </Button>
-            <Button
-              onClick={() => this.setState({ showCloud: true })}
-              icon={<IconCloud />}
-            >
-              {t('cloud_backup')}
-            </Button>
-          </Space>
-        </Card>
+      <Layout
+        title={t('export_and_import')}
+        right={
+          <Card>
+            <Space vertical align="start">
+              <Button onClick={this.handleExport} icon={<IconSave />}>
+                {t('export')}
+              </Button>
+              <Button onClick={this.handleImport} icon={<IconFolderOpen />}>
+                {t('import')}
+              </Button>
+              <Button
+                onClick={() => this.setState({ showCloud: true })}
+                icon={<IconCloud />}
+              >
+                {t('cloud_backup')}
+              </Button>
+            </Space>
+          </Card>
+        }
+      >
         <Card title={t('download_rule')}>
           <Space style={{ width: '100%' }}>
             <Input
@@ -225,7 +230,7 @@ export default class ImportAndExport extends React.Component<{}, IEState> {
           onClose={() => this.setState({ showCloud: false })}
           onImport={this.handleCloudImport}
         />
-      </section>
+      </Layout>
     );
   }
 }

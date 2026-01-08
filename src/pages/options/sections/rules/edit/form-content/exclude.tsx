@@ -1,15 +1,11 @@
-import {
-  Form,
-  Typography,
-  useFormApi,
-  useFormState,
-} from '@douyinfe/semi-ui';
+import { Form, Typography, useFormApi, useFormState } from '@douyinfe/semi-ui';
 import * as React from 'react';
+import { METHOD_LIST } from '@/pages/options/constant';
 import { RULE_MATCH_TYPE } from '@/share/core/constant';
 import { isValidArray, t } from '@/share/core/utils';
 import Domains from '../domains';
-import { METHOD_LIST, RESOURCE_TYPE_LIST } from '../options';
-import { RuleInput } from '../utils';
+import { RESOURCE_TYPE_LIST } from '../options';
+import type { RuleInput } from '../utils';
 
 const { Text } = Typography;
 
@@ -44,7 +40,7 @@ const Exclude = () => {
             disabled: editMatchType.includes(RULE_MATCH_TYPE.RESOURCE_TYPE),
           },
         ]}
-        onChange={(value) => {
+        onChange={value => {
           if (value.includes(RULE_MATCH_TYPE.DOMAIN)) {
             const a = formApi.getValue('condition.excludeDomain');
             if (!isValidArray(a)) {
@@ -57,7 +53,11 @@ const Exclude = () => {
         <Form.Input
           label={t('match_regexp')}
           field="condition.excludeRegex"
-          helpText={MANIFEST_VER === 'v3' ? <Text type="tertiary">{t('lite_not_support')}</Text> : undefined}
+          helpText={
+            MANIFEST_VER === 'v3' ? (
+              <Text type="tertiary">{t('lite_not_support')}</Text>
+            ) : undefined
+          }
         />
       )}
       {editExcludeType.includes('domain') && (
@@ -66,7 +66,12 @@ const Exclude = () => {
         </Form.Slot>
       )}
       {editExcludeType.includes('method') && (
-        <Form.Select multiple label={t('match_method')} field="condition.excludeMethod" optionList={METHOD_LIST} />
+        <Form.Select
+          multiple
+          label={t('match_method')}
+          field="condition.excludeMethod"
+          optionList={METHOD_LIST}
+        />
       )}
       {editExcludeType.includes('resourceType') && (
         <Form.Select

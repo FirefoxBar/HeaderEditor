@@ -4,11 +4,10 @@ import type { FormApi } from '@douyinfe/semi-ui/lib/es/form';
 import { css } from '@emotion/css';
 import { useRequest } from 'ahooks';
 import { RE2JS } from 're2js';
-import React, { useEffect, useMemo, useRef } from 'react';
+import { useEffect, useMemo, useRef } from 'react';
 import { RULE_TYPE } from '@/share/core/constant';
 import { prefs } from '@/share/core/prefs';
-import { detectRunner } from '@/share/core/rule-utils';
-import type { Rule } from '@/share/core/types';
+import type { BasicRule, Rule } from '@/share/core/types';
 import { t } from '@/share/core/utils';
 import Api from '@/share/pages/api';
 import FormContent from './form-content';
@@ -18,14 +17,14 @@ const { Text } = Typography;
 
 interface EditProps {
   visible: boolean;
-  rule?: Rule;
+  rule?: BasicRule;
   onClose: () => void;
 }
 
 const Edit = ({ visible, rule: ruleProp, onClose }: EditProps) => {
   const formApi = useRef<FormApi>();
 
-  const isEdit = Boolean(ruleProp);
+  const isEdit = Boolean((ruleProp as Rule)?.id);
 
   const initInput = useMemo(() => {
     const rule = ruleProp || EMPTY_RULE;
@@ -62,7 +61,7 @@ const Edit = ({ visible, rule: ruleProp, onClose }: EditProps) => {
           'domain',
           'regex',
           'resourceTypes',
-        ].every(x => typeof rule.condition![x] === 'undefined')
+        ].every(x => typeof (rule.condition as any)[x] === 'undefined')
       ) {
         throw new Error(t('match_rule_empty'));
       }

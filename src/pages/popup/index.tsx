@@ -100,44 +100,40 @@ const Popup = () => {
   }, []);
 
   return (
-    <SemiLocale>
-      <div
-        className={cx(basicStyle, {
-          [mobileStyle]: IS_ANDROID,
-        })}
-      >
-        <Nav
-          className="navbar semi-always-dark"
-          selectedKeys={['rules']}
-          onSelect={handleNavSelect}
-          header={{
-            logo: (
-              <img src="/assets/images/128.png" style={{ width: '36px' }} />
-            ),
-            text: 'Header Editor',
-          }}
-          items={[
-            { itemKey: 'rules', text: t('rule_list'), icon: <IconMenu /> },
-            { itemKey: 'setting', text: t('manage'), icon: <IconSetting /> },
-          ]}
-          isCollapsed
-          footer={
-            <div>
-              <Tooltip content={t('enable_he')} position="right">
-                <Switch
-                  checked={enable}
-                  onChange={handleEnableChange}
-                  size="small"
-                />
-              </Tooltip>
-            </div>
-          }
-        />
-        <main className="main-content">
-          <Rules />
-        </main>
-      </div>
-    </SemiLocale>
+    <div
+      className={cx(basicStyle, {
+        [mobileStyle]: IS_ANDROID,
+      })}
+    >
+      <Nav
+        className="navbar semi-always-dark"
+        selectedKeys={['rules']}
+        onSelect={handleNavSelect}
+        header={{
+          logo: <img src="/assets/images/128.png" style={{ width: '36px' }} />,
+          text: 'Header Editor',
+        }}
+        items={[
+          { itemKey: 'rules', text: t('rule_list'), icon: <IconMenu /> },
+          { itemKey: 'setting', text: t('manage'), icon: <IconSetting /> },
+        ]}
+        isCollapsed
+        footer={
+          <div>
+            <Tooltip content={t('enable_he')} position="right">
+              <Switch
+                checked={enable}
+                onChange={handleEnableChange}
+                size="small"
+              />
+            </Tooltip>
+          </div>
+        }
+      />
+      <main className="main-content">
+        <Rules />
+      </main>
+    </div>
   );
 };
 
@@ -146,7 +142,9 @@ if (rootEl) {
   const root = ReactDOM.createRoot(rootEl);
   root.render(
     <React.StrictMode>
-      <Popup />
+      <SemiLocale>
+        <Popup />
+      </SemiLocale>
     </React.StrictMode>,
   );
 }

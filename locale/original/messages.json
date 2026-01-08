@@ -619,5 +619,114 @@
   "view": {
     "message": "View",
     "description": "View rule or a link"
+  },
+  "tasks": {
+    "message": "Tasks"
+  },
+  "refresh": {
+    "message": "Refresh"
+  },
+  "task_not_run": {
+    "message": "Never run"
+  },
+  "task_run_success": {
+    "message": "Run successfully"
+  },
+  "task_run_error": {
+    "message": "Error"
+  },
+  "task_running": {
+    "message": "Running"
+  },
+  "task_last_run": {
+    "message": "Last run"
+  },
+  "time": {
+    "message": "Time"
+  },
+  "result": {
+    "message": "Result"
+  },
+  "run": {
+    "message": "Run"
+  },
+  "delete_task_confirm": {
+    "message": "Do you want to delete these tasks?",
+    "description": "A confirmation box shows when user want to delete tasks"
+  },
+  "task_key": {
+    "message": "Task key"
+  },
+  "task_name": {
+    "message": "Task name"
+  },
+  "task_execute_type": {
+    "message": "Task execute type"
+  },
+  "task_execute_once": {
+    "message": "Run only once"
+  },
+  "task_execute_interval": {
+    "message": "Fixed interval operation"
+  },
+  "task_execute_cron": {
+    "message": "Scheduled operation"
+  },
+  "task_interval": {
+    "message": "Time interval (minutes)"
+  },
+  "task_cron_expression": {
+    "message": "Cron expression"
+  },
+  "task_fetch_url": {
+    "message": "Fetch URL"
+  },
+  "request_method": {
+    "message": "Request method"
+  },
+  "request_body": {
+    "message": "Request body"
+  },
+  "response_type": {
+    "message": "Response type"
+  },
+  "response_type_json": {
+    "message": "JSON"
+  },
+  "response_type_text": {
+    "message": "Text"
+  },
+  "validator": {
+    "message": "Validator"
+  },
+  "task_key_empty": {
+    "message": "Task key cannot be empty"
+  },
+  "task_key_invalid": {
+    "message": "Task key is invalid"
+  },
+  "task_name_empty": {
+    "message": "Task name cannot be empty"
+  },
+  "cron_expression_empty": {
+    "message": "Cron expression cannot be empty"
+  },
+  "cron_expression_invalid": {
+    "message": "Cron expression is invalid"
+  },
+  "interval_empty": {
+    "message": "Time interval cannot be empty"
+  },
+  "fetch_url_invalid": {
+    "message": "Fetch URL is invalid"
+  },
+  "fetch_method_empty": {
+    "message": "Request method cannot be empty"
+  },
+  "response_type_empty": {
+    "message": "Response type cannot be empty"
+  },
+  "validator_invalid": {
+    "message": "Validator is invalid"
   }
 }

@@ -1,9 +1,9 @@
-import notify from '@/share/core/notify';
-import type { Rule, BasicRule } from '@/share/core/types';
-import { isBasicRule } from '@/share/core/types';
 import { APIs } from '@/share/core/constant';
+import notify from '@/share/core/notify';
+import type { BasicRule, Rule, Task } from '@/share/core/types';
+import { isBasicRule } from '@/share/core/types';
+import { type TABLE_NAMES, TABLE_NAMES_ARR } from '../core/constant';
 import { convertToRule } from '../core/rule-utils';
-import { TABLE_NAMES, TABLE_NAMES_ARR } from '../core/constant';
 import type { RuleFilterOptions } from '../core/types';
 
 /**
@@ -30,7 +30,7 @@ const Api = {
     });
   },
   getAllRules(): Promise<{ [x: string]: Rule[] }> {
-    return Promise.all(TABLE_NAMES_ARR.map((k) => this.getRules(k))).then((res) => {
+    return Promise.all(TABLE_NAMES_ARR.map(k => this.getRules(k))).then(res => {
       const result: any = {};
       res.forEach((it, index) => {
         result[TABLE_NAMES_ARR[index]] = it;
@@ -42,6 +42,29 @@ const Api = {
     return notify.background({
       method: APIs.SAVE_RULE,
       rule: isBasicRule(rule) ? rule : convertToRule(rule),
+    });
+  },
+  saveTask(task: Task) {
+    return notify.background({
+      method: APIs.TASK_SAVE,
+      task,
+    });
+  },
+  getTasks(): Promise<Task[]> {
+    return notify.background({
+      method: APIs.TASK_LIST,
+    });
+  },
+  removeTask(key: string) {
+    return notify.background({
+      method: APIs.TASK_DELETE,
+      key,
+    });
+  },
+  runTask(key: string) {
+    return notify.background({
+      method: APIs.TASK_RUN,
+      key,
     });
   },
   removeRule(table: TABLE_NAMES, id: number) {

@@ -125,7 +125,7 @@ export interface Task {
   // define
   fetch?: {
     url: string;
-    method?: string;
+    method: string;
     headers?: Record<string, string>;
     body?: string;
     responseType?: 'json' | 'text';

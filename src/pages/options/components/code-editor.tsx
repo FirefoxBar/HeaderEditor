@@ -1,8 +1,7 @@
-import { withField } from '@douyinfe/semi-ui';
-import React from 'react';
-import CodeMirror, { ReactCodeMirrorProps } from '@uiw/react-codemirror';
-import { githubLight, githubDark } from '@uiw/codemirror-theme-github';
 import { javascript } from '@codemirror/lang-javascript';
+import { withField } from '@douyinfe/semi-ui';
+import { githubDark, githubLight } from '@uiw/codemirror-theme-github';
+import CodeMirror, { type ReactCodeMirrorProps } from '@uiw/react-codemirror';
 import isDarkMode from '@/share/pages/is-dark-mode';
 
 type CodeEditorProps = ReactCodeMirrorProps;

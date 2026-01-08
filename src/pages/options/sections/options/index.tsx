@@ -2,13 +2,11 @@ import { Card } from '@douyinfe/semi-ui';
 import { css } from '@emotion/css';
 import React from 'react';
 import { t } from '@/share/core/utils';
+import { Layout } from '../layout';
 import Env from './env';
 import Prefs from './prefs';
 
 const style = css`
-  width: 800px;
-  max-width: 100%;
-  margin: 0 auto;
   .semi-card-body {
     padding: 0;
   }
@@ -24,14 +22,18 @@ const style = css`
 `;
 
 const Options = () => (
-  <section className="section-options">
-    <Card title={t('options')} className={style}>
+  <Layout
+    title={t('options')}
+    right={
+      <Card title={t('env_info')} className={style}>
+        <Env />
+      </Card>
+    }
+  >
+    <Card className={style}>
       <Prefs />
     </Card>
-    <Card title={t('env_info')} className={style}>
-      <Env />
-    </Card>
-  </section>
+  </Layout>
 );
 
 export default Options;

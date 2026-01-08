@@ -1,11 +1,11 @@
 import { Form, useFormApi, useFormState } from '@douyinfe/semi-ui';
 import React, { useEffect } from 'react';
 import { BoolRadioGroupField } from '@/pages/options/components/bool-radio';
+import { CodeEditorField } from '@/pages/options/components/code-editor';
 import HeaderField from '@/share/components/header-field';
 import { RULE_TYPE } from '@/share/core/constant';
 import { IS_FIREFOX, t } from '@/share/core/utils';
 import usePref from '@/share/hooks/use-pref';
-import { CodeEditorField } from '../code-editor';
 import ENCODING_LIST from '../encoding';
 import type { RuleInput } from '../utils';
 

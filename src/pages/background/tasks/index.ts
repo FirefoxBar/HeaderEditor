@@ -1,6 +1,7 @@
 import { Cron } from 'croner';
 import { alarms } from 'webextension-polyfill';
 import emitter from '@/share/core/emitter';
+import logger from '@/share/core/logger';
 import type { Task } from '@/share/core/types';
 import {
   getTask,
@@ -28,6 +29,7 @@ export async function checkOneTask(task: Task) {
     if (alarm) {
       return;
     }
+    logger.debug('[task] create interval alarm', alarmKey, task);
     alarms.create(alarmKey, {
       delayInMinutes: task.interval,
       periodInMinutes: task.interval,
@@ -35,8 +37,13 @@ export async function checkOneTask(task: Task) {
   }
 
   if (task.execute === 'cron' && task.cron) {
-    const cron = new Cron(task.cron);
-    const nextDate = cron.nextRun();
+    let nextDate: Date | null = null;
+    try {
+      const cron = new Cron(task.cron);
+      nextDate = cron.nextRun();
+    } catch (e) {
+      console.error(e);
+    }
     if (nextDate) {
       if (alarm?.scheduledTime === nextDate.getTime()) {
         return;
@@ -44,6 +51,7 @@ export async function checkOneTask(task: Task) {
       if (alarm) {
         await alarms.clear(alarmKey);
       }
+      logger.debug('[task] create cron alarm', alarmKey, nextDate);
       alarms.create(alarmKey, {
         when: nextDate.getTime(),
       });

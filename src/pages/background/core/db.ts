@@ -29,7 +29,6 @@ export function getDatabase(): Promise<IDBDatabase> {
       if (event.oldVersion < 5) {
         handler.createObjectStore(TABLE_NAME_TASKS, {
           keyPath: 'key',
-          autoIncrement: true,
         });
       }
 
@@ -39,7 +38,6 @@ export function getDatabase(): Promise<IDBDatabase> {
           if (!tx.objectStoreNames.contains(k)) {
             handler.createObjectStore(k, {
               keyPath: 'id',
-              autoIncrement: true,
             });
             return;
           }

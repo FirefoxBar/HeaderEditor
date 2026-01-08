@@ -10,7 +10,7 @@ const baseManifest = {
   icons: {
     128: 'assets/images/128.png',
   },
-  permissions: ['tabs', 'storage', 'unlimitedStorage'],
+  permissions: ['tabs', 'storage', 'unlimitedStorage', 'alarms'],
   default_locale: 'en',
   options_ui: {
     page: 'options.html',

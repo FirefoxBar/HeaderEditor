@@ -24,7 +24,7 @@ export async function saveTask(taskInfo: Task) {
   const tx = db.transaction([TABLE_NAME_TASKS], 'readwrite');
   const os = tx.objectStore(TABLE_NAME_TASKS);
 
-  const exists = await pifyIDBRequest(os.get(Number(taskInfo.key)));
+  const exists = await pifyIDBRequest(os.get(taskInfo.key));
   if (exists) {
     const original = cloneDeep(exists);
     const copy = pick(
