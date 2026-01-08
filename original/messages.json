@@ -92,6 +92,12 @@
     "message": "Unmark",
     "description": "Unmark a common rule/group"
   },
+  "cron_expression_empty": {
+    "message": "Cron expression cannot be empty"
+  },
+  "cron_expression_invalid": {
+    "message": "Cron expression is invalid"
+  },
   "dark_mode": {
     "message": "Dark mode",
     "description": "Dark mode select"
@@ -115,6 +121,10 @@
   "delete_confirm": {
     "message": "Do you want to delete these rules?",
     "description": "A confirmation box shows when user want to delete rules"
+  },
+  "delete_task_confirm": {
+    "message": "Do you want to delete these tasks?",
+    "description": "A confirmation box shows when user want to delete tasks"
   },
   "description": {
     "message": "Manage browser requests",
@@ -212,6 +222,12 @@
     "message": "Feedback",
     "description": "Feedback link"
   },
+  "fetch_method_empty": {
+    "message": "Request method cannot be empty"
+  },
+  "fetch_url_invalid": {
+    "message": "Fetch URL is invalid"
+  },
   "group": {
     "message": "Group",
     "description": "Group button"
@@ -263,6 +279,9 @@
   "init_rule_failed": {
     "message": "Initialization rule failed",
     "description": "Failed to initialize rule"
+  },
+  "interval_empty": {
+    "message": "Time interval cannot be empty"
   },
   "lite_edit_tip": {
     "message": "Some features are not supported in the lite version",
@@ -376,13 +395,22 @@
     "message": "Redirect target cannot be empty",
     "description": "Message for saving a rule without redirect target if rule type is redirect"
   },
+  "refresh": {
+    "message": "Refresh"
+  },
   "rename": {
     "message": "Rename",
     "description": "Rename group"
   },
+  "request_body": {
+    "message": "Request body"
+  },
   "request_headers": {
     "message": "Request headers",
     "description": "Request headers"
+  },
+  "request_method": {
+    "message": "Request method"
   },
   "request_stage": {
     "message": "Request stage",
@@ -448,6 +476,21 @@
     "message": "Response headers",
     "description": "Response headers"
   },
+  "response_type": {
+    "message": "Response type"
+  },
+  "response_type_empty": {
+    "message": "Response type cannot be empty"
+  },
+  "response_type_json": {
+    "message": "JSON"
+  },
+  "response_type_text": {
+    "message": "Text"
+  },
+  "result": {
+    "message": "Result"
+  },
   "ruleType": {
     "message": "Rule type",
     "description": "Label for rule type in modal"
@@ -491,6 +534,9 @@
   "rule_switch_help": {
     "message": "Use the menu to switch rule content",
     "description": "Help text for rule_switch option"
+  },
+  "run": {
+    "message": "Run"
   },
   "run_mode": {
     "message": "Run mode",
@@ -560,6 +606,60 @@
     "message": "Quick switch",
     "description": "Title of the quick switch feature"
   },
+  "task_cron_expression": {
+    "message": "Cron expression"
+  },
+  "task_execute_cron": {
+    "message": "Scheduled operation"
+  },
+  "task_execute_interval": {
+    "message": "Fixed interval operation"
+  },
+  "task_execute_once": {
+    "message": "Run only once"
+  },
+  "task_execute_type": {
+    "message": "Task execute type"
+  },
+  "task_fetch_url": {
+    "message": "Fetch URL"
+  },
+  "task_interval": {
+    "message": "Time interval (minutes)"
+  },
+  "task_key": {
+    "message": "Task key"
+  },
+  "task_key_empty": {
+    "message": "Task key cannot be empty"
+  },
+  "task_key_invalid": {
+    "message": "Task key is invalid"
+  },
+  "task_last_run": {
+    "message": "Last run"
+  },
+  "task_name": {
+    "message": "Task name"
+  },
+  "task_name_empty": {
+    "message": "Task name cannot be empty"
+  },
+  "task_not_run": {
+    "message": "Never run"
+  },
+  "task_run_error": {
+    "message": "Error"
+  },
+  "task_run_success": {
+    "message": "Run successfully"
+  },
+  "task_running": {
+    "message": "Running"
+  },
+  "tasks": {
+    "message": "Tasks"
+  },
   "test_custom_code": {
     "message": "Custom code testing not supported",
     "description": "Label to test a redirect rule"
@@ -588,6 +688,9 @@
     "message": "Third party rules",
     "description": "Link to find more third party rules"
   },
+  "time": {
+    "message": "Time"
+  },
   "ungrouped": {
     "message": "Ungrouped",
     "description": "The default group name"
@@ -615,6 +718,12 @@
   "url_third_party_rules": {
     "message": "https://he.firefoxcn.net/en-US/guide/third-party-rules/",
     "description": "URL of documentations, if not translated, please use english version"
+  },
+  "validator": {
+    "message": "Validator"
+  },
+  "validator_invalid": {
+    "message": "Validator is invalid"
   },
   "view": {
     "message": "View",
