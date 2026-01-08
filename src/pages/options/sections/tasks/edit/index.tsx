@@ -71,7 +71,6 @@ const TaskConfig = () => {
           <Form.TextArea
             field="fetch.body"
             label={t('request_body')}
-            placeholder={t('request_body_placeholder')}
             rows={4}
           />
           <Form.Select
@@ -255,6 +254,7 @@ const Edit = ({ visible, task: taskProp, onClose }: EditProps) => {
           field="key"
           label={t('task_key')}
           placeholder={t('task_key_placeholder')}
+          disabled={Boolean(initInput?.key)}
         />
 
         <Form.Input

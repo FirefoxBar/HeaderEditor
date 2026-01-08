@@ -1,14 +1,14 @@
-import * as React from 'react';
-import { SideSheet, Button, Table, Select, Toast } from '@douyinfe/semi-ui';
-import { css } from '@emotion/css';
 import { IconSave } from '@douyinfe/semi-icons';
-import { selectGroup } from '@/pages/options/utils';
-import Api from '@/share/pages/api';
-import { fromJson } from '@/share/core/rule-utils';
-import { t } from '@/share/core/utils';
-import type { ImportRule, BasicRule } from '@/share/core/types';
+import { Button, Select, SideSheet, Table, Toast } from '@douyinfe/semi-ui';
+import { css } from '@emotion/css';
+import * as React from 'react';
 import BoolRadioGroup from '@/pages/options/components/bool-radio';
+import { selectGroup } from '@/pages/options/utils';
 import { TABLE_NAMES_ARR } from '@/share/core/constant';
+import { fromJson } from '@/share/core/rule-utils';
+import type { BasicRule, ImportRule } from '@/share/core/types';
+import { t } from '@/share/core/utils';
+import Api from '@/share/pages/api';
 
 interface ImportDrawerProps {
   onCancel?: () => void;
@@ -22,7 +22,10 @@ interface ImportDrawerState {
   useRecommend: boolean;
 }
 
-export default class ImportDrawer extends React.Component<ImportDrawerProps, ImportDrawerState> {
+export default class ImportDrawer extends React.Component<
+  ImportDrawerProps,
+  ImportDrawerState
+> {
   constructor(props: any) {
     super(props);
 
@@ -50,13 +53,13 @@ export default class ImportDrawer extends React.Component<ImportDrawerProps, Imp
       let totalCount = 0;
       const importList: ImportRule[] = [];
       const list = typeof content === 'string' ? fromJson(content) : content;
-      TABLE_NAMES_ARR.forEach((tableName) => {
+      TABLE_NAMES_ARR.forEach(tableName => {
         if (!list[tableName]) {
           return;
         }
-        list[tableName].forEach((e) => {
+        list[tableName].forEach(e => {
           totalCount++;
-          Api.getRules(tableName, { name: e.name }).then((rule) => {
+          Api.getRules(tableName, { name: e.name }).then(rule => {
             const it: ImportRule = {
               ...e,
               group: e.group || t('ungrouped'),
@@ -82,9 +85,10 @@ export default class ImportDrawer extends React.Component<ImportDrawerProps, Imp
   }
 
   handleConfirm() {
+    // TODO: 处理 task 导入
     // 确认导入
     const queue: any[] = [];
-    this.state.list.forEach((e: BasicRule) => {
+    this.state.list.forEach((e: any) => {
       // 不导入
       if (e.importAction === 3) {
         return;
@@ -131,7 +135,7 @@ export default class ImportDrawer extends React.Component<ImportDrawerProps, Imp
   }
 
   handleSelectGroup(item: ImportRule) {
-    selectGroup(item.group).then((res) => {
+    selectGroup(item.group).then(res => {
       item.group = res;
       this.forceUpdate();
     });
@@ -166,11 +170,18 @@ export default class ImportDrawer extends React.Component<ImportDrawerProps, Imp
           }
         `}
         footer={
-          <div style={{ display: 'flex', justifyContent: 'flex-end', gap: '8px' }}>
+          <div
+            style={{ display: 'flex', justifyContent: 'flex-end', gap: '8px' }}
+          >
             <Button type="tertiary" theme="light" onClick={this.handleCancel}>
               {t('cancel')}
             </Button>
-            <Button type="primary" theme="solid" onClick={this.handleConfirm} icon={<IconSave />}>
+            <Button
+              type="primary"
+              theme="solid"
+              onClick={this.handleConfirm}
+              icon={<IconSave />}
+            >
               {t('save')}
             </Button>
           </div>
@@ -196,7 +207,11 @@ export default class ImportDrawer extends React.Component<ImportDrawerProps, Imp
                 <span>
                   <span>{value}</span>
                   &nbsp;
-                  <Button className="select-group" size="small" onClick={this.handleSelectGroup.bind(this, item)}>
+                  <Button
+                    className="select-group"
+                    size="small"
+                    onClick={this.handleSelectGroup.bind(this, item)}
+                  >
                     {t('choose')}
                   </Button>
                 </span>
@@ -207,10 +222,16 @@ export default class ImportDrawer extends React.Component<ImportDrawerProps, Imp
               render: (_v: any, item: ImportRule) => (
                 <Select
                   value={item.importAction}
-                  onChange={(value: string) => this.handleActionChange(item, value)}
+                  onChange={(value: string) =>
+                    this.handleActionChange(item, value)
+                  }
                   optionList={[
                     { label: t('import_new'), value: 1 },
-                    { label: t('import_override'), value: 2, disabled: item.importOldId === -1 },
+                    {
+                      label: t('import_override'),
+                      value: 2,
+                      disabled: item.importOldId === -1,
+                    },
                     { label: t('import_drop'), value: 3 },
                   ]}
                 />
@@ -243,10 +264,15 @@ export default class ImportDrawer extends React.Component<ImportDrawerProps, Imp
                   <span>
                     <span>{this.state.group}</span>
                     &nbsp;
-                    <Button className="select-group" size="small" onClick={this.handleSelectAll}>
+                    <Button
+                      className="select-group"
+                      size="small"
+                      onClick={this.handleSelectAll}
+                    >
                       {t('choose')}
                     </Button>
-                  </span>),
+                  </span>
+                ),
                 value: false,
               },
             ]}

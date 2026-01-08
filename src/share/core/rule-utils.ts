@@ -69,6 +69,7 @@ export function initRule(
 }
 
 export function createExport(arr: { [key: string]: Array<Rule | InitdRule> }) {
+  // TODO: 一并导出规则
   const result: { [key: string]: BasicRule[] } = {};
   Object.keys(arr).forEach(k => {
     result[k] = arr[k].map(e => convertToBasicRule(e));

@@ -55,8 +55,15 @@ export function parseJSONPath(text: string) {
       return;
     }
 
-    const value = get(run.result, restPath);
-    result = result.replace(match, value);
+    if (typeof run.result === 'string') {
+      result = result.replaceAll(match, run.result);
+    } else {
+      const value = get(run.result, restPath);
+      result = result.replaceAll(
+        match,
+        typeof value === 'undefined' || value === null ? '' : value,
+      );
+    }
   });
 
   return result;
