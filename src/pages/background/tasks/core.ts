@@ -4,6 +4,7 @@ import emitter from '@/share/core/emitter';
 import logger from '@/share/core/logger';
 import { getSession, readStorage } from '@/share/core/storage';
 import type { Task, TaskRun } from '@/share/core/types';
+import { sleep } from '@/share/core/utils';
 import { getDatabase } from '../core/db';
 import { pifyIDBRequest } from '../utils';
 
@@ -132,13 +133,28 @@ export function removeTaskRun(taskKey: string) {
 }
 
 export async function runTaskAndSave(task: Task) {
-  const result = await runTask(task);
-  if (result.status === 'done') {
-    validTaskRun[task.key] = result;
+  let result: any;
+  let count = task.retry?.max || 1;
+  const wait = 1000 * (task.retry?.wait || 0);
+  while (count--) {
+    try {
+      result = await runTask(task);
+      if (result.status === 'done') {
+        validTaskRun[task.key] = result;
+        break;
+      }
+    } catch (e) {
+      logger.debug('[task] runTask error', task, e);
+      if (wait > 0) {
+        await sleep(wait);
+      }
+    }
   }
-  logger.debug('[task] save taskRun storage', task, result);
-  await getSession().set({
-    [`taskRun_${task.key}`]: result,
-  });
-  return result;
+  if (result.status === 'done') {
+    logger.debug('[task] save taskRun storage', task, result);
+    await getSession().set({
+      [`taskRun_${task.key}`]: result,
+    });
+    return result;
+  }
 }

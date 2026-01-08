@@ -728,5 +728,28 @@
   "view": {
     "message": "View",
     "description": "View rule or a link"
+  },
+  "last_run": {
+    "message": "Last run: $time$",
+    "placeholders": {
+      "time": {
+        "content": "$1"
+      }
+    }
+  },
+  "retry": {
+    "message": "Retry"
+  },
+  "yes": {
+    "message": "Yes"
+  },
+  "no": {
+    "message": "No"
+  },
+  "retry_max": {
+    "message": "Most retries"
+  },
+  "retry_wait": {
+    "message": "Retry interval (seconds)"
   }
 }

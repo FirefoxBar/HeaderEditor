@@ -46,15 +46,15 @@ const style = css`
   }
 `;
 
-const renderTaskStatus = (task: Task) => {
+const renderLastRun = (task: Task) => {
   if (!task.lastRun) {
-    return <Tag color="grey">{t('task_not_run')}</Tag>;
+    return null;
   }
   if (task.lastRun.status === 'done') {
     const { result, time } = task.lastRun;
     return (
-      <Tag
-        color="green"
+      <span
+        style={{ cursor: 'pointer' }}
         onClick={() =>
           Modal.info({
             title: t('task_last_run'),
@@ -80,14 +80,14 @@ const renderTaskStatus = (task: Task) => {
         }
       >
         {t('task_run_success')}
-      </Tag>
+      </span>
     );
   }
   if (task.lastRun.status === 'error') {
     const { error, time } = task.lastRun;
     return (
-      <Tag
-        color="red"
+      <span
+        style={{ cursor: 'pointer' }}
         onClick={() =>
           Modal.info({
             title: t('task_last_run'),
@@ -106,11 +106,11 @@ const renderTaskStatus = (task: Task) => {
         }
       >
         {t('task_run_error')}
-      </Tag>
+      </span>
     );
   }
   if (task.lastRun.status === 'running') {
-    return <Tag color="blue">{t('task_running')}</Tag>;
+    return <span>{t('task_running')}</span>;
   }
 };
 
@@ -160,12 +160,32 @@ const Tasks = () => {
                   <div className="list-item">
                     <Typography.Text className="title">
                       <Space>
+                        <Tag
+                          color="grey"
+                          style={{ cursor: 'pointer' }}
+                          onClick={() =>
+                            navigator.clipboard.writeText(task.key)
+                          }
+                        >
+                          {task.key}
+                        </Tag>
                         {task.name}
-                        {renderTaskStatus(task)}
                       </Space>
                     </Typography.Text>
                     <Typography.Text type="quaternary" className="content">
-                      {task.key} {t(`task_execute_${task.execute}`)}
+                      <Space>
+                        <span>
+                          {t('last_run', {
+                            time: task.lastRun
+                              ? dayjs(task.lastRun.time).format(
+                                  'YYYY-MM-DD HH:mm:ss',
+                                )
+                              : t('task_not_run'),
+                          })}
+                        </span>
+                        {renderLastRun(task)}
+                        <span>{t(`task_execute_${task.execute}`)}</span>
+                      </Space>
                     </Typography.Text>
                   </div>
                 }

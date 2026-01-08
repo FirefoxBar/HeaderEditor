@@ -35,7 +35,8 @@
         "useKeyWithClickEvents": "off",
         "useValidAnchor": "off",
         "useAltText": "off",
-        "useIframeTitle": "off"
+        "useIframeTitle": "off",
+        "noStaticElementInteractions": "off"
       },
       "style": {
         "noNonNullAssertion": "off"

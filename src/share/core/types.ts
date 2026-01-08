@@ -122,6 +122,11 @@ export interface Task {
 
   isFunction: boolean;
 
+  retry?: {
+    max: number;
+    wait: number; // seconds
+  };
+
   // define
   fetch?: {
     url: string;
