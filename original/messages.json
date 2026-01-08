@@ -283,6 +283,14 @@
   "interval_empty": {
     "message": "Time interval cannot be empty"
   },
+  "last_run": {
+    "message": "Last run: $time$",
+    "placeholders": {
+      "time": {
+        "content": "$1"
+      }
+    }
+  },
   "lite_edit_tip": {
     "message": "Some features are not supported in the lite version",
     "description": "Tip at the edit panel for lite version"
@@ -362,6 +370,9 @@
   "name_empty": {
     "message": "Name cannot be empty",
     "description": "Message for saving a rule without name"
+  },
+  "no": {
+    "message": "No"
   },
   "no_update": {
     "message": "No updates available",
@@ -490,6 +501,15 @@
   },
   "result": {
     "message": "Result"
+  },
+  "retry": {
+    "message": "Retry"
+  },
+  "retry_max": {
+    "message": "Most retries"
+  },
+  "retry_wait": {
+    "message": "Retry interval (seconds)"
   },
   "ruleType": {
     "message": "Rule type",
@@ -728,5 +748,8 @@
   "view": {
     "message": "View",
     "description": "View rule or a link"
+  },
+  "yes": {
+    "message": "Yes"
   }
 }
