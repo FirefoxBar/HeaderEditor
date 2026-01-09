@@ -1,6 +1,6 @@
 import assert from 'node:assert';
 import { setTimeout as sleep } from 'node:timers/promises';
-import { getTask, saveTask } from './scripts/api.mjs';
+import { getTask, runTask, saveTask } from './scripts/api.mjs';
 import { runTest } from './scripts/browser.mjs';
 import { randStr, testServer } from './scripts/utils.mjs';
 
