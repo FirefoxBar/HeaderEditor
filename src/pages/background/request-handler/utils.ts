@@ -1,5 +1,5 @@
 import { get } from 'lodash-es';
-import { getValidTaskRun } from '../tasks/core';
+import { getValidTaskRun } from '../core/task';
 
 const textDecoder: Map<string, TextDecoder> = new Map();
 
