@@ -21,7 +21,6 @@ export function getDatabase(): Promise<IDBDatabase> {
         );
         handler.createObjectStore(TABLE_NAME_TASKS, {
           keyPath: 'key',
-          autoIncrement: true,
         });
         return;
       }
