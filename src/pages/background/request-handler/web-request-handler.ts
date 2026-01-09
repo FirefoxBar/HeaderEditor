@@ -10,6 +10,7 @@ import {
   IS_SUPPORT_STREAM_FILTER,
   isValidArray,
 } from '@/share/core/utils';
+import { basicHelper } from '../core/function-helper';
 import { get as getRules } from '../core/rules';
 import { parseJSONPath, textDecode, textEncode } from './utils';
 
@@ -238,9 +239,9 @@ class WebRequestHandler {
       if (item.ruleType === RULE_TYPE.CANCEL && !item.isFunction) {
         return { cancel: true };
       }
-      if (item.isFunction) {
+      if (item.isFunction && ENABLE_EVAL) {
         try {
-          const r = item._func(redirectTo, detail);
+          const r = item._func.call(basicHelper, redirectTo, detail);
           if (typeof r === 'string') {
             logger.debug(
               `[web-request-handler] [rule: ${item.id}] redirect ${redirectTo} to ${r}`,
@@ -486,11 +487,11 @@ class WebRequestHandler {
         value: newHeaders[k],
       });
     }
-    if (functions.length > 0) {
+    if (functions.length > 0 && ENABLE_EVAL) {
       const detail = presetDetail || this.makeDetails(request);
       functions.forEach(item => {
         try {
-          item._func(headers, detail);
+          item._func.call(basicHelper, headers, detail);
         } catch (e) {
           console.error(e);
         }
@@ -560,6 +561,10 @@ class WebRequestHandler {
       return;
     }
 
+    if (!ENABLE_EVAL) {
+      return;
+    }
+
     const filter = browser.webRequest.filterResponseData(e.requestId);
     let buffers: Uint8Array | null = null;
 
@@ -601,7 +606,7 @@ class WebRequestHandler {
               finalBody = body;
             }
           }
-          const text = item._func(finalBody, detail);
+          const text: any = item._func.call(basicHelper, finalBody, detail);
           if (typeof text === 'string' && text !== finalBody) {
             finalBody = text;
             hasChanged = true;

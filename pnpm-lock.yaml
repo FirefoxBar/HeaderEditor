@@ -114,8 +114,8 @@ importers:
         specifier: ^18.3.1
         version: 18.3.1
       '@types/webextension-polyfill':
-        specifier: ^0.12.3
-        version: 0.12.3
+        specifier: ^0.12.4
+        version: 0.12.4
       amo-upload:
         specifier: ^1.0.0
         version: 1.0.0
@@ -712,8 +712,8 @@ packages:
   '@types/unist@3.0.3':
     resolution: {integrity: sha512-ko/gIFJRv177XgZsZcBwnqJN5x/Gien8qNOn0D5bQU/zAzVf9Zt3BlcUiLqhV9y4ARk0GbT3tnUiPNgnTXzc/Q==}
 
-  '@types/webextension-polyfill@0.12.3':
-    resolution: {integrity: sha512-F58aDVSeN/MjUGazXo/cPsmR76EvqQhQ1v4x23hFjUX0cfAJYE+JBWwiOGW36/VJGGxoH74sVlRIF3z7SJCKyg==}
+  '@types/webextension-polyfill@0.12.4':
+    resolution: {integrity: sha512-wK8YdSI0pDiaehSLDIvtvonYmLwUUivg4Z6JCJO8rkyssMAG82cFJgwPK/V7NO61mJBLg/tXeoXQL8AFzpXZmQ==}
 
   '@types/yauzl@2.10.3':
     resolution: {integrity: sha512-oJoftv0LSuaDZE3Le4DbKX+KS9G36NzOeSap90UIK0yMA/NhKJhqlSGtNDORNRaIbQfzjXDrQa0ytJ6mNRGz/Q==}
@@ -4303,7 +4303,7 @@ snapshots:
 
   '@types/unist@3.0.3': {}
 
-  '@types/webextension-polyfill@0.12.3': {}
+  '@types/webextension-polyfill@0.12.4': {}
 
   '@types/yauzl@2.10.3':
     dependencies:

@@ -1,4 +1,5 @@
 import browser from 'webextension-polyfill';
+import { getLocal } from '@/share/core/storage';
 import { IS_CHROME } from '@/share/core/utils';
 import createApiHandler from './api-handler';
 import { init as initRules } from './core/rules';
@@ -31,6 +32,22 @@ function init() {
   if (IS_CHROME) {
     createChromeResponseModifier();
   }
+
+  // remove fake session storage
+  if (
+    typeof chrome !== 'undefined' &&
+    !('session' in chrome.storage) &&
+    'getKeys' in getLocal()
+  ) {
+    getLocal()
+      .getKeys()
+      .then(keys => {
+        const removeKeys = keys.filter(key => key.startsWith('sess_'));
+        if (removeKeys.length > 0) {
+          getLocal().remove(removeKeys);
+        }
+      });
+  }
 }
 
 if (typeof window !== 'undefined') {
@@ -41,7 +58,7 @@ if (typeof window !== 'undefined') {
 if (MANIFEST_VER === 'v3') {
   try {
     browser.runtime.onStartup.addListener(init);
-  } catch (e) {
+  } catch (_) {
     // ignore
   }
 }

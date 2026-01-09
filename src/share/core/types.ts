@@ -103,40 +103,59 @@ export interface PrefValue {
 }
 
 export interface TaskRun {
+  // 任务 Key
   key: string;
+  // 开始运行的时间
   time: number;
+  // 运行状态
   status: 'running' | 'done' | 'error';
+  // 错误信息
   error?: string;
+  // 运行结果
   result?: any;
 }
 
 export interface Task {
+  // 任务 Key
   key: string;
+  // 任务名称
   name: string;
-
-  execute: 'once' | 'interval' | 'cron';
-  cron?: string;
-  interval?: number; // minutes
-
-  lastRun?: TaskRun;
-
+  // 是否是函数
   isFunction: boolean;
 
+  // 运行类型
+  execute: 'once' | 'interval' | 'cron';
+  // Cron 表达式
+  cron?: string;
+  // 时间间隔（分）
+  interval?: number;
+
+  // 重试设置
   retry?: {
+    // 最大重试次数
     max: number;
-    wait: number; // seconds
+    // 重试等待时间（秒）
+    wait: number;
   };
 
-  // define fetch
+  // Fetch 设置
   fetch?: {
+    // 请求 URL
     url: string;
+    // 请求方法
     method: string;
+    // 请求头
     headers?: Record<string, string>;
+    // 请求体
     body?: string;
+    // 响应类型
     responseType?: 'json' | 'text';
+    // 验证器
     validator?: RulesLogic;
   };
 
-  // function code
+  // 自定义函数代码
   code?: string;
+
+  _func?: () => Promise<void>;
 }

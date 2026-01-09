@@ -1,15 +1,19 @@
 import { apply as applyJsonLogic } from 'json-logic-js';
+import { cloneDeep, pick } from 'lodash-es';
 import { TABLE_NAME_TASKS } from '@/share/core/constant';
 import emitter from '@/share/core/emitter';
 import logger from '@/share/core/logger';
-import { getSession, readStorage } from '@/share/core/storage';
+import { getLocal, getSession, readStorage } from '@/share/core/storage';
 import type { Task, TaskRun } from '@/share/core/types';
 import { sleep } from '@/share/core/utils';
 import { getDatabase } from '../core/db';
 import { pifyIDBRequest } from '../utils';
+import { basicHelper, createStorage } from './function-helper';
 
 const validTaskRun: Record<string, TaskRun> = {};
 const lastTaskRun: Record<string, TaskRun> = {};
+
+const cachedTasks: Record<string, Task> = {};
 
 export function getValidTaskRun(key: string) {
   return validTaskRun[key];
@@ -33,19 +37,96 @@ export async function getTasks(): Promise<Task[]> {
         resolve(all);
         return;
       }
-      all.push(cursor.value);
+      const t: Task = cursor.value;
+      all.push(t);
+      if (!cachedTasks[t.key]) {
+        cachedTasks[t.key] = t;
+      }
       cursor.continue();
     };
   });
 }
 
 export async function getTask(key: string): Promise<Task | null> {
+  if (cachedTasks[key]) {
+    return cachedTasks[key];
+  }
+
   const db = await getDatabase();
 
   const tx = db.transaction([TABLE_NAME_TASKS], 'readonly');
   const os = tx.objectStore(TABLE_NAME_TASKS);
 
-  return pifyIDBRequest(os.get(key));
+  const res = await pifyIDBRequest(os.get(key));
+  if (res) {
+    cachedTasks[key] = res;
+  }
+  return res;
+}
+
+export async function saveTask(taskInfo: Task) {
+  const db = await getDatabase();
+
+  const tx = db.transaction([TABLE_NAME_TASKS], 'readwrite');
+  const os = tx.objectStore(TABLE_NAME_TASKS);
+
+  const exists = await pifyIDBRequest(os.get(taskInfo.key));
+  if (exists) {
+    const original = cloneDeep(exists);
+    const copy = pick(
+      taskInfo,
+      'key',
+      'name',
+      'execute',
+      'cron',
+      'interval',
+      'isFunction',
+      'fetch',
+      'code',
+    );
+    Object.assign(original, copy);
+    await pifyIDBRequest(os.put(original));
+    emitter.emit(emitter.INNER_TASK_UPDATE, { task: original });
+    if (cachedTasks[taskInfo.key]) {
+      cachedTasks[taskInfo.key] = taskInfo;
+    }
+    return original;
+  }
+
+  // Create
+  await pifyIDBRequest(os.add(taskInfo));
+  emitter.emit(emitter.INNER_TASK_UPDATE, { task: taskInfo });
+  if (cachedTasks[taskInfo.key]) {
+    cachedTasks[taskInfo.key] = taskInfo;
+  }
+  return taskInfo;
+}
+
+export async function removeTask(key: string) {
+  const db = await getDatabase();
+  const tx = db.transaction([TABLE_NAME_TASKS], 'readwrite');
+  const os = tx.objectStore(TABLE_NAME_TASKS);
+  await pifyIDBRequest(os.delete(key));
+  removeTaskRun(key);
+  if (cachedTasks[key]) {
+    delete cachedTasks[key];
+  }
+  if (validTaskRun[key]) {
+    delete validTaskRun[key];
+  }
+  if (lastTaskRun[key]) {
+    delete lastTaskRun[key];
+  }
+  if ('getKeys' in getLocal()) {
+    // remove storage
+    getLocal()
+      .getKeys()
+      .then(keys => {
+        const k = keys.filter(key => key.startsWith(`f#t#${key}#`));
+        if (k.length > 0) getLocal().remove(k);
+      });
+  }
+  emitter.emit(emitter.INNER_TASK_REMOVE, { key });
 }
 
 export async function loadTaskRun(key: string): Promise<TaskRun | undefined> {
@@ -86,9 +167,17 @@ export async function runTask(task: Task) {
   };
 
   if (task.isFunction && task.code && ENABLE_EVAL) {
+    if (!task._func) {
+      task._func = new Function(`return async function() { ${task.code} }`)();
+    }
     try {
-      const fn = new Function(`return async function() { ${task.code} }`)();
-      return onSuccess(await fn());
+      return onSuccess(
+        await task._func!.call({
+          ...basicHelper,
+          sessionStorage: createStorage(`t#${task.key}`, getSession()),
+          localStorage: createStorage(`t#${task.key}`, getLocal()),
+        }),
+      );
     } catch (e) {
       return onError((e as Error).message);
     }

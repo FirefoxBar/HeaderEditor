@@ -1,61 +1,19 @@
-import { cloneDeep, pick } from 'lodash-es';
-import { TABLE_NAME_TASKS } from '@/share/core/constant';
-import emitter from '@/share/core/emitter';
-import type { Task } from '@/share/core/types';
-import { getDatabase } from '../core/db';
-import { pifyIDBRequest } from '../utils';
 import {
   getLastTaskRun,
   getTask as innerGetTask,
   getTasks as innerGetTasks,
+  removeTask,
   runTaskAndSave,
-} from './core';
+  saveTask,
+} from '../core/task';
+
+export { removeTask, saveTask };
 
 export async function runTask(key: string) {
   const task = await innerGetTask(key);
   if (task) {
     return runTaskAndSave(task);
   }
-}
-
-export async function saveTask(taskInfo: Task) {
-  const db = await getDatabase();
-
-  const tx = db.transaction([TABLE_NAME_TASKS], 'readwrite');
-  const os = tx.objectStore(TABLE_NAME_TASKS);
-
-  const exists = await pifyIDBRequest(os.get(taskInfo.key));
-  if (exists) {
-    const original = cloneDeep(exists);
-    const copy = pick(
-      taskInfo,
-      'key',
-      'name',
-      'execute',
-      'cron',
-      'interval',
-      'isFunction',
-      'fetch',
-      'code',
-    );
-    Object.assign(original, copy);
-    await pifyIDBRequest(os.put(original));
-    emitter.emit(emitter.INNER_TASK_UPDATE, { task: original });
-    return original;
-  }
-
-  // Create
-  await pifyIDBRequest(os.add(taskInfo));
-  emitter.emit(emitter.INNER_TASK_UPDATE, { task: taskInfo });
-  return taskInfo;
-}
-
-export async function removeTask(key: string) {
-  const db = await getDatabase();
-  const tx = db.transaction([TABLE_NAME_TASKS], 'readwrite');
-  const os = tx.objectStore(TABLE_NAME_TASKS);
-  await pifyIDBRequest(os.delete(key));
-  emitter.emit(emitter.INNER_TASK_REMOVE, { key });
 }
 
 export async function getTask(key: string) {

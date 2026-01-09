@@ -57,7 +57,7 @@
     "@types/node": "^18.15.5",
     "@types/react": "^18.3.1",
     "@types/react-dom": "^18.3.1",
-    "@types/webextension-polyfill": "^0.12.3",
+    "@types/webextension-polyfill": "^0.12.4",
     "amo-upload": "^1.0.0",
     "axios": "^1.7.2",
     "cpr": "^3.0.1",

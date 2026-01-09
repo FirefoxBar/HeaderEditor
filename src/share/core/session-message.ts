@@ -38,7 +38,7 @@ const remove = async (id: string) => {
 };
 
 type StorageOnChange = Parameters<
-  Browser.Storage.StorageAreaWithUsage['onChanged']['addListener']
+  Browser.Storage.StorageArea['onChanged']['addListener']
 >[0];
 const watch = (callback: (message: SessionMessageItem[]) => void) => {
   const s = getSession();

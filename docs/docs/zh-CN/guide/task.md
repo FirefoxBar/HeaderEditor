@@ -73,3 +73,98 @@ return res.json();
 * 可以在规则的 重定向至、请求/响应头内容、响应体中使用此语法。
 * 如果响应类型配置为“文本”，则任何 `{$TASK.task1.*}` 均会获取到完整的响应文本。
 * 当请求失败或尚未完成请求时，该语法会被替换为空字符串。
+
+## 工具函数
+
+在任务的自定义函数中，Header Editor 提供了以下工具函数：
+
+函数列表如下：
+* 通过 `this._` 调用部分 [lodash](https://lodash.com/docs/4.17.21) 函数：clone, cloneDeep, cloneDeepWith, cloneWith, difference, differenceBy, differenceWith, eq, first, flatten, get, has, head, isEqual, isEqualWith, last, pick, pickBy, random, set, setWith, uniq, uniqBy, uniqWith
+* 通过 `this.task` 获取任务相关内容。
+  * `this.task.get`: 获取任务信息。
+  * `this.task.getLastRun`: 获取任务上一次运行结果。
+  * `this.task.getValidRun`: 获取任务上一次成功运行的结果。
+* 通过 `this.sessionStorage` 或 `this.localStorage` 进行数据存取。其中，`localStorage` 为持久化存储，`sessionStorage` 为会话级存储（浏览器关闭时清空）。
+
+相关函数定义如下：
+```ts
+declare const this: {
+  _: { /* lodash */ },
+  task: {
+    // 获取任务信息
+    get: (key: string) => Promise<Task | null>,
+    // 获取任务上一次运行结果
+    getLastRun: (key: string) => Promise<TaskRun | undefined>,
+    // 获取任务上一次成功运行的结果
+    getValidRun: (key: string) => Promise<TaskRun | undefined>,
+  },
+  sessionStorage: Storage,
+  localStorage: Storage,
+}
+
+declare interface Storage {
+  get: (key: string) => Promise<any>,
+  set: (key: string, value: any) => Promise<void>,
+  remove: (key: string) => Promise<void>,
+  has: (key: string) => Promise<boolean>,
+}
+```
+
+## Task 相关类型定义
+
+Task 相关类型定义如下：
+```ts
+// 任务运行记录
+interface TaskRun {
+  // 任务 Key
+  key: string;
+  // 开始运行的时间
+  time: number;
+  // 运行状态
+  status: 'running' | 'done' | 'error';
+  // 错误信息
+  error?: string;
+  // 运行结果
+  result?: any;
+}
+
+// 任务信息
+interface Task {
+  // 任务 Key
+  key: string;
+  // 任务名称
+  name: string;
+  // 运行类型
+  execute: 'once' | 'interval' | 'cron';
+  // Cron 表达式
+  cron?: string;
+  // 时间间隔（分）
+  interval?: number;
+  // 是否是函数
+  isFunction: boolean;
+  // 重试设置
+  retry?: {
+    // 最大重试次数
+    max: number;
+    // 重试等待时间（秒）
+    wait: number;
+  };
+  // Fetch 设置
+  fetch?: {
+    // 请求 URL
+    url: string;
+    // 请求方法
+    method: string;
+    // 请求头
+    headers?: Record<string, string>;
+    // 请求体
+    body?: string;
+    // 响应类型
+    responseType?: 'json' | 'text';
+    // 验证器
+    validator?: RulesLogic;
+  };
+  // 自定义函数代码
+  code?: string;
+}
+```

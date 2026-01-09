@@ -6,6 +6,7 @@ import logger from '@/share/core/logger';
 import { prefs } from '@/share/core/prefs';
 import type { InitdRule, Rule } from '@/share/core/types';
 import { isValidArray } from '@/share/core/utils';
+import { basicHelper } from '../core/function-helper';
 import { filter, get, waitLoad } from '../core/rules';
 import { parseJSONPath, textDecode, textEncode } from './utils';
 
@@ -298,8 +299,8 @@ class ChromeResponseModifier {
         if (rule.headers) {
           Object.assign(newHeaders, rule.headers);
         }
-        if (rule.isFunction) {
-          const body = rule._func(finalBody, {
+        if (rule.isFunction && ENABLE_EVAL) {
+          const body = rule._func.call(basicHelper, finalBody, {
             ...params,
             browser: 'chrome',
           });
