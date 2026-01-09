@@ -9,7 +9,7 @@ import {
   loadTaskRun,
   removeTaskRun,
   runTaskAndSave,
-} from './core';
+} from '../core/task';
 
 export async function checkOneTask(task: Task) {
   const data = await loadTaskRun(task.key);

@@ -24,8 +24,8 @@ describe('Redirect', () =>
         const query = JSON.parse(
           await getPageValue(browser.browser, `get123/test${key}`),
         );
-        assert.strictEqual(query['id'], '123');
-        assert.strictEqual(query['value'], `test${key}`);
+        assert.strictEqual(query.id, '123');
+        assert.strictEqual(query.value, `test${key}`);
       } finally {
         await remove();
       }
@@ -54,7 +54,7 @@ describe('Modify Request Header', () =>
       try {
         const header = await getHeader(browser.browser);
 
-        assert.strictEqual(header['X_TEST_HEADER'], key);
+        assert.strictEqual(header.X_TEST_HEADER, key);
       } finally {
         await remove();
       }
@@ -81,9 +81,9 @@ describe('Exclude regex', () =>
 
     try {
       const header1 = await getHeader(browser.browser, 't123=1');
-      assert.strictEqual(header1['X_EXCLUDE'], undefined);
+      assert.strictEqual(header1.X_EXCLUDE, undefined);
       const header2 = await getHeader(browser.browser);
-      assert.strictEqual(header2['X_EXCLUDE'], key);
+      assert.strictEqual(header2.X_EXCLUDE, key);
     } finally {
       await remove();
     }
@@ -110,7 +110,7 @@ describe('Disable rule', () =>
 
       const header = await getHeader(browser.browser);
 
-      assert.strictEqual(header['X_TEST_HEADER'], undefined);
+      assert.strictEqual(header.X_TEST_HEADER, undefined);
 
       await remove();
     },
@@ -198,11 +198,11 @@ describe('Disable All', () =>
         await setPref(browser.popup, 'disable-all', true);
         await sleep(100);
         const header1 = await getHeader(browser.browser);
-        assert.strictEqual(header1['X_TEST_DISABLE'], undefined);
+        assert.strictEqual(header1.X_TEST_DISABLE, undefined);
         await setPref(browser.popup, 'disable-all', false);
         await sleep(100);
         const header2 = await getHeader(browser.browser);
-        assert.strictEqual(header2['X_TEST_DISABLE'], key);
+        assert.strictEqual(header2.X_TEST_DISABLE, key);
       } finally {
         await remove();
       }

@@ -196,6 +196,18 @@ export async function cleanup() {
   }
 }
 
+export async function runInBrowsers(keys, cb) {
+  await Promise.all(
+    keys.map(key => () => {
+      const client = browserList[key];
+      if (!client) {
+        return Promise.resolve();
+      }
+      return cb(client);
+    }),
+  );
+}
+
 export function runTest(keys, cb) {
   for (const key of keys) {
     it(key, () => {

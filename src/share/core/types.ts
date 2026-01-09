@@ -157,5 +157,6 @@ export interface Task {
   // 自定义函数代码
   code?: string;
 
+  lastRun?: TaskRun;
   _func?: () => Promise<void>;
 }

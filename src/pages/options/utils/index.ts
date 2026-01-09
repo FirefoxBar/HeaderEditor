@@ -28,7 +28,11 @@ export async function createExport(arr: {
         Array.from(tasks)
           .map(x => allTasks.find(y => y.key === x))
           .filter(Boolean) as Task[]
-      ).map(x => [x.key, x]),
+      ).map(x => {
+        delete x.lastRun;
+        delete x._func;
+        return [x.key, x];
+      }),
     );
   }
   return result;
