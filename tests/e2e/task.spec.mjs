@@ -8,7 +8,7 @@ describe('Fetch task', () => {
   const key = `task_${randStr()}`;
   const value = randStr();
   const removes = [];
-  beforeAll(() =>
+  before(() =>
     runInBrowsers(
       ['edge_v2', 'chrome_v3', 'firefox_v2', 'firefox_v3'],
       async browser => {
@@ -26,7 +26,7 @@ describe('Fetch task', () => {
       },
     ),
   );
-  afterAll(() => removes.forEach(remove => remove()));
+  after(() => removes.forEach(remove => remove()));
 
   describe('Get task result', () =>
     runTest(
