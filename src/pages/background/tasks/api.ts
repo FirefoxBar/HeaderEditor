@@ -54,7 +54,7 @@ export async function removeTask(key: string) {
   const db = await getDatabase();
   const tx = db.transaction([TABLE_NAME_TASKS], 'readwrite');
   const os = tx.objectStore(TABLE_NAME_TASKS);
-  await pifyIDBRequest(os.delete(Number(key)));
+  await pifyIDBRequest(os.delete(key));
   emitter.emit(emitter.INNER_TASK_REMOVE, { key });
 }
 
