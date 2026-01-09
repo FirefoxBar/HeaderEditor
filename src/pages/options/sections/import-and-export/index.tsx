@@ -8,14 +8,13 @@ import {
 import { Button, Card, Input, Space, Table, Toast } from '@douyinfe/semi-ui';
 import * as React from 'react';
 import { openURL } from '@/pages/background/utils';
-import { getExportName } from '@/pages/options/utils';
-import { createExport } from '@/share/core/rule-utils';
 import { getLocal, readStorage } from '@/share/core/storage';
 import type { BasicRule } from '@/share/core/types';
 import { fetchUrl, t } from '@/share/core/utils';
 import Api from '@/share/pages/api';
 import file from '@/share/pages/file';
 import { Layout } from '../layout';
+import { batchShare } from '../rules/utils';
 import Cloud from './cloud';
 import ImportDrawer from './import-drawer';
 
@@ -101,10 +100,7 @@ export default class ImportAndExport extends React.Component<{}, IEState> {
 
   async handleExport() {
     const result = await Api.getAllRules();
-    file.save(
-      JSON.stringify(createExport(result), null, '\t'),
-      getExportName(),
-    );
+    batchShare(Object.values(result).flat());
   }
 
   handleOpenThird() {

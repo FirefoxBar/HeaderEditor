@@ -51,7 +51,7 @@ class BrowserSync {
         toSave[`backup_${index++}`] = one;
       }
       toSave.backup = {
-        time: new Date().getTime(),
+        time: Date.now(),
         index: index - 1,
       };
       return getSync().set(toSave);
@@ -59,7 +59,7 @@ class BrowserSync {
 
     return getSync().set({
       backup: {
-        time: new Date().getTime(),
+        time: Date.now(),
         index: 0,
       },
       backup_0: rules,

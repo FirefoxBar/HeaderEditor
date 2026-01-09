@@ -28,19 +28,18 @@ import type {
 } from '@douyinfe/semi-ui/lib/es/table';
 import { css } from '@emotion/css';
 import { useResponsive } from 'ahooks';
-import { getExportName, selectGroup } from '@/pages/options/utils';
+import { selectGroup } from '@/pages/options/utils';
 import Modal from '@/share/components/modal';
 import RuleContentSwitcher from '@/share/components/rule-content-switcher';
 import RuleDetail from '@/share/components/rule-detail';
-import { TABLE_NAMES_ARR, VIRTUAL_KEY } from '@/share/core/constant';
-import { convertToBasicRule, createExport } from '@/share/core/rule-utils';
+import { VIRTUAL_KEY } from '@/share/core/constant';
+import { convertToBasicRule } from '@/share/core/rule-utils';
 import type { RuleWithVirtualKey } from '@/share/core/types';
-import { getTableName, t } from '@/share/core/utils';
+import { t } from '@/share/core/utils';
 import useMarkCommon from '@/share/hooks/use-mark-common';
 import Api from '@/share/pages/api';
-import file from '@/share/pages/file';
 import { textEllipsis } from '@/share/pages/styles';
-import { remove, toggleRule } from './utils';
+import { batchShare, remove, toggleRule } from './utils';
 
 interface RuleCardProps {
   name: string;
@@ -291,17 +290,7 @@ const RuleGroupCard = (props: RuleCardProps) => {
               {
                 node: 'item',
                 name: t('share'),
-                onClick: () => {
-                  const result: any = {};
-                  TABLE_NAMES_ARR.forEach(tb => {
-                    result[tb] = [];
-                  });
-                  rules.forEach(e => result[getTableName(e.ruleType)].push(e));
-                  file.save(
-                    JSON.stringify(createExport(result), null, '\t'),
-                    getExportName(),
-                  );
-                },
+                onClick: () => batchShare(rules),
                 icon: <IconSend />,
               },
               {

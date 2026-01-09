@@ -7,6 +7,7 @@ import { prefs } from '@/share/core/prefs';
 import { detectRunner } from '@/share/core/rule-utils';
 import SessionMessage from '@/share/core/session-message';
 import { getSession, readStorage } from '@/share/core/storage';
+import { getRuleUsedTasks } from '@/share/core/tasks';
 import type { Rule, Task } from '@/share/core/types';
 import {
   getVirtualKey,
@@ -15,7 +16,7 @@ import {
   t,
 } from '@/share/core/utils';
 import { getAll, get as getRules, waitLoad } from '../../core/rules';
-import { createDNR, getRuleId, getRuleUsedTasks } from './utils';
+import { createDNR, getRuleId } from './utils';
 
 type DNRRule = DeclarativeNetRequest.Rule;
 

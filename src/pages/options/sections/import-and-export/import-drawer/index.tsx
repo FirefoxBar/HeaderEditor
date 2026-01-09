@@ -6,7 +6,8 @@ import { selectGroup } from '@/pages/options/utils';
 import BoolRadioGroup from '@/share/components/bool-radio';
 import { TABLE_NAMES_ARR } from '@/share/core/constant';
 import { fromJson } from '@/share/core/rule-utils';
-import type { BasicRule, ImportRule } from '@/share/core/types';
+import { getRuleUsedTasks } from '@/share/core/tasks';
+import type { BasicRule, ImportRule, Rule, Task } from '@/share/core/types';
 import { t } from '@/share/core/utils';
 import Api from '@/share/pages/api';
 
@@ -26,6 +27,8 @@ export default class ImportDrawer extends React.Component<
   ImportDrawerProps,
   ImportDrawerState
 > {
+  tasks?: Record<string, Task>;
+
   constructor(props: any) {
     super(props);
 
@@ -42,7 +45,7 @@ export default class ImportDrawer extends React.Component<
     };
   }
 
-  show(content: { [key: string]: BasicRule[] }) {
+  show(content: any) {
     this.setState({
       ...this.state,
       list: [],
@@ -57,7 +60,7 @@ export default class ImportDrawer extends React.Component<
         if (!list[tableName]) {
           return;
         }
-        list[tableName].forEach(e => {
+        list[tableName].forEach((e: Rule) => {
           totalCount++;
           Api.getRules(tableName, { name: e.name }).then(rule => {
             const it: ImportRule = {
@@ -79,15 +82,18 @@ export default class ImportDrawer extends React.Component<
           });
         });
       });
+      if (content.tasks) {
+        this.tasks = content.tasks;
+      }
     } catch (e) {
       console.error(e);
     }
   }
 
   handleConfirm() {
-    // TODO: 处理 task 导入
     // 确认导入
     const queue: any[] = [];
+    const tasks = new Set<string>();
     this.state.list.forEach((e: any) => {
       // 不导入
       if (e.importAction === 3) {
@@ -106,8 +112,15 @@ export default class ImportDrawer extends React.Component<
       if (typeof e.enable === 'undefined') {
         e.enable = true;
       }
+      getRuleUsedTasks(e).forEach(task => tasks.add(task));
       queue.push(Api.saveRule(e));
     });
+    // 处理 task 导入
+    if (tasks.size > 0) {
+      Array.from(tasks)
+        .map(x => this.tasks?.[x])
+        .forEach(t => queue.push(t ? Api.saveTask(t) : Promise.resolve()));
+    }
     Promise.all(queue).then(() => {
       // this.imports.status = 0;
       Toast.success(t('import_success'));
@@ -222,8 +235,8 @@ export default class ImportDrawer extends React.Component<
               render: (_v: any, item: ImportRule) => (
                 <Select
                   value={item.importAction}
-                  onChange={(value: string) =>
-                    this.handleActionChange(item, value)
+                  onChange={value =>
+                    this.handleActionChange(item, value as string)
                   }
                   optionList={[
                     { label: t('import_new'), value: 1 },

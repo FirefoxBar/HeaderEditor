@@ -68,15 +68,6 @@ export function initRule(
   return initd;
 }
 
-export function createExport(arr: { [key: string]: Array<Rule | InitdRule> }) {
-  // TODO: 一并导出规则
-  const result: { [key: string]: BasicRule[] } = {};
-  Object.keys(arr).forEach(k => {
-    result[k] = arr[k].map(e => convertToBasicRule(e));
-  });
-  return result;
-}
-
 export function convertToRule(rule: InitdRule | Rule): Rule {
   const item: any = { ...rule };
   delete item._reg;
