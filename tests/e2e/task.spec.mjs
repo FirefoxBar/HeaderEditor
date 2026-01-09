@@ -26,7 +26,7 @@ describe('Run task', () =>
         await sleep(100);
         const result = await getTask(browser.popup, key);
         assert.strictEqual(result.lastRun.status, 'done');
-        assert.strictEqual(result.lastRun.result.value, value);
+        assert.deepStrictEqual(result.lastRun.result, { value });
       } finally {
         await remove();
       }
