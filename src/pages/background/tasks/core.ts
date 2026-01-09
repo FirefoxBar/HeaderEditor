@@ -73,7 +73,7 @@ export async function runTask(task: Task) {
     logger.debug('[task] runTask success', task, taskRes);
     result.status = 'done';
     result.result = taskRes;
-    validTaskRun[task.key] = taskRes;
+    validTaskRun[task.key] = result;
     emitter.emit(emitter.INNER_TASK_RUN, task, result);
     return result;
   };
@@ -102,11 +102,10 @@ export async function runTask(task: Task) {
         body: task.fetch.body,
       });
       let taskRes: any;
-      if (task.fetch.responseType === 'text') {
-        taskRes = await res.text();
-      }
       if (task.fetch.responseType === 'json') {
         taskRes = await res.json();
+      } else {
+        taskRes = await res.text();
       }
       const validator = task.fetch.validator;
       if (validator) {
@@ -140,7 +139,6 @@ export async function runTaskAndSave(task: Task) {
     try {
       result = await runTask(task);
       if (result.status === 'done') {
-        validTaskRun[task.key] = result;
         break;
       }
     } catch (e) {

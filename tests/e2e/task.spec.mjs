@@ -18,6 +18,7 @@ describe('Run task', () =>
         fetch: {
           url: `${testServer}mock-json.php?value=${value}`,
           method: 'GET',
+          responseType: 'json',
         },
       });
 
