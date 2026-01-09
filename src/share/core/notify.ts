@@ -1,8 +1,8 @@
-import browser, { Tabs } from 'webextension-polyfill';
 import EventEmitter from 'eventemitter3';
+import browser, { type Tabs } from 'webextension-polyfill';
+import { APIs } from './constant';
 import logger from './logger';
 import { canAccess, getGlobal, IS_ANDROID } from './utils';
-import { APIs } from './constant';
 
 class Notify {
   event = new EventEmitter();
@@ -14,7 +14,7 @@ class Notify {
   private messageTimer: ReturnType<typeof setTimeout> | null = null;
 
   constructor() {
-    const handleMessage = (request: any, sender?: any) => {
+    const handleMessage = (request: any) => {
       if (request.method === 'notifyBackground') {
         request.method = request.reason;
         delete request.reason;
@@ -26,10 +26,10 @@ class Notify {
       this.event.emit(request.event, request);
     };
 
-    browser.runtime.onMessage.addListener((request, sender) => {
+    browser.runtime.onMessage.addListener((request: any) => {
       // 批量消息
       if (request.method === 'batchExecute') {
-        request.batch.forEach((item) => handleMessage(item));
+        request.batch.forEach((item: any) => handleMessage(item));
         return;
       }
       handleMessage(request);
@@ -50,11 +50,14 @@ class Notify {
       }
       if (currentQueue.length === 1) {
         const first = currentQueue[0];
-        browser.runtime.sendMessage(first.request).then(first.resolve).catch(first.reject);
+        browser.runtime
+          .sendMessage(first.request)
+          .then(first.resolve)
+          .catch(first.reject);
         return;
       }
       // 有多条并行执行
-      const messages = currentQueue.map((x) => x.request);
+      const messages = currentQueue.map(x => x.request);
       const result = await browser.runtime.sendMessage({
         method: 'batchExecute',
         batch: messages,
@@ -82,7 +85,11 @@ class Notify {
   }
 
   background(request: any) {
-    return this.sendMessage({ ...request, method: 'notifyBackground', reason: request.method });
+    return this.sendMessage({
+      ...request,
+      method: 'notifyBackground',
+      reason: request.method,
+    });
   }
 
   async tabs(request: any, filterTab?: (tab: Tabs.Tab) => boolean) {
@@ -105,12 +112,12 @@ class Notify {
     // notify other tabs
     const windows = await browser.windows.getAll({ populate: true });
     return Promise.all(
-      windows.map((win) => {
+      windows.map(win => {
         if (!win.tabs) {
           return Promise.resolve();
         }
         return Promise.all(
-          win.tabs.map((tab) => {
+          win.tabs.map(tab => {
             if (!canAccess(tab.url)) {
               return Promise.resolve();
             }

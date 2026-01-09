@@ -22,8 +22,10 @@ import { css } from '@emotion/css';
 import { useRequest } from 'ahooks';
 import dayjs from 'dayjs';
 import { cloneDeep } from 'lodash-es';
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import Modal from '@/share/components/modal';
+import { EVENTs } from '@/share/core/constant';
+import notify from '@/share/core/notify';
 import type { Task } from '@/share/core/types';
 import { t } from '@/share/core/utils';
 import Api from '@/share/pages/api';
@@ -124,6 +126,16 @@ const Tasks = () => {
   } = useRequest(Api.getTasks, {
     manual: false,
   });
+
+  useEffect(() => {
+    notify.event.on(EVENTs.TASK_SAVE, refresh);
+    notify.event.on(EVENTs.TASK_DELETE, refresh);
+
+    return () => {
+      notify.event.off(EVENTs.TASK_SAVE, refresh);
+      notify.event.off(EVENTs.TASK_DELETE, refresh);
+    };
+  }, []);
 
   return (
     <Layout

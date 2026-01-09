@@ -75,6 +75,8 @@ export enum IS_MATCH {
 export enum EVENTs {
   RULE_UPDATE = 'rule_update',
   RULE_DELETE = 'rule_delete',
+  TASK_SAVE = 'task_save',
+  TASK_DELETE = 'task_del',
 }
 
 export const ALL_RESOURCE_TYPES: DeclarativeNetRequest.ResourceType[] = [

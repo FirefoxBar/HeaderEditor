@@ -1,7 +1,7 @@
 import assert from 'node:assert';
 import { setTimeout as sleep } from 'node:timers/promises';
-import { getTask, runTask, saveTask } from './scripts/api.mjs';
-import { runInBrowsers, runTest } from './scripts/browser.mjs';
+import { getTask, runTask, saveRule, saveTask } from './scripts/api.mjs';
+import { getPageValue, runInBrowsers, runTest } from './scripts/browser.mjs';
 import { randStr, testServer } from './scripts/utils.mjs';
 
 describe('Fetch task', () => {
@@ -26,7 +26,7 @@ describe('Fetch task', () => {
       },
     ),
   );
-  after(() => removes.forEach(remove => remove()));
+  after(() => removes.map(remove => remove()));
 
   describe('Get task result', () =>
     runTest(
@@ -51,7 +51,7 @@ describe('Fetch task', () => {
           matchType: 'regexp',
           isFunction: false,
           enable: true,
-          to: `${testServer}get-query.php?value=\${TASK.${key}.value}`,
+          to: `${testServer}get-query.php?value={\$TASK.${key}.value}`,
         });
 
         try {

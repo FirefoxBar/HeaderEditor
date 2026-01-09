@@ -1,8 +1,9 @@
 import { apply as applyJsonLogic } from 'json-logic-js';
 import { cloneDeep, pick } from 'lodash-es';
-import { TABLE_NAME_TASKS } from '@/share/core/constant';
+import { APIs, EVENTs, TABLE_NAME_TASKS } from '@/share/core/constant';
 import emitter from '@/share/core/emitter';
 import logger from '@/share/core/logger';
+import notify from '@/share/core/notify';
 import { getLocal, getSession, readStorage } from '@/share/core/storage';
 import type { Task, TaskRun } from '@/share/core/types';
 import { sleep } from '@/share/core/utils';
@@ -86,7 +87,12 @@ export async function saveTask(taskInfo: Task) {
     );
     Object.assign(original, copy);
     await pifyIDBRequest(os.put(original));
-    emitter.emit(emitter.INNER_TASK_UPDATE, { task: original });
+    emitter.emit(emitter.INNER_TASK_UPDATE, original);
+    notify.other({
+      method: APIs.ON_EVENT,
+      event: EVENTs.TASK_SAVE,
+      task: original,
+    });
     if (cachedTasks[taskInfo.key]) {
       cachedTasks[taskInfo.key] = taskInfo;
     }
@@ -95,7 +101,12 @@ export async function saveTask(taskInfo: Task) {
 
   // Create
   await pifyIDBRequest(os.add(taskInfo));
-  emitter.emit(emitter.INNER_TASK_UPDATE, { task: taskInfo });
+  emitter.emit(emitter.INNER_TASK_UPDATE, taskInfo);
+  notify.other({
+    method: APIs.ON_EVENT,
+    event: EVENTs.TASK_SAVE,
+    task: taskInfo,
+  });
   if (cachedTasks[taskInfo.key]) {
     cachedTasks[taskInfo.key] = taskInfo;
   }
@@ -126,6 +137,11 @@ export async function removeTask(key: string) {
         if (k.length > 0) getLocal().remove(k);
       });
   }
+  notify.other({
+    method: APIs.ON_EVENT,
+    event: EVENTs.TASK_DELETE,
+    key,
+  });
   emitter.emit(emitter.INNER_TASK_REMOVE, { key });
 }
 

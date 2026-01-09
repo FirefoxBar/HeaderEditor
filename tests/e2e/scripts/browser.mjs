@@ -198,7 +198,7 @@ export async function cleanup() {
 
 export async function runInBrowsers(keys, cb) {
   await Promise.all(
-    keys.map(key => () => {
+    keys.map(key => {
       const client = browserList[key];
       if (!client) {
         return Promise.resolve();

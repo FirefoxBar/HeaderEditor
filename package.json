@@ -68,7 +68,7 @@
     "lodash": "^4.17.21",
     "mocha": "^11.7.1",
     "prettier": "^3.3.2",
-    "puppeteer": "^24.15.0",
+    "puppeteer": "^24.34.0",
     "resolve": "^1.22.10",
     "rimraf": "^6.0.1",
     "sign-addon": "^6.4.0",
