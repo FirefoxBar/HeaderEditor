@@ -1,5 +1,6 @@
 import { after, before } from 'mocha';
-import { cleanup, getBrowserClient, waitTestServer } from './utils.mjs';
+import { cleanup, getBrowserClient } from './browser.mjs';
+import { waitTestServer } from './utils.mjs';
 
 before(async function () {
   this.timeout(20000);

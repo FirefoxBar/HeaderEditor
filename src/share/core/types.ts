@@ -127,7 +127,7 @@ export interface Task {
     wait: number; // seconds
   };
 
-  // define
+  // define fetch
   fetch?: {
     url: string;
     method: string;

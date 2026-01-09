@@ -1,16 +1,12 @@
 import assert from 'node:assert';
-import {
-  getPageValue,
-  runTest,
-  saveRule,
-  setPref,
-  testServer,
-} from './scripts/utils.mjs';
+import { saveRule, setPref } from './scripts/api.mjs';
+import { getPageValue, runTest } from './scripts/browser.mjs';
+import { randStr, testServer } from './scripts/utils.mjs';
 
 describe('Disable Modify Response', () =>
   runTest(['edge_v2', 'chrome_v3', 'firefox_v2'], async browser => {
-    const key1 = String(Math.random()).replace('.', '');
-    const key2 = String(Math.random()).replace('.', '');
+    const key1 = randStr();
+    const key2 = randStr();
 
     const { remove } = await saveRule(browser.popup, {
       enable: true,
@@ -42,8 +38,8 @@ describe('Disable Modify Response', () =>
 
 describe('Modify Response', () =>
   runTest(['edge_v2', 'chrome_v3', 'firefox_v2'], async browser => {
-    const key1 = String(Math.random()).replace('.', '');
-    const key2 = String(Math.random()).replace('.', '');
+    const key1 = randStr();
+    const key2 = randStr();
 
     await setPref(browser.popup, 'modify-body', true);
 
@@ -78,8 +74,8 @@ describe('Modify Response', () =>
 
 describe('Modify Response - Custom Function', () =>
   runTest(['edge_v2', 'firefox_v2'], async browser => {
-    const key1 = String(Math.random()).replace('.', '');
-    const key2 = String(Math.random()).replace('.', '');
+    const key1 = randStr();
+    const key2 = randStr();
 
     await setPref(browser.popup, 'modify-body', true);
 

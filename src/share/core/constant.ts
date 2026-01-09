@@ -61,6 +61,7 @@ export enum APIs {
 
   TASK_RUN = 'task_run',
   TASK_LIST = 'task_list',
+  TASK_GET = 'task_get',
   TASK_SAVE = 'task_save',
   TASK_DELETE = 'task_del',
 }

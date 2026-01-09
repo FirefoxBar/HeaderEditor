@@ -50,6 +50,8 @@ function execute(request: any) {
       return taskApi.removeTask(request.key);
     case APIs.TASK_LIST:
       return taskApi.getTasks();
+    case APIs.TASK_GET:
+      return taskApi.getTask(request.key);
     default:
       break;
   }

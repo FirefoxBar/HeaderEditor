@@ -1,19 +1,14 @@
 import assert from 'node:assert';
 import { setTimeout as sleep } from 'node:timers/promises';
-import {
-  getHeader,
-  getPageValue,
-  runTest,
-  saveRule,
-  setPref,
-  testServer,
-} from './scripts/utils.mjs';
+import { saveRule, setPref } from './scripts/api.mjs';
+import { getHeader, getPageValue, runTest } from './scripts/browser.mjs';
+import { randStr, testServer } from './scripts/utils.mjs';
 
 describe('Redirect', () =>
   runTest(
     ['edge_v2', 'chrome_v3', 'firefox_v2', 'firefox_v3'],
     async browser => {
-      const key = String(Math.random()).replace('.', '');
+      const key = randStr();
 
       const { remove } = await saveRule(browser.popup, {
         name: 'test redirect',
@@ -41,7 +36,7 @@ describe('Modify Request Header', () =>
   runTest(
     ['edge_v2', 'chrome_v3', 'firefox_v2', 'firefox_v3'],
     async browser => {
-      const key = String(Math.random()).replace('.', '');
+      const key = randStr();
 
       const { remove } = await saveRule(browser.popup, {
         name: 'test modify request header',
@@ -68,7 +63,7 @@ describe('Modify Request Header', () =>
 
 describe('Exclude regex', () =>
   runTest(['edge_v2', 'firefox_v2'], async browser => {
-    const key = String(Math.random()).replace('.', '');
+    const key = randStr();
 
     const { remove } = await saveRule(browser.popup, {
       name: 'test exclude regex',
@@ -98,7 +93,7 @@ describe('Disable rule', () =>
   runTest(
     ['edge_v2', 'chrome_v3', 'firefox_v2', 'firefox_v3'],
     async browser => {
-      const key = String(Math.random()).replace('.', '');
+      const key = randStr();
 
       const { remove } = await saveRule(browser.popup, {
         name: 'test disable rule',
@@ -152,7 +147,7 @@ describe('Modify Response Header', () =>
   runTest(
     ['edge_v2', 'chrome_v3', 'firefox_v2', 'firefox_v3'],
     async browser => {
-      const key = String(Math.random()).replace('.', '');
+      const key = randStr();
 
       const { remove } = await saveRule(browser.popup, {
         name: 'test modify request header',
@@ -184,7 +179,7 @@ describe('Disable All', () =>
   runTest(
     ['edge_v2', 'chrome_v3', 'firefox_v2', 'firefox_v3'],
     async browser => {
-      const key = String(Math.random()).replace('.', '');
+      const key = randStr();
 
       const { remove } = await saveRule(browser.popup, {
         name: 'test disable all',
@@ -216,7 +211,7 @@ describe('Disable All', () =>
 
 describe('Custom Function', () =>
   runTest(['edge_v2', 'firefox_v2'], async browser => {
-    const key = String(Math.random()).replace('.', '');
+    const key = randStr();
 
     const { remove } = await saveRule(browser.popup, {
       name: 'test custom function',

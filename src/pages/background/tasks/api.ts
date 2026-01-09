@@ -6,13 +6,13 @@ import { getDatabase } from '../core/db';
 import { pifyIDBRequest } from '../utils';
 import {
   getLastTaskRun,
-  getTask,
+  getTask as innerGetTask,
   getTasks as innerGetTasks,
   runTaskAndSave,
 } from './core';
 
 export async function runTask(key: string) {
-  const task = await getTask(key);
+  const task = await innerGetTask(key);
   if (task) {
     return runTaskAndSave(task);
   }
@@ -56,6 +56,15 @@ export async function removeTask(key: string) {
   const os = tx.objectStore(TABLE_NAME_TASKS);
   await pifyIDBRequest(os.delete(Number(key)));
   emitter.emit(emitter.INNER_TASK_REMOVE, { key });
+}
+
+export async function getTask(key: string) {
+  const task = await innerGetTask(key);
+  if (!task) {
+    return;
+  }
+  task.lastRun = getLastTaskRun(key);
+  return task;
 }
 
 export async function getTasks() {
