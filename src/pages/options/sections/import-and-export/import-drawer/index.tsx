@@ -90,10 +90,11 @@ export default class ImportDrawer extends React.Component<
     }
   }
 
-  handleConfirm() {
+  async handleConfirm() {
     // 确认导入
-    const queue: any[] = [];
+    const queue: Promise<void>[] = [];
     const tasks = new Set<string>();
+    const rules: BasicRule[] = [];
     this.state.list.forEach((e: any) => {
       // 不导入
       if (e.importAction === 3) {
@@ -113,19 +114,56 @@ export default class ImportDrawer extends React.Component<
         e.enable = true;
       }
       getRuleUsedTasks(e).forEach(task => tasks.add(task));
-      queue.push(Api.saveRule(e));
+      rules.push(e);
     });
     // 处理 task 导入
+    const taskKeyAlias = new Map<string, string>();
     if (tasks.size > 0) {
+      const allTasks = await Api.getTasks();
+      const taskKeys = allTasks.map(x => x.key);
       Array.from(tasks)
         .map(x => this.tasks?.[x])
-        .forEach(t => queue.push(t ? Api.saveTask(t) : Promise.resolve()));
+        .forEach(t => {
+          if (!t) {
+            return Promise.resolve();
+          }
+          while (taskKeys.includes(t.key)) {
+            const newKey = `${t.key}${Math.random().toString(36).substring(1)}`;
+            taskKeyAlias.set(t.key, newKey);
+            t.key = newKey;
+            taskKeys.push(newKey);
+          }
+          queue.push(Api.saveTask(t));
+        });
     }
-    Promise.all(queue).then(() => {
-      // this.imports.status = 0;
-      Toast.success(t('import_success'));
-      this.props.onSuccess?.();
+
+    const replaceTaskKeys = (s: string) => {
+      let res = s;
+      taskKeyAlias.forEach((value, key) => {
+        res = res.replaceAll(`{\$TASK.${key}.}`, `{\$TASK.${value}.}`);
+      });
+      return res;
+    };
+
+    // 处理 rule 导入
+    rules.forEach(e => {
+      if (e.headers) {
+        Object.keys(e.headers).forEach(key => {
+          e.headers![key] = replaceTaskKeys(e.headers![key]);
+        });
+      }
+      if (e.to) {
+        e.to = replaceTaskKeys(e.to);
+      }
+      if (e.body?.value) {
+        e.body.value = replaceTaskKeys(e.body.value);
+      }
+      queue.push(Api.saveRule(e));
     });
+    await Promise.all(queue);
+    // this.imports.status = 0;
+    Toast.success(t('import_success'));
+    this.props.onSuccess?.();
     this.setState({
       list: [],
       visible: false,

@@ -1,7 +1,12 @@
 import assert from 'node:assert';
 import { setTimeout as sleep } from 'node:timers/promises';
 import { getTask, runTask, saveRule, saveTask } from './scripts/api.mjs';
-import { getPageValue, runInBrowsers, runTest } from './scripts/browser.mjs';
+import {
+  getHeader,
+  getPageValue,
+  runInBrowsers,
+  runTest,
+} from './scripts/browser.mjs';
 import { randStr, testServer } from './scripts/utils.mjs';
 
 describe('Fetch task', () => {
@@ -59,6 +64,33 @@ describe('Fetch task', () => {
             await getPageValue(browser.browser, `get123`),
           );
           assert.strictEqual(query.value, value);
+        } finally {
+          await remove();
+        }
+      },
+    ));
+
+  describe('Use in headers', () =>
+    runTest(
+      ['edge_v2', 'chrome_v3', 'firefox_v2', 'firefox_v3'],
+      async browser => {
+        const { remove } = await saveRule(browser.popup, {
+          name: 'test modify request header',
+          ruleType: 'modifySendHeader',
+          condition: {
+            urlPrefix: testServer,
+          },
+          isFunction: false,
+          enable: true,
+          action: {
+            name: 'X-Test-Header',
+            value: `X-{\$TASK.${key}.value}-Y`,
+          },
+        });
+
+        try {
+          const header = await getHeader(browser.browser);
+          assert.strictEqual(header.X_TEST_HEADER, `X-${value}-Y`);
         } finally {
           await remove();
         }
