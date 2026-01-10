@@ -1,4 +1,5 @@
 import { Input, Modal, Select } from '@douyinfe/semi-ui';
+import { nanoid } from 'nanoid';
 import * as React from 'react';
 import emitter from '@/share/core/emitter';
 import { t } from '@/share/core/utils';
@@ -14,7 +15,7 @@ export default class GroupSelect extends React.Component<
   any,
   GroupSelectState
 > {
-  private newValue = `_new_${Math.random().toString()}`;
+  private newValue = `_new_${nanoid()}`;
 
   constructor(props: any) {
     super(props);

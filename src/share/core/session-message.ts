@@ -1,3 +1,4 @@
+import { nanoid } from 'nanoid';
 import type Browser from 'webextension-polyfill';
 import { getSession, readStorage } from './storage';
 import { isValidArray } from './utils';
@@ -23,7 +24,7 @@ const add = async (msg: Omit<SessionMessageItem, 'id' | 'time'>) => {
   const m = isValidArray(message) ? message : [];
   m.push({
     ...msg,
-    id: `${Date.now()}-${Math.random().toString(36)}`,
+    id: `${Date.now()}-${nanoid()}`,
     time: Date.now(),
   });
   await s.set({ message: m });

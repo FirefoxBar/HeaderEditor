@@ -3,6 +3,7 @@ import path from 'node:path';
 import { setTimeout as sleep } from 'node:timers/promises';
 import { fileURLToPath } from 'node:url';
 import axios from 'axios';
+import { nanoid } from 'nanoid';
 
 export const testServer = 'http://127.0.0.1:8899/';
 export const fxAddonUUID = 'f492d714-700a-4402-8b96-4ec9e829332d';
@@ -37,4 +38,4 @@ export async function waitTestServer() {
   }
 }
 
-export const randStr = () => String(Math.random()).replace('.', '');
+export const randStr = () => String(nanoid());

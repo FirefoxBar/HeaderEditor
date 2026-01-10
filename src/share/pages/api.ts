@@ -50,6 +50,12 @@ const Api = {
       task,
     });
   },
+  getTask(key: string): Promise<Task | undefined> {
+    return notify.background({
+      method: APIs.TASK_GET,
+      key,
+    });
+  },
   getTasks(): Promise<Task[]> {
     return notify.background({
       method: APIs.TASK_LIST,

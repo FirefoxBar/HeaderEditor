@@ -127,7 +127,9 @@ if (detail.type === "media") {
 
 函数列表如下：
 * 通过 `this._` 调用部分 [lodash](https://lodash.com/docs/4.17.21) 函数：clone, cloneDeep, cloneDeepWith, cloneWith, difference, differenceBy, differenceWith, eq, first, flatten, get, has, head, isEqual, isEqualWith, last, pick, pickBy, random, set, setWith, uniq, uniqBy, uniqWith
+* 通过 `this.nanoid` 生成随机字符串。
 * 通过 `this.task` 获取任务相关内容。请参考[任务](./task.md)
+  * 注意：不建议解构后使用 Task 相关函数，可能影响导入/导出功能。
 * 注意：storage 仅在任务的自定义函数中可用，规则中无 `this.sessionStorage` 及 `this.localStorage`
 
 相关函数定义如下：
@@ -142,6 +144,14 @@ declare const this: {
     // 获取任务上一次成功运行的结果
     getValidRun: (key: string) => Promise<TaskRun | undefined>,
   },
+}
+```
+
+例如：
+```ts
+if (detail.type === "media") {
+  const run = this.task.getValidRun("exampleTask");
+	return val.replace("example.com", run ? run.result.url : "example.org");
 }
 ```
 

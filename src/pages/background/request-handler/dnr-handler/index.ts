@@ -7,7 +7,7 @@ import { prefs } from '@/share/core/prefs';
 import { detectRunner } from '@/share/core/rule-utils';
 import SessionMessage from '@/share/core/session-message';
 import { getSession, readStorage } from '@/share/core/storage';
-import { getRuleUsedTasks } from '@/share/core/tasks';
+import { collectRuleUsedTasks } from '@/share/core/tasks';
 import type { Rule, Task } from '@/share/core/types';
 import {
   getVirtualKey,
@@ -62,7 +62,7 @@ class DNRRequestHandler {
 
   private writeDependency(rule: Rule) {
     const rk = getVirtualKey(rule);
-    const dep = getRuleUsedTasks(rule);
+    const dep = collectRuleUsedTasks(rule);
     let shouldSave = false;
 
     for (const key in this.taskDependencies) {

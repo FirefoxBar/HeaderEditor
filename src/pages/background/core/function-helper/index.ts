@@ -1,9 +1,11 @@
+import { nanoid } from 'nanoid';
 import type { Storage } from 'webextension-polyfill';
 import { getLastTaskRun, getTask, getValidTaskRun } from '../task';
 import { lodash } from './lodash';
 
 export const basicHelper = {
   _: lodash,
+  nanoid,
   task: {
     get: getTask,
     getLastRun: getLastTaskRun,

@@ -1,14 +1,23 @@
 import { IconSave } from '@douyinfe/semi-icons';
-import { Button, Select, SideSheet, Table, Toast } from '@douyinfe/semi-ui';
+import {
+  Button,
+  Select,
+  SideSheet,
+  Space,
+  Table,
+  Tag,
+  Toast,
+} from '@douyinfe/semi-ui';
 import { css } from '@emotion/css';
+import { nanoid } from 'nanoid';
 import * as React from 'react';
 import { selectGroup } from '@/pages/options/utils';
 import BoolRadioGroup from '@/share/components/bool-radio';
-import { TABLE_NAMES_ARR } from '@/share/core/constant';
+import { type RULE_TYPE, TABLE_NAMES_ARR } from '@/share/core/constant';
 import { fromJson } from '@/share/core/rule-utils';
-import { getRuleUsedTasks } from '@/share/core/tasks';
-import type { BasicRule, ImportRule, Rule, Task } from '@/share/core/types';
-import { t } from '@/share/core/utils';
+import { collectRuleUsedTasks } from '@/share/core/tasks';
+import type { BasicRule, Rule, Task } from '@/share/core/types';
+import { getTableName, t } from '@/share/core/utils';
 import Api from '@/share/pages/api';
 
 interface ImportDrawerProps {
@@ -16,10 +25,35 @@ interface ImportDrawerProps {
   onSuccess?: () => void;
 }
 
+enum IMPORT_ACTION {
+  NEW = 'new',
+  OVERRIDE = 'override',
+  DROP = 'drop',
+}
+
+interface ImportRuleInfo {
+  id: string;
+  name: string;
+  oldId?: number;
+  type: RULE_TYPE;
+  group: string;
+  tasks: Set<string>;
+  action: IMPORT_ACTION;
+}
+
+interface ImportTaskInfo {
+  key: string;
+  name: string;
+  exists: boolean;
+  action: IMPORT_ACTION;
+}
+
 interface ImportDrawerState {
   visible: boolean;
   group: string;
-  list: ImportRule[];
+  loading: boolean;
+  rules: Array<ImportRuleInfo>;
+  tasks: Array<ImportTaskInfo>;
   useRecommend: boolean;
 }
 
@@ -27,7 +61,8 @@ export default class ImportDrawer extends React.Component<
   ImportDrawerProps,
   ImportDrawerState
 > {
-  tasks?: Record<string, Task>;
+  tasks: Record<string, Task>;
+  rules: Record<string, BasicRule>;
 
   constructor(props: any) {
     super(props);
@@ -37,106 +72,116 @@ export default class ImportDrawer extends React.Component<
     this.handleSelectAll = this.handleSelectAll.bind(this);
     this.handleRecommendChange = this.handleRecommendChange.bind(this);
 
+    this.rules = {};
+    this.tasks = {};
+
     this.state = {
       visible: false,
-      list: [],
       useRecommend: true,
+      loading: false,
       group: '',
+      rules: [],
+      tasks: [],
     };
   }
 
   show(content: any) {
+    this.rules = {};
+    this.tasks = {};
     this.setState({
-      ...this.state,
-      list: [],
       group: t('ungrouped'),
       useRecommend: true,
+      visible: true,
+      loading: true,
     });
-    try {
-      let totalCount = 0;
-      const importList: ImportRule[] = [];
-      const list = typeof content === 'string' ? fromJson(content) : content;
-      TABLE_NAMES_ARR.forEach(tableName => {
-        if (!list[tableName]) {
-          return;
-        }
-        list[tableName].forEach((e: Rule) => {
-          totalCount++;
-          Api.getRules(tableName, { name: e.name }).then(rule => {
-            const it: ImportRule = {
-              ...e,
-              group: e.group || t('ungrouped'),
-              id: Math.random(),
-              importAction: rule && rule.length ? 2 : 1,
-              importOldId: rule && rule.length ? rule[0].id : -1,
-            };
-            importList.push(it);
-            // 检查是否已经全部完成了
-            if (totalCount === importList.length) {
-              this.setState({
-                ...this.state,
-                visible: true,
-                list: importList,
-              });
-            }
-          });
-        });
+    const ruleInfos: ImportRuleInfo[] = [];
+    const taskInfos: ImportTaskInfo[] = [];
+    const queue: Promise<void>[] = [];
+
+    // process rules
+    const initOneRule = async (r: Rule) => {
+      const existsRule = await Api.getRules(getTableName(r.ruleType), {
+        name: r.name,
       });
-      if (content.tasks) {
-        this.tasks = content.tasks;
+      const hasRule = existsRule.length > 0;
+      const basicInfo: ImportRuleInfo = {
+        id: nanoid(),
+        name: r.name,
+        type: r.ruleType,
+        group: r.group || t('ungrouped'),
+        tasks: collectRuleUsedTasks(r),
+        action: hasRule ? IMPORT_ACTION.OVERRIDE : IMPORT_ACTION.NEW,
+      };
+      if (hasRule) {
+        basicInfo.oldId = existsRule[0].id;
       }
-    } catch (e) {
-      console.error(e);
+      this.rules[basicInfo.id] = r;
+      ruleInfos.push(basicInfo);
+    };
+    const list = typeof content === 'string' ? fromJson(content) : content;
+    TABLE_NAMES_ARR.forEach(tableName => {
+      if (!list[tableName]) {
+        return;
+      }
+      list[tableName].forEach((e: Rule) => {
+        queue.push(initOneRule(e));
+      });
+    });
+
+    // process tasks
+    const initOneTask = async (t: Task) => {
+      const existsTask = await Api.getTask(t.key);
+      taskInfos.push({
+        key: t.key,
+        name: t.name,
+        exists: Boolean(existsTask),
+        action: IMPORT_ACTION.NEW,
+      });
+    };
+    if (content.tasks) {
+      this.tasks = content.tasks;
+      Object.keys(content.tasks).forEach(taskKey =>
+        queue.push(initOneTask(content.tasks[taskKey])),
+      );
     }
+
+    Promise.all(queue).then(() => {
+      this.setState({
+        loading: false,
+        tasks: taskInfos,
+        rules: ruleInfos,
+      });
+    });
   }
 
   async handleConfirm() {
+    this.setState({
+      loading: true,
+    });
     // 确认导入
     const queue: Promise<void>[] = [];
-    const tasks = new Set<string>();
-    const rules: BasicRule[] = [];
-    this.state.list.forEach((e: any) => {
-      // 不导入
-      if (e.importAction === 3) {
-        return;
-      }
-      if (e.importAction === 2) {
-        e.id = e.importOldId;
-      } else {
-        delete e.id;
-      }
-      delete e.importAction;
-      delete e.importOldId;
-      if (!this.state.useRecommend) {
-        e.group = this.state.group;
-      }
-      if (typeof e.enable === 'undefined') {
-        e.enable = true;
-      }
-      getRuleUsedTasks(e).forEach(task => tasks.add(task));
-      rules.push(e);
-    });
+
     // 处理 task 导入
     const taskKeyAlias = new Map<string, string>();
-    if (tasks.size > 0) {
-      const allTasks = await Api.getTasks();
-      const taskKeys = allTasks.map(x => x.key);
-      Array.from(tasks)
-        .map(x => this.tasks?.[x])
-        .forEach(t => {
-          if (!t) {
-            return Promise.resolve();
-          }
-          while (taskKeys.includes(t.key)) {
-            const newKey = `${t.key}${Math.random().toString(36).substring(1)}`;
-            taskKeyAlias.set(t.key, newKey);
-            t.key = newKey;
-            taskKeys.push(newKey);
-          }
-          queue.push(Api.saveTask(t));
-        });
-    }
+    const allTasks = await Api.getTasks();
+    const taskKeys = allTasks.map(x => x.key);
+    this.state.tasks.forEach(e => {
+      const task = this.tasks[e.key];
+      if (!task || e.action === IMPORT_ACTION.DROP) {
+        return;
+      }
+      if (e.exists && e.action === IMPORT_ACTION.NEW) {
+        while (taskKeys.includes(task.key)) {
+          const newKey = `${task.key}_${nanoid()}`;
+          taskKeyAlias.set(task.key, newKey);
+          task.key = newKey;
+          taskKeys.push(newKey);
+        }
+      }
+      queue.push(Api.saveTask(task));
+    });
 
+    // 处理 rule 导入
     const replaceTaskKeys = (s: string) => {
       let res = s;
       taskKeyAlias.forEach((value, key) => {
@@ -144,35 +189,72 @@ export default class ImportDrawer extends React.Component<
       });
       return res;
     };
+    this.state.rules.forEach(e => {
+      const rule = this.rules[e.id];
+      // 不导入
+      if (e.action === IMPORT_ACTION.DROP || !rule) {
+        return;
+      }
+      if (e.action === IMPORT_ACTION.OVERRIDE) {
+        (rule as Rule).id = e.oldId!;
+      } else {
+        delete (rule as any).id;
+      }
+      if (!this.state.useRecommend) {
+        e.group = this.state.group;
+      }
+      if (typeof rule.enable === 'undefined') {
+        rule.enable = true;
+      }
 
-    // 处理 rule 导入
-    rules.forEach(e => {
-      if (e.headers) {
-        Object.keys(e.headers).forEach(key => {
-          e.headers![key] = replaceTaskKeys(e.headers![key]);
+      if (rule.isFunction && rule.code) {
+        ['get', 'getLastRun', 'getValidRun'].forEach(func => {
+          const regex = new RegExp(
+            `task\.${func}\\s*\\(\\s*['"]?([^'"]+)['"]?\\s*\\)`,
+          );
+          rule.code = rule.code.replaceAll(regex, (fullText, taskKey) =>
+            taskKeyAlias.has(taskKey)
+              ? `task.${func}('${taskKeyAlias.get(taskKey)}')`
+              : fullText,
+          );
         });
       }
-      if (e.to) {
-        e.to = replaceTaskKeys(e.to);
+      if (rule.headers) {
+        Object.keys(rule.headers).forEach(key => {
+          rule.headers![key] = replaceTaskKeys(rule.headers![key]);
+        });
       }
-      if (e.body?.value) {
-        e.body.value = replaceTaskKeys(e.body.value);
+      if (rule.to) {
+        rule.to = replaceTaskKeys(rule.to);
       }
-      queue.push(Api.saveRule(e));
+      if (rule.body?.value) {
+        rule.body.value = replaceTaskKeys(rule.body.value);
+      }
+      queue.push(Api.saveRule(rule));
     });
+
     await Promise.all(queue);
     // this.imports.status = 0;
     Toast.success(t('import_success'));
     this.props.onSuccess?.();
+
+    this.tasks = {};
+    this.rules = {};
     this.setState({
-      list: [],
+      loading: false,
+      tasks: [],
+      rules: [],
       visible: false,
     });
   }
 
   handleCancel() {
+    this.tasks = {};
+    this.rules = {};
     this.setState({
-      list: [],
+      loading: false,
+      tasks: [],
+      rules: [],
       visible: false,
     });
     if (this.props.onCancel) {
@@ -180,12 +262,12 @@ export default class ImportDrawer extends React.Component<
     }
   }
 
-  handleActionChange(item: ImportRule, to: string) {
-    item.importAction = parseInt(to, 10);
+  handleActionChange(item: ImportRuleInfo | ImportTaskInfo, to: IMPORT_ACTION) {
+    item.action = to;
     this.forceUpdate();
   }
 
-  handleSelectGroup(item: ImportRule) {
+  handleSelectGroup(item: ImportRuleInfo) {
     selectGroup(item.group).then(res => {
       item.group = res;
       this.forceUpdate();
@@ -239,8 +321,9 @@ export default class ImportDrawer extends React.Component<
         }
       >
         <Table
-          dataSource={this.state.list}
+          dataSource={this.state.rules}
           pagination={false}
+          loading={this.state.loading}
           columns={[
             {
               title: t('name'),
@@ -254,7 +337,7 @@ export default class ImportDrawer extends React.Component<
             {
               title: t('suggested_group'),
               dataIndex: 'group',
-              render: (value: string, item: ImportRule) => (
+              render: (value: string, item: ImportRuleInfo) => (
                 <span>
                   <span>{value}</span>
                   &nbsp;
@@ -269,21 +352,65 @@ export default class ImportDrawer extends React.Component<
               ),
             },
             {
+              title: '任务',
+              dataIndex: 'tasks',
+              render: (tasks: Set<string>) => (
+                <Space>
+                  {Array.from(tasks).map(x => (
+                    <Tag color="grey" key={x}>
+                      {x}
+                    </Tag>
+                  ))}
+                </Space>
+              ),
+            },
+            {
               title: t('action'),
-              render: (_v: any, item: ImportRule) => (
+              render: (_v: any, item: ImportRuleInfo) => (
                 <Select
-                  value={item.importAction}
+                  value={item.action}
                   onChange={value =>
-                    this.handleActionChange(item, value as string)
+                    this.handleActionChange(item, value as IMPORT_ACTION)
                   }
                   optionList={[
-                    { label: t('import_new'), value: 1 },
+                    { label: t('import_new'), value: IMPORT_ACTION.NEW },
                     {
                       label: t('import_override'),
-                      value: 2,
-                      disabled: item.importOldId === -1,
+                      value: IMPORT_ACTION.OVERRIDE,
+                      disabled: !item.oldId,
                     },
-                    { label: t('import_drop'), value: 3 },
+                    { label: t('import_drop'), value: IMPORT_ACTION.DROP },
+                  ]}
+                />
+              ),
+            },
+          ]}
+        />
+        <Table
+          dataSource={this.state.tasks}
+          pagination={false}
+          loading={this.state.loading}
+          columns={[
+            {
+              title: t('name'),
+              dataIndex: 'name',
+            },
+            {
+              title: t('action'),
+              render: (_v: any, item: ImportTaskInfo) => (
+                <Select
+                  value={item.action}
+                  onChange={value =>
+                    this.handleActionChange(item, value as IMPORT_ACTION)
+                  }
+                  optionList={[
+                    { label: t('import_new'), value: IMPORT_ACTION.NEW },
+                    {
+                      label: t('import_override'),
+                      value: IMPORT_ACTION.OVERRIDE,
+                      disabled: !item.exists,
+                    },
+                    { label: t('import_drop'), value: IMPORT_ACTION.DROP },
                   ]}
                 />
               ),

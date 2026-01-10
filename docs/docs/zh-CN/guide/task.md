@@ -80,10 +80,12 @@ return res.json();
 
 函数列表如下：
 * 通过 `this._` 调用部分 [lodash](https://lodash.com/docs/4.17.21) 函数：clone, cloneDeep, cloneDeepWith, cloneWith, difference, differenceBy, differenceWith, eq, first, flatten, get, has, head, isEqual, isEqualWith, last, pick, pickBy, random, set, setWith, uniq, uniqBy, uniqWith
+* 通过 `this.nanoid` 生成随机字符串。
 * 通过 `this.task` 获取任务相关内容。
   * `this.task.get`: 获取任务信息。
   * `this.task.getLastRun`: 获取任务上一次运行结果。
   * `this.task.getValidRun`: 获取任务上一次成功运行的结果。
+  * 注意：不建议解构后使用 Task 相关函数，可能影响导入/导出功能。
 * 通过 `this.sessionStorage` 或 `this.localStorage` 进行数据存取。其中，`localStorage` 为持久化存储，`sessionStorage` 为会话级存储（浏览器关闭时清空）。
 
 相关函数定义如下：
