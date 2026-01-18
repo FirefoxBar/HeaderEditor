@@ -488,7 +488,7 @@
     "description": "Response headers"
   },
   "response_type": {
-    "message": "要求類型"
+    "message": "回應類型"
   },
   "response_type_empty": {
     "message": "回應類型不能為空"
