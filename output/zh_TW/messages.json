@@ -633,7 +633,7 @@
     "message": "排程操作"
   },
   "task_execute_interval": {
-    "message": "固定間隔任務"
+    "message": "固定間隔操作"
   },
   "task_execute_once": {
     "message": "僅執行一次"
