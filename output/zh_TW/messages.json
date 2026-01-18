@@ -92,6 +92,12 @@
     "message": "取消常用",
     "description": "Unmark a common rule/group"
   },
+  "cron_expression_empty": {
+    "message": "Cron 表達式不能為空"
+  },
+  "cron_expression_invalid": {
+    "message": "Cron 表達式無效"
+  },
   "dark_mode": {
     "message": "深色模式",
     "description": "Dark mode select"
@@ -115,6 +121,10 @@
   "delete_confirm": {
     "message": "您確定要刪除這些規則嗎？",
     "description": "A confirmation box shows when user want to delete rules"
+  },
+  "delete_task_confirm": {
+    "message": "是否要刪除這些任務？",
+    "description": "A confirmation box shows when user want to delete tasks"
   },
   "description": {
     "message": "管理瀏覽器要求",
@@ -212,6 +222,12 @@
     "message": "意見反應",
     "description": "Feedback link"
   },
+  "fetch_method_empty": {
+    "message": "要求方法不能為空"
+  },
+  "fetch_url_invalid": {
+    "message": "擷取 URL 無效"
+  },
   "group": {
     "message": "分組",
     "description": "Group button"
@@ -263,6 +279,17 @@
   "init_rule_failed": {
     "message": "初始化規則失敗",
     "description": "Failed to initialize rule"
+  },
+  "interval_empty": {
+    "message": "時間間隔不能為空"
+  },
+  "last_run": {
+    "message": "上次執行：$time$",
+    "placeholders": {
+      "time": {
+        "content": "$1"
+      }
+    }
   },
   "lite_edit_tip": {
     "message": "精簡版不支援某些功能",
@@ -344,6 +371,9 @@
     "message": "名稱不能為空",
     "description": "Message for saving a rule without name"
   },
+  "no": {
+    "message": "否"
+  },
   "no_update": {
     "message": "沒有更新",
     "description": "No update"
@@ -376,13 +406,22 @@
     "message": "重新導向目標不能為空",
     "description": "Message for saving a rule without redirect target if rule type is redirect"
   },
+  "refresh": {
+    "message": "重新整理"
+  },
   "rename": {
     "message": "重新命名",
     "description": "Rename group"
   },
+  "request_body": {
+    "message": "要求內容"
+  },
   "request_headers": {
     "message": "要求標頭",
     "description": "Request headers"
+  },
+  "request_method": {
+    "message": "要求方式"
   },
   "request_stage": {
     "message": "要求階段",
@@ -448,6 +487,30 @@
     "message": "回應標頭",
     "description": "Response headers"
   },
+  "response_type": {
+    "message": "要求類型"
+  },
+  "response_type_empty": {
+    "message": "回應類型不能為空"
+  },
+  "response_type_json": {
+    "message": "JSON"
+  },
+  "response_type_text": {
+    "message": "文字"
+  },
+  "result": {
+    "message": "結果"
+  },
+  "retry": {
+    "message": "重試"
+  },
+  "retry_max": {
+    "message": "最大重試次數"
+  },
+  "retry_wait": {
+    "message": "重試間隔（秒）"
+  },
   "ruleType": {
     "message": "規則類型",
     "description": "Label for rule type in modal"
@@ -491,6 +554,9 @@
   "rule_switch_help": {
     "message": "透過選單快速切換規則內容",
     "description": "Help text for rule_switch option"
+  },
+  "run": {
+    "message": "執行"
   },
   "run_mode": {
     "message": "執行模式",
@@ -560,6 +626,60 @@
     "message": "快速切換",
     "description": "Title of the quick switch feature"
   },
+  "task_cron_expression": {
+    "message": "Cron 表達式"
+  },
+  "task_execute_cron": {
+    "message": "排程操作"
+  },
+  "task_execute_interval": {
+    "message": "固定間隔任務"
+  },
+  "task_execute_once": {
+    "message": "僅執行一次"
+  },
+  "task_execute_type": {
+    "message": "任務執行類型"
+  },
+  "task_fetch_url": {
+    "message": "擷取 URL"
+  },
+  "task_interval": {
+    "message": "時間間隔（分鐘）"
+  },
+  "task_key": {
+    "message": "任務 Key"
+  },
+  "task_key_empty": {
+    "message": "任務 Key 不能為空"
+  },
+  "task_key_invalid": {
+    "message": "任務 Key 無效"
+  },
+  "task_last_run": {
+    "message": "上次執行"
+  },
+  "task_name": {
+    "message": "任務名稱"
+  },
+  "task_name_empty": {
+    "message": "任務名稱不能為空"
+  },
+  "task_not_run": {
+    "message": "未執行"
+  },
+  "task_run_error": {
+    "message": "錯誤"
+  },
+  "task_run_success": {
+    "message": "執行成功"
+  },
+  "task_running": {
+    "message": "正在執行"
+  },
+  "tasks": {
+    "message": "任務"
+  },
   "test_custom_code": {
     "message": "暫不支援自訂函數",
     "description": "Label to test a redirect rule"
@@ -587,6 +707,9 @@
   "third_party_rules": {
     "message": "第三方規則",
     "description": "Link to find more third party rules"
+  },
+  "time": {
+    "message": "時間"
   },
   "ungrouped": {
     "message": "未分組",
@@ -616,8 +739,17 @@
     "message": "https://he.firefoxcn.net/zh-TW/guide/third-party-rules/",
     "description": "URL of documentations, if not translated, please use english version"
   },
+  "validator": {
+    "message": "驗證器"
+  },
+  "validator_invalid": {
+    "message": "驗證器無效"
+  },
   "view": {
     "message": "檢視",
     "description": "View rule or a link"
+  },
+  "yes": {
+    "message": "是"
   }
 }
