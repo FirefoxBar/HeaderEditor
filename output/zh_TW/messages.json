@@ -480,7 +480,7 @@
     "description": "Resource type"
   },
   "response_content": {
-    "message": "回應標頭",
+    "message": "回應內容",
     "description": "Response content"
   },
   "response_headers": {
