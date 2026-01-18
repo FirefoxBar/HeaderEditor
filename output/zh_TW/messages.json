@@ -421,7 +421,7 @@
     "description": "Request headers"
   },
   "request_method": {
-    "message": "要求方式"
+    "message": "要求方法"
   },
   "request_stage": {
     "message": "要求階段",
