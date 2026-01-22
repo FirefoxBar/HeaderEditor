@@ -123,6 +123,40 @@ if (detail.type === "media") {
 }
 ```
 
+## Utility Functions
+
+Starting from version 5.3.0, the Header Editor provides several utility functions to simplify the writing of custom functions.
+
+The function list is as follows:
+
+* Calling some [lodash](https://lodash.com/docs/4.17.21) functions via `this._`: clone, cloneDeep, cloneDeepWith, cloneWith, difference, differenceBy, differenceWith, eq, first, flatten, get, has, head, isEqual, isEqualWith, last, pick, pickBy, random, set, setWith, uniq, uniqBy, uniqWith
+* Generating a random string via `this.nanoid`.
+* Retrieving task-related content via `this.task`. Please refer to [Task](./task.md)
+  * Note: It is not recommended to use Task-related functions after destructuring, as it may affect import/export functionality.
+* Note: `storage` is only available in custom functions of a task; `this.sessionStorage` and `this.localStorage` are not specified in the rules.
+
+The relevant function definitions are as follows:
+```ts
+declare const this: {
+  _: { /* lodash */ },
+  task: {
+    // Get task information
+    get: (key: string) => Promise<Task | null>,
+    // Get the result of the last task execution
+    getLastRun: (key: string) => Promise<TaskRun | undefined>,
+    // Get the result of the last successful task execution
+    getValidRun: (key: string) => Promise<TaskRun | undefined>,
+  },
+}
+```
+
+For example:
+```ts
+if (detail.type === "media") {
+  const run = this.task.getValidRun("exampleTask");
+	return val.replace("example.com", run ? run.result.url : "example.org");
+}
+``
 ## How to debug a custom function
 
 All custom functions are run in the background page, so to debug custom functions, open the console of the background page
