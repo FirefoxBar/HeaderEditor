@@ -100,7 +100,8 @@ export default class ImportAndExport extends React.Component<{}, IEState> {
 
   async handleExport() {
     const result = await Api.getAllRules();
-    batchShare(Object.values(result).flat());
+    const tasks = await Api.getTasks();
+    batchShare(Object.values(result).flat(), tasks);
   }
 
   handleOpenThird() {

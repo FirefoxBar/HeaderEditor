@@ -10,7 +10,7 @@ function collectTaskUsage(text: string) {
   if (!matches) {
     return [];
   }
-  return matches.map(x => x.substring(7, x.indexOf('.')));
+  return matches.map(x => x.substring(7, x.indexOf('.', 7)));
 }
 
 export function collectTaskFromCode(code: string) {

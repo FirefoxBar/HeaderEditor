@@ -1,4 +1,5 @@
 import dayjs from 'dayjs';
+import { TABLE_NAMES, TABLE_NAMES_ARR } from '@/share/core/constant';
 import emitter from '@/share/core/emitter';
 import { convertToBasicRule } from '@/share/core/rule-utils';
 import { collectRulesUsedTasks } from '@/share/core/tasks';
@@ -10,35 +11,53 @@ export function getExportName(additional?: string) {
   return `HE_${date}${additional ? '_' + additional : ''}.json`;
 }
 
-export async function createTaskExport(task: Task) {
-  if (task.isFunction && task.code) {
-  }
+export function createTaskExport(x: Task) {
+  delete x.lastRun;
+  delete x._func;
+  return x;
 }
 
-export async function createExport(arr: {
-  [key: string]: Array<Rule | InitdRule>;
-}) {
+export async function createExport(
+  arr: Partial<{
+    [TABLE_NAMES.receiveHeader]: Array<Rule | InitdRule>;
+    [TABLE_NAMES.receiveBody]: Array<Rule | InitdRule>;
+    [TABLE_NAMES.request]: Array<Rule | InitdRule>;
+    [TABLE_NAMES.sendHeader]: Array<Rule | InitdRule>;
+    tasks: Record<string, Task>;
+  }>,
+) {
   const result: any = {};
   const tasks = new Set<string>();
-  Object.keys(arr).forEach(k => {
-    result[k] = arr[k].map(e => convertToBasicRule(e));
-    const t = collectRulesUsedTasks(arr[k]);
+
+  TABLE_NAMES_ARR.forEach(tb => {
+    if (!arr[tb]) {
+      return;
+    }
+    result[tb] = arr[tb].map(e => convertToBasicRule(e));
+    const t = collectRulesUsedTasks(arr[tb]);
     t.forEach(e => tasks.add(e));
   });
+
   // 一并导出任务
-  if (tasks.size) {
+  if (tasks.size || arr.tasks) {
     const allTasks = await Api.getTasks();
-    result.tasks = Object.fromEntries(
-      (
-        Array.from(tasks)
-          .map(x => allTasks.find(y => y.key === x))
-          .filter(Boolean) as Task[]
-      ).map(x => {
-        delete x.lastRun;
-        delete x._func;
-        return [x.key, x];
-      }),
-    );
+    if (!result.tasks) {
+      result.tasks = {};
+    }
+    if (arr.tasks) {
+      Object.keys(arr.tasks).forEach(x => {
+        result.tasks[x] = createTaskExport(arr.tasks![x]);
+      });
+    }
+    const tasksArr = Array.from(tasks)
+      .map(x => allTasks.find(y => y.key === x))
+      .filter(Boolean) as Task[];
+    tasksArr.forEach(x => {
+      if (result.tasks[x.key]) {
+        return;
+      }
+      result.tasks[x.key] = createTaskExport(x);
+    });
   }
   return result;
 }

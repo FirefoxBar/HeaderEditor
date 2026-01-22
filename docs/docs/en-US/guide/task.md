@@ -169,5 +169,5 @@ interface Task {
   };
   // Custom function code
   code?: string;
-  }
+}
 ```

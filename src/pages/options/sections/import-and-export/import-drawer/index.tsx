@@ -324,6 +324,7 @@ export default class ImportDrawer extends React.Component<
           dataSource={this.state.rules}
           pagination={false}
           loading={this.state.loading}
+          size="small"
           columns={[
             {
               title: t('name'),
@@ -369,6 +370,7 @@ export default class ImportDrawer extends React.Component<
               render: (_v: any, item: ImportRuleInfo) => (
                 <Select
                   value={item.action}
+                  size="small"
                   onChange={value =>
                     this.handleActionChange(item, value as IMPORT_ACTION)
                   }
@@ -386,51 +388,7 @@ export default class ImportDrawer extends React.Component<
             },
           ]}
         />
-        <Table
-          dataSource={this.state.tasks}
-          pagination={false}
-          loading={this.state.loading}
-          columns={[
-            {
-              title: t('name'),
-              dataIndex: 'name',
-            },
-            {
-              title: t('action'),
-              render: (_v: any, item: ImportTaskInfo) => (
-                <Select
-                  value={item.action}
-                  onChange={value =>
-                    this.handleActionChange(item, value as IMPORT_ACTION)
-                  }
-                  optionList={[
-                    { label: t('import_new'), value: IMPORT_ACTION.NEW },
-                    {
-                      label: t('import_override'),
-                      value: IMPORT_ACTION.OVERRIDE,
-                      disabled: !item.exists,
-                    },
-                    { label: t('import_drop'), value: IMPORT_ACTION.DROP },
-                  ]}
-                />
-              ),
-            },
-          ]}
-        />
-        <div
-          className={css`
-            display: flex;
-            flex-direction: row;
-            align-items: center;
-            margin-top: 8px;
-            gap: 8px;
-            .semi-radio-content {
-              display: flex;
-              flex-direction: row;
-              align-items: center;
-            }
-          `}
-        >
+        <Space>
           <span>{t('save_to')}</span>
           <BoolRadioGroup
             onChange={this.handleRecommendChange}
@@ -455,7 +413,40 @@ export default class ImportDrawer extends React.Component<
               },
             ]}
           />
-        </div>
+        </Space>
+        <Table
+          dataSource={this.state.tasks}
+          pagination={false}
+          loading={this.state.loading}
+          size="small"
+          columns={[
+            {
+              title: t('name'),
+              dataIndex: 'name',
+            },
+            {
+              title: t('action'),
+              render: (_v: any, item: ImportTaskInfo) => (
+                <Select
+                  value={item.action}
+                  size="small"
+                  onChange={value =>
+                    this.handleActionChange(item, value as IMPORT_ACTION)
+                  }
+                  optionList={[
+                    { label: t('import_new'), value: IMPORT_ACTION.NEW },
+                    {
+                      label: t('import_override'),
+                      value: IMPORT_ACTION.OVERRIDE,
+                      disabled: !item.exists,
+                    },
+                    { label: t('import_drop'), value: IMPORT_ACTION.DROP },
+                  ]}
+                />
+              ),
+            },
+          ]}
+        />
       </SideSheet>
     );
   }
