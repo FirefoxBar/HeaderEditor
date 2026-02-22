@@ -17,6 +17,14 @@ import { getAll, waitLoad } from '../core/rules';
 
 type DNRRule = DeclarativeNetRequest.Rule;
 
+function hasImageSet() {
+  try {
+    return 'IMAGESET' in chrome.declarativeNetRequest.ResourceType;
+  } catch (e) {
+    return false;
+  }
+}
+
 function createDNR(rule: Rule, id: number) {
   const res: DNRRule = {
     id,
@@ -68,11 +76,17 @@ function createDNR(rule: Rule, id: number) {
     }
     // 应仅指定 resourceTypes 和 excludedResourceTypes 中的一项
     if (isValidArray(resourceTypes)) {
-      res.condition.resourceTypes = resourceTypes;
+      res.condition.resourceTypes = [...resourceTypes];
+      if (hasImageSet() && resourceTypes.includes('image')) {
+        res.condition.resourceTypes.push('imageset');
+      }
     }
     if (isValidArray(excludeResourceTypes)) {
       delete res.condition.resourceTypes;
       res.condition.excludedResourceTypes = excludeResourceTypes;
+      if (hasImageSet() && excludeResourceTypes.includes('image')) {
+        res.condition.excludedResourceTypes.push('imageset');
+      }
     }
   } else {
     // match condition

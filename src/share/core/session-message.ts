@@ -20,7 +20,13 @@ const get = async (): Promise<SessionMessageItem[]> => {
 const add = async (msg: Omit<SessionMessageItem, 'id' | 'time'>) => {
   const s = getSession();
   const { message } = await s.get('message');
-  const m = isValidArray(message) ? message : [];
+  let m = isValidArray(message) ? message : [];
+  m = m.filter(
+    item =>
+      item.type !== msg.type &&
+      item.title !== msg.title &&
+      item.content !== msg.content,
+  );
   m.push({
     ...msg,
     id: `${Date.now()}-${Math.random().toString(36)}`,
