@@ -83,7 +83,7 @@ function createDNR(rule: Rule, id: number) {
     }
     if (isValidArray(excludeResourceTypes)) {
       delete res.condition.resourceTypes;
-      res.condition.excludedResourceTypes = excludeResourceTypes;
+      res.condition.excludedResourceTypes = [...excludeResourceTypes];
       if (hasImageSet() && excludeResourceTypes.includes('image')) {
         res.condition.excludedResourceTypes.push('imageset');
       }
