@@ -98,7 +98,7 @@ val.push({"name": "test", "value": value.toString()}); //合法
 }
 ```
 
-可用類型參見[此处](https://developer.mozilla.org/en-US/Add-ons/WebExtensions/API/webRequest/ResourceType)
+可用類型參見[此处](https://developer.mozilla.org/en-US/docs/Mozilla/Add-ons/WebExtensions/API/webRequest/ResourceType)
 
 您可以借此实现一些高级功能，例如，下面的代码只会将example.com域名下的图片和视频重定向到example.org：
 

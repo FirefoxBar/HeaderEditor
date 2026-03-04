@@ -113,7 +113,7 @@ This parameter is Object and is a read-only parameter. The structure is as follo
 }
 ```
 
-Available resource type see [here](https://developer.mozilla.org/en-US/Add-ons/WebExtensions/API/webRequest/ResourceType)
+Available resource type see [here](https://developer.mozilla.org/en-US/docs/Mozilla/Add-ons/WebExtensions/API/webRequest/ResourceType)
 
 You can use this to implement some advanced features, for example, the following code will only redirect images and videos from example.com to example.org:
 
