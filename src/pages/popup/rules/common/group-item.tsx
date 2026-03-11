@@ -1,69 +1,74 @@
-import { Spin } from '@douyinfe/semi-ui';
-import { useLatest, useRequest } from 'ahooks';
-import { type FC, useEffect } from 'react';
-import { EVENTs, TABLE_NAMES_ARR, VIRTUAL_KEY } from '@/share/core/constant';
-import notify from '@/share/core/notify';
-import type { Rule } from '@/share/core/types';
-import { getVirtualKey } from '@/share/core/utils';
+import { IconLock, IconUnlock } from '@douyinfe/semi-icons';
+import { Button, ButtonGroup, Tooltip } from '@douyinfe/semi-ui';
+import { cx } from '@emotion/css';
+import { flatten } from 'lodash-es';
+import type { FC } from 'react';
+import { VIRTUAL_KEY } from '@/share/core/constant';
+import type { RuleWithVirtualKey } from '@/share/core/types';
+import { t } from '@/share/core/utils';
 import Api from '@/share/pages/api';
+import { Toast } from '@/share/pages/toast';
 import RuleItem from './rule-item';
+
+const toggleGroup = async (name: string, target: boolean) => {
+  const rules = flatten(Object.values(await Api.getAllRules()));
+  const toUpdate = rules.filter(x => x.group === name);
+  try {
+    await Promise.all(
+      toUpdate.map(x => {
+        x.enable = target;
+        return Api.saveRule(x);
+      }),
+    );
+    Toast().success(t('switch_success'));
+  } catch (e) {
+    console.error(e);
+    Toast().error((e as Error).message);
+  }
+};
 
 interface GroupItemProps {
   group: string;
+  rules: RuleWithVirtualKey[];
+  hasToggle?: boolean;
 }
 
-const GroupItem: FC<GroupItemProps> = ({ group }) => {
-  const {
-    data = [],
-    loading,
-    refresh,
-  } = useRequest(
-    async () =>
-      (
-        await Promise.all(
-          TABLE_NAMES_ARR.map(t =>
-            Api.getRules(t, {
-              group,
-            }),
-          ),
-        )
-      )
-        .flat(1)
-        .map(x => ({ ...x, [VIRTUAL_KEY]: getVirtualKey(x) })),
-    {
-      manual: false,
-      refreshDeps: [group],
-    },
-  );
-
-  const dataRef = useLatest(data);
-
-  useEffect(() => {
-    const handleRuleUpdate = (request: any) => {
-      const rule: Rule = request.target;
-      const key = getVirtualKey(rule);
-      if (dataRef.current.some(x => getVirtualKey(x) === key)) {
-        refresh();
-      }
-    };
-
-    notify.event.on(EVENTs.RULE_UPDATE, handleRuleUpdate);
-
-    return () => {
-      notify.event.off(EVENTs.RULE_UPDATE, handleRuleUpdate);
-    };
-  }, []);
-
-  if (Object.keys(data).length === 0 && !loading) {
+const GroupItem: FC<GroupItemProps> = ({ group, rules, hasToggle = true }) => {
+  if (group.length === 0) {
     return null;
   }
 
   return (
-    <Spin spinning={loading}>
-      {data.map(item => (
+    <>
+      <div className={cx('group-title', { toggle: hasToggle })}>
+        <div className="name">{group}</div>
+        {hasToggle && (
+          <ButtonGroup>
+            <Tooltip content={t('enable')}>
+              <Button
+                theme="borderless"
+                type="tertiary"
+                onClick={() => toggleGroup(group, true)}
+                size="small"
+                icon={<IconUnlock />}
+              />
+            </Tooltip>
+            <Tooltip content={t('disable')}>
+              <Button
+                theme="borderless"
+                type="tertiary"
+                onClick={() => toggleGroup(group, false)}
+                size="small"
+                icon={<IconLock />}
+              />
+            </Tooltip>
+          </ButtonGroup>
+        )}
+      </div>
+      {rules.map(item => (
         <RuleItem key={item[VIRTUAL_KEY]} rule={item} />
       ))}
-    </Spin>
+    </>
   );
 };
 

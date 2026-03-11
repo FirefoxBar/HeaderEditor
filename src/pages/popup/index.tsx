@@ -34,48 +34,24 @@ const basicStyle = css`
     display: flex;
     flex-direction: column;
 
-    .item-block {
+    .group-title {
+      padding: 8px;
+      font-weight: bold;
+      color: var(--semi-color-tertiary);
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+
+      &.toggle {
+        padding-top: 4px;
+        padding-right: 4px;
+        padding-bottom: 4px;
+      }
+    }
+
+    .main-list {
       display: flex;
       flex-direction: column;
-
-      > .title {
-        padding: 8px;
-        font-weight: bold;
-        color: var(--semi-color-tertiary);
-        display: flex;
-        align-items: center;
-        justify-content: space-between;
-
-        &.group {
-          padding-top: 4px;
-          padding-right: 4px;
-          padding-bottom: 4px;
-        }
-      }
-
-      .item {
-        display: flex;
-        flex-direction: row;
-        gap: 8px;
-        align-items: center;
-        background-color: var(--semi-color-bg-1);
-        border-top: 1px solid var(--semi-color-border);
-        padding-left: 8px;
-        padding-right: 8px;
-
-        > * {
-          flex-grow: 0;
-          flex-shrink: 0;
-        }
-
-        > .name {
-          flex-grow: 1;
-          flex-shrink: 1;
-          font-size: 14px;
-          padding-top: 8px;
-          padding-bottom: 8px;
-        }
-      }
     }
   }
 `;

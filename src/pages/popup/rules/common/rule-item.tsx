@@ -1,6 +1,6 @@
 import { IconBranch } from '@douyinfe/semi-icons';
 import { Button, Popover, Switch } from '@douyinfe/semi-ui';
-import { cx } from '@emotion/css';
+import { css, cx } from '@emotion/css';
 import type { FC } from 'react';
 import RuleContentSwitcher from '@/share/components/rule-content-switcher';
 import RuleDetail from '@/share/components/rule-detail';
@@ -13,9 +13,33 @@ interface RuleItemProps {
   rule: Rule;
 }
 
+const style = css`
+  display: flex;
+  flex-direction: row;
+  gap: 8px;
+  align-items: center;
+  background-color: var(--semi-color-bg-1);
+  border-top: 1px solid var(--semi-color-border);
+  padding-left: 8px;
+  padding-right: 8px;
+
+  > * {
+    flex-grow: 0;
+    flex-shrink: 0;
+  }
+
+  > .name {
+    flex-grow: 1;
+    flex-shrink: 1;
+    font-size: 14px;
+    padding-top: 8px;
+    padding-bottom: 8px;
+  }
+`;
+
 const RuleItem: FC<RuleItemProps> = ({ rule }) => {
   return (
-    <div className="item">
+    <div className={style}>
       <Switch
         size="small"
         checked={rule.enable}

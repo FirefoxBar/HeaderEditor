@@ -5,8 +5,10 @@ import Rules from './rules';
 
 const Common = () => (
   <>
-    <Rules />
-    <Group />
+    <div className="main-list">
+      <Rules />
+      <Group />
+    </div>
     <div style={{ flexGrow: 1, minHeight: '20px' }} />
     <Typography.Text
       type="tertiary"

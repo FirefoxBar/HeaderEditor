@@ -1,28 +1,66 @@
-import { IconLock, IconUnlock } from '@douyinfe/semi-icons';
-import { Button, ButtonGroup, Tooltip } from '@douyinfe/semi-ui';
+import { Spin } from '@douyinfe/semi-ui';
+import { useLatest, useRequest } from 'ahooks';
 import { flatten } from 'lodash-es';
-import { Fragment } from 'react';
-import { isValidArray, t } from '@/share/core/utils';
+import { type FC, useEffect } from 'react';
+import { EVENTs, VIRTUAL_KEY } from '@/share/core/constant';
+import notify from '@/share/core/notify';
+import type { Rule } from '@/share/core/types';
+import { getVirtualKey, isValidArray } from '@/share/core/utils';
 import useMarkCommon from '@/share/hooks/use-mark-common';
 import Api from '@/share/pages/api';
-import { Toast } from '@/share/pages/toast';
 import GroupItem from './group-item';
 
-const toggleGroup = async (name: string, target: boolean) => {
-  const rules = flatten(Object.values(await Api.getAllRules()));
-  const toUpdate = rules.filter(x => x.group === name);
-  try {
-    await Promise.all(
-      toUpdate.map(x => {
-        x.enable = target;
-        return Api.saveRule(x);
-      }),
-    );
-    Toast().success(t('switch_success'));
-  } catch (e) {
-    console.error(e);
-    Toast().error((e as Error).message);
+interface GroupLoaderProps {
+  group: string;
+}
+
+const GroupLoader: FC<GroupLoaderProps> = ({ group }) => {
+  const {
+    data = [],
+    loading,
+    refresh,
+  } = useRequest(
+    async () =>
+      flatten(Object.values(await Api.getAllRules()))
+        .filter(x => x.group === group)
+        .map(x => ({
+          ...x,
+          [VIRTUAL_KEY]: getVirtualKey(x),
+        })),
+    {
+      manual: false,
+      refreshDeps: [group],
+      debounceWait: 100,
+    },
+  );
+
+  const dataRef = useLatest(data);
+
+  useEffect(() => {
+    const handleRuleUpdate = (request: any) => {
+      const rule: Rule = request.target;
+      const key = getVirtualKey(rule);
+      if (dataRef.current.some(x => getVirtualKey(x) === key)) {
+        refresh();
+      }
+    };
+
+    notify.event.on(EVENTs.RULE_UPDATE, handleRuleUpdate);
+
+    return () => {
+      notify.event.off(EVENTs.RULE_UPDATE, handleRuleUpdate);
+    };
+  }, []);
+
+  if (Object.keys(data).length === 0 && !loading) {
+    return null;
   }
+
+  return (
+    <Spin spinning={loading}>
+      <GroupItem group={group} rules={data} hasToggle />
+    </Spin>
+  );
 };
 
 const Group = () => {
@@ -35,32 +73,7 @@ const Group = () => {
   return (
     <div className="item-block">
       {keys.map(key => (
-        <Fragment key={key}>
-          <div className="title group">
-            <div className="name">{key}</div>
-            <ButtonGroup>
-              <Tooltip content={t('enable')}>
-                <Button
-                  theme="borderless"
-                  type="tertiary"
-                  onClick={() => toggleGroup(key, true)}
-                  size="small"
-                  icon={<IconUnlock />}
-                />
-              </Tooltip>
-              <Tooltip content={t('disable')}>
-                <Button
-                  theme="borderless"
-                  type="tertiary"
-                  onClick={() => toggleGroup(key, false)}
-                  size="small"
-                  icon={<IconLock />}
-                />
-              </Tooltip>
-            </ButtonGroup>
-          </div>
-          <GroupItem group={key} />
-        </Fragment>
+        <GroupLoader key={key} group={key} />
       ))}
     </div>
   );

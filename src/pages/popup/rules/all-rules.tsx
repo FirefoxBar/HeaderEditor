@@ -1,31 +1,28 @@
-import { IconBranch } from '@douyinfe/semi-icons';
-import { Button, Popover, Spin, Switch } from '@douyinfe/semi-ui';
-import { css, cx } from '@emotion/css';
+import { Spin } from '@douyinfe/semi-ui';
 import { useRequest } from 'ahooks';
-import { flatten } from 'lodash-es';
-import { Fragment, useEffect } from 'react';
-import RuleContentSwitcher from '@/share/components/rule-content-switcher';
-import RuleDetail from '@/share/components/rule-detail';
+import { flatten, groupBy } from 'lodash-es';
+import { useEffect } from 'react';
 import { EVENTs, VIRTUAL_KEY } from '@/share/core/constant';
 import notify from '@/share/core/notify';
-import type { Rule } from '@/share/core/types';
+import type { RuleWithVirtualKey } from '@/share/core/types';
 import { getVirtualKey } from '@/share/core/utils';
 import Api from '@/share/pages/api';
-import { textEllipsis } from '@/share/pages/styles';
-import QuickEdit from './quick-edit';
+import GroupItem from './common/group-item';
 
 const AllRules = () => {
   const {
-    data = [],
+    data = {},
     loading,
     mutate,
   } = useRequest(
-    async () => {
-      const res = await Api.getAllRules();
-      return flatten(Object.values(res))
-        .sort((a, b) => a.group.localeCompare(b.group))
-        .map(x => ({ ...x, [VIRTUAL_KEY]: getVirtualKey(x) }));
-    },
+    async () =>
+      groupBy(
+        flatten(Object.values(await Api.getAllRules())).map(x => ({
+          ...x,
+          [VIRTUAL_KEY]: getVirtualKey(x),
+        })),
+        'group',
+      ),
     {
       manual: false,
     },
@@ -33,22 +30,38 @@ const AllRules = () => {
 
   useEffect(() => {
     const handleRuleUpdate = (request: any) => {
-      const rule: Rule = request.target;
-      const key = getVirtualKey(rule);
+      const key = getVirtualKey(request.target);
+      const rule: RuleWithVirtualKey = {
+        ...request.target,
+        [VIRTUAL_KEY]: key,
+      };
       mutate(currentData => {
         if (!currentData) {
           return;
         }
-        const index = currentData.findIndex(x => x[VIRTUAL_KEY] === key);
-        if (index === -1) {
-          return currentData;
+        const oldGroup = Object.entries(currentData).find(([_, value]) =>
+          value.some(x => x[VIRTUAL_KEY] === key),
+        );
+        const newData = { ...currentData };
+        if (!oldGroup) {
+          // new
+          newData[rule.group] = [...(currentData[rule.group] || []), rule];
+          return newData;
         }
-        const result = [...currentData];
-        result.splice(index, 1, {
-          ...rule,
-          [VIRTUAL_KEY]: key,
-        });
-        return result;
+        if (oldGroup[0] !== rule.group) {
+          // group changed
+          newData[oldGroup[0]] = oldGroup[1].filter(
+            x => x[VIRTUAL_KEY] !== key,
+          );
+          newData[rule.group] = [...(currentData[rule.group] || []), rule];
+          return newData;
+        } else {
+          // group not change
+          const index = oldGroup[1].findIndex(x => x[VIRTUAL_KEY] === key);
+          newData[oldGroup[0]] = [...oldGroup[1]];
+          newData[oldGroup[0]][index] = rule;
+          return newData;
+        }
       });
     };
 
@@ -59,65 +72,12 @@ const AllRules = () => {
     };
   }, []);
 
-  if (data.length === 0 && !loading) {
-    return null;
-  }
-
-  const renderedGroup = new Set<string>();
-
   return (
     <Spin spinning={loading}>
-      <div className="item-block">
-        {data.map(item => {
-          const itemDOM = (
-            <div className="item" key={item[VIRTUAL_KEY]}>
-              <Switch
-                size="small"
-                checked={item.enable}
-                onChange={checked =>
-                  Api.saveRule({
-                    ...item,
-                    enable: checked,
-                  })
-                }
-              />
-              <Popover
-                showArrow
-                position="top"
-                content={<RuleDetail rule={item} size="small" />}
-                style={{ maxWidth: '300px' }}
-              >
-                <div className={cx(textEllipsis, 'name')}>{item.name}</div>
-              </Popover>
-              <div className="actions">
-                <QuickEdit rule={item} />
-                <RuleContentSwitcher
-                  rule={item}
-                  type={item.ruleType}
-                  size="small"
-                  add={false}
-                >
-                  <Button
-                    theme="borderless"
-                    type="tertiary"
-                    size="small"
-                    icon={<IconBranch />}
-                  />
-                </RuleContentSwitcher>
-              </div>
-            </div>
-          );
-
-          if (renderedGroup.has(item.group)) {
-            return itemDOM;
-          }
-          return (
-            <Fragment key={item.group}>
-              <div className="title">{item.group}</div>
-              {itemDOM}
-            </Fragment>
-          );
-        })}
+      <div className="main-list">
+        {Object.entries(data).map(([group, rules]) => (
+          <GroupItem key={group} group={group} rules={rules} hasToggle />
+        ))}
       </div>
     </Spin>
   );
