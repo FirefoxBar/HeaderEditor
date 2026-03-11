@@ -360,6 +360,10 @@
     "message": "Collapse/expand group",
     "description": "Button to pack up or unfurl a group"
   },
+  "popupPanel": {
+    "message": "Popup panel",
+    "description": "Popup panel"
+  },
   "quick_edit": {
     "message": "Quick edit",
     "description": "Display edit button on the popup panel"
@@ -532,6 +536,10 @@
     "message": "Share",
     "description": "Share button title"
   },
+  "showQuickPreview": {
+    "message": "Show quick preview",
+    "description": "Show quick preview"
+  },
   "show_rules_on_popup": {
     "message": "Display these rules on a popup",
     "description": "Options"
@@ -619,13 +627,5 @@
   "view": {
     "message": "View",
     "description": "View rule or a link"
-  },
-  "showQuickPreview": {
-    "message": "Show quick preview",
-    "description": "Show quick preview"
-  },
-  "popupPanel": {
-    "message": "Popup panel",
-    "description": "Popup panel"
   }
 }
