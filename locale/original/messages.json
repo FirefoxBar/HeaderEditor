@@ -619,5 +619,13 @@
   "view": {
     "message": "View",
     "description": "View rule or a link"
+  },
+  "showQuickPreview": {
+    "message": "Show quick preview",
+    "description": "Show quick preview"
+  },
+  "popupPanel": {
+    "message": "Popup panel",
+    "description": "Popup panel"
   }
 }

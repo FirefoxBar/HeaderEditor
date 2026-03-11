@@ -4,7 +4,9 @@ import emitter from '../core/emitter';
 import { prefs } from '../core/prefs';
 import type { PrefValue } from '../core/types';
 
-const usePref = <K extends keyof PrefValue>(key: K) => {
+const usePref = <K extends keyof PrefValue>(
+  key: K,
+): [PrefValue[K], (value: PrefValue[K]) => void] => {
   const [state, setState] = useState(defaultPrefValue[key]);
 
   useEffect(() => {

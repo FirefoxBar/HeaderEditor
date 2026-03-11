@@ -37,6 +37,7 @@ import { convertToBasicRule, createExport } from '@/share/core/rule-utils';
 import type { RuleWithVirtualKey } from '@/share/core/types';
 import { getTableName, t } from '@/share/core/utils';
 import useMarkCommon from '@/share/hooks/use-mark-common';
+import usePref from '@/share/hooks/use-pref';
 import Api from '@/share/pages/api';
 import file from '@/share/pages/file';
 import { textEllipsis } from '@/share/pages/styles';
@@ -92,6 +93,9 @@ const RuleGroupCard = (props: RuleCardProps) => {
       }
     : undefined;
 
+  const [pref] = usePref('show-quick-preview');
+  const showQuickPreview = pref.includes('manage');
+
   const tableColumns: Array<ColumnProps<RuleWithVirtualKey>> = [
     {
       title: t('enable'),
@@ -113,16 +117,19 @@ const RuleGroupCard = (props: RuleCardProps) => {
       title: t('name'),
       className: 'cell-name',
       dataIndex: 'name',
-      render: (value: string, item) => (
-        <Popover
-          showArrow
-          position="top"
-          content={<RuleDetail rule={item} />}
-          style={{ maxWidth: '300px' }}
-        >
+      render: (value: string, item) =>
+        showQuickPreview ? (
+          <Popover
+            showArrow
+            position="top"
+            content={<RuleDetail rule={item} />}
+            style={{ maxWidth: '300px' }}
+          >
+            <div className={textEllipsis}>{value}</div>
+          </Popover>
+        ) : (
           <div className={textEllipsis}>{value}</div>
-        </Popover>
-      ),
+        ),
     },
     {
       title: t('ruleType'),

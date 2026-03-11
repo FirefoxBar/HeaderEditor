@@ -17,6 +17,7 @@ const prefItems: {
     type: 'switch' | 'select';
     optionList?: Array<{ label: string; value: string }>;
     disabled?: boolean;
+    multiple?: boolean;
   };
 } = {
   'manage-collapse-group': {
@@ -82,6 +83,21 @@ const prefItems: {
       {
         label: t('all_rules'),
         value: 'all',
+      },
+    ],
+  },
+  'show-quick-preview': {
+    langKey: 'showQuickPreview',
+    type: 'select',
+    multiple: true,
+    optionList: [
+      {
+        label: t('popupPanel'),
+        value: 'popup',
+      },
+      {
+        label: t('manage'),
+        value: 'manage',
       },
     ],
   },
@@ -167,6 +183,7 @@ export default class Prefs extends React.Component<void, PrefsState> {
                     onChange={v => this.handleChange(key, v)}
                     value={this.state.prefs[key as keyof PrefValue] as any}
                     disabled={item.disabled}
+                    multiple={item.multiple}
                   />
                 ) : (
                   <Switch

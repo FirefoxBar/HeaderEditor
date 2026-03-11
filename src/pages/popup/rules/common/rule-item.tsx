@@ -5,6 +5,7 @@ import type { FC } from 'react';
 import RuleContentSwitcher from '@/share/components/rule-content-switcher';
 import RuleDetail from '@/share/components/rule-detail';
 import type { Rule } from '@/share/core/types';
+import usePref from '@/share/hooks/use-pref';
 import Api from '@/share/pages/api';
 import { textEllipsis } from '@/share/pages/styles';
 import QuickEdit from '../quick-edit';
@@ -38,6 +39,22 @@ const style = css`
 `;
 
 const RuleItem: FC<RuleItemProps> = ({ rule }) => {
+  const [pref] = usePref('show-quick-preview');
+  const showQuickPreview = pref.includes('popup');
+
+  const title = showQuickPreview ? (
+    <Popover
+      showArrow
+      position="top"
+      content={<RuleDetail rule={rule} size="small" />}
+      style={{ maxWidth: '300px' }}
+    >
+      <div className={cx(textEllipsis, 'name')}>{rule.name}</div>
+    </Popover>
+  ) : (
+    <div className={cx(textEllipsis, 'name')}>{rule.name}</div>
+  );
+
   return (
     <div className={style}>
       <Switch
@@ -50,14 +67,7 @@ const RuleItem: FC<RuleItemProps> = ({ rule }) => {
           })
         }
       />
-      <Popover
-        showArrow
-        position="top"
-        content={<RuleDetail rule={rule} size="small" />}
-        style={{ maxWidth: '300px' }}
-      >
-        <div className={cx(textEllipsis, 'name')}>{rule.name}</div>
-      </Popover>
+      {title}
       <div className="actions">
         <QuickEdit rule={rule} />
         <RuleContentSwitcher

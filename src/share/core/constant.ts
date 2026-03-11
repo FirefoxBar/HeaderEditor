@@ -44,6 +44,7 @@ export const defaultPrefValue: PrefValue = {
   'rule-history': true,
   'quick-edit': true,
   'popup-show-rules': 'common',
+  'show-quick-preview': ['popup', 'manage'],
 };
 
 export enum APIs {
