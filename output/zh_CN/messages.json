@@ -92,12 +92,6 @@
     "message": "取消常用",
     "description": "Unmark a common rule/group"
   },
-  "cron_expression_empty": {
-    "message": "Cron 表达式不能为空"
-  },
-  "cron_expression_invalid": {
-    "message": "Cron 表达式无效"
-  },
   "dark_mode": {
     "message": "暗黑模式",
     "description": "Dark mode select"
@@ -121,10 +115,6 @@
   "delete_confirm": {
     "message": "您确认要删除这些规则吗？",
     "description": "A confirmation box shows when user want to delete rules"
-  },
-  "delete_task_confirm": {
-    "message": "您确认要删除这些任务吗？",
-    "description": "A confirmation box shows when user want to delete tasks"
   },
   "description": {
     "message": "管理浏览器请求",
@@ -222,12 +212,6 @@
     "message": "问题反馈",
     "description": "Feedback link"
   },
-  "fetch_method_empty": {
-    "message": "请求方法不能为空"
-  },
-  "fetch_url_invalid": {
-    "message": "请求 URL 无效"
-  },
   "group": {
     "message": "分组",
     "description": "Group button"
@@ -279,9 +263,6 @@
   "init_rule_failed": {
     "message": "初始化规则失败",
     "description": "Failed to initialize rule"
-  },
-  "interval_empty": {
-    "message": "时间间隔不能为空"
   },
   "lite_edit_tip": {
     "message": "Lite版本不支持部分功能",
@@ -395,22 +376,13 @@
     "message": "重定向目标不能为空",
     "description": "Message for saving a rule without redirect target if rule type is redirect"
   },
-  "refresh": {
-    "message": "刷新"
-  },
   "rename": {
     "message": "重命名",
     "description": "Rename group"
   },
-  "request_body": {
-    "message": "请求体"
-  },
   "request_headers": {
     "message": "请求头",
     "description": "Request headers"
-  },
-  "request_method": {
-    "message": "请求方法"
   },
   "request_stage": {
     "message": "请求阶段",
@@ -476,21 +448,6 @@
     "message": "响应头",
     "description": "Response headers"
   },
-  "response_type": {
-    "message": "响应类型"
-  },
-  "response_type_empty": {
-    "message": "响应类型不能为空"
-  },
-  "response_type_json": {
-    "message": "JSON"
-  },
-  "response_type_text": {
-    "message": "文本"
-  },
-  "result": {
-    "message": "结果"
-  },
   "ruleType": {
     "message": "规则类型",
     "description": "Label for rule type in modal"
@@ -534,9 +491,6 @@
   "rule_switch_help": {
     "message": "通过菜单快捷切换规则内容",
     "description": "Help text for rule_switch option"
-  },
-  "run": {
-    "message": "运行"
   },
   "run_mode": {
     "message": "运行模式",
@@ -606,60 +560,6 @@
     "message": "快速切换",
     "description": "Title of the quick switch feature"
   },
-  "task_cron_expression": {
-    "message": "Cron 表达式"
-  },
-  "task_execute_cron": {
-    "message": "定时任务"
-  },
-  "task_execute_interval": {
-    "message": "固定间隔任务"
-  },
-  "task_execute_once": {
-    "message": "仅运行一次"
-  },
-  "task_execute_type": {
-    "message": "运行类型"
-  },
-  "task_fetch_url": {
-    "message": "请求 URL"
-  },
-  "task_interval": {
-    "message": "时间间隔（分）"
-  },
-  "task_key": {
-    "message": "任务 Key"
-  },
-  "task_key_empty": {
-    "message": "任务 Key 不能为空"
-  },
-  "task_key_invalid": {
-    "message": "任务 Key 无效"
-  },
-  "task_last_run": {
-    "message": "上次运行"
-  },
-  "task_name": {
-    "message": "任务名称"
-  },
-  "task_name_empty": {
-    "message": "任务名称不能为空"
-  },
-  "task_not_run": {
-    "message": "未运行"
-  },
-  "task_run_error": {
-    "message": "错误"
-  },
-  "task_run_success": {
-    "message": "运行成功"
-  },
-  "task_running": {
-    "message": "运行中"
-  },
-  "tasks": {
-    "message": "任务"
-  },
   "test_custom_code": {
     "message": "暂不支持测试自定义函数",
     "description": "Label to test a redirect rule"
@@ -688,9 +588,6 @@
     "message": "第三方规则",
     "description": "Link to find more third party rules"
   },
-  "time": {
-    "message": "时间"
-  },
   "ungrouped": {
     "message": "未分组",
     "description": "The default group name"
@@ -718,12 +615,6 @@
   "url_third_party_rules": {
     "message": "https://he.firefoxcn.net/guide/third-party-rules/",
     "description": "URL of documentations, if not translated, please use english version"
-  },
-  "validator": {
-    "message": "验证器"
-  },
-  "validator_invalid": {
-    "message": "验证器无效"
   },
   "view": {
     "message": "查看",
