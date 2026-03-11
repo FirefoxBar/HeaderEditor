@@ -47,15 +47,15 @@ jobs:
       uses: ./.github/actions/build-and-test
     - name: Pack
       env:
-        AMO_KEY: ${{ secrets.AMO_KEY }}
-        AMO_SECRET: ${{ secrets.AMO_SECRET }}
+        AMO_KEY: ${{ secrets.ORG_AMO_KEY }}
+        AMO_SECRET: ${{ secrets.ORG_AMO_SECRET }}
         CRX_PRIV_KEY: ${{ secrets.CRX_PRIV_KEY }}
         CRX_PRIV_KEY_V3: ${{ secrets.CRX_PRIV_KEY_V3 }}
-        CWS_CLIENT_ID: ${{ secrets.CWS_CLIENT_ID }}
-        CWS_CLIENT_SECRET: ${{ secrets.CWS_CLIENT_SECRET }}
-        CWS_TOKEN: ${{ secrets.CWS_TOKEN }}
-        MS_CLIENT_ID: ${{ secrets.MS_CLIENT_ID }}
-        MS_API_KEY: ${{ secrets.MS_API_KEY }}
+        CWS_CLIENT_ID: ${{ secrets.ORG_CWS_CLIENT_ID }}
+        CWS_CLIENT_SECRET: ${{ secrets.ORG_CWS_CLIENT_SECRET }}
+        CWS_TOKEN: ${{ secrets.ORG_CWS_TOKEN }}
+        MS_CLIENT_ID: ${{ secrets.ORG_MS_CLIENT_ID }}
+        MS_API_KEY: ${{ secrets.ORG_MS_API_KEY }}
         DEBUG: '*'
       run: npm run pack
     - name: Upload release
