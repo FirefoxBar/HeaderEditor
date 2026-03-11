@@ -104,6 +104,17 @@ interface RuleContentSwitcherProps {
   size?: 'small' | 'default';
 }
 
+const baseStyle = css`
+  .semi-dropdown-item,
+  .semi-dropdown-title {
+    max-width: 160px;
+    overflow: hidden;
+    white-space: nowrap;
+    text-overflow: ellipsis;
+    display: block;
+  }
+`;
+
 const smallStyle = css`
   .semi-dropdown-item {
     padding: 4px 8px;
@@ -139,31 +150,82 @@ const RuleContentSwitcher: FC<RuleContentSwitcherProps> = props => {
       RULE_TYPE.MODIFY_SEND_HEADER,
     ].includes(rule.ruleType);
 
-    const result: DropdownProps['menu'] = (
-      isValidArray(value) ? value : []
-    ).map(x => ({
-      node: 'item',
-      name:
-        typeof x === 'string'
-          ? x
-          : ((
-              <div className={tagList}>
-                {Object.keys(x).map(k => (
-                  <Tag color="grey" key={k} size="small" shape="circle">
-                    {k}: {x[k]}
-                  </Tag>
-                ))}
-              </div>
-            ) as any),
-      onClick: () => {
-        if (isHeader) {
-          updateRule('headers', x);
+    const getCommonHeaderKey = () => {
+      if (!isValidArray(value)) {
+        return;
+      }
+      let k: string | undefined;
+      for (const item of value) {
+        if (typeof item !== 'object') {
+          return;
         }
-        if (type === RULE_TYPE.REDIRECT) {
-          updateRule('action', x);
+        const keys = Object.keys(item);
+        if (keys.length === 1) {
+          if (!k) k = keys[0];
+          if (k !== keys[0]) {
+            return;
+          }
+        } else {
+          return;
         }
-      },
-    }));
+      }
+      return k;
+    };
+
+    const commonKey = getCommonHeaderKey();
+
+    const result: DropdownProps['menu'] = [];
+
+    if (commonKey) {
+      result.push({
+        node: 'title',
+        name: commonKey,
+      });
+    }
+
+    if (isValidArray(value)) {
+      value.forEach(x => {
+        let content: any = null;
+
+        if (typeof x === 'string') {
+          content = x;
+        }
+
+        const itemKeys = Object.keys(x);
+        if (commonKey && typeof x === 'object') {
+          content = x[commonKey];
+        }
+
+        if (typeof x === 'object' && !content) {
+          content = (
+            <div className={tagList}>
+              {itemKeys.map(k => (
+                <Tag color="grey" key={k} size="small" shape="circle">
+                  <div className="item-tag" title={`${k}: ${x[k]}`}>
+                    <span className="key">{k}</span>
+                    <span className="sp">:</span>
+                    <span className="value">{x[k]}</span>
+                  </div>
+                </Tag>
+              ))}
+            </div>
+          );
+        }
+
+        result.push({
+          node: 'item',
+          name: content,
+          onClick: () => {
+            if (isHeader) {
+              updateRule('headers', x);
+            }
+            if (type === RULE_TYPE.REDIRECT) {
+              updateRule('action', x);
+            }
+          },
+        });
+      });
+    }
 
     if (add) {
       if (result.length === 0) {
@@ -236,7 +298,7 @@ const RuleContentSwitcher: FC<RuleContentSwitcherProps> = props => {
 
   return (
     <Dropdown
-      className={cx({
+      className={cx(baseStyle, {
         [smallStyle]: size === 'small',
       })}
       style={{ minWidth: '120px' }}
