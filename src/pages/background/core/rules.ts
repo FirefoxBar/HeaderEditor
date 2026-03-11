@@ -110,6 +110,10 @@ function filter(fromRules: InitdRule[], options?: RuleFilterOptions) {
       return false;
     }
 
+    if (options.group && rule.group !== options.group) {
+      return false;
+    }
+
     if (typeof options.id !== 'undefined') {
       if (Array.isArray(options.id)) {
         if (!options.id.includes(rule.id)) {

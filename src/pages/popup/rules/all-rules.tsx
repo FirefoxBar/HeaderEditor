@@ -14,16 +14,6 @@ import Api from '@/share/pages/api';
 import { textEllipsis } from '@/share/pages/styles';
 import QuickEdit from './quick-edit';
 
-const titleStyle = css`
-  font-size: 12px;
-  font-weight: 500;
-  line-height: 24px;
-  padding: 0 8px;
-  overflow: hidden;
-  white-space: nowrap;
-  text-overflow: ellipsis;
-`;
-
 const AllRules = () => {
   const {
     data = [],
@@ -123,7 +113,7 @@ const AllRules = () => {
           }
           return (
             <Fragment key={item.group}>
-              <div className={titleStyle}>{item.group}</div>
+              <div className="title">{item.group}</div>
               {itemDOM}
             </Fragment>
           );

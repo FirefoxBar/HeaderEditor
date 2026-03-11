@@ -38,7 +38,22 @@ const basicStyle = css`
       display: flex;
       flex-direction: column;
 
-      > .item {
+      > .title {
+        padding: 8px;
+        font-weight: bold;
+        color: var(--semi-color-tertiary);
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+
+        &.group {
+          padding-top: 4px;
+          padding-right: 4px;
+          padding-bottom: 4px;
+        }
+      }
+
+      .item {
         display: flex;
         flex-direction: row;
         gap: 8px;
