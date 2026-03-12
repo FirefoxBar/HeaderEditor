@@ -360,6 +360,10 @@
     "message": "摺疊/展開分組",
     "description": "Button to pack up or unfurl a group"
   },
+  "popupPanel": {
+    "message": "彈出式面板",
+    "description": "Popup panel"
+  },
   "quick_edit": {
     "message": "快速編輯",
     "description": "Display edit button on the popup panel"
@@ -531,6 +535,10 @@
   "share": {
     "message": "分享",
     "description": "Share button title"
+  },
+  "showQuickPreview": {
+    "message": "顯示快速預覽",
+    "description": "Show quick preview"
   },
   "show_rules_on_popup": {
     "message": "在彈出式視窗中顯示規則",
