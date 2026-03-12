@@ -13,8 +13,8 @@ import isDarkMode from '@/share/pages/is-dark-mode';
 import Rules from './rules';
 
 const basicStyle = css`
-  min-width: 340px;
-  min-height: 440px;
+  min-width: 380px;
+  min-height: 460px;
   height: 100vh;
   width: 100vw;
   justify-content: stretch;

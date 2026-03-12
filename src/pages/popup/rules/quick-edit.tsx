@@ -1,8 +1,9 @@
-import { IconEdit, IconItalic, IconPlusCircle } from '@douyinfe/semi-icons';
-import { Button, Form, Input, Tabs } from '@douyinfe/semi-ui';
+import { IconEdit } from '@douyinfe/semi-icons';
+import { Button, Form, Input } from '@douyinfe/semi-ui';
 import { css } from '@emotion/css';
 import { useLatest } from 'ahooks';
-import { type ReactNode, useCallback, useEffect, useState } from 'react';
+import { type ReactNode, useCallback } from 'react';
+import HeaderField from '@/share/components/header-field';
 import Modal from '@/share/components/modal';
 import { RULE_TYPE } from '@/share/core/constant';
 import type { Rule } from '@/share/core/types';
@@ -10,77 +11,6 @@ import { t } from '@/share/core/utils';
 import usePref from '@/share/hooks/use-pref';
 import Api from '@/share/pages/api';
 import { Toast } from '@/share/pages/toast';
-
-interface HeaderQuickEditProps {
-  defaultValue: Record<string, string>;
-  onChange: (v: Record<string, string>) => void;
-}
-
-const HeaderQuickEdit = ({ defaultValue, onChange }: HeaderQuickEditProps) => {
-  const [innerValue, setInnerValue] = useState<Array<[string, string]>>([]);
-
-  useEffect(() => {
-    setInnerValue(Object.entries(defaultValue));
-  }, []);
-
-  const handleChange = (processValue: (v: Array<[string, string]>) => void) => {
-    setInnerValue(prev => {
-      const res = [...prev];
-      processValue(res);
-      onChange(Object.fromEntries(res.filter(x => Boolean(x[0]))));
-      return res;
-    });
-  };
-
-  const handleItemChange = (index: number, keyIndex: number, value: string) => {
-    handleChange(res => {
-      const newItem: [string, string] = [...res[index]];
-      newItem[keyIndex] = value;
-      res[index] = newItem;
-    });
-  };
-
-  return (
-    <Tabs
-      defaultActiveKey="0"
-      collapsible
-      onTabClose={key => handleChange(res => res.splice(Number(key), 1))}
-      tabBarExtraContent={
-        <Button
-          onClick={() => handleChange(res => res.push(['', '']))}
-          icon={<IconPlusCircle />}
-        />
-      }
-      size="small"
-      type="card"
-      keepDOM
-    >
-      {innerValue.map(([name, value], index) => {
-        return (
-          <Tabs.TabPane
-            key={index}
-            closable
-            itemKey={String(index)}
-            tab={name || <IconItalic />}
-          >
-            <Form.Slot label={t('headerName')}>
-              <Input
-                value={name}
-                onChange={v => handleItemChange(index, 0, v)}
-              />
-            </Form.Slot>
-            <Form.Slot label={t('headerValue')}>
-              <Input
-                value={value}
-                onChange={v => handleItemChange(index, 1, v)}
-              />
-            </Form.Slot>
-          </Tabs.TabPane>
-        );
-      })}
-    </Tabs>
-  );
-};
 
 interface QuickEditProps {
   rule: Rule;
@@ -93,7 +23,9 @@ const modalCls = css`
     bottom: 0;
     width: 100%;
     .semi-modal-body {
-      overflow: hidden;
+      max-height: calc(90vh - 90px);
+      overflow: auto;
+      scrollbar-width: thin;
     }
     > .semi-modal-content {
       border-bottom-left-radius: 0;
@@ -132,12 +64,25 @@ const QuickEdit = ({ rule }: QuickEditProps) => {
         newRule.ruleType,
       )
     ) {
-      const defaultValue = newRule.headers || {};
+      const defaultValue = Object.entries(newRule.headers || {}).map(
+        ([name, value]) => ({
+          name,
+          value,
+        }),
+      );
       content = (
-        <HeaderQuickEdit
-          defaultValue={defaultValue}
-          onChange={v => (newRule.headers = v)}
-        />
+        <Form
+          initValues={{ header: defaultValue }}
+          onValueChange={({ header }) =>
+            (newRule.headers = Object.fromEntries(
+              header
+                .filter((x: any) => Boolean(x.name))
+                .map((x: any) => [x.name, x.value]),
+            ))
+          }
+        >
+          <HeaderField field="header" type={undefined} />
+        </Form>
       );
     }
 
