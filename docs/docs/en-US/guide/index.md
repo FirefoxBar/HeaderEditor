@@ -23,6 +23,7 @@ The features of the full version (Header Editor) and the lite version (Header Ed
 
 | Feature | Full | Lite |
 | --- | --- | --- |
+| Manifest version | v2 | v3 |
 | Basic functions | ✅ | ✅ |
 | DNR mode | ✅ | ✅ |
 | Rules - Exclude - Regular Expression | ✅ | ✅ |
@@ -33,6 +34,7 @@ The features of the full version (Header Editor) and the lite version (Header Ed
 
 | Feature | Full | Lite |
 | --- | --- | --- |
+| Manifest version | v2 | v3 |
 | Basic functions | ✅ | ✅ |
 | DNR mode | ❌ | ✅ |
 | Rules - Exclude - Regular Expression | ✅ | ❌ |
