@@ -30,11 +30,18 @@ const Test = () => {
         try {
           rule.current = initRule(ruleContent, true);
           if (ruleContent.condition?.regex) {
-            // check re2 syntax
-            rule.current._re2 = RE2JS.compile(ruleContent.condition.regex);
+            try {
+              rule.current._re2 = RE2JS.compile(ruleContent.condition.regex);
+            } catch (e) {
+              if (ENABLE_WEB_REQUEST) {
+                new RegExp(ruleContent.condition.regex);
+                rule.current.forceRunner = 'web_request';
+              } else {
+                throw e;
+              }
+            }
           }
         } catch (e) {
-          // 出错
           setResult((e as Error).message);
           return;
         }

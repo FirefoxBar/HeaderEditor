@@ -4,10 +4,9 @@ import type { FormApi } from '@douyinfe/semi-ui/lib/es/form';
 import { css } from '@emotion/css';
 import { useRequest } from 'ahooks';
 import { RE2JS } from 're2js';
-import React, { useEffect, useMemo, useRef } from 'react';
+import { useEffect, useMemo, useRef } from 'react';
 import { RULE_TYPE } from '@/share/core/constant';
 import { prefs } from '@/share/core/prefs';
-import { detectRunner } from '@/share/core/rule-utils';
 import type { Rule } from '@/share/core/types';
 import { t } from '@/share/core/utils';
 import Api from '@/share/pages/api';
@@ -51,7 +50,16 @@ const Edit = ({ visible, rule: ruleProp, onClose }: EditProps) => {
         throw new Error(t('match_rule_empty'));
       }
       if (rule.condition.regex) {
-        RE2JS.compile(rule.condition.regex);
+        try {
+          RE2JS.compile(rule.condition.regex);
+        } catch (e) {
+          if (ENABLE_WEB_REQUEST) {
+            new RegExp(rule.condition.regex);
+            rule.forceRunner = 'web_request';
+          } else {
+            throw e;
+          }
+        }
       }
       if (
         [
@@ -62,7 +70,11 @@ const Edit = ({ visible, rule: ruleProp, onClose }: EditProps) => {
           'domain',
           'regex',
           'resourceTypes',
-        ].every(x => typeof rule.condition![x] === 'undefined')
+        ].every(
+          x =>
+            typeof rule.condition![x as keyof Rule['condition']] ===
+            'undefined',
+        )
       ) {
         throw new Error(t('match_rule_empty'));
       }
