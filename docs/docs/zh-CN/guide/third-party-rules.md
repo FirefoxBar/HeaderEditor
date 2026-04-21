@@ -10,7 +10,7 @@ title: 第三方规则
 ## 列表
 
 * [dupontjoy](https://github.com/dupontjoy/customization/tree/main/Rules/HeaderEditor) 主要为中文站点
-* [azurezeng/GoogleRedirect](https://github.azurezeng.com/static/HE-GoogleRedirect.json) Google资源重定向
+* [azurezeng/GoogleRedirect](https://github.azurezeng.com/static/HE-GoogleRedirect.json) Google资源&reCaptcha重定向
 
 ## 提交规则
 
