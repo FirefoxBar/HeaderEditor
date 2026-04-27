@@ -50,15 +50,23 @@ const Edit = ({ visible, rule: ruleProp, onClose }: EditProps) => {
         throw new Error(t('match_rule_empty'));
       }
       if (rule.condition.regex) {
+        let err: Error | undefined;
         try {
           RE2JS.compile(rule.condition.regex);
         } catch (e) {
-          if (ENABLE_WEB_REQUEST) {
+          err = e as Error;
+        }
+        if (err && ENABLE_WEB_REQUEST) {
+          try {
             new RegExp(rule.condition.regex);
             rule.forceRunner = 'web_request';
-          } else {
-            throw e;
+            err = undefined;
+          } catch (e) {
+            err = e as Error;
           }
+        }
+        if (err) {
+          throw err;
         }
       }
       if (

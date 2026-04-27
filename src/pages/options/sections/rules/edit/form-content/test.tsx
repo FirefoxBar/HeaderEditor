@@ -27,22 +27,31 @@ const Test = () => {
 
       if (!equal(lastValue.current, values) || !rule.current) {
         const ruleContent = getRuleFromInput(values);
+        let err: Error | undefined;
         try {
           rule.current = initRule(ruleContent, true);
-          if (ruleContent.condition?.regex) {
+        } catch (e) {
+          err = e as Error;
+        }
+        if (ruleContent.condition?.regex && rule.current && !err) {
+          try {
+            rule.current._re2 = RE2JS.compile(ruleContent.condition.regex);
+          } catch (e) {
+            err = e as Error;
+          }
+
+          if (err && ENABLE_WEB_REQUEST) {
             try {
-              rule.current._re2 = RE2JS.compile(ruleContent.condition.regex);
+              rule.current._reg = new RegExp(ruleContent.condition.regex);
+              rule.current.forceRunner = 'web_request';
+              err = undefined;
             } catch (e) {
-              if (ENABLE_WEB_REQUEST) {
-                new RegExp(ruleContent.condition.regex);
-                rule.current.forceRunner = 'web_request';
-              } else {
-                throw e;
-              }
+              err = e as Error;
             }
           }
-        } catch (e) {
-          setResult((e as Error).message);
+        }
+        if (err) {
+          setResult(err.message);
           return;
         }
         lastValue.current = cloneDeep(values);
