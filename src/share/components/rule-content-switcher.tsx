@@ -134,6 +134,15 @@ const RuleContentSwitcher: FC<RuleContentSwitcherProps> = props => {
   const [isEnable] = usePref('rule-switch');
 
   const menu = useMemo(() => {
+    const isHeader = [
+      RULE_TYPE.MODIFY_RECV_HEADER,
+      RULE_TYPE.MODIFY_SEND_HEADER,
+    ].includes(rule.ruleType);
+
+    if ((!isHeader && type !== RULE_TYPE.REDIRECT) || rule.isFunction) {
+      return [];
+    }
+
     const updateRule = async (k: keyof Rule, v: any) => {
       const newRule = { ...newestRule.current };
       newRule[k] = v as never;
@@ -144,11 +153,6 @@ const RuleContentSwitcher: FC<RuleContentSwitcherProps> = props => {
         Toast().error((e as Error).message);
       }
     };
-
-    const isHeader = [
-      RULE_TYPE.MODIFY_RECV_HEADER,
-      RULE_TYPE.MODIFY_SEND_HEADER,
-    ].includes(rule.ruleType);
 
     const getCommonHeaderKey = () => {
       if (!isValidArray(value)) {
