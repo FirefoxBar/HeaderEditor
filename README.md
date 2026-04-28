@@ -81,7 +81,7 @@ Please note that some languages (such as zh-Hans) will not be translated on tran
 
 ## Licenses
 
-Copyright © 2017-2025 [FirefoxBar Team](https://team.firefoxcn.net)
+Copyright © 2017-2026 [FirefoxBar Team](https://team.firefoxcn.net)
 
 This project is licensed under the ​**GNU GPL v2.0 or later**. Unauthorized use for training, imitation, learning, generation, or related activities in the field of artificial intelligence (AI) is prohibited.
 
