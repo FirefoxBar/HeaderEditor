@@ -15,9 +15,9 @@ title: Install Full Version
 * Enable "Developer Mode"
 * Drag the downloaded crx file to the extension page
 
-## Enable Extension
+## Unable to install or enable extension
 
-If you encounter an issue with extensions not being enabled (common in Google Chrome 86 and above), please follow these steps:
+If you encounter problems installing or enabling the extension (common in Google Chrome 86 and above), please follow these steps:
 
 ### Windows
 
