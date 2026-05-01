@@ -105,8 +105,12 @@ This parameter is Object and is a read-only parameter. The structure is as follo
 	// URL of the resource which triggered the request. For example, if "https://example.com" contains a link, and the user clicks the link, then the originUrl for the resulting request is "https://example.com".
 	// Since 4.1.0
 	originUrl: '',
-	// URL of the document in which the resource will be loaded. Only avaliable in Firefox. Since 4.1.0
+	// URL of the document in which the resource will be loaded. Only available in Firefox. Since 4.1.0
 	documentUrl: '',
+	// Whether the request is from a private browsing window. Only available in Firefox.
+	incognito: false,
+	// The cookie store ID of the contextual identity. Only available in Firefox.
+	cookieStoreId: 'firefox-default',
 	// Contains request header if enable "Include request headers in custom function" and this time is response
 	// May be null. Since 4.1.0
 	requestHeaders: null

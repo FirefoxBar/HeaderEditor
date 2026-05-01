@@ -106,6 +106,10 @@ val.push({"name": "test", "value": value.toString()}); //合法
 	originUrl: '',
 	// 资源将会被加载到的地址，仅Firefox可用，可能为空
 	documentUrl: '',
+	// 请求是否来自隐私浏览窗口，仅Firefox可用
+	incognito: false,
+	// 请求页面容器id，仅Firefox可用
+	cookieStoreId: 'firefox-default',
 	// 如果开启了“在自定义函数中包含请求头”且此次触发是在响应时，则此处是请求时的头信息，可能为null，自4.1.0可用
 	requestHeaders: null
 }
