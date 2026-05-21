@@ -67,11 +67,17 @@ export function copyDir(source, target) {
   });
 }
 
-export function getNote() {
+export function getNote(browserConfig) {
   const repo = process.env.GITHUB_REPOSITORY;
   const runId = process.env.GITHUB_RUN_ID;
+  const text = [
+    `* This is a ${browserConfig.IS_LITE_VER ? 'lite' : 'full'} version build.`,
+    '* For build instructions and other information, please read the README.md',
+  ];
   if (repo && runId) {
-    return `This release conducted via GitHub Actions: https://github.com/${repo}/actions/runs/${runId} \n\nFor build instructions and other information, please read the README.md`;
+    text.push(
+      `* This release conducted via GitHub Actions: https://github.com/${repo}/actions/runs/${runId}`,
+    );
   }
-  return 'https://github.com/FirefoxBar/HeaderEditor/blob/master/README.md';
+  return text.join('\n\n');
 }

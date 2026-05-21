@@ -40,8 +40,8 @@ const packUtils = {
 /**
  * 打包一个平台的产物
  * @param {*} name
- * @param {*} browserConfig 对应browser.config.json中的配置
- * @param {*} extensionConfig 对应extension.json中的配置
+ * @param {*} browserConfig 对应browser.config.json中的单项配置
+ * @param {*} extensionConfig 对应extension.json中的单项配置
  * @returns
  */
 async function prepareOnePlatform(name, extensionConfig) {

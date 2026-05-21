@@ -114,7 +114,6 @@ export async function submitAddon(
   const opts = {
     apiKey: process.env.AMO_KEY,
     apiSecret: process.env.AMO_SECRET,
-    approvalNotes: getNote(),
     override: false,
     pollInterval: 8000,
     pollRetry: 9999,
@@ -138,6 +137,7 @@ export default async function ({
   rootPath,
   sourcePath,
   zipPath,
+  browserConfig,
   extensionConfig,
 }) {
   return submitAddon(rootPath, true, {
@@ -145,5 +145,6 @@ export default async function ({
     addonVersion: await getVersion(sourcePath),
     channel: 'listed',
     distFile: zipPath,
+    approvalNotes: getNote(browserConfig),
   });
 }

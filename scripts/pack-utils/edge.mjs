@@ -2,7 +2,7 @@ import { createReadStream } from 'node:fs';
 import { EdgeAddonsAPI } from '@plasmohq/edge-addons-api';
 import { getNote } from '../utils.mjs';
 
-export default async function ({ zipPath, extensionConfig }) {
+export default async function ({ zipPath, browserConfig, extensionConfig }) {
   if (!process.env.MS_CLIENT_ID) {
     return Promise.reject(new Error('MS_CLIENT_ID not found'));
   }
@@ -20,7 +20,7 @@ export default async function ({ zipPath, extensionConfig }) {
   console.log('[edge] upload done', uploadResp);
   const uploadStatus = await client.waitForUpload(uploadResp);
   console.log('[edge] upload check success', uploadStatus);
-  const publishResp = await client.publish(getNote());
+  const publishResp = await client.publish(getNote(browserConfig));
   console.log('[edge] publish done', publishResp);
   return JSON.stringify(await client.getPublishStatus(publishResp));
 }
