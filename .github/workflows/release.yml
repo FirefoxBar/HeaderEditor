@@ -28,16 +28,17 @@ jobs:
   build:
     runs-on: ubuntu-24.04
     steps:
-    - uses: actions/checkout@v4
+    - uses: actions/checkout@v6
     - name: Inject Env
       run: |
         echo "INPUT_PLATFORM=${{ github.event.inputs.platform }}" >> $GITHUB_ENV
         echo "INPUT_VERSION=${{ github.event.inputs.version }}" >> $GITHUB_ENV
-    - uses: pnpm/action-setup@v4
+    - uses: pnpm/action-setup@v6
       with:
+        cache: true
         version: 11
     - name: Setup Node.js
-      uses: actions/setup-node@v4
+      uses: actions/setup-node@v6
       with:
         node-version: 24
         cache: 'pnpm'

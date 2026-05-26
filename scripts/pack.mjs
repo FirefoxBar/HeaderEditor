@@ -66,10 +66,10 @@ async function prepareOnePlatform(name, extensionConfig) {
       }),
     );
     // 打包成zip
-    console.log(`zip ${thisPack} -> ${zipPath}`);
+    console.log(`[${name}] zip ${thisPack} -> ${zipPath}`);
     await createZip(thisPack, zipPath);
   } catch (e) {
-    console.error(`Prepare ${name} error`);
+    console.error(`[${name}] prepare error`);
     console.error(e);
   }
   return { dirName, thisPack, zipPath };
@@ -89,9 +89,9 @@ async function packOnePlatform(name, prepare, browserConfig, extensionConfig) {
       browserConfig,
       extensionConfig,
     });
-    console.log(`Pack ${name} success: ${res}`);
+    console.log(`[${name}] pack success: ${res}`);
   } catch (e) {
-    console.error(`Pack ${name} error`);
+    console.error(`[${name}] pack error`);
     console.error(e);
   }
   try {

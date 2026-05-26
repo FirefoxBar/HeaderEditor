@@ -144,7 +144,7 @@ export async function submitAddon(
           'wait-poll',
         ].includes(type)
       ) {
-        console.log(`[${messagePrefix}] [${options.addonId}] [${type}]`);
+        console.log(`[${messagePrefix}] [${options.addonId}] ${type}`);
       }
     },
   });
