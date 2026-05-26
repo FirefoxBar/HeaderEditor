@@ -5,6 +5,7 @@ import { outputJSON } from '../utils.mjs';
 import { submitAddon, waitSubmit } from './amo.mjs';
 
 async function packXpi({
+  rootPath,
   sourcePath,
   zipPath,
   releasePath,
