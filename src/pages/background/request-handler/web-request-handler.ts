@@ -41,6 +41,8 @@ interface CustomFunctionDetail {
   time: number;
   originUrl: string;
   documentUrl: string;
+  incognito?: boolean;
+  cookieStoreId?: string;
   requestHeaders: WebRequest.HttpHeaders | null;
   responseHeaders: WebRequest.HttpHeaders | null;
   statusCode?: number;
@@ -400,6 +402,8 @@ class WebRequestHandler {
       time: request.timeStamp,
       originUrl: request.originUrl || '',
       documentUrl: request.documentUrl || '',
+      incognito: request.incognito,
+      cookieStoreId: request.cookieStoreId,
       requestHeaders: null,
       responseHeaders: null,
       browser: BROWSER_TYPE,

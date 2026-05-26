@@ -1,0 +1,8 @@
+allowBuilds:
+  core-js: false
+  puppeteer: false
+  simple-git-hooks: true
+  spawn-sync: false
+patchedDependencies:
+  lodash: patches/lodash.patch
+  lodash-es: patches/lodash-es.patch
