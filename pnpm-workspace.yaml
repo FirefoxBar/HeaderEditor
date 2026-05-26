@@ -1,3 +1,4 @@
+autoInstallPeers: false
 allowBuilds:
   core-js: false
   puppeteer: false
