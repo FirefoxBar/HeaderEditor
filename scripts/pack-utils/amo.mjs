@@ -89,6 +89,7 @@ export const waitSubmit = [];
 export async function submitAddon(
   rootPath,
   uploadSourceCode = false,
+  messagePrefix = '',
   options = {},
 ) {
   if (!process.env.AMO_KEY) {
@@ -111,16 +112,7 @@ export async function submitAddon(
     waitSubmit.push(time);
   }
 
-  const opts = {
-    apiKey: process.env.AMO_KEY,
-    apiSecret: process.env.AMO_SECRET,
-    approvalNotes: getNote(),
-    override: false,
-    pollInterval: 8000,
-    pollRetry: 9999,
-    pollRetryExisting: 9999,
-    ...options,
-  };
+  const opts = {};
 
   // Pack source codes
   if (uploadSourceCode) {
@@ -130,8 +122,33 @@ export async function submitAddon(
     opts.sourceFile = await packingSourceCode;
   }
 
-  console.log(`[amo] [${options.addonId}] start signAddon`);
-  return signAddon(opts);
+  console.log(`[${messagePrefix}] [${options.addonId}] start signAddon`);
+  return signAddon({
+    ...opts,
+    apiKey: process.env.AMO_KEY,
+    apiSecret: process.env.AMO_SECRET,
+    approvalNotes: getNote(),
+    override: false,
+    pollInterval: 8000,
+    pollRetry: 9999,
+    pollRetryExisting: 9999,
+    retryAfterLimit: 600,
+    ...options,
+    onDebug: type => {
+      if (
+        ![
+          'token-update',
+          'request-start',
+          'request-end',
+          'retry-wait',
+          'upload-file-poll',
+          'wait-poll',
+        ].includes(type)
+      ) {
+        console.log(`[${messagePrefix}] [${options.addonId}] [${type}]`);
+      }
+    },
+  });
 }
 
 export default async function ({
@@ -140,7 +157,7 @@ export default async function ({
   zipPath,
   extensionConfig,
 }) {
-  return submitAddon(rootPath, true, {
+  return submitAddon(rootPath, true, 'amo', {
     addonId: extensionConfig.id,
     addonVersion: await getVersion(sourcePath),
     channel: 'listed',

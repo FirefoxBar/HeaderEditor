@@ -1,0 +1,5 @@
+allowBuilds:
+  core-js: false
+  puppeteer: false
+  simple-git-hooks: true
+  spawn-sync: false
