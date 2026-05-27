@@ -74,9 +74,7 @@ Please note that some languages (such as zh-Hans) will not be translated on tran
 #### Development
 
 * Modify `start` command's `TARGET_BROWSER` to the version you want to build
-
 * Run `npm run start`
-
 * Open browser, load extension from `/dist_*` directory or `/dist_*/manifest.json`
 
 ## Licenses

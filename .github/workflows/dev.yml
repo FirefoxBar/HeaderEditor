@@ -62,7 +62,6 @@ jobs:
         echo "INPUT_VERSION=${{ github.event.inputs.version }}" >> $GITHUB_ENV
     - uses: pnpm/action-setup@v6
       with:
-        cache: true
         version: 11
     - name: Setup Node.js
       uses: actions/setup-node@v6
@@ -72,20 +71,23 @@ jobs:
     - name: Install dependencies
       run: pnpm i --frozen-lockfile
     - name: Get snapshot version
+      uses: FirefoxBar/extension-packer@action
+      with:
+        script: ${{ github.workspace }}/scripts/get-snapshot-version.mjs
       env:
         TOKEN: ${{ secrets.SNAPSHOT_TOKEN }}
         GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-      run: node ./scripts/get-snapshot-version.mjs
     - name: Build And Test
       uses: ./.github/actions/build-and-test
     - name: Publish snapshot
+      uses: FirefoxBar/extension-packer@action
+      with:
+        script: ${{ github.workspace }}/scripts/pack.mjs
       env:
         AMO_KEY: ${{ secrets.ORG_AMO_KEY }}
         AMO_SECRET: ${{ secrets.ORG_AMO_SECRET }}
         CRX_PRIV_KEY: ${{ secrets.CRX_PRIV_KEY }}
         PACK_PLATFORM: xpi,crx
-        DEBUG: '*'
-      run: npm run pack
     - name: Upload snapshot release
       uses: actions/upload-artifact@v4
       with:
@@ -121,7 +123,6 @@ jobs:
     - uses: actions/checkout@v6
     - uses: pnpm/action-setup@v6
       with:
-        cache: true
         version: 11
     - name: Setup Node.js
       uses: actions/setup-node@v6

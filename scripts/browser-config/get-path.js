@@ -1,13 +1,7 @@
 const browserConfig = require('./browser.config.json');
 
 function getOutputFile(browserKey, version, extension) {
-  return (
-    ['HeaderEditor', version, browserConfig[browserKey].MANIFEST_VER].join(
-      '-',
-    ) +
-    '.' +
-    extension
-  );
+  return `HeaderEditor-${version}-${browserConfig[browserKey].MANIFEST_VER}.${extension}`;
 }
 
 function getDistDir(browser) {
