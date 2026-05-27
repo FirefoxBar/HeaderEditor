@@ -1,17 +1,17 @@
-const baseURL = `${process.env.GITHUB_API_URL}/repos/${process.env.GITHUB_REPOSITORY}`;
-
-const apiHeader = {
-  Accept: 'application/vnd.github+json',
-  Authorization: `Bearer ${process.env.GITHUB_TOKEN}`,
-  'X-GitHub-Api-Version': '2022-11-28',
-  'Content-Type': 'application/json',
-};
-
 async function main() {
-  if (!token) {
-    console.log('No token');
+  if (!process.env.GITHUB_TOKEN) {
+    console.log('No GITHUB_TOKEN');
     return;
   }
+
+  const baseURL = `${process.env.GITHUB_API_URL}/repos/${process.env.GITHUB_REPOSITORY}`;
+
+  const apiHeader = {
+    Accept: 'application/vnd.github+json',
+    Authorization: `Bearer ${process.env.GITHUB_TOKEN}`,
+    'X-GitHub-Api-Version': '2022-11-28',
+    'Content-Type': 'application/json',
+  };
 
   console.log('baseURL: ' + baseURL);
 
