@@ -12,15 +12,12 @@ concurrency:
 jobs:
   locale:
     runs-on: ubuntu-latest
-    strategy:
-      matrix:
-        node-version: [16.x]
     steps:
-    - uses: actions/checkout@v4
+    - uses: actions/checkout@v6
     - name: Use Node.js ${{ matrix.node-version }}
-      uses: actions/setup-node@v4
+      uses: actions/setup-node@v6
       with:
-        node-version: ${{ matrix.node-version }}
+        node-version: 24
     - name: Format output
       run: node ./locales.js
     - name: Checkout dev branch
@@ -50,6 +47,4 @@ jobs:
     - name: Create PR
       env:
         GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-      run: |
-        npm i axios
-        node ./create-pr.js
+      run: node ./create-pr.js
