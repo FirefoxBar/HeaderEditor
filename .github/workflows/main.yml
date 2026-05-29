@@ -49,7 +49,7 @@ jobs:
         npm run build
         cp $GITHUB_WORKSPACE/scripts/www/* $GITHUB_WORKSPACE/docs/doc_build/
     - name: Upload
-      uses: actions/upload-artifact@v4
+      uses: actions/upload-artifact@v7
       with:
         name: docs
         retention-days: 1

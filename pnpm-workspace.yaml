@@ -4,6 +4,8 @@ allowBuilds:
   puppeteer: false
   simple-git-hooks: true
   spawn-sync: false
+overrides:
+  yauzl: 3.3.1
 patchedDependencies:
   lodash: patches/lodash.patch
   lodash-es: patches/lodash-es.patch

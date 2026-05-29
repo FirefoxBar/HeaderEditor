@@ -60,7 +60,7 @@ jobs:
         MS_CLIENT_ID: ${{ secrets.ORG_MS_CLIENT_ID }}
         MS_API_KEY: ${{ secrets.ORG_MS_API_KEY }}
     - name: Upload release
-      uses: actions/upload-artifact@v4
+      uses: actions/upload-artifact@v7
       with:
         retention-days: 7
         name: release
