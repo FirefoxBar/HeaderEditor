@@ -52,14 +52,14 @@ export function initRule(
     if (rule.condition) {
       const { regex, excludeRegex } = rule.condition;
       if (regex) {
-        initd._reg = new RegExp(regex, 'g');
+        initd._reg = new RegExp(regex);
       }
       if (excludeRegex) {
         initd._exclude = new RegExp(excludeRegex);
       }
     } else {
       if (initd.matchType === 'regexp' && initd.pattern) {
-        initd._reg = new RegExp(initd.pattern, 'g');
+        initd._reg = new RegExp(initd.pattern);
       }
       if (typeof initd.exclude === 'string' && initd.exclude.length > 0) {
         initd._exclude = new RegExp(initd.exclude);
@@ -212,8 +212,7 @@ export function isMatchUrl(rule: InitdRule, url: string): IS_MATCH {
       if (detectRunner(rule) === 'dnr' && rule._re2 && ENABLE_DNR) {
         result = rule._re2.matches(url);
       } else {
-        const reg = rule._reg || new RegExp(regex, 'g');
-        reg.lastIndex = 0;
+        const reg = rule._reg || new RegExp(regex);
         result = result && reg.test(url);
       }
     }
@@ -224,8 +223,7 @@ export function isMatchUrl(rule: InitdRule, url: string): IS_MATCH {
       return IS_MATCH.MATCH_BUT_EXCLUDE;
     }
     if (excludeRegex) {
-      const reg = rule._exclude || new RegExp(excludeRegex, 'g');
-      reg.lastIndex = 0;
+      const reg = rule._exclude || new RegExp(excludeRegex);
       if (reg.test(url)) {
         return IS_MATCH.MATCH_BUT_EXCLUDE;
       }
@@ -236,7 +234,6 @@ export function isMatchUrl(rule: InitdRule, url: string): IS_MATCH {
   switch (rule.matchType) {
     case 'regexp': {
       const reg = rule._reg;
-      reg.lastIndex = 0;
       result = reg.test(url);
       break;
     }
