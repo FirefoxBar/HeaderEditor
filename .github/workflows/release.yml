@@ -28,16 +28,16 @@ jobs:
   build:
     runs-on: ubuntu-24.04
     steps:
-    - uses: actions/checkout@v4
+    - uses: actions/checkout@v6
     - name: Inject Env
       run: |
         echo "INPUT_PLATFORM=${{ github.event.inputs.platform }}" >> $GITHUB_ENV
         echo "INPUT_VERSION=${{ github.event.inputs.version }}" >> $GITHUB_ENV
-    - uses: pnpm/action-setup@v4
+    - uses: pnpm/action-setup@v6
       with:
         version: 11
     - name: Setup Node.js
-      uses: actions/setup-node@v4
+      uses: actions/setup-node@v6
       with:
         node-version: 24
         cache: 'pnpm'
@@ -46,6 +46,9 @@ jobs:
     - name: Build And Test
       uses: ./.github/actions/build-and-test
     - name: Pack
+      uses: FirefoxBar/extension-packer@action
+      with:
+        script: ${{ github.workspace }}/scripts/pack.mjs
       env:
         AMO_KEY: ${{ secrets.ORG_AMO_KEY }}
         AMO_SECRET: ${{ secrets.ORG_AMO_SECRET }}
@@ -56,18 +59,18 @@ jobs:
         CWS_TOKEN: ${{ secrets.ORG_CWS_TOKEN }}
         MS_CLIENT_ID: ${{ secrets.ORG_MS_CLIENT_ID }}
         MS_API_KEY: ${{ secrets.ORG_MS_API_KEY }}
-        DEBUG: '*'
-      run: npm run pack
     - name: Upload release
-      uses: actions/upload-artifact@v4
+      uses: actions/upload-artifact@v7
       with:
         retention-days: 7
         name: release
         path: temp/release
     - name: Release
       if: ${{ github.ref_type == 'tag' || github.event.inputs.release_tag != '' }}
+      uses: FirefoxBar/extension-packer@action
+      with:
+        script: ${{ github.workspace }}/scripts/release.mjs
       env:
         GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         TOKEN: ${{ secrets.SNAPSHOT_TOKEN }}
         INPUT_RELEASE_TAG: ${{ github.event.inputs.release_tag }}
-      run: npm run release

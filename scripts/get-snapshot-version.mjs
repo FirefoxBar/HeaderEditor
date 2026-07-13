@@ -1,14 +1,7 @@
-import { mkdir, writeFile } from 'node:fs/promises';
-import { dirname, join } from 'node:path';
-import { fileURLToPath } from 'node:url';
-import axios from 'axios';
+import { join } from 'node:path';
+import { root } from './config.mjs';
 
-// import { readJSON } from './utils.mjs';
-
-const __filename = fileURLToPath(import.meta.url);
-const __dirname = dirname(__filename);
-
-async function main() {
+export const run = async ({ getSnapshotVersion }) => {
   const token = process.env.TOKEN;
   if (!token) {
     return;
@@ -19,47 +12,14 @@ async function main() {
     return;
   }
 
-  // const pkgJson = await readJSON(join(__dirname, '../package.json'));
-  // const { version: versionPrefix } = pkgJson;
-  // console.log('Get latest release version from package.json');
+  const filePath = join(root, 'temp/version.txt');
 
-  // Get latest release version
-  const gitHubToken = process.env.GITHUB_TOKEN;
-  const gitHubBaseURL =
-    process.env.GITHUB_API_URL + '/repos/' + process.env.GITHUB_REPOSITORY;
-  const latestRelease = await axios.get(gitHubBaseURL + '/releases/latest', {
-    headers: {
-      Accept: 'application/vnd.github+json',
-      Authorization: 'Bearer ' + gitHubToken,
-      'X-GitHub-Api-Version': '2022-11-28',
-    },
+  return await getSnapshotVersion({
+    token,
+    gitHubApi: process.env.GITHUB_API_URL,
+    gitHubRepo: process.env.GITHUB_REPOSITORY,
+    gitHubToken: process.env.GITHUB_TOKEN,
+    extName: 'header-editor',
+    writeTo: filePath,
   });
-  const versionPrefix = latestRelease.data.tag_name.replace(/^v/, '');
-
-  // Get remote version
-  const params = new URLSearchParams();
-  params.append('name', 'header-editor');
-  params.append('ver', versionPrefix);
-  params.append('token', token);
-
-  const resp = await axios.get(
-    'https://server-api.sylibs.com/ext/snapshot.php?' + params.toString(),
-  );
-  const text = resp.data;
-
-  const filePath = join(__dirname, '../temp/version.txt');
-  if (/^(\d+)$/.test(text)) {
-    await mkdir(join(__dirname, '../temp/'), {
-      recursive: true,
-    });
-    const newVersion = `${versionPrefix}.${text}`;
-    await writeFile(filePath, newVersion, {
-      encoding: 'utf8',
-    });
-    console.log(`Got version: ${newVersion}, wrote to: ${filePath}`);
-  } else {
-    console.log(`Invalid version: ${text}`);
-  }
-}
-
-main();
+};

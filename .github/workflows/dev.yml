@@ -29,10 +29,10 @@ jobs:
       docs_changed: ${{ steps.filter.outputs.docs }}
       src_changed: ${{ steps.filter.outputs.src }}
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v6
         with:
           fetch-depth: 2
-      - uses: dorny/paths-filter@v3
+      - uses: dorny/paths-filter@v4
         id: filter
         with:
           base: ${{ github.ref_name }}
@@ -55,38 +55,41 @@ jobs:
     runs-on: ubuntu-24.04
     if: ${{ needs.check_changes.outputs.src_changed == 'true' || github.event_name == 'workflow_dispatch' }}
     steps:
-    - uses: actions/checkout@v4
+    - uses: actions/checkout@v6
     - name: Inject Env
       run: |
         echo "INPUT_PLATFORM=${{ github.event.inputs.platform }}" >> $GITHUB_ENV
         echo "INPUT_VERSION=${{ github.event.inputs.version }}" >> $GITHUB_ENV
-    - uses: pnpm/action-setup@v4
+    - uses: pnpm/action-setup@v6
       with:
         version: 11
     - name: Setup Node.js
-      uses: actions/setup-node@v4
+      uses: actions/setup-node@v6
       with:
         node-version: 24
         cache: 'pnpm'
     - name: Install dependencies
       run: pnpm i --frozen-lockfile
     - name: Get snapshot version
+      uses: FirefoxBar/extension-packer@action
+      with:
+        script: ${{ github.workspace }}/scripts/get-snapshot-version.mjs
       env:
         TOKEN: ${{ secrets.SNAPSHOT_TOKEN }}
         GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-      run: node ./scripts/get-snapshot-version.mjs
     - name: Build And Test
       uses: ./.github/actions/build-and-test
     - name: Publish snapshot
+      uses: FirefoxBar/extension-packer@action
+      with:
+        script: ${{ github.workspace }}/scripts/pack.mjs
       env:
         AMO_KEY: ${{ secrets.ORG_AMO_KEY }}
         AMO_SECRET: ${{ secrets.ORG_AMO_SECRET }}
         CRX_PRIV_KEY: ${{ secrets.CRX_PRIV_KEY }}
         PACK_PLATFORM: xpi,crx
-        DEBUG: '*'
-      run: npm run pack
     - name: Upload snapshot release
-      uses: actions/upload-artifact@v4
+      uses: actions/upload-artifact@v7
       with:
         name: release
         retention-days: 7
@@ -97,9 +100,9 @@ jobs:
     runs-on: ubuntu-24.04
     if: ${{ needs.check_changes.outputs.locale_changed == 'true' }}
     steps:
-    - uses: actions/checkout@v4
+    - uses: actions/checkout@v6
     - name: Setup Node.js
-      uses: actions/setup-node@v4
+      uses: actions/setup-node@v6
       with:
         node-version: 24
     - name: Sort
@@ -117,12 +120,12 @@ jobs:
     runs-on: ubuntu-24.04
     if: ${{ needs.check_changes.outputs.docs_changed == 'true' }}
     steps:
-    - uses: actions/checkout@v4
-    - uses: pnpm/action-setup@v4
+    - uses: actions/checkout@v6
+    - uses: pnpm/action-setup@v6
       with:
         version: 11
     - name: Setup Node.js
-      uses: actions/setup-node@v4
+      uses: actions/setup-node@v6
       with:
         node-version: 24
     - name: Install dependencies
@@ -135,7 +138,7 @@ jobs:
         npm run build
         cp $GITHUB_WORKSPACE/scripts/www/* $GITHUB_WORKSPACE/docs/doc_build/
     - name: Upload
-      uses: actions/upload-artifact@v4
+      uses: actions/upload-artifact@v7
       with:
         name: docs
         retention-days: 1
@@ -146,7 +149,7 @@ jobs:
     runs-on: ubuntu-24.04
     steps:
     - name: Setup Node.js
-      uses: actions/setup-node@v4
+      uses: actions/setup-node@v6
       with:
         node-version: 24
     - name: Download
@@ -165,7 +168,7 @@ jobs:
     runs-on: ubuntu-24.04
     steps:
     - name: Setup Node.js
-      uses: actions/setup-node@v4
+      uses: actions/setup-node@v6
       with:
         node-version: 24
     - name: Download

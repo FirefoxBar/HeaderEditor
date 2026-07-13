@@ -82,8 +82,7 @@ const Test = () => {
         if (detectRunner(initdRule) === 'dnr' && initdRule._re2 && ENABLE_DNR) {
           redirect = initdRule._re2.matcher(url).replaceAll(initdRule.to);
         } else if (initdRule?._reg) {
-          initdRule._reg.lastIndex = 0;
-          redirect = url.replace(initdRule._reg, initdRule.to);
+          redirect = url.replaceAll(initdRule._reg, initdRule.to);
         } else {
           redirect = initdRule.to;
         }

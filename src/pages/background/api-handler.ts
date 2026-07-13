@@ -60,10 +60,10 @@ function updateIcon(disabled: boolean) {
 }
 
 export default function createApiHandler() {
-  browser.runtime.onMessage.addListener(request => {
+  browser.runtime.onMessage.addListener((request: any) => {
     logger.debug('[api-handler] onMessage', request);
     if (request.method === 'batchExecute') {
-      const queue = request.batch.map(item => {
+      const queue = request.batch.map((item: any) => {
         const res = execute(item);
         if (res) {
           return res;

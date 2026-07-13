@@ -4,7 +4,6 @@ import path from 'node:path';
 import { setTimeout as sleep } from 'node:timers/promises';
 import { fileURLToPath } from 'node:url';
 import { promisify } from 'node:util';
-import axios from 'axios';
 import getPort from 'get-port';
 import puppeteer from 'puppeteer';
 import resolve from 'resolve';
@@ -208,10 +207,8 @@ export async function waitTestServer() {
   // Check if test server is running
   while (true) {
     try {
-      const res = await axios.get(`${testServer}health-check.php`, {
-        timeout: 5000,
-      });
-      if (String(res.data).includes('It works!')) {
+      const res = await fetch(`${testServer}health-check.php`);
+      if (String(await res.text()).includes('It works!')) {
         break;
       }
       // Sleep 1 second

@@ -16,7 +16,7 @@ runs:
       shell: bash
       run: npm run build:chrome_v3
     - name: Upload bundle
-      uses: actions/upload-artifact@v4
+      uses: actions/upload-artifact@v7
       with:
         name: dist
         retention-days: 7
@@ -25,6 +25,13 @@ runs:
           dist_chrome_v3
           dist_firefox_v2
           dist_firefox_v3
+    - name: Install Puppeteer Browsers
+      shell: bash
+      env:
+        PUPPETEER_CHROME_SKIP_DOWNLOAD: false
+        PUPPETEER_FIREFOX_SKIP_DOWNLOAD: false
+        PUPPETEER_CHROME_HEADLESS_SHELL_SKIP_DOWNLOAD: false
+      run: npx puppeteer browsers install
     - name: Install Edge
       id: install-edge
       shell: bash
@@ -44,7 +51,6 @@ runs:
       env:
         EDGE_PATH: ${{ steps.install-edge.outputs.edge-path }}
       run: |
-        npx puppeteer browsers install
         php -S 0.0.0.0:8899 -t $GITHUB_WORKSPACE/tests/simple-server > /dev/null 2>&1 &
         sleep 2
         npm run test:e2e

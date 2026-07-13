@@ -261,7 +261,7 @@ class WebRequestHandler {
         }
       } else if (item.to) {
         if (item.condition?.regex || item.matchType === 'regexp') {
-          const to = redirectTo.replace(item._reg, item.to);
+          const to = redirectTo.replaceAll(item._reg, item.to);
           logger.debug(
             `[web-request-handler] [rule: ${item.id}] redirect ${redirectTo} to ${to}`,
           );
