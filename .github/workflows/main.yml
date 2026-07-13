@@ -42,7 +42,7 @@ jobs:
     - name: Install dependencies
       run: |
         cd $GITHUB_WORKSPACE/docs
-        pnpm i --frozen-lockfile --ignore-workspace
+        pnpm i --frozen-lockfile --ignore-workspace --ignore-scripts
     - name: Build
       run: |
         cd $GITHUB_WORKSPACE/docs
