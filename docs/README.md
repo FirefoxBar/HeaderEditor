@@ -1,3 +1,1 @@
 # Header Editor Docs
-
-D
