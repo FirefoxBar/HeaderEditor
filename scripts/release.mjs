@@ -6,9 +6,15 @@ export const run = async ({ getVersion, readJSON, release }) => {
     return;
   }
 
+  const tagName = process.env.INPUT_RELEASE_TAG || process.env.GITHUB_REF_NAME;
+  if (!tagName) {
+    return;
+  }
+
   const browserConfig = await readJSON(
     join(scriptRoot, 'browser-config/browser.config.json'),
   );
+  const browserList = Object.keys(browserConfig);
 
   let distRootPath = '';
   for (const browser of browserList) {
@@ -29,7 +35,7 @@ export const run = async ({ getVersion, readJSON, release }) => {
     gitHubToken: process.env.GITHUB_TOKEN,
     distRootPath,
     browserConfig,
-    tagName: process.env.INPUT_RELEASE_TAG || process.env.GITHUB_REF_NAME,
+    tagName,
     releasePath,
     extName: 'header-editor',
   });

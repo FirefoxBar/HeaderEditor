@@ -34,7 +34,7 @@ jobs:
     - uses: actions/checkout@v6
     - uses: pnpm/action-setup@v6
       with:
-        version: 11
+        version: 11.11.0
     - name: Setup Node.js
       uses: actions/setup-node@v6
       with:
@@ -42,7 +42,7 @@ jobs:
     - name: Install dependencies
       run: |
         cd $GITHUB_WORKSPACE/docs
-        pnpm i --frozen-lockfile
+        pnpm i --frozen-lockfile --ignore-workspace --ignore-scripts
     - name: Build
       run: |
         cd $GITHUB_WORKSPACE/docs

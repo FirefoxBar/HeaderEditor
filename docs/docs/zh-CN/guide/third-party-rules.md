@@ -9,9 +9,13 @@ title: 第三方规则
 
 ## 列表
 
-* [dupontjoy](https://github.com/dupontjoy/customization/tree/main/Rules/HeaderEditor) 主要为中文站点
-* [azurezeng/GoogleRedirect](https://github.azurezeng.com/static/HE-GoogleRedirect.json) Google资源&reCaptcha重定向
+| 下载 | 作者 | 简介 |
+| --- | --- | --- |
+| [CingList.json](https://github.com/dupontjoy/Customization/raw/refs/heads/main/Rules/HeaderEditor/headereditor-CingList.json) | [dupontjoy](https://github.com/dupontjoy) | 部分中文站点重定向、防盗链规则，[详见](https://github.com/dupontjoy/Customization/tree/main/Rules/HeaderEditor) |
+| [HE-GoogleRedirect.json](https://github.azurezeng.com/static/HE-GoogleRedirect.json) | [azurezeng](https://github.com/azurezeng) | Google 资源、reCaptcha 重定向 |
+| [disable-ai-search.json](https://he-rules-repo.firefoxcn.net/disable-ai-search.json) | [Willie169](https://github.com/Willie169) | 在 Brave 和 Google 上禁用 AI 搜索 |
 
 ## 提交规则
 
 如果您希望您维护的规则出现在此处，请[提交issue](https://github.com/FirefoxBar/HeaderEditor/issues/new?template=rule-submit-cn.md)
+
