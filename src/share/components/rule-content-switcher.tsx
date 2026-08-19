@@ -107,11 +107,29 @@ interface RuleContentSwitcherProps {
 const baseStyle = css`
   .semi-dropdown-item,
   .semi-dropdown-title {
-    max-width: 160px;
+    max-width: 180px;
     overflow: hidden;
     white-space: nowrap;
     text-overflow: ellipsis;
     display: block;
+    transition: all 0.25s ease-in-out;
+  }
+
+  .semi-dropdown-menu {
+    max-height: 300px;
+    max-width: 180px;
+    overflow-x: hidden;
+    overflow-y: auto;
+  }
+
+  .semi-dropdown-menu .semi-dropdown-item {
+    padding: 8px 12px;
+
+    &:hover,
+    &.semi-dropdown-item-hover {
+      background-color: var(--semi-color-secondary-light-default);
+      transform: translateX(8px)
+    }
   }
 `;
 
@@ -308,6 +326,7 @@ const RuleContentSwitcher: FC<RuleContentSwitcherProps> = props => {
       style={{ minWidth: '120px' }}
       menu={menu}
       position="bottomRight"
+      autoAdjustOverflow
     >
       {children}
     </Dropdown>
