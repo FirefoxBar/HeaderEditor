@@ -1,8 +1,16 @@
 import assert from 'node:assert';
-import { testUrlFilter } from '@/share/core/rule-utils';
+import { createUrlFilterRegex } from '@/share/core/rule-utils';
+
+function testUrlFilter(url, filter) {
+  if (filter.length === 0) {
+    return true;
+  }
+  const reg = createUrlFilterRegex(filter);
+  return reg.test(url);
+}
 
 describe('rule-utils', () => {
-  describe('testUrlFilter', () => {
+  describe('createUrlFilterRegex', () => {
     it('should return true for matching URL', () => {
       const url = 'https://example.com';
       const filter = 'example.com';
