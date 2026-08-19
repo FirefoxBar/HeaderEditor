@@ -1,6 +1,7 @@
 autoInstallPeers: false
 allowBuilds:
   core-js: false
+  esbuild: false
   puppeteer: false
   simple-git-hooks: true
   spawn-sync: false

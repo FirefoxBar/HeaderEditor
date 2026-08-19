@@ -77,6 +77,7 @@ const Edit = ({ visible, rule: ruleProp, onClose }: EditProps) => {
           'method',
           'domain',
           'regex',
+          'urlFilter',
           'resourceTypes',
         ].every(
           x =>

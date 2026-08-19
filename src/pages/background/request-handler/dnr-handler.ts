@@ -50,10 +50,13 @@ function createDNR(rule: Rule, id: number) {
       excludeResourceTypes,
       excludeMethod,
       method,
+      urlFilter,
     } = rule.condition;
     res.condition.requestDomains = domain;
     // 只能指定 urlFilter 或 regexFilter 中的一项。
-    if (regex) {
+    if (urlFilter) {
+      res.condition.urlFilter = urlFilter;
+    } else if (regex) {
       res.condition.regexFilter = regex;
       isRegex = true;
     } else if (all) {

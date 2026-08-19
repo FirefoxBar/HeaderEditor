@@ -1,0 +1,8 @@
+{
+  "extension": ["mjs"],
+  "import": "tsx/esm",
+  "file": ["tests/unit/setup.mjs"],
+  "spec": "tests/unit/**/*.spec.mjs",
+  "exit": true,
+  "parallel": false
+}

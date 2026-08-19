@@ -43,6 +43,7 @@ export function getInput(rule: BasicRule) {
       excludeDomain,
       excludeRegex,
       excludeResourceTypes,
+      urlFilter,
     } = res.condition;
     if (all) {
       res.editMatchType.push(RULE_MATCH_TYPE.ALL);
@@ -58,6 +59,9 @@ export function getInput(rule: BasicRule) {
     }
     if (isValidArray(domain)) {
       res.editMatchType.push(RULE_MATCH_TYPE.DOMAIN);
+    }
+    if (urlFilter) {
+      res.editMatchType.push(RULE_MATCH_TYPE.URL_FILTER);
     }
     if (regex) {
       res.editMatchType.push(RULE_MATCH_TYPE.REGEXP);
@@ -101,6 +105,16 @@ export function getRuleFromInput(input: RuleInput): BasicRule {
     if (res.editMatchType?.includes(RULE_MATCH_TYPE.ALL)) {
       res.condition.all = true;
     }
+  }
+
+  if (
+    res.editMatchType?.includes(RULE_MATCH_TYPE.URL_FILTER) &&
+    input.condition?.urlFilter
+  ) {
+    res.condition.urlFilter = input.condition.urlFilter;
+    delete res.condition.url;
+    delete res.condition.urlPrefix;
+    delete res.condition.all;
   }
 
   if (res.encoding) {

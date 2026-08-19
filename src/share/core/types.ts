@@ -47,6 +47,7 @@ export interface BasicRule {
     method: string[];
     domain: string[];
     excludeDomain: string[];
+    urlFilter: string;
     regex: string;
     excludeRegex: string;
     excludeMethod: string[];
@@ -85,6 +86,7 @@ export interface InitdRule extends Rule {
   _exclude?: RegExp;
   _func: (val: any, detail: any) => any;
   _re2?: RE2JS;
+  _filter_reg?: RegExp;
 }
 
 export interface PrefValue {

@@ -66,6 +66,36 @@ describe('Modify Request Header', () =>
     },
   ));
 
+describe('Modify Request Header with URL Filter', () =>
+  runTest(
+    ['edge_v2', 'chrome_v3', 'firefox_v2', 'firefox_v3'],
+    async browser => {
+      const key = String(Math.random()).replace('.', '');
+
+      const { remove } = await saveRule(browser.popup, {
+        name: 'test modify request header with url filter',
+        ruleType: 'modifySendHeader',
+        condition: {
+          urlFilter: testServer + '*',
+        },
+        isFunction: false,
+        enable: true,
+        action: {
+          name: 'X-Test-Header',
+          value: key,
+        },
+      });
+
+      try {
+        const header = await getHeader(browser.browser);
+
+        assert.strictEqual(header['X_TEST_HEADER'], key);
+      } finally {
+        await remove();
+      }
+    },
+  ));
+
 describe('Exclude regex', () =>
   runTest(['edge_v2', 'firefox_v2'], async browser => {
     const key = String(Math.random()).replace('.', '');

@@ -29,6 +29,8 @@ export enum RULE_MATCH_TYPE {
   // new
   METHOD = 'method',
   RESOURCE_TYPE = 'resourceType',
+  // URL filter
+  URL_FILTER = 'urlFilter',
 }
 
 export const defaultPrefValue: PrefValue = {

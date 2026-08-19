@@ -15,10 +15,11 @@
     "build:firefox_v3": "cross-env TARGET_BROWSER=firefox_v3 rsbuild build",
     "build:chrome_v2": "cross-env TARGET_BROWSER=chrome_v2 rsbuild build",
     "build:chrome_v3": "cross-env TARGET_BROWSER=chrome_v3 rsbuild build",
-    "check": "biome check --write",
-    "format": "biome format --write",
+    "check": "biome check",
+    "format": "biome format",
     "run-test-server": "php -S 0.0.0.0:8899 -t tests/simple-server",
-    "test:e2e": "cross-env NODE_OPTIONS=\"$NODE_OPTIONS --experimental-vm-modules\" npx mocha --config ./tests/e2e/.mocharc.json"
+    "test:e2e": "cross-env NODE_OPTIONS=\"$NODE_OPTIONS --experimental-vm-modules\" npx mocha --config ./tests/e2e/.mocharc.json",
+    "test:unit": "cross-env NODE_OPTIONS=\"$NODE_OPTIONS --experimental-vm-modules\" npx mocha --config ./tests/unit/.mocharc.json"
   },
   "dependencies": {
     "@codemirror/lang-javascript": "^6.1.4",
@@ -60,6 +61,7 @@
     "resolve": "^1.22.10",
     "rimraf": "^6.0.1",
     "simple-git-hooks": "^2.13.0",
+    "tsx": "^4.23.12",
     "typescript": "^5.7.3",
     "web-ext": "^8.6.0"
   },
