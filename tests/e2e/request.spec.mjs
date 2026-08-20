@@ -115,10 +115,10 @@ describe('Exclude regex', () =>
     });
 
     try {
-      const header1 = await getHeader(browser.browser, 't123=1');
-      assert.strictEqual(header1['X_EXCLUDE'], undefined);
       const header2 = await getHeader(browser.browser);
       assert.strictEqual(header2['X_EXCLUDE'], key);
+      const header1 = await getHeader(browser.browser, 't123=1');
+      assert.strictEqual(header1['X_EXCLUDE'], undefined);
     } finally {
       await remove();
     }

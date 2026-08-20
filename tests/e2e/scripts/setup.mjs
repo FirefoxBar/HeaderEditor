@@ -1,5 +1,5 @@
 import { after, before } from 'mocha';
-import { cleanup, getBrowserClient, waitTestServer } from './utils.mjs';
+import { cleanup, config, getBrowserClient, waitTestServer } from './utils.mjs';
 
 function launchBrowser(browserKey) {
   const timeoutPromise = new Promise((_, reject) => {
@@ -14,8 +14,12 @@ function launchBrowser(browserKey) {
 
 before(async function () {
   this.timeout(20000);
-  const browserKeys = ['edge_v2', 'chrome_v3', 'firefox_v2', 'firefox_v3'];
-  // const browserKeys = ['firefox_v2'];
+  const browserKeys = config.browserKeys || [
+    'edge_v2',
+    'chrome_v3',
+    'firefox_v2',
+    'firefox_v3',
+  ];
   console.log('🚀 starting browser...');
   const firefoxBrowsers = browserKeys.filter(key => key.startsWith('firefox'));
   const chromeLikeBrowsers = browserKeys.filter(

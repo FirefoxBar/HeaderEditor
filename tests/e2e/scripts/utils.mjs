@@ -16,7 +16,7 @@ const browserList = {};
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
 
-const config = (() => {
+export const config = (() => {
   const configPath = path.join(__dirname, 'config.json');
   if (!existsSync(configPath)) {
     return {};
