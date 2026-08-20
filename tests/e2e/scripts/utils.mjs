@@ -197,9 +197,7 @@ export async function cleanup() {
       if (client.popup && !client.popup.isClosed()) {
         await client.popup.close();
       }
-      if (client.browser.isConnected()) {
-        await client.browser.close();
-      }
+      await client.browser.close().catch(() => {});
     } catch (error) {
       console.log('Cleanup error:', error.message);
     }
