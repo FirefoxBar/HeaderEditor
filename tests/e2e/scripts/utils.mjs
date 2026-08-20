@@ -60,7 +60,10 @@ async function createBrowser(browserKey, pathToExtension) {
       // headless: false,
       browser: 'firefox',
       executablePath,
-      args: [`--start-debugger-server=${rppPort}`],
+      args: [
+        `--start-debugger-server=${rppPort}`,
+        '--remote-allow-system-access',
+      ],
       extraPrefsFirefox: {
         'devtools.chrome.enabled': true,
         'devtools.debugger.prompt-connection': false,
