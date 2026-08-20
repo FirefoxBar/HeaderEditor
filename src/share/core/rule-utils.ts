@@ -55,14 +55,14 @@ export function initRule(
         initd._filter_reg = createUrlFilterRegex(urlFilter);
       }
       if (regex) {
-        initd._reg = new RegExp(regex);
+        initd._reg = new RegExp(regex, 'g');
       }
       if (excludeRegex) {
         initd._exclude = new RegExp(excludeRegex);
       }
     } else {
       if (initd.matchType === 'regexp' && initd.pattern) {
-        initd._reg = new RegExp(initd.pattern);
+        initd._reg = new RegExp(initd.pattern, 'g');
       }
       if (typeof initd.exclude === 'string' && initd.exclude.length > 0) {
         initd._exclude = new RegExp(initd.exclude);
