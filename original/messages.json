@@ -324,6 +324,10 @@
     "message": "URL",
     "description": "URL option in modal"
   },
+  "match_url_filter": {
+    "message": "URL Filter",
+    "description": "URL Filter option"
+  },
   "modify_body": {
     "message": "Modify response body",
     "description": "Option to enable/disable modify body"
