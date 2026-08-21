@@ -41,6 +41,10 @@ jobs:
         node-version: 24
     - name: Install dependencies
       run: |
+        cd $GITHUB_WORKSPACE
+        pnpm i --frozen-lockfile
+    - name: Install doc dependencies
+      run: |
         cd $GITHUB_WORKSPACE/docs
         pnpm i --frozen-lockfile --ignore-workspace --ignore-scripts
     - name: Build
