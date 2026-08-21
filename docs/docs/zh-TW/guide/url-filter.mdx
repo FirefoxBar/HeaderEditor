@@ -1,0 +1,45 @@
+---
+title: URL Filter 表達式
+---
+
+import URLFilterTest from "../../../components/URLFilterTest.tsx";
+
+## URL Filter 表達式
+
+URL Filter 是一種語法類似於 ABP/uBO 等過濾軟體的表達式。其功能相對正規表示式簡單，也較容易上手。
+
+支援的建構體：
+
+* `*`：萬用字元，可比對任意數量的字元。
+* `|`：左/右錨點：如果模式的任一端使用此符號，則分別指定網址的開頭/結尾。
+* `||`：網域名稱錨點：如果用於模式開頭，則指定網址的 (子) 網域開頭。
+* `^`：分隔符號字元。比對字母、數字或下列字元以外的任何內容：_、-、. 或 %。這也會比對網址結尾。
+
+因此 URL Filter 由下列部分組成：(選用的左側/網域名稱錨點) + 模式 + (選用的右側錨點)。
+
+> 注意：
+> * 模式開頭不得為 `||*`。改用 `*`。
+> * 只能由 ASCII 字元組成。網址中主機是以 Punycode 格式編碼 (適用於國際化網域)，其他非 ASCII 字元則是以 UTF-8 格式編碼。
+
+## 範例
+
+| URL Filter | 配對組合 | 不相符 |
+| --------- | --- | --- |
+| `abc` | `https://abcd.com` `https://example.com/abcd` | `https://ab.com` |
+| `abc*d` | `https://abcd.com` `https://example.com/abcxyzd` | `https://abc.com` |
+| `\|\|a.example.com` | `https://a.example.com/` `https://b.a.example.com/xyz` `https://a.example.company` | `https://example.com/` |
+| `\|https*` | `https://example.com` `http://example.com/` | `http://https.com` |
+| `example*^123\|` | `https://example.com/123` `http://abc.com/example?123` `https://example.com/1234` | `https://abc.com/example0123` |
+| `/image/*.gif` | `https://example.com/image/banner.gif` `https://example.com/image/path/to/img.gif` | `https://example.com/image/banner.jpg` |
+
+## 在线测试
+
+<URLFilterTest
+  lang={{
+    inputData: "输入测试 URL，如 https://example.com",
+    inputExpr: "输入 URL Filter 表达式",
+    executing: "正在运行...",
+    error: "运行错误",
+    result: "运行结果",
+  }}
+/>

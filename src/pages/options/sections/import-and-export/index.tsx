@@ -1,14 +1,21 @@
-import { IconCloud, IconDownload, IconFolderOpen, IconSave, IconSearch } from '@douyinfe/semi-icons';
+import {
+  IconCloud,
+  IconDownload,
+  IconFolderOpen,
+  IconSave,
+  IconSearch,
+} from '@douyinfe/semi-icons';
 import { Button, Card, Input, Space, Table, Toast } from '@douyinfe/semi-ui';
 import * as React from 'react';
 import { openURL } from '@/pages/background/utils';
 import { getExportName } from '@/pages/options/utils';
-import file from '@/share/pages/file';
+import { t } from '@/share/core/browser';
 import { createExport } from '@/share/core/rule-utils';
 import { getLocal } from '@/share/core/storage';
-import { fetchUrl, t } from '@/share/core/utils';
 import type { BasicRule } from '@/share/core/types';
+import { fetchUrl } from '@/share/core/utils';
 import Api from '@/share/pages/api';
+import file from '@/share/pages/file';
 import Cloud from './cloud';
 import ImportDrawer from './import-drawer';
 
@@ -42,21 +49,23 @@ export default class ImportAndExport extends React.Component<IEProps, IEState> {
 
   componentDidMount() {
     // Load download history
-    getLocal().get('dl_history').then((r) => {
-      if (Array.isArray(r.dl_history)) {
-        this.setState({
-          downloadHistory: r.dl_history,
-        });
-      }
-    });
+    getLocal()
+      .get('dl_history')
+      .then(r => {
+        if (Array.isArray(r.dl_history)) {
+          this.setState({
+            downloadHistory: r.dl_history,
+          });
+        }
+      });
   }
 
   handleImport() {
-    file.load('.json').then((content) => {
+    file.load('.json').then(content => {
       try {
         this.importRef.current!.show(JSON.parse(content));
       } catch (e) {
-        Toast.error(e.message);
+        Toast.error((e as Error).message);
       }
     });
   }
@@ -70,8 +79,11 @@ export default class ImportAndExport extends React.Component<IEProps, IEState> {
       this.importRef.current!.show(JSON.parse(res));
 
       if (!this.state.downloadHistory.includes(this.state.downloadUrl)) {
-        this.setState((prevState) => {
-          const newHistory = [this.state.downloadUrl, ...prevState.downloadHistory];
+        this.setState(prevState => {
+          const newHistory = [
+            this.state.downloadUrl,
+            ...prevState.downloadHistory,
+          ];
           getLocal().set({
             dl_history: newHistory,
           });
@@ -81,7 +93,7 @@ export default class ImportAndExport extends React.Component<IEProps, IEState> {
         });
       }
     } catch (e) {
-      Toast.error(e.message);
+      Toast.error((e as Error).message);
     }
     this.setState({ downloading: false });
   }
@@ -90,13 +102,16 @@ export default class ImportAndExport extends React.Component<IEProps, IEState> {
     try {
       this.importRef.current!.show(res);
     } catch (e) {
-      Toast.error(e.message);
+      Toast.error((e as Error).message);
     }
   }
 
   async handleExport() {
     const result = await Api.getAllRules();
-    file.save(JSON.stringify(createExport(result), null, '\t'), getExportName());
+    file.save(
+      JSON.stringify(createExport(result), null, '\t'),
+      getExportName(),
+    );
   }
 
   handleOpenThird() {
@@ -107,7 +122,9 @@ export default class ImportAndExport extends React.Component<IEProps, IEState> {
 
   render() {
     return (
-      <section className={`section-ie ${this.props.visible ? 'visible' : 'in-visible'}`}>
+      <section
+        className={`section-ie ${this.props.visible ? 'visible' : 'in-visible'}`}
+      >
         <Card title={t('export_and_import')}>
           <Space>
             <Button onClick={this.handleExport} icon={<IconSave />}>
@@ -116,7 +133,10 @@ export default class ImportAndExport extends React.Component<IEProps, IEState> {
             <Button onClick={this.handleImport} icon={<IconFolderOpen />}>
               {t('import')}
             </Button>
-            <Button onClick={() => this.setState({ showCloud: true })} icon={<IconCloud />}>
+            <Button
+              onClick={() => this.setState({ showCloud: true })}
+              icon={<IconCloud />}
+            >
               {t('cloud_backup')}
             </Button>
           </Space>
@@ -127,19 +147,28 @@ export default class ImportAndExport extends React.Component<IEProps, IEState> {
               value={this.state.downloadUrl}
               style={{ width: '100%' }}
               showClear
-              onChange={(downloadUrl) => this.setState({ downloadUrl })}
+              onChange={downloadUrl => this.setState({ downloadUrl })}
             />
-            <Button className="btn-icon" onClick={this.handleDownload} icon={<IconDownload />} loading={this.state.downloading}>
+            <Button
+              className="btn-icon"
+              onClick={this.handleDownload}
+              icon={<IconDownload />}
+              loading={this.state.downloading}
+            >
               {t('download')}
             </Button>
-            <Button className="btn-icon" icon={<IconSearch />} onClick={this.handleOpenThird}>
+            <Button
+              className="btn-icon"
+              icon={<IconSearch />}
+              onClick={this.handleOpenThird}
+            >
               {t('third_party_rules')}
             </Button>
           </Space>
           <Table
             showHeader={false}
             style={{ marginTop: '8px' }}
-            dataSource={this.state.downloadHistory.map((x) => ({ url: x }))}
+            dataSource={this.state.downloadHistory.map(x => ({ url: x }))}
             size="small"
             columns={[
               {
@@ -152,9 +181,12 @@ export default class ImportAndExport extends React.Component<IEProps, IEState> {
                     <Button
                       size="small"
                       onClick={() => {
-                        this.setState({
-                          downloadUrl: record.url,
-                        }, () => this.handleDownload());
+                        this.setState(
+                          {
+                            downloadUrl: record.url,
+                          },
+                          () => this.handleDownload(),
+                        );
                       }}
                     >
                       {t('download')}
@@ -172,7 +204,7 @@ export default class ImportAndExport extends React.Component<IEProps, IEState> {
                     <Button
                       size="small"
                       onClick={() => {
-                        this.setState((prevState) => {
+                        this.setState(prevState => {
                           const newHistory = [...prevState.downloadHistory];
                           const index = newHistory.indexOf(record.url);
                           if (index === -1) {

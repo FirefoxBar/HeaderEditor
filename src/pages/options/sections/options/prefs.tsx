@@ -1,10 +1,11 @@
 import { List, Select, Switch, Typography } from '@douyinfe/semi-ui';
 import React from 'react';
+import { IS_SUPPORT_STREAM_FILTER, t } from '@/share/core/browser';
 import { defaultPrefValue } from '@/share/core/constant';
 import emitter from '@/share/core/emitter';
 import { prefs } from '@/share/core/prefs';
 import type { PrefValue } from '@/share/core/types';
-import { IS_FIREFOX, IS_SUPPORT_STREAM_FILTER, t } from '@/share/core/utils';
+import { IS_FIREFOX } from '@/share/core/utils';
 import Api from '@/share/pages/api';
 
 interface PrefsState {
@@ -105,7 +106,7 @@ const prefItems: {
 
 const allPrefs = Object.keys(prefItems);
 
-export default class Prefs extends React.Component<void, PrefsState> {
+export default class Prefs extends React.Component<{}, PrefsState> {
   constructor(props: any) {
     super(props);
 

@@ -18,6 +18,7 @@ import { css, cx } from '@emotion/css';
 import * as React from 'react';
 import { selectGroup } from '@/pages/options/utils';
 import Modal from '@/share/components/modal';
+import { t } from '@/share/core/browser';
 import {
   EVENTs,
   type TABLE_NAMES,
@@ -29,7 +30,7 @@ import logger from '@/share/core/logger';
 import notify from '@/share/core/notify';
 import { prefs } from '@/share/core/prefs';
 import type { Rule, RuleWithVirtualKey } from '@/share/core/types';
-import { getVirtualKey, t } from '@/share/core/utils';
+import { getVirtualKey } from '@/share/core/utils';
 import Api from '@/share/pages/api';
 import Float from './float';
 import RuleGroupCard from './rule-group-card';

@@ -2,7 +2,7 @@ import { IconDelete, IconPlus } from '@douyinfe/semi-icons';
 import { ArrayField, Button, Form, Space } from '@douyinfe/semi-ui';
 import { css, cx } from '@emotion/css';
 import React from 'react';
-import { t } from '@/share/core/utils';
+import { t } from '@/share/core/browser';
 import { AutoCompleteField } from './auto-complete';
 
 const commonHeaders = {
@@ -161,9 +161,19 @@ const HeaderField = ({ field, type, initValue }: HeaderFieldProps) => (
                 allowEmptyString
               />
             ) : (
-              <Form.Input noLabel field={`${subField}.name`} placeholder={t('headerName')} allowEmptyString />
+              <Form.Input
+                noLabel
+                field={`${subField}.name`}
+                placeholder={t('headerName')}
+                allowEmptyString
+              />
             )}
-            <Form.Input noLabel placeholder={t('headerValue')} field={`${subField}.value`} allowEmptyString />
+            <Form.Input
+              noLabel
+              placeholder={t('headerValue')}
+              field={`${subField}.value`}
+              allowEmptyString
+            />
             <Button onClick={remove} type="tertiary" icon={<IconDelete />} />
           </Space>
         ))}

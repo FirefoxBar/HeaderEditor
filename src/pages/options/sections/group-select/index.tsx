@@ -1,7 +1,7 @@
 import { Input, Modal, Select } from '@douyinfe/semi-ui';
 import * as React from 'react';
+import { t } from '@/share/core/browser';
 import emitter from '@/share/core/emitter';
-import { t } from '@/share/core/utils';
 
 interface GroupSelectState {
   group: string[];

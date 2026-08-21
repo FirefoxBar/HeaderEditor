@@ -1,4 +1,3 @@
-import browser from 'webextension-polyfill';
 import { RULE_TYPE, TABLE_NAMES } from './constant';
 import type { Rule } from './types';
 
@@ -6,18 +5,8 @@ export const IS_ANDROID = navigator.userAgent.includes('Android');
 export const IS_FIREFOX = BROWSER_TYPE === 'firefox';
 export const IS_CHROME = BROWSER_TYPE === 'chrome';
 
-export const IS_SUPPORT_STREAM_FILTER =
-  ENABLE_WEB_REQUEST &&
-  typeof browser.webRequest?.filterResponseData === 'function';
-
 export const isValidArray = <T = any>(v: any): v is T[] =>
   Array.isArray(v) && v.length > 0;
-
-// Get Active Tab
-export async function getActiveTab() {
-  const tabs = await browser.tabs.query({ currentWindow: true, active: true });
-  return tabs[0];
-}
 
 export function trimNewLines(s: string) {
   return s.replace(/^[\s\n]+/, '').replace(/[\s\n]+$/, '');
@@ -104,17 +93,6 @@ export function canAccess(url?: string) {
     return false;
   }
   return true;
-}
-
-export function t(key: string, params?: any, defaultValue?: string) {
-  const s = browser.i18n.getMessage(key, params);
-  if (s) {
-    return s;
-  }
-  if (typeof defaultValue !== 'undefined') {
-    return defaultValue;
-  }
-  return key;
 }
 
 export function getDomain(url: string) {

@@ -1,15 +1,12 @@
 import { last } from 'lodash-es';
 import browser, { type WebRequest } from 'webextension-polyfill';
+import { IS_SUPPORT_STREAM_FILTER } from '@/share/core/browser';
 import { RULE_TYPE, TABLE_NAMES } from '@/share/core/constant';
 import emitter from '@/share/core/emitter';
 import logger from '@/share/core/logger';
 import { prefs } from '@/share/core/prefs';
 import type { InitdRule, RULE_ACTION_OBJ } from '@/share/core/types';
-import {
-  IS_CHROME,
-  IS_SUPPORT_STREAM_FILTER,
-  isValidArray,
-} from '@/share/core/utils';
+import { IS_CHROME, isValidArray } from '@/share/core/utils';
 import { get as getRules } from '../core/rules';
 import { textDecode, textEncode } from './utils';
 

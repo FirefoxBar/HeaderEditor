@@ -2,8 +2,8 @@ import { Descriptions, Tag } from '@douyinfe/semi-ui';
 import type { Data } from '@douyinfe/semi-ui/lib/es/descriptions';
 import { css, cx } from '@emotion/css';
 import React from 'react';
+import { t } from '@/share/core/browser';
 import type { Rule } from '@/share/core/types';
-import { t } from '@/share/core/utils';
 import { RULE_TYPE } from '../core/constant';
 import { tagList } from '../pages/styles';
 

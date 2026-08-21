@@ -1,5 +1,6 @@
 import browser from 'webextension-polyfill';
 import type { DeclarativeNetRequest } from 'webextension-polyfill/namespaces/declarativeNetRequest';
+import { t } from '@/share/core/browser';
 import {
   ALL_RESOURCE_TYPES,
   RULE_MATCH_TYPE,
@@ -12,7 +13,7 @@ import { prefs } from '@/share/core/prefs';
 import { detectRunner } from '@/share/core/rule-utils';
 import SessionMessage from '@/share/core/session-message';
 import type { RULE_ACTION_OBJ, Rule } from '@/share/core/types';
-import { getTableName, isValidArray, t } from '@/share/core/utils';
+import { getTableName, isValidArray } from '@/share/core/utils';
 import { getAll, waitLoad } from '../core/rules';
 
 type DNRRule = DeclarativeNetRequest.Rule;

@@ -1,5 +1,6 @@
 import isEqual from 'fast-deep-equal';
 import { cloneDeep } from 'lodash-es';
+import { t } from '@/share/core/browser';
 import {
   APIs,
   EVENTs,
@@ -31,7 +32,6 @@ import {
   getVirtualKey,
   isValidArray,
   sleep,
-  t,
 } from '@/share/core/utils';
 import { getDatabase } from './db';
 

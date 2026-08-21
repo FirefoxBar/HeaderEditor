@@ -4,10 +4,10 @@ import equal from 'fast-deep-equal';
 import { cloneDeep } from 'lodash-es';
 import { RE2JS } from 're2js';
 import { useRef, useState } from 'react';
+import { t } from '@/share/core/browser';
 import { IS_MATCH } from '@/share/core/constant';
 import { detectRunner, initRule, isMatchUrl } from '@/share/core/rule-utils';
 import type { InitdRule } from '@/share/core/types';
-import { t } from '@/share/core/utils';
 import useStateIfChanged from '@/share/hooks/use-state-if-changed';
 import { getRuleFromInput } from '../utils';
 

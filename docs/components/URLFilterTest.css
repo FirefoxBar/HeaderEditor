@@ -1,0 +1,30 @@
+.url-filter-test {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.url-filter-test input[type="text"] {
+  border: 1px solid var(--rp-c-bg-mute);
+  border-radius: var(--rp-radius-small);
+  padding: 12px;
+  outline: none;
+}
+
+.url-filter-test input[type="text"]:focus {
+  border-color: var(--rp-c-brand);
+}
+
+.url-filter-test .result {
+  border-radius: var(--rp-radius-small);
+  background-color: var(--rp-c-bg-mute);
+}
+
+.url-filter-test .result > .content {
+  padding: 12px;
+}
+
+.url-filter-test .result > .title {
+  padding: 12px;
+  border-bottom: 1px solid var(--rp-c-divider);
+}

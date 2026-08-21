@@ -1,7 +1,7 @@
 import { Card } from '@douyinfe/semi-ui';
 import { css } from '@emotion/css';
 import React from 'react';
-import { t } from '@/share/core/utils';
+import { t } from '@/share/core/browser';
 import Env from './env';
 import Prefs from './prefs';
 

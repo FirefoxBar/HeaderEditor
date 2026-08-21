@@ -35,4 +35,16 @@ export default defineConfig({
       label: '繁體中文',
     },
   ],
+  builderConfig: {
+    source: {
+      define: {
+        BROWSER_TYPE: JSON.stringify('chrome'),
+        MANIFEST_VER: JSON.stringify('v3'),
+        ENABLE_DNR: JSON.stringify(true),
+        ENABLE_WEB_REQUEST: JSON.stringify(true),
+        ENABLE_EVAL: JSON.stringify(true),
+        IS_DEV: JSON.stringify(true),
+      },
+    },
+  },
 });

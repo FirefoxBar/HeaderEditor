@@ -627,5 +627,9 @@
   "view": {
     "message": "View",
     "description": "View rule or a link"
+  },
+  "match_url_filter": {
+    "message": "URL Filter",
+    "description": "URL Filter option"
   }
 }

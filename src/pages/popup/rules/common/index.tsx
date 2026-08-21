@@ -1,5 +1,5 @@
 import { Typography } from '@douyinfe/semi-ui';
-import { t } from '@/share/core/utils';
+import { t } from '@/share/core/browser';
 import Group from './group';
 import Rules from './rules';
 

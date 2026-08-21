@@ -13,6 +13,7 @@
     "dashed": true
   },
   "custom-function",
+  "url-filter",
   "modify-body",
   {
     "type": "divider",

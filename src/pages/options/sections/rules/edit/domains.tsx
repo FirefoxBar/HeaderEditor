@@ -1,8 +1,8 @@
 import { IconDelete, IconPlus } from '@douyinfe/semi-icons';
-import { ArrayField, Space, Form, Button } from '@douyinfe/semi-ui';
+import { ArrayField, Button, Form, Space } from '@douyinfe/semi-ui';
 import { css } from '@emotion/css';
 import React from 'react';
-import { t } from '@/share/core/utils';
+import { t } from '@/share/core/browser';
 
 interface DomainsProps {
   field: string;
@@ -28,7 +28,12 @@ const Domains = ({ field, initValue }: DomainsProps) => (
       >
         {arrayFields.map(({ key, field: subField, remove }) => (
           <Space key={key}>
-            <Form.Input noLabel placeholder="sub.example.com" field={subField} allowEmptyString />
+            <Form.Input
+              noLabel
+              placeholder="sub.example.com"
+              field={subField}
+              allowEmptyString
+            />
             <Button onClick={remove} icon={<IconDelete />} type="tertiary" />
           </Space>
         ))}

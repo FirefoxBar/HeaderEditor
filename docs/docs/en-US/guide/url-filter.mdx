@@ -1,0 +1,45 @@
+---
+title: URL Filter
+---
+
+import URLFilterTest from "../../../components/URLFilterTest.tsx";
+
+## URL Filter
+
+URL filters are expressions with syntax similar to filtering software like ABP/uBO. They are simpler to use than regular expressions and easier to learn.
+
+Supported constructs:
+* `*` : Wildcard: Matches any number of characters.
+* `|` : Left/right anchor: If used at either end of the pattern, specifies the beginning/end of the url respectively.
+* `||` : Domain name anchor: If used at the beginning of the pattern, specifies the start of a (sub-)domain of the URL.
+* `^` : Separator character: This matches anything except a letter, a digit, or one of the following: _, -, ., or %. This also match the end of the URL.
+
+Therefore urlFilter is composed of the following parts: (optional Left/Domain name anchor) + pattern + (optional Right anchor).
+
+> Note:
+> * A pattern beginning with `||*` is not allowed. Use `*` instead.
+> * The urlFilter must be composed of only ASCII characters. The host in URL is encoded in the punycode format (in case of internationalized domains) and any other non-ascii characters are url encoded in utf-8.
+
+## Demo
+
+| URL Filter | Matches | Does not match |
+| --------- | --- | --- |
+| `abc` | `https://abcd.com` `https://example.com/abcd` | `https://ab.com` |
+| `abc*d` | `https://abcd.com` `https://example.com/abcxyzd` | `https://abc.com` |
+| `\|\|a.example.com` | `https://a.example.com/` `https://b.a.example.com/xyz` `https://a.example.company` | `https://example.com/` |
+| `\|https*` | `https://example.com` `http://example.com/` | `http://https.com` |
+| `example*^123\|` | `https://example.com/123` `http://abc.com/example?123` `https://example.com/1234` | `https://abc.com/example0123` |
+| `/image/*.gif` | `https://example.com/image/banner.gif` `https://example.com/image/path/to/img.gif` | `https://example.com/image/banner.jpg` |
+
+
+## Test
+
+<URLFilterTest
+  lang={{
+    inputData: "Input test URL, such as https://example.com",
+    inputExpr: "Input URL Filter",
+    executing: "Running...",
+    error: "Error",
+    result: "Result",
+  }}
+/>

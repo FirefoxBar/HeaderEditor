@@ -2,10 +2,10 @@ import { Button, Notification } from '@douyinfe/semi-ui';
 import { css } from '@emotion/css';
 import { useEffect } from 'react';
 import Modal from '@/share/components/modal';
+import { t } from '@/share/core/browser';
 import SessionMessage, {
   type SessionMessageItem,
 } from '@/share/core/session-message';
-import { t } from '@/share/core/utils';
 
 export const Message = () => {
   useEffect(() => {

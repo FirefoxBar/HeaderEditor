@@ -1,6 +1,6 @@
 import { Collapse } from '@douyinfe/semi-ui';
 import React from 'react';
-import { t } from '@/share/core/utils';
+import { t } from '@/share/core/browser';
 import Basic from './basic';
 import Exclude from './exclude';
 import Execution from './execution';

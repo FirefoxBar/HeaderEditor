@@ -1,6 +1,7 @@
+import { t } from '@/share/core/browser';
 import { RULE_MATCH_TYPE, RULE_TYPE } from '@/share/core/constant';
 import type { BasicRule } from '@/share/core/types';
-import { isValidArray, t } from '@/share/core/utils';
+import { isValidArray } from '@/share/core/utils';
 
 export interface RuleInput extends BasicRule {
   editHeader?: Array<{ name: string; value: string }>;
@@ -86,6 +87,7 @@ export function getInput(rule: BasicRule) {
 }
 
 export function getRuleFromInput(input: RuleInput): BasicRule {
+  const { editMatchType = [], condition = {} } = input;
   const res = { ...input };
   if (
     res.ruleType === RULE_TYPE.MODIFY_SEND_HEADER ||
@@ -102,19 +104,22 @@ export function getRuleFromInput(input: RuleInput): BasicRule {
 
   if (!res.condition) {
     res.condition = {};
-    if (res.editMatchType?.includes(RULE_MATCH_TYPE.ALL)) {
-      res.condition.all = true;
-    }
+  }
+
+  if (editMatchType.includes(RULE_MATCH_TYPE.ALL)) {
+    res.condition.all = true;
   }
 
   if (
-    res.editMatchType?.includes(RULE_MATCH_TYPE.URL_FILTER) &&
-    input.condition?.urlFilter
+    editMatchType.includes(RULE_MATCH_TYPE.URL_FILTER) &&
+    condition.urlFilter
   ) {
-    res.condition.urlFilter = input.condition.urlFilter;
+    res.condition.urlFilter = condition.urlFilter;
     delete res.condition.url;
     delete res.condition.urlPrefix;
     delete res.condition.all;
+    // urlFilter 不能和 regex 共存
+    delete res.condition.regex;
   }
 
   if (res.encoding) {
