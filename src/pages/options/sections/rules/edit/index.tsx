@@ -5,6 +5,7 @@ import { css } from '@emotion/css';
 import { useRequest } from 'ahooks';
 import { RE2JS } from 're2js';
 import { useEffect, useMemo, useRef } from 'react';
+import { withErrorBoundary } from '@/share/components/error-boundary';
 import { t } from '@/share/core/browser';
 import { RULE_TYPE } from '@/share/core/constant';
 import { prefs } from '@/share/core/prefs';
@@ -205,4 +206,4 @@ const Edit = ({ visible, rule: ruleProp, onClose }: EditProps) => {
   );
 };
 
-export default Edit;
+export default withErrorBoundary(Edit);

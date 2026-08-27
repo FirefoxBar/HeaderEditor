@@ -1,6 +1,7 @@
 import { Card } from '@douyinfe/semi-ui';
 import { css } from '@emotion/css';
 import React from 'react';
+import { withErrorBoundary } from '@/share/components/error-boundary';
 import { t } from '@/share/core/browser';
 import Env from './env';
 import Prefs from './prefs';
@@ -27,7 +28,7 @@ const style = css`
   }
 `;
 
-const Options = ({ visible }: OptionsProps) => (
+const Options = withErrorBoundary(({ visible }: OptionsProps) => (
   <section className={`section-options ${visible ? 'visible' : 'in-visible'}`}>
     <Card title={t('options')} className={style}>
       <Prefs />
@@ -36,6 +37,6 @@ const Options = ({ visible }: OptionsProps) => (
       <Env />
     </Card>
   </section>
-);
+));
 
 export default Options;

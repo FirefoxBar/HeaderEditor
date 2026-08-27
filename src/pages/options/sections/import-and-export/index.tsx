@@ -9,6 +9,7 @@ import { Button, Card, Input, Space, Table, Toast } from '@douyinfe/semi-ui';
 import * as React from 'react';
 import { openURL } from '@/pages/background/utils';
 import { getExportName } from '@/pages/options/utils';
+import { withErrorBoundary } from '@/share/components/error-boundary';
 import { t } from '@/share/core/browser';
 import { createExport } from '@/share/core/rule-utils';
 import { getLocal } from '@/share/core/storage';
@@ -30,7 +31,7 @@ interface IEState {
   downloadHistory: string[];
 }
 
-export default class ImportAndExport extends React.Component<IEProps, IEState> {
+class ImportAndExport extends React.Component<IEProps, IEState> {
   private importRef: React.RefObject<ImportDrawer> = React.createRef();
   constructor(props: any) {
     super(props);
@@ -239,3 +240,5 @@ export default class ImportAndExport extends React.Component<IEProps, IEState> {
     );
   }
 }
+
+export default withErrorBoundary(ImportAndExport);

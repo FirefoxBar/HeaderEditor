@@ -2,6 +2,7 @@ import { Spin } from '@douyinfe/semi-ui';
 import { useRequest } from 'ahooks';
 import { flatten, groupBy } from 'lodash-es';
 import { useEffect } from 'react';
+import { withErrorBoundary } from '@/share/components/error-boundary';
 import { EVENTs, VIRTUAL_KEY } from '@/share/core/constant';
 import notify from '@/share/core/notify';
 import type { RuleWithVirtualKey } from '@/share/core/types';
@@ -9,7 +10,7 @@ import { getVirtualKey } from '@/share/core/utils';
 import Api from '@/share/pages/api';
 import GroupItem from './common/group-item';
 
-const AllRules = () => {
+const AllRules = withErrorBoundary(() => {
   const {
     data = {},
     loading,
@@ -81,6 +82,6 @@ const AllRules = () => {
       </div>
     </Spin>
   );
-};
+});
 
 export default AllRules;

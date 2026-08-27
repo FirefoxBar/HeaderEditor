@@ -2,6 +2,7 @@ import { Button, Notification, Space, Typography } from '@douyinfe/semi-ui';
 import { css } from '@emotion/css';
 import { useEffect } from 'react';
 import browser from 'webextension-polyfill';
+import { withErrorBoundary } from '@/share/components/error-boundary';
 import Modal from '@/share/components/modal';
 import { t } from '@/share/core/browser';
 import SessionMessage, {
@@ -28,7 +29,7 @@ function shouldShowEdgeUpgradeMessage() {
   return updateUrl.includes('https://edge.microsoft.com/');
 }
 
-export const Message = () => {
+export const Message = withErrorBoundary(() => {
   useEffect(() => {
     const showMessage = (item: SessionMessageItem) => {
       Notification[item.type]({
@@ -89,6 +90,7 @@ export const Message = () => {
   useEffect(() => {
     if (shouldShowEdgeUpgradeMessage()) {
       const m = Notification.info({
+        duration: 0,
         title: t('edge_upgrade_tip'),
         content: (
           <Space>
@@ -116,4 +118,4 @@ export const Message = () => {
   }, []);
 
   return <div />;
-};
+});

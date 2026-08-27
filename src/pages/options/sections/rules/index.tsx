@@ -17,6 +17,7 @@ import {
 import { css, cx } from '@emotion/css';
 import * as React from 'react';
 import { selectGroup } from '@/pages/options/utils';
+import { withErrorBoundary } from '@/share/components/error-boundary';
 import Modal from '@/share/components/modal';
 import { t } from '@/share/core/browser';
 import {
@@ -55,7 +56,7 @@ interface RulesState {
   collapsed: string[];
 }
 
-export default class Rules extends React.Component<RulesProps, RulesState> {
+class Rules extends React.Component<RulesProps, RulesState> {
   // 默认展开/收起
   private isCollapse = true;
 
@@ -482,3 +483,5 @@ export default class Rules extends React.Component<RulesProps, RulesState> {
     );
   }
 }
+
+export default withErrorBoundary(Rules);

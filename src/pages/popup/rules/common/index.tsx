@@ -1,9 +1,10 @@
 import { Typography } from '@douyinfe/semi-ui';
+import { withErrorBoundary } from '@/share/components/error-boundary';
 import { t } from '@/share/core/browser';
 import Group from './group';
 import Rules from './rules';
 
-const Common = () => (
+const Common = withErrorBoundary(() => (
   <>
     <div className="main-list">
       <Rules />
@@ -17,6 +18,6 @@ const Common = () => (
       {t('common_mark_tip')}
     </Typography.Text>
   </>
-);
+));
 
 export default Common;
