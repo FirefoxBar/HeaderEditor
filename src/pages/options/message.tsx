@@ -1,11 +1,32 @@
-import { Button, Notification } from '@douyinfe/semi-ui';
+import { Button, Notification, Space, Typography } from '@douyinfe/semi-ui';
 import { css } from '@emotion/css';
 import { useEffect } from 'react';
+import browser from 'webextension-polyfill';
 import Modal from '@/share/components/modal';
 import { t } from '@/share/core/browser';
 import SessionMessage, {
   type SessionMessageItem,
 } from '@/share/core/session-message';
+
+function shouldShowEdgeUpgradeMessage() {
+  if (MANIFEST_VER !== 'v2') {
+    return false;
+  }
+  try {
+    if (localStorage.getItem('doNotShowEdgeUpgradeTip')) {
+      return false;
+    }
+  } catch (_) {
+    // ignore
+  }
+  // is edge
+  if (!navigator.userAgent.includes('Edg/')) {
+    return false;
+  }
+  // is store channel
+  const updateUrl = (browser.runtime.getManifest() as any).update_url || '';
+  return updateUrl.includes('https://edge.microsoft.com/');
+}
 
 export const Message = () => {
   useEffect(() => {
@@ -63,6 +84,35 @@ export const Message = () => {
     return () => {
       remove();
     };
+  }, []);
+
+  useEffect(() => {
+    if (shouldShowEdgeUpgradeMessage()) {
+      const m = Notification.info({
+        title: t('edge_upgrade_tip'),
+        content: (
+          <Space>
+            <Typography.Text
+              link={{
+                href: 'https://github.com/FirefoxBar/HeaderEditor/issues/357',
+                target: '_blank',
+              }}
+            >
+              {t('view')}
+            </Typography.Text>
+            <Typography.Text
+              link
+              onClick={() => {
+                localStorage.setItem('doNotShowEdgeUpgradeTip', 'true');
+                Notification.close(m);
+              }}
+            >
+              {t('do_not_show_again')}
+            </Typography.Text>
+          </Space>
+        ),
+      });
+    }
   }, []);
 
   return <div />;
