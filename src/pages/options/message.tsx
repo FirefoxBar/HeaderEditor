@@ -91,6 +91,8 @@ export const Message = withErrorBoundary(() => {
     if (shouldShowEdgeUpgradeMessage()) {
       const m = Notification.info({
         duration: 0,
+        theme: 'light',
+        position: 'bottomRight',
         title: t('edge_upgrade_tip'),
         content: (
           <Space>
