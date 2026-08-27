@@ -5,13 +5,13 @@ title: 安裝完整版
 # 安裝完整版
 
 * Firefox 可在 AMO 中安裝完整版；
-* Edge 可以透過 Edge Addons 安裝完整版；
-* Chrome 用戶請依照下述步驟安裝；
+* 截止目前，Edge 使用者可以從 Microsoft Store 安裝完整版；若未來更新為 Lite 版本，請依照下述步驟安裝；
+* Edge / Chrome 用戶請依照下述步驟安裝；
 
 ## 安裝
 
 * 從[該位址](https://github.com/FirefoxBar/HeaderEditor/releases)下載最新的安裝包（名为`HeaderEditor-x.x.x-v2.crx`）
-* 開啟`chrome://extensions/`
+* 開啟`chrome://extensions/`或`edge://extensions/`
 * 開啟“開發者模式”
 * 將下載的crx檔案拖曳到擴充頁面
 
@@ -20,6 +20,8 @@ title: 安裝完整版
 如果您在安裝或啟用擴充功能時遇到問題（常見於 Google Chrome 86+），請依照下列步驟操作：
 
 ### Windows
+
+#### Chrome
 
 您可以選擇下列方式之一：
 
@@ -31,12 +33,31 @@ title: 安裝完整版
 Windows Registry Editor Version 5.00
 
 [HKEY_LOCAL_MACHINE\SOFTWARE\Policies\Google\Chrome\ExtensionInstallAllowlist]
-"1"="jhigoaelcgmfbocglkcnhmfacajle"
+"1"="jhigoaelcgmfbidkocglkcnhmfacajle"
 ```
 
 **方式二 組策略**
 
 在[Google 官網](https://support.google.com/chrome/a/answer/7532015?hl=zh-Hant)上下載最新的政策模板，將`jhigoaelcgmfbidkocglkcnhmfacajle`加入到`ExtensionInstallAllowlist`中
+
+#### Edge
+
+您可以選擇下列方式之一：
+
+**方式一 註冊表**
+
+將下列程式碼儲存為`.reg`文件，並雙擊運行。其中，1可以是任意值，若有多個需要啟用的擴展，則換行再寫，保證前邊的序號唯一。
+
+```
+Windows Registry Editor Version 5.00
+
+[HKEY_LOCAL_MACHINE\SOFTWARE\Policies\Microsoft\Edge\ExtensionInstallAllowlist]
+"1"="jhigoaelcgmfbidkocglkcnhmfacajle"
+```
+
+**方式二 組策略**
+
+請參考[Microsoft 官網](https://learn.microsoft.com/zh-tw/deployedge/microsoft-edge-manage-extensions-policies#allow-or-block-extensions-in-group-policy)，將`jhigoaelcgmfbidkocglkcnhmfacajle`加入到`ExtensionInstallAllowlist`中
 
 ### macOS / Linux
 

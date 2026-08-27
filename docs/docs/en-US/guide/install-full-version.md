@@ -5,13 +5,13 @@ title: Install Full Version
 # Install Full Version
 
 * Firefox can install the full version directly from AMO;
-* Edge can install the full version from Edge Addons;
-* Chrome users please follow the steps below to install;
+* As of now, Edge users can install the full version from the Microsoft Store; if a Lite version is updated in the future, please follow the steps below to install it;
+* Chrome/Edge users please follow the steps below to install;
 
 ## Install
 
 * Download the latest installation package (named `HeaderEditor-x.x.x-v2.crx`) from [this address](https://github.com/FirefoxBar/HeaderEditor/releases)
-* Open `chrome://extensions/`
+* Open `chrome://extensions/` or `edge://extensions/`
 * Enable "Developer Mode"
 * Drag the downloaded crx file to the extension page
 
@@ -20,6 +20,8 @@ title: Install Full Version
 If you encounter problems installing or enabling the extension (common in Google Chrome 86 and above), please follow these steps:
 
 ### Windows
+
+#### Chrome
 
 You can use one of the following methods:
 
@@ -37,6 +39,25 @@ Windows Registry Editor Version 5.00
 **Method 2: Group Policy**
 
 Download the latest policy template from the [Google official website](https://support.google.com/chrome/a/answer/7532015?hl=en) and add `jhigoaelcgmfbidkocglkcnhmfacajle` to `ExtensionInstallAllowlist`.
+
+#### Edge
+
+You can use one of the following methods:
+
+**Method 1: Registry**
+
+Save the following code as a `.reg` file and double-click to run it. The value `1` can be anything. If you have multiple extensions to enable, add them on a separate line, ensure the leading numbers are unique.
+
+```
+Windows Registry Editor Version 5.00
+
+[HKEY_LOCAL_MACHINE\SOFTWARE\Policies\Microsoft\Edge\ExtensionInstallAllowlist]
+"1"="jhigoaelcgmfbidkocglkcnhmfacajle"
+```
+
+**Method 2: Group Policy**
+
+Please refer to the [Microsoft official website](https://learn.microsoft.com/en-us/deployedge/microsoft-edge-manage-extensions-policies#allow-or-block-extensions-in-group-policy), add `jhigoaelcgmfbidkocglkcnhmfacajle` to `ExtensionInstallAllowlist`.
 
 ### macOS / Linux
 
