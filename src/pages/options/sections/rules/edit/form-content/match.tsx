@@ -36,6 +36,7 @@ const Match = () => {
             disabled: [
               RULE_MATCH_TYPE.ALL,
               RULE_MATCH_TYPE.REGEXP,
+              RULE_MATCH_TYPE.URL,
               RULE_MATCH_TYPE.PREFIX,
             ].some(x => editMatchType.includes(x)),
           },
