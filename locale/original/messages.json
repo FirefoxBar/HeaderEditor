@@ -132,6 +132,10 @@
     "message": "Display common request and response header names when editing rules",
     "description": "Help text for display_common_header_help option"
   },
+  "do_not_show_again": {
+    "message": "Don't show again",
+    "description": "Don't show again"
+  },
   "download": {
     "message": "Download",
     "description": "Download button"
@@ -139,6 +143,10 @@
   "download_rule": {
     "message": "Download rules",
     "description": "Title of the rule download area"
+  },
+  "edge_upgrade_tip": {
+    "message": "Edge store channel will be upgraded to the Lite version",
+    "description": "Edge store channel tip"
   },
   "edit": {
     "message": "Edit",
@@ -323,6 +331,10 @@
   "match_url": {
     "message": "URL",
     "description": "URL option in modal"
+  },
+  "match_url_filter": {
+    "message": "URL Filter",
+    "description": "URL Filter option"
   },
   "modify_body": {
     "message": "Modify response body",
@@ -627,17 +639,5 @@
   "view": {
     "message": "View",
     "description": "View rule or a link"
-  },
-  "match_url_filter": {
-    "message": "URL Filter",
-    "description": "URL Filter option"
-  },
-  "do_not_show_again": {
-    "message": "Don't show again",
-    "description": "Don't show again"
-  },
-  "edge_upgrade_tip": {
-    "message": "Edge store channel will be upgraded to the Lite version",
-    "description": "Edge store channel tip"
   }
 }
