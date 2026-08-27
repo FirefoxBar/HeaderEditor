@@ -132,6 +132,10 @@
     "message": "在編輯規則時，顯示常用的要求標頭和回應標頭",
     "description": "Help text for display_common_header_help option"
   },
+  "do_not_show_again": {
+    "message": "不再顯示",
+    "description": "Don't show again"
+  },
   "download": {
     "message": "下載",
     "description": "Download button"
@@ -139,6 +143,10 @@
   "download_rule": {
     "message": "下載規則",
     "description": "Title of the rule download area"
+  },
+  "edge_upgrade_tip": {
+    "message": "Edge 商店通道將會更新為 Lite 版本",
+    "description": "Edge store channel tip"
   },
   "edit": {
     "message": "編輯",
@@ -323,6 +331,10 @@
   "match_url": {
     "message": "網址",
     "description": "URL option in modal"
+  },
+  "match_url_filter": {
+    "message": "URL 篩選",
+    "description": "URL Filter option"
   },
   "modify_body": {
     "message": "修改回應本文",
