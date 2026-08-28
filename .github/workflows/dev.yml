@@ -137,7 +137,7 @@ jobs:
   build-docs:
     needs: check_changes
     if: ${{ needs.check_changes.outputs.docs_changed == 'true' }}
-    uses: ./.github/workflows-part/build-docs.yml
+    uses: ./.github/workflows/build-docs.yml
     secrets: inherit
     with:
       is_prod: false

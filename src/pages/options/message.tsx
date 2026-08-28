@@ -20,11 +20,11 @@ function shouldShowEdgeUpgradeMessage() {
   } catch (_) {
     // ignore
   }
+  // is edge
+  if (!navigator.userAgent.includes('Edg/')) {
+    return false;
+  }
   try {
-    // is edge
-    if (!navigator.userAgent.includes('Edg/')) {
-      return false;
-    }
     // is store channel
     const updateUrl = (browser.runtime.getManifest() as any).update_url || '';
     return updateUrl.includes('https://edge.microsoft.com/');
