@@ -32,4 +32,4 @@ jobs:
     uses: ./.github/workflows/build-docs.yml
     secrets: inherit
     with:
-      is_prod: false
+      is_prod: true

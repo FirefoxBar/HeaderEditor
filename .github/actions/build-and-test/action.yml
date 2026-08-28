@@ -39,7 +39,7 @@ runs:
         sudo rm -f /var/lib/dpkg/info/man-db.*
         sudo rm -f /var/lib/dpkg/triggers/*man-db*
         sudo apt-get remove -y microsoft-edge-stable
-        wget https://packages.microsoft.com/repos/edge/pool/main/m/microsoft-edge-stable/microsoft-edge-stable_151.0.4129.72-1_amd64.deb -O ./temp/microsoft-edge-stable.deb
+        wget https://packages.microsoft.com/repos/edge/pool/main/m/microsoft-edge-stable/microsoft-edge-stable_151.0.4129.72-1_amd64.deb -nv -O ./temp/microsoft-edge-stable.deb
         sudo dpkg -i ./temp/microsoft-edge-stable.deb
         microsoft-edge --version
         EDGE_PATH=$(which microsoft-edge)
