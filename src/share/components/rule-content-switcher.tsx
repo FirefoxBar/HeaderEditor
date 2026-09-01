@@ -106,16 +106,6 @@ interface RuleContentSwitcherProps {
 }
 
 const baseStyle = css`
-  .semi-dropdown-item,
-  .semi-dropdown-title {
-    max-width: 180px;
-    overflow: hidden;
-    white-space: nowrap;
-    text-overflow: ellipsis;
-    display: block;
-    transition: all 0.25s ease-in-out;
-  }
-
   .semi-dropdown-menu {
     max-height: 300px;
     max-width: 180px;
@@ -123,14 +113,13 @@ const baseStyle = css`
     overflow-y: auto;
   }
 
-  .semi-dropdown-menu .semi-dropdown-item {
-    padding: 8px 12px;
-
-    &:hover,
-    &.semi-dropdown-item-hover {
-      background-color: var(--semi-color-secondary-light-default);
-      transform: translateX(8px)
-    }
+  .semi-dropdown-item,
+  .semi-dropdown-title {
+    max-width: 180px;
+    overflow: hidden;
+    white-space: nowrap;
+    text-overflow: ellipsis;
+    display: block;
   }
 `;
 
