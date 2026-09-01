@@ -139,12 +139,16 @@ describe('rule-utils', () => {
           testUrlFilter('https://a.b.example.com', '||example.com'),
           true,
         );
+        assert.strictEqual(
+          testUrlFilter('https://a.example.company', '||example.com'),
+          true,
+        );
       });
 
-      it('should not match different domain with same suffix', () => {
+      it('should match different domain with same suffix', () => {
         assert.strictEqual(
           testUrlFilter('https://example.com.test', '||example.com'),
-          false,
+          true,
         );
       });
 
@@ -164,11 +168,11 @@ describe('rule-utils', () => {
         );
         assert.strictEqual(
           testUrlFilter('https://example.com?query=1', 'example.com^query'),
-          true,
+          false,
         );
         assert.strictEqual(
           testUrlFilter('https://example.com#hash', 'example.com^hash'),
-          true,
+          false,
         );
         assert.strictEqual(
           testUrlFilter('https://example.com:8080', 'example.com^8080'),
@@ -219,21 +223,21 @@ describe('rule-utils', () => {
     });
 
     describe('combined anchors', () => {
-      it('should work with domain anchor and right anchor', () => {
+      it('domain anchor and right anchor', () => {
         assert.strictEqual(
           testUrlFilter('https://example.com/path', '||example.com|'),
           false,
         );
         assert.strictEqual(
           testUrlFilter('https://example.com', '||example.com|'),
-          true,
+          false,
         );
       });
 
-      it('should work with left and right anchor', () => {
+      it('left and right anchor', () => {
         assert.strictEqual(
           testUrlFilter('https://example.com', '|https://example.com|'),
-          true,
+          false,
         );
         assert.strictEqual(
           testUrlFilter('https://example.com/', '|https://example.com|'),

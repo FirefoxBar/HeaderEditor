@@ -191,71 +191,63 @@ export function upgradeRuleFormat(s: OldRule) {
 }
 
 export function createUrlFilterRegex(filter: string): RegExp {
-  let domainAnchor = false;
-  let leftAnchor = false;
-  let rightAnchor = false;
+  if (!filter) {
+    return /.*/;
+  }
+
+  let leftAnchor = '';
+  let rightAnchor = '';
   let pattern = filter;
 
   if (pattern.startsWith('||')) {
-    domainAnchor = true;
-    pattern = pattern.substring(2);
+    leftAnchor = '||';
+    pattern = pattern.slice(2);
   } else if (pattern.startsWith('|')) {
-    leftAnchor = true;
-    pattern = pattern.substring(1);
+    leftAnchor = '|';
+    pattern = pattern.slice(1);
   }
 
-  if (pattern.endsWith('|')) {
-    rightAnchor = true;
-    pattern = pattern.substring(0, pattern.length - 1);
+  if (pattern.endsWith('|') && !pattern.endsWith('||')) {
+    rightAnchor = '|';
+    pattern = pattern.slice(0, -1);
   }
 
-  let regexStr = '';
-  if (domainAnchor) {
-    regexStr = '^https?://([a-z0-9-]+\\.)*';
-  } else if (leftAnchor) {
-    regexStr = '^';
-  }
+  const SEPARATOR_END = '(?:$|[^a-zA-Z0-9_.%?#-])';
+  const escapeRegex = (s: string) => s.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
 
-  let domainPartEnded = false;
+  let body = '';
   for (let i = 0; i < pattern.length; i++) {
     const ch = pattern[i];
-    switch (ch) {
-      case '*':
-        regexStr += '.*';
-        domainPartEnded = true;
-        break;
-      case '^':
-        regexStr += '(?:[^a-z0-9_.%-]|$)';
-        domainPartEnded = true;
-        break;
-      default:
-        if (!domainPartEnded && domainAnchor) {
-          // Check if this character ends the domain part
-          if (
-            ch === '/' ||
-            ch === '?' ||
-            ch === '#' ||
-            ch === ':' ||
-            ch === '^' ||
-            ch === '*'
-          ) {
-            domainPartEnded = true;
-          }
-        }
-        regexStr += ch.replace(/[-/\\^$()+?.{}|[\]]/g, '\\$&');
-        break;
+    if (ch === '*') {
+      body += '.*';
+    } else if (ch === '^') {
+      body += SEPARATOR_END;
+    } else {
+      body += escapeRegex(ch);
     }
   }
 
-  if (domainAnchor && !domainPartEnded) {
-    regexStr += '(?=[^a-z0-9.-]|$)';
+  let regex = '';
+
+  if (leftAnchor === '||') {
+    regex = `^(?:[^/]*://)?(?:[^/]*\\.)?${body}`;
+  } else if (leftAnchor === '|') {
+    regex = `^${body}`;
+  } else {
+    regex = body;
   }
 
-  if (rightAnchor) {
-    regexStr += '$';
+  if (rightAnchor === '|') {
+    if (leftAnchor === '|') {
+      regex += '(?=[^a-zA-Z0-9_.%?#-/:])';
+    } else if (leftAnchor === '||') {
+      regex += '(?=[^a-zA-Z0-9_.%?#-/:])';
+    } else {
+      regex += '$';
+    }
   }
 
-  return new RegExp(regexStr, 'i');
+  return new RegExp(regex, 'i');
 }
 
 export function isMatchUrl(rule: InitdRule, url: string): IS_MATCH {
