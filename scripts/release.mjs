@@ -16,16 +16,21 @@ export const run = async ({ getVersion, readJSON, release }) => {
   );
   const browserList = Object.keys(browserConfig);
 
-  let distRootPath = '';
+  let version = '';
   for (const browser of browserList) {
     const path = getDistPath(browser);
     try {
-      await getVersion(path);
-      distRootPath = path;
+      version = await getVersion(path);
+      console.log(`Get version from ${path}`);
       break;
     } catch (_) {
       // ignore
     }
+  }
+
+  if (!version) {
+    console.log('version not found');
+    return;
   }
 
   return await release({
@@ -33,7 +38,7 @@ export const run = async ({ getVersion, readJSON, release }) => {
     gitHubApi: process.env.GITHUB_API_URL,
     gitHubRepo: process.env.GITHUB_REPOSITORY,
     gitHubToken: process.env.GITHUB_TOKEN,
-    distRootPath,
+    version,
     browserConfig,
     tagName,
     releasePath,
