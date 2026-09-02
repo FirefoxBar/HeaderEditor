@@ -106,8 +106,11 @@ function getManifest(browser, options) {
     manifest.browser_specific_settings = {
       gecko: commonGecko,
     };
-    if (ext.include_android) {
-      manifest.browser_specific_settings.gecko_android = commonGecko;
+    if (ext.android_min_version) {
+      manifest.browser_specific_settings.gecko_android = {
+        ...commonGecko,
+        min_version: ext.android_min_version,
+      };
     }
   }
 
