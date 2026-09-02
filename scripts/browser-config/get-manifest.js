@@ -88,26 +88,26 @@ function getManifest(browser, options) {
   }
 
   if (config.BROWSER_TYPE === 'firefox') {
+    const commonGecko = {};
+    let ext = {};
     if (packer === 'xpi') {
-      const id = extensionConfig.xpi.find(x => x.browser === browser).id;
-      manifest.browser_specific_settings = {
-        gecko: {
-          id,
-          strict_min_version: '113.0',
-          update_url:
-            config.MANIFEST_VER === 'v2'
-              ? 'https://ext.firefoxcn.net/header-editor/install/update.json'
-              : 'https://ext.firefoxcn.net/header-editor/install-v3/update.json',
-        },
-      };
+      ext = extensionConfig.xpi.find(x => x.browser === browser);
+      commonGecko.update_url =
+        config.MANIFEST_VER === 'v2'
+          ? 'https://ext.firefoxcn.net/header-editor/install/update.json'
+          : 'https://ext.firefoxcn.net/header-editor/install-v3/update.json';
     } else {
-      const id = extensionConfig.amo.find(x => x.browser === browser).id;
-      manifest.browser_specific_settings = {
-        gecko: {
-          id,
-          strict_min_version: '113.0',
-        },
-      };
+      ext = extensionConfig.amo.find(x => x.browser === browser);
+    }
+    commonGecko.id = ext.id;
+    if (ext.min_version) {
+      commonGecko.strict_min_version = ext.min_version;
+    }
+    manifest.browser_specific_settings = {
+      gecko: commonGecko,
+    };
+    if (ext.include_android) {
+      manifest.browser_specific_settings.gecko_android = commonGecko;
     }
   }
 

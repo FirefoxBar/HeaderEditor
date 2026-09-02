@@ -31,22 +31,28 @@
   "amo": [
     {
       "browser": "firefox_v2",
-      "id": "headereditor-amo@addon.firefoxcn.net"
+      "id": "headereditor-amo@addon.firefoxcn.net",
+      "include_android": true,
+      "min_version": "113.0.0"
     },
     {
       "browser": "firefox_v3",
-      "id": "headereditor-v3-amo@addon.firefoxcn.net"
+      "id": "headereditor-v3-amo@addon.firefoxcn.net",
+      "include_android": true,
+      "min_version": "113.0.0"
     }
   ],
   "xpi": [
     {
       "browser": "firefox_v2",
       "id": "headereditor@addon.firefoxcn.net",
+      "include_android": true,
       "min_version": "113.0.0"
     },
     {
       "browser": "firefox_v3",
       "id": "headereditor-v3@addon.firefoxcn.net",
+      "include_android": true,
       "min_version": "113.0.0"
     }
   ],
