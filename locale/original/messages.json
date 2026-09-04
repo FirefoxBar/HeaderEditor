@@ -625,7 +625,7 @@
     "description": "Upload button"
   },
   "url_cloud_backup": {
-    "message": "https://he.firefoxcn.net/en-US/guide/cloud-backup/",
+    "message": "https://he.firefoxcn.net/en-US/guide/cloud-backup.html",
     "description": "URL of documentations, if not translated, please use english version"
   },
   "url_help": {
