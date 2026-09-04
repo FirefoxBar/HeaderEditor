@@ -633,7 +633,7 @@
     "description": "URL of documentations, if not translated, please use english version"
   },
   "url_third_party_rules": {
-    "message": "https://he.firefoxcn.net/en-US/guide/third-party-rules/",
+    "message": "https://he.firefoxcn.net/en-US/guide/third-party-rules.html",
     "description": "URL of documentations, if not translated, please use english version"
   },
   "view": {

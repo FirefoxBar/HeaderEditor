@@ -25,6 +25,8 @@ import OptionsSection from './sections/options';
 import RulesSection from './sections/rules';
 import Edit from './sections/rules/edit';
 
+import './global.css';
+
 const Options = () => {
   const [editShow, setEditShow] = useState(false);
   const [editRule, setEditRule] = useState<Rule>();

@@ -6,6 +6,7 @@ import {
   IconSearch,
 } from '@douyinfe/semi-icons';
 import { Button, Card, Input, Space, Table, Toast } from '@douyinfe/semi-ui';
+import { css } from '@emotion/css';
 import * as React from 'react';
 import { openURL } from '@/pages/background/utils';
 import { getExportName } from '@/pages/options/utils';
@@ -143,10 +144,19 @@ class ImportAndExport extends React.Component<IEProps, IEState> {
           </Space>
         </Card>
         <Card title={t('download_rule')}>
-          <Space style={{ width: '100%' }}>
+          <div
+            className={css`
+              display: flex;
+              flex-direction: row;
+              gap: 8px;
+
+              @media (max-width: 600px) {
+                flex-direction: column;
+              }
+            `}
+          >
             <Input
               value={this.state.downloadUrl}
-              style={{ width: '100%' }}
               showClear
               onChange={downloadUrl => this.setState({ downloadUrl })}
             />
@@ -165,7 +175,7 @@ class ImportAndExport extends React.Component<IEProps, IEState> {
             >
               {t('third_party_rules')}
             </Button>
-          </Space>
+          </div>
           <Table
             showHeader={false}
             style={{ marginTop: '8px' }}

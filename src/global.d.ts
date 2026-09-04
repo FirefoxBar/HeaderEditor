@@ -1,3 +1,5 @@
+declare module '*.css';
+
 declare const MANIFEST_VER: 'v2' | 'v3';
 declare const ENABLE_DNR: boolean;
 declare const ENABLE_WEB_REQUEST: boolean;
