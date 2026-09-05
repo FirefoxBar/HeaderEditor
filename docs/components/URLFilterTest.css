@@ -18,13 +18,5 @@
 .url-filter-test .result {
   border-radius: var(--rp-radius-small);
   background-color: var(--rp-c-bg-mute);
-}
-
-.url-filter-test .result > .content {
   padding: 12px;
-}
-
-.url-filter-test .result > .title {
-  padding: 12px;
-  border-bottom: 1px solid var(--rp-c-divider);
 }
