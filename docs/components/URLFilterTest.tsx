@@ -1,7 +1,5 @@
-import { useRequest } from 'ahooks';
-import jsonata from 'jsonata';
-import { random } from 'lodash-es';
-import { type FC, useState } from 'react';
+import { useGetState } from 'ahooks';
+import { type FC, useEffect, useState } from 'react';
 import { createUrlFilterRegex } from '../../src/share/core/rule-utils';
 import './URLFilterTest.css';
 
@@ -9,9 +7,8 @@ interface URLFilterTestProps {
   lang: {
     inputData: string;
     inputExpr: string;
-    executing: string;
-    error: string;
-    result: string;
+    match: string;
+    noMatch: string;
   };
 }
 
@@ -19,22 +16,28 @@ const URLFilterTest: FC<URLFilterTestProps> = ({ lang }) => {
   const [url, setUrl] = useState('');
   const [expr, setExpr] = useState('');
 
-  const {
-    data: result,
-    loading,
-    error,
-  } = useRequest(
-    async () => {
-      const e = createUrlFilterRegex(expr);
-      return e.test(url);
-    },
-    {
-      manual: false,
-      refreshDeps: [url, expr],
-      debounceWait: 500,
-      onError: e => console.error('run error', e),
-    },
-  );
+  const [result, setResult, getResult] = useGetState('');
+
+  useEffect(() => {
+    const c = { expr, url };
+
+    if (getResult() !== '') {
+      setResult('');
+    }
+
+    setTimeout(() => {
+      if (c.expr !== expr || c.url !== url) {
+        return;
+      }
+      try {
+        const e = createUrlFilterRegex(expr);
+        setResult(e.test(url) ? lang.match : lang.noMatch);
+      } catch (error) {
+        console.error(error);
+        setResult((error as Error).message);
+      }
+    }, 500);
+  }, [url, expr]);
 
   return (
     <div className="url-filter-test">
@@ -50,23 +53,7 @@ const URLFilterTest: FC<URLFilterTestProps> = ({ lang }) => {
         onChange={e => setExpr(e.target.value)}
         placeholder={lang.inputExpr}
       />
-      {loading && (
-        <div className="result">
-          <div className="content">{lang.executing}</div>
-        </div>
-      )}
-      {error && !loading && (
-        <div className="result">
-          <div className="title">{lang.error}</div>
-          <div className="content">{error.message}</div>
-        </div>
-      )}
-      {!error && !loading && (
-        <div className="result">
-          <div className="title">{lang.result}</div>
-          <pre className="content">{JSON.stringify(result, null, 2)}</pre>
-        </div>
-      )}
+      <div className="result">{result}</div>
     </div>
   );
 };
