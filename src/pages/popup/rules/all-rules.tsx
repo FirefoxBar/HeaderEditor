@@ -81,6 +81,9 @@ const AllRules = withErrorBoundary(() => {
         }
         const newData = { ...currentData };
         newData[group[0]] = group[1].filter(x => x[VIRTUAL_KEY] !== key);
+        if (newData[group[0]].length === 0) {
+          delete newData[group[0]];
+        }
         return newData;
       });
     };
