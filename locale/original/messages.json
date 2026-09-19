@@ -639,5 +639,17 @@
   "view": {
     "message": "View",
     "description": "View rule or a link"
+  },
+  "import_item_function_tooltip": {
+    "message": "This rule contains a custom function, please check the code before importing. Click to view the code.",
+    "description": "Tooltip for import item with custom function"
+  },
+  "import_function_warning_title": {
+    "message": "This import includes custom functions",
+    "description": "Title for the warning modal"
+  },
+  "import_function_warning_content": {
+    "message": "Custom functions may contain malicious code. Please verify that the content comes from a trusted publisher or that you have reviewed the function's contents.",
+    "description": "Content for the warning modal"
   }
 }

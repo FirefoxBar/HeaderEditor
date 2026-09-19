@@ -1,9 +1,20 @@
-import { IconSave } from '@douyinfe/semi-icons';
-import { Button, Select, SideSheet, Table, Toast } from '@douyinfe/semi-ui';
+import { IconAlertCircle, IconSave } from '@douyinfe/semi-icons';
+import {
+  Button,
+  Select,
+  SideSheet,
+  Space,
+  Table,
+  Tag,
+  Toast,
+  Tooltip,
+} from '@douyinfe/semi-ui';
 import { css } from '@emotion/css';
 import * as React from 'react';
 import BoolRadioGroup from '@/pages/options/components/bool-radio';
 import { selectGroup } from '@/pages/options/utils';
+import { CodeEditor } from '@/share/components/code-editor';
+import Modal from '@/share/components/modal';
 import { t } from '@/share/core/browser';
 import { TABLE_NAMES_ARR } from '@/share/core/constant';
 import { fromJson } from '@/share/core/rule-utils';
@@ -85,38 +96,54 @@ export default class ImportDrawer extends React.Component<
   }
 
   handleConfirm() {
-    // 确认导入
-    const queue: any[] = [];
-    this.state.list.forEach((e: ImportRule) => {
-      const x: any = { ...e };
-      // 不导入
-      if (x.importAction === 3) {
-        return;
-      }
-      if (x.importAction === 2) {
-        x.id = x.importOldId;
-      } else {
-        delete x.id;
-      }
-      delete x.importAction;
-      delete x.importOldId;
-      if (!this.state.useRecommend) {
-        x.group = this.state.group;
-      }
-      if (typeof x.enable === 'undefined') {
-        x.enable = true;
-      }
-      queue.push(Api.saveRule(x));
-    });
-    Promise.all(queue).then(() => {
-      // this.imports.status = 0;
-      Toast.success(t('import_success'));
-      this.props.onSuccess?.();
-    });
-    this.setState({
-      list: [],
-      visible: false,
-    });
+    const finalList = this.state.list
+      .map((e: ImportRule) => {
+        const x: any = { ...e };
+        // 不导入
+        if (x.importAction === 3) {
+          return;
+        }
+        if (x.importAction === 2) {
+          x.id = x.importOldId;
+        } else {
+          delete x.id;
+        }
+        delete x.importAction;
+        delete x.importOldId;
+        if (!this.state.useRecommend) {
+          x.group = this.state.group;
+        }
+        if (typeof x.enable === 'undefined') {
+          x.enable = true;
+        }
+        return x;
+      })
+      .filter(Boolean);
+
+    const execImport = () => {
+      // 执行导入
+      const queue: any[] = finalList.map(x => Api.saveRule(x));
+      Promise.all(queue).then(() => {
+        // this.imports.status = 0;
+        Toast.success(t('import_success'));
+        this.props.onSuccess?.();
+      });
+      this.setState({
+        list: [],
+        visible: false,
+      });
+    };
+
+    // 是否有自定义函数
+    if (finalList.some(x => x?.isFunction)) {
+      Modal.warning({
+        title: t('import_function_warning_title'),
+        content: t('import_function_warning_content'),
+        onOk: () => execImport(),
+      });
+    } else {
+      execImport();
+    }
   }
 
   handleCancel() {
@@ -194,6 +221,39 @@ export default class ImportDrawer extends React.Component<
             {
               title: t('name'),
               dataIndex: 'name',
+              render: (value: string, record: ImportRule) => {
+                if (!record.isFunction) {
+                  return value;
+                }
+                return (
+                  <Space vertical align="start">
+                    <span>{value}</span>
+                    <Tooltip content={t('import_item_function_tooltip')}>
+                      <Tag
+                        color="red"
+                        prefixIcon={<IconAlertCircle />}
+                        style={{ cursor: 'pointer' }}
+                        onClick={() => {
+                          Modal.info({
+                            title: t('code'),
+                            icon: null,
+                            size: 'large',
+                            content: (
+                              <CodeEditor
+                                value={record.code}
+                                editable={false}
+                              />
+                            ),
+                            hasCancel: false,
+                          });
+                        }}
+                      >
+                        {t('exec_function')}
+                      </Tag>
+                    </Tooltip>
+                  </Space>
+                );
+              },
             },
             {
               title: t('ruleType'),
