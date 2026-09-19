@@ -14,7 +14,11 @@ export async function getActiveTab() {
   return tabs[0];
 }
 
-export function t(key: string, params?: any, defaultValue?: string) {
+export function t(
+  key: string,
+  params?: string[] | string,
+  defaultValue?: string,
+) {
   const s = browser.i18n.getMessage(key, params);
   if (s) {
     return s;

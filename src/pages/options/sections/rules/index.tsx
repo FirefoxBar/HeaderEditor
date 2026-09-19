@@ -164,8 +164,7 @@ class Rules extends React.Component<RulesProps, RulesState> {
 
   // 事件响应 - 通知 - 规则删除
   handleRuleDeleteEvent(request: any) {
-    const { id } = request;
-    const { table } = request;
+    const { id, table } = request;
     const virtualKey = `${table}-${id}`;
     // 寻找key相同的
     let sameItem: Rule | null = null;

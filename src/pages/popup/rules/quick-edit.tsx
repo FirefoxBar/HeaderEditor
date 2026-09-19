@@ -17,28 +17,9 @@ interface QuickEditProps {
 }
 
 const modalCls = css`
-  .semi-modal {
-    margin: 0;
-    position: fixed;
-    bottom: 0;
-    width: 100%;
-    .semi-modal-body {
-      max-height: calc(90vh - 90px);
-      overflow: auto;
-      scrollbar-width: thin;
-    }
-    > .semi-modal-content {
-      border-bottom-left-radius: 0;
-      border-bottom-right-radius: 0;
-      border-bottom: 0;
-      border-left: 0;
-      border-right: 0;
-
-      > .semi-modal-footer {
-        margin-top: 0;
-        margin-bottom: 12px;
-      }
-    }
+  .semi-modal-content > .semi-modal-footer {
+    margin-top: 0;
+    margin-bottom: 12px;
   }
 `;
 const QuickEdit = ({ rule }: QuickEditProps) => {
@@ -81,7 +62,16 @@ const QuickEdit = ({ rule }: QuickEditProps) => {
             ))
           }
         >
-          <HeaderField field="header" type={undefined} />
+          <HeaderField
+            field="header"
+            type={undefined}
+            size="small"
+            className={css`
+            .name-input {
+              max-width: 28%;
+            }
+          `}
+          />
         </Form>
       );
     }
@@ -91,6 +81,7 @@ const QuickEdit = ({ rule }: QuickEditProps) => {
       closable: false,
       className: modalCls,
       content,
+
       onOk: async () => {
         if (
           newRule.ruleType === 'redirect' &&

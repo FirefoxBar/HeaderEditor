@@ -13,6 +13,8 @@ import Api from '@/share/pages/api';
 import isDarkMode from '@/share/pages/is-dark-mode';
 import Rules from './rules';
 
+import './global.css';
+
 const basicStyle = css`
   min-width: 380px;
   min-height: 460px;

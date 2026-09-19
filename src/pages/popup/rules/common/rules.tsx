@@ -53,10 +53,20 @@ const Rules = () => {
       }
     };
 
+    const handleRuleDelete = (request: any) => {
+      const { id, table } = request;
+      const key = `${table}-${id}`;
+      if (keysRef.current.includes(key)) {
+        refresh();
+      }
+    };
+
     notify.event.on(EVENTs.RULE_UPDATE, handleRuleUpdate);
+    notify.event.on(EVENTs.RULE_DELETE, handleRuleDelete);
 
     return () => {
       notify.event.off(EVENTs.RULE_UPDATE, handleRuleUpdate);
+      notify.event.off(EVENTs.RULE_DELETE, handleRuleDelete);
     };
   }, []);
 

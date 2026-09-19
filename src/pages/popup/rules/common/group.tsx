@@ -45,10 +45,20 @@ const GroupLoader: FC<GroupLoaderProps> = ({ group }) => {
       }
     };
 
+    const handleRuleDelete = (request: any) => {
+      const { id, table } = request;
+      const key = `${table}-${id}`;
+      if (dataRef.current.some(x => getVirtualKey(x) === key)) {
+        refresh();
+      }
+    };
+
     notify.event.on(EVENTs.RULE_UPDATE, handleRuleUpdate);
+    notify.event.on(EVENTs.RULE_DELETE, handleRuleDelete);
 
     return () => {
       notify.event.off(EVENTs.RULE_UPDATE, handleRuleUpdate);
+      notify.event.off(EVENTs.RULE_DELETE, handleRuleDelete);
     };
   }, []);
 

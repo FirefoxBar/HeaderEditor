@@ -1,5 +1,6 @@
 import { IconDelete, IconPlus } from '@douyinfe/semi-icons';
 import { ArrayField, Button, Form, Space } from '@douyinfe/semi-ui';
+import type { InputSize } from '@douyinfe/semi-ui/lib/es/input';
 import { css, cx } from '@emotion/css';
 import React from 'react';
 import { t } from '@/share/core/browser';
@@ -126,11 +127,19 @@ const commonHeaders = {
 
 interface HeaderFieldProps {
   field: string;
+  size?: InputSize;
+  className?: string;
   initValue?: any;
   type?: keyof typeof commonHeaders;
 }
 
-const HeaderField = ({ field, type, initValue }: HeaderFieldProps) => (
+const HeaderField = ({
+  field,
+  type,
+  initValue,
+  size,
+  className,
+}: HeaderFieldProps) => (
   <ArrayField field={field} initValue={initValue}>
     {({ add, arrayFields }) => (
       <div
@@ -144,10 +153,21 @@ const HeaderField = ({ field, type, initValue }: HeaderFieldProps) => (
             .semi-space > .semi-form-field {
               padding-top: 0;
               padding-bottom: 0;
-              flex-grow: 1;
+            }
+
+            .name-input {
+              width: 180px;
+              max-width: 40%;
               flex-shrink: 1;
+              flex-grow: 0;
+            }
+
+            .value-input {
+              flex-shrink: 1;
+              flex-grow: 1;
             }
           `,
+          className,
         )}
       >
         {arrayFields.map(({ key, field: subField, remove }) => (
@@ -158,6 +178,8 @@ const HeaderField = ({ field, type, initValue }: HeaderFieldProps) => (
                 field={`${subField}.name`}
                 placeholder={t('headerName')}
                 list={commonHeaders[type]}
+                fieldClassName="name-input"
+                size={size}
                 allowEmptyString
               />
             ) : (
@@ -165,6 +187,8 @@ const HeaderField = ({ field, type, initValue }: HeaderFieldProps) => (
                 noLabel
                 field={`${subField}.name`}
                 placeholder={t('headerName')}
+                fieldClassName="name-input"
+                size={size}
                 allowEmptyString
               />
             )}
@@ -172,9 +196,16 @@ const HeaderField = ({ field, type, initValue }: HeaderFieldProps) => (
               noLabel
               placeholder={t('headerValue')}
               field={`${subField}.value`}
+              fieldClassName="value-input"
+              size={size}
               allowEmptyString
             />
-            <Button onClick={remove} type="tertiary" icon={<IconDelete />} />
+            <Button
+              onClick={remove}
+              type="tertiary"
+              icon={<IconDelete />}
+              size={size}
+            />
           </Space>
         ))}
         <Button onClick={add} icon={<IconPlus />}>

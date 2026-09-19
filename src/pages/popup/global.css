@@ -1,0 +1,20 @@
+.semi-modal {
+  margin: 0;
+  position: fixed;
+  bottom: 0;
+  width: 100%;
+  .semi-modal-body {
+    max-height: calc(90vh - 90px);
+    overflow: auto;
+    scrollbar-width: thin;
+  }
+  > .semi-modal-content {
+    border-bottom-left-radius: 0;
+    border-bottom-right-radius: 0;
+    border-bottom: 0;
+    border-left: 0;
+    border-right: 0;
+    padding-left: 12px;
+    padding-right: 12px;
+  }
+}

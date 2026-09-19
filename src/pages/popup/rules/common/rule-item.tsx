@@ -1,12 +1,21 @@
-import { IconBranch } from '@douyinfe/semi-icons';
-import { Button, Popover, Switch } from '@douyinfe/semi-ui';
+import {
+  IconBranch,
+  IconCopyAdd,
+  IconDelete,
+  IconMore,
+} from '@douyinfe/semi-icons';
+import { Button, Dropdown, Popover, Switch } from '@douyinfe/semi-ui';
 import { css, cx } from '@emotion/css';
 import type { FC } from 'react';
+import Modal from '@/share/components/modal';
 import RuleContentSwitcher from '@/share/components/rule-content-switcher';
 import RuleDetail from '@/share/components/rule-detail';
+import { t } from '@/share/core/browser';
+import { convertToBasicRule } from '@/share/core/rule-utils';
 import type { Rule } from '@/share/core/types';
 import usePref from '@/share/hooks/use-pref';
 import Api from '@/share/pages/api';
+import { clone, remove } from '@/share/pages/rule-utils';
 import { textEllipsis } from '@/share/pages/styles';
 import QuickEdit from '../quick-edit';
 
@@ -83,6 +92,37 @@ const RuleItem: FC<RuleItemProps> = ({ rule }) => {
             icon={<IconBranch />}
           />
         </RuleContentSwitcher>
+
+        <Dropdown
+          position="bottomRight"
+          menu={[
+            {
+              node: 'item',
+              name: t('clone'),
+              onClick: () => clone(rule),
+              icon: <IconCopyAdd />,
+            },
+            {
+              node: 'item',
+              name: t('delete'),
+              onClick: () => {
+                Modal.warning({
+                  title: t('delete_single_confirm', rule.name),
+                  onOk: () => remove(rule),
+                });
+              },
+              type: 'danger',
+              icon: <IconDelete />,
+            },
+          ]}
+        >
+          <Button
+            theme="borderless"
+            type="tertiary"
+            icon={<IconMore />}
+            size="small"
+          />
+        </Dropdown>
       </div>
     </div>
   );

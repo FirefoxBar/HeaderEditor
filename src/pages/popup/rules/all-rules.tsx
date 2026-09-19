@@ -66,10 +66,31 @@ const AllRules = withErrorBoundary(() => {
       });
     };
 
+    const handleRuleDelete = (request: any) => {
+      const { id, table } = request;
+      const key = `${table}-${id}`;
+      mutate(currentData => {
+        if (!currentData) {
+          return;
+        }
+        const group = Object.entries(currentData).find(([_, value]) =>
+          value.some(x => x[VIRTUAL_KEY] === key),
+        );
+        if (!group) {
+          return;
+        }
+        const newData = { ...currentData };
+        newData[group[0]] = group[1].filter(x => x[VIRTUAL_KEY] !== key);
+        return newData;
+      });
+    };
+
     notify.event.on(EVENTs.RULE_UPDATE, handleRuleUpdate);
+    notify.event.on(EVENTs.RULE_DELETE, handleRuleDelete);
 
     return () => {
       notify.event.off(EVENTs.RULE_UPDATE, handleRuleUpdate);
+      notify.event.off(EVENTs.RULE_DELETE, handleRuleDelete);
     };
   }, []);
 
