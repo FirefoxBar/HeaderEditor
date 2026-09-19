@@ -116,6 +116,15 @@
     "message": "Do you want to delete these rules?",
     "description": "A confirmation box shows when user want to delete rules"
   },
+  "delete_single_confirm": {
+    "message": "Do you want to delete rule \"$rule$\"?",
+    "description": "A confirmation box shows when user want to delete a rule",
+    "placeholders": {
+      "rule": {
+        "content": "$1"
+      }
+    }
+  },
   "description": {
     "message": "Manage browser requests",
     "description": "Extension description"
