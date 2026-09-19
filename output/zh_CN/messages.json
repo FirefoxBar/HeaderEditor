@@ -116,6 +116,15 @@
     "message": "您确认要删除这些规则吗？",
     "description": "A confirmation box shows when user want to delete rules"
   },
+  "delete_single_confirm": {
+    "message": "您确认要删除规则“$rule$”吗？",
+    "description": "A confirmation box shows when user want to delete a rule",
+    "placeholders": {
+      "rule": {
+        "content": "$1"
+      }
+    }
+  },
   "description": {
     "message": "管理浏览器请求",
     "description": "Extension description"
@@ -247,6 +256,18 @@
   "import_drop": {
     "message": "不导入",
     "description": "do not import a rule"
+  },
+  "import_function_warning_content": {
+    "message": "自定义函数可能包含恶意代码。请确认该内容来自可信发布者，或您已审查过函数内容。",
+    "description": "Content for the warning modal"
+  },
+  "import_function_warning_title": {
+    "message": "本次导入包含自定义函数",
+    "description": "Title for the warning modal"
+  },
+  "import_item_function_tooltip": {
+    "message": "此规则有自定义函数，请检查后再导入。点击查看代码",
+    "description": "Tooltip for import item with custom function"
   },
   "import_new": {
     "message": "添加",
