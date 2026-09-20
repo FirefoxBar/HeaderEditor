@@ -18,5 +18,8 @@
 .url-filter-test .result {
   border-radius: var(--rp-radius-small);
   background-color: var(--rp-c-bg-mute);
-  padding: 12px;
+  padding-left: 12px;
+  box-sizing: border-box;
+  height: 54px;
+  line-height: 54px;
 }
