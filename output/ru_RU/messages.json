@@ -1,0 +1,672 @@
+{
+  "action": {
+    "message": "Действие",
+    "description": "Table title in management page"
+  },
+  "add": {
+    "message": "Добавить",
+    "description": "Button to add somethings"
+  },
+  "all_rules": {
+    "message": "Все правила",
+    "description": "Options"
+  },
+  "auto": {
+    "message": "Авто",
+    "description": "Auto detect dark mode"
+  },
+  "auto_enable_modify_body": {
+    "message": "«Изменение тела ответа» включено автоматически. Если это не требуется, отключите вручную.",
+    "description": "A message"
+  },
+  "basic_information": {
+    "message": "Основная информация",
+    "description": "Basic information of a rule"
+  },
+  "batch_delete": {
+    "message": "Пакетное удаление",
+    "description": "Button to delete multiple rules"
+  },
+  "batch_mode": {
+    "message": "Пакетные операции",
+    "description": "Button to enter batch operation mode"
+  },
+  "browser_version": {
+    "message": "Версия браузера",
+    "description": "Browser version"
+  },
+  "cancel": {
+    "message": "Отмена",
+    "description": "Button to close modal without save"
+  },
+  "check_update": {
+    "message": "Проверить обновления",
+    "description": "Check for updates"
+  },
+  "choose": {
+    "message": "Выбрать",
+    "description": "Choose a group"
+  },
+  "clone": {
+    "message": "Клонировать",
+    "description": "Clone rule"
+  },
+  "cloud_backup": {
+    "message": "Облачная резервная копия",
+    "description": "Cloud backup button"
+  },
+  "cloud_backup_at": {
+    "message": "Последняя резервная копия: $date$",
+    "description": "Display last backup time if any backup found",
+    "placeholders": {
+      "date": {
+        "content": "$1"
+      }
+    }
+  },
+  "cloud_no_backup": {
+    "message": "Нет резервных копий",
+    "description": "Display if no backup found"
+  },
+  "cloud_over_limit": {
+    "message": "Превышен лимит размера резервной копии",
+    "description": "Message display when exceeded backup size limit"
+  },
+  "code": {
+    "message": "Код",
+    "description": "Label for code section in modal"
+  },
+  "code_empty": {
+    "message": "Код не может быть пустым",
+    "description": "Tips when a rule is custom function but code is empty"
+  },
+  "common_mark": {
+    "message": "Отметить как часто используемое",
+    "description": "Mark a rule/group as common, it will display at the popup panel"
+  },
+  "common_mark_tip": {
+    "message": "Если вы отметите правило или группу как часто используемые, они появятся здесь",
+    "description": "Display at the popup panel"
+  },
+  "common_unmark": {
+    "message": "Снять отметку",
+    "description": "Unmark a common rule/group"
+  },
+  "dark_mode": {
+    "message": "Тёмная тема",
+    "description": "Dark mode select"
+  },
+  "dark_mode_help": {
+    "message": "Тёмная тема — экспериментальная функция. Обновите страницу, чтобы увидеть эффект.",
+    "description": "Dark help text"
+  },
+  "debug_mode_enable": {
+    "message": "Включить режим отладки",
+    "description": "Enable debug mode"
+  },
+  "debug_mode_enable_help": {
+    "message": "При включённом режиме отладки журналы выводятся на фоновой странице",
+    "description": "Debug mode description"
+  },
+  "delete": {
+    "message": "Удалить",
+    "description": "Delete button"
+  },
+  "delete_confirm": {
+    "message": "Вы действительно хотите удалить эти правила?",
+    "description": "A confirmation box shows when user want to delete rules"
+  },
+  "delete_single_confirm": {
+    "message": "Вы действительно хотите удалить правило «$rule$»?",
+    "description": "A confirmation box shows when user want to delete a rule",
+    "placeholders": {
+      "rule": {
+        "content": "$1"
+      }
+    }
+  },
+  "description": {
+    "message": "Управление запросами браузера",
+    "description": "Extension description"
+  },
+  "disable": {
+    "message": "Отключить",
+    "description": "disable"
+  },
+  "display_common_header": {
+    "message": "Показывать часто используемые заголовки при редактировании",
+    "description": "An option to enable header auto-complete when editing rules"
+  },
+  "display_common_header_help": {
+    "message": "При редактировании правил показывать часто используемые заголовки запросов и ответов",
+    "description": "Help text for display_common_header_help option"
+  },
+  "do_not_show_again": {
+    "message": "Больше не показывать",
+    "description": "Don't show again"
+  },
+  "download": {
+    "message": "Скачать",
+    "description": "Download button"
+  },
+  "download_rule": {
+    "message": "Скачать правила",
+    "description": "Title of the rule download area"
+  },
+  "edge_upgrade_tip": {
+    "message": "Канал Edge Store будет обновлён до версии Lite",
+    "description": "Edge store channel tip"
+  },
+  "edit": {
+    "message": "Изменить",
+    "description": "Edit something"
+  },
+  "enable": {
+    "message": "Включить",
+    "description": "Switch one rule on/off in table title"
+  },
+  "enable_he": {
+    "message": "Включить Header Editor",
+    "description": "If not checked, all rules will take no effects"
+  },
+  "encoding": {
+    "message": "Кодировка",
+    "description": "Label for responseBody's character encoding"
+  },
+  "encoding_desc": {
+    "message": "Только для декодирования",
+    "description": "encoding description"
+  },
+  "enter_group_name": {
+    "message": "Введите имя группы",
+    "description": "Prompt the user when the user click add group button"
+  },
+  "env_info": {
+    "message": "Информация об окружении",
+    "description": "Version info, etc"
+  },
+  "excludeRule": {
+    "message": "Правило исключения",
+    "description": "Label for exclude rule in modal"
+  },
+  "exec_function": {
+    "message": "Пользовательская функция",
+    "description": "Custom function in execute type"
+  },
+  "exec_normal": {
+    "message": "Обычный",
+    "description": "Normal option in execute type"
+  },
+  "exec_type": {
+    "message": "Тип выполнения",
+    "description": "Label for execute type in modal"
+  },
+  "execution": {
+    "message": "Выполнение",
+    "description": "Execution settings of a rule"
+  },
+  "export": {
+    "message": "Экспорт",
+    "description": "Button to export all rules as a json file"
+  },
+  "export_and_import": {
+    "message": "Экспорт и импорт",
+    "description": "The tab title in the top"
+  },
+  "extButtonTitle": {
+    "message": "Header Editor",
+    "description": "Toolbar tooltip"
+  },
+  "extName": {
+    "message": "Header Editor",
+    "description": "Extension name"
+  },
+  "ext_version": {
+    "message": "Версия расширения",
+    "description": "Extension version"
+  },
+  "feedback": {
+    "message": "Обратная связь",
+    "description": "Feedback link"
+  },
+  "group": {
+    "message": "Группа",
+    "description": "Group button"
+  },
+  "headerName": {
+    "message": "Имя заголовка",
+    "description": "Label for header name in modal"
+  },
+  "headerValue": {
+    "message": "Значение заголовка",
+    "description": "Label for header value in modal"
+  },
+  "header_empty": {
+    "message": "Имя заголовка не может быть пустым",
+    "description": "Message for saving a rule without header name"
+  },
+  "height": {
+    "message": "Высота",
+    "description": "Height"
+  },
+  "help": {
+    "message": "Справка",
+    "description": "Help link"
+  },
+  "import": {
+    "message": "Импорт",
+    "description": "Button to import rules from a file"
+  },
+  "import_drop": {
+    "message": "Не импортировать",
+    "description": "do not import a rule"
+  },
+  "import_function_warning_content": {
+    "message": "Пользовательские функции могут содержать вредоносный код. Убедитесь, что содержимое получено от надёжного издателя или что вы проверили код функции.",
+    "description": "Content for the warning modal"
+  },
+  "import_function_warning_title": {
+    "message": "Этот импорт содержит пользовательские функции",
+    "description": "Title for the warning modal"
+  },
+  "import_item_function_tooltip": {
+    "message": "Это правило содержит пользовательскую функцию, проверьте код перед импортом. Нажмите, чтобы просмотреть код.",
+    "description": "Tooltip for import item with custom function"
+  },
+  "import_new": {
+    "message": "Добавить",
+    "description": "Add a new rule"
+  },
+  "import_override": {
+    "message": "Перезаписать существующее",
+    "description": "Overrides already existing rule"
+  },
+  "import_success": {
+    "message": "Импорт выполнен успешно",
+    "description": "Displays when import successfully"
+  },
+  "include_header_in_custom_function": {
+    "message": "Включать заголовки запроса в пользовательскую функцию",
+    "description": "An option to enable this feature"
+  },
+  "include_header_in_custom_function_help": {
+    "message": "Передавать заголовки запроса в пользовательскую функцию, обрабатывающую заголовки ответа. Это может снизить производительность.",
+    "description": "Help text for include_header_in_custom_function option"
+  },
+  "init_rule_failed": {
+    "message": "Не удалось инициализировать правило",
+    "description": "Failed to initialize rule"
+  },
+  "lite_edit_tip": {
+    "message": "В версии Lite некоторые функции не поддерживаются",
+    "description": "Tip at the edit panel for lite version"
+  },
+  "lite_not_support": {
+    "message": "Эта функция не поддерживается в версии Lite",
+    "description": "Message at the not support features"
+  },
+  "manage": {
+    "message": "Управление",
+    "description": "Manage rules, options and more"
+  },
+  "manage_collapse_group": {
+    "message": "Сворачивать группы по умолчанию",
+    "description": "All groups will be collapsed when open the management page"
+  },
+  "marked_as_common": {
+    "message": "Отмечено как часто используемое",
+    "description": "Options"
+  },
+  "matchRule": {
+    "message": "Правила соответствия",
+    "description": "Label for match rule in modal"
+  },
+  "matchType": {
+    "message": "Тип соответствия",
+    "description": "Label for match type in modal"
+  },
+  "match_all": {
+    "message": "Все",
+    "description": "All option in modal"
+  },
+  "match_domain": {
+    "message": "Домен",
+    "description": "Domain option in modal"
+  },
+  "match_method": {
+    "message": "Метод",
+    "description": "Request method"
+  },
+  "match_prefix": {
+    "message": "Префикс URL",
+    "description": "URL prefix option in modal"
+  },
+  "match_regexp": {
+    "message": "Регулярное выражение",
+    "description": "Regular expression option in modal"
+  },
+  "match_resourceType": {
+    "message": "Тип ресурса",
+    "description": "Request resource type"
+  },
+  "match_rule_empty": {
+    "message": "Правило соответствия не может быть пустым",
+    "description": "Message for saving a rule without match rule"
+  },
+  "match_url": {
+    "message": "URL",
+    "description": "URL option in modal"
+  },
+  "match_url_filter": {
+    "message": "Фильтр URL",
+    "description": "URL Filter option"
+  },
+  "modify_body": {
+    "message": "Изменить тело ответа",
+    "description": "Option to enable/disable modify body"
+  },
+  "modify_body_help": {
+    "message": "Разрешить изменение тела ответа. Это может снизить производительность.",
+    "description": "Help text for modify_body option"
+  },
+  "more_information": {
+    "message": "Подробнее",
+    "description": "More Information"
+  },
+  "name": {
+    "message": "Имя",
+    "description": "Label for name in modal"
+  },
+  "name_empty": {
+    "message": "Имя не может быть пустым",
+    "description": "Message for saving a rule without name"
+  },
+  "no_update": {
+    "message": "Обновлений нет",
+    "description": "No update"
+  },
+  "ok": {
+    "message": "OK",
+    "description": "OK Button"
+  },
+  "options": {
+    "message": "Настройки",
+    "description": "Heading for options section on manage page."
+  },
+  "pack_up_or_unfurl": {
+    "message": "Свернуть/развернуть группу",
+    "description": "Button to pack up or unfurl a group"
+  },
+  "popupPanel": {
+    "message": "Всплывающая панель",
+    "description": "Popup panel"
+  },
+  "quick_edit": {
+    "message": "Быстрое редактирование",
+    "description": "Display edit button on the popup panel"
+  },
+  "quick_edit_help": {
+    "message": "Показывать кнопку редактирования на всплывающей панели",
+    "description": "Help text for quick_edit option"
+  },
+  "redirectTo": {
+    "message": "Перенаправить на",
+    "description": "Label for redirect to in modal"
+  },
+  "redirect_empty": {
+    "message": "Цель перенаправления не может быть пустой",
+    "description": "Message for saving a rule without redirect target if rule type is redirect"
+  },
+  "rename": {
+    "message": "Переименовать",
+    "description": "Rename group"
+  },
+  "request_headers": {
+    "message": "Заголовки запроса",
+    "description": "Request headers"
+  },
+  "request_stage": {
+    "message": "Этап запроса",
+    "description": "Request stage"
+  },
+  "resourceType_csp_report": {
+    "message": "Отчёт CSP (указан в заголовке Content-Security-Policy)",
+    "description": "Resource type"
+  },
+  "resourceType_font": {
+    "message": "Веб-шрифты",
+    "description": "Resource type"
+  },
+  "resourceType_image": {
+    "message": "Изображения",
+    "description": "Resource type"
+  },
+  "resourceType_main_frame": {
+    "message": "Основной фрейм (документы верхнего уровня, загруженные во вкладку)",
+    "description": "Resource type"
+  },
+  "resourceType_media": {
+    "message": "Медиа (видео и аудио)",
+    "description": "Resource type"
+  },
+  "resourceType_object": {
+    "message": "Объект (ресурсы, загружаемые элементами <object> или <embed>)",
+    "description": "Resource type"
+  },
+  "resourceType_other": {
+    "message": "Другое",
+    "description": "Resource type"
+  },
+  "resourceType_ping": {
+    "message": "Ping (указан в атрибуте ping гиперссылки)",
+    "description": "Resource type"
+  },
+  "resourceType_script": {
+    "message": "Скрипты",
+    "description": "Resource type"
+  },
+  "resourceType_stylesheet": {
+    "message": "Таблицы стилей CSS",
+    "description": "Resource type"
+  },
+  "resourceType_sub_frame": {
+    "message": "Вложенный фрейм (документы, загруженные в элементах <iframe> или <frame>)",
+    "description": "Resource type"
+  },
+  "resourceType_websocket": {
+    "message": "WebSocket",
+    "description": "Resource type"
+  },
+  "resourceType_xmlhttprequest": {
+    "message": "XMLHttpRequest / Fetch",
+    "description": "Resource type"
+  },
+  "response_content": {
+    "message": "Тело ответа",
+    "description": "Response content"
+  },
+  "response_headers": {
+    "message": "Заголовки ответа",
+    "description": "Response headers"
+  },
+  "ruleType": {
+    "message": "Тип правила",
+    "description": "Label for rule type in modal"
+  },
+  "rule_cancel": {
+    "message": "Отменить запрос",
+    "description": "Cancel request option in modal"
+  },
+  "rule_history": {
+    "message": "Автоматически записывать историю правил",
+    "description": "If checked, rule history will automatically record to the switch list"
+  },
+  "rule_history_help": {
+    "message": "Автоматически записывать историю правил в список переключения",
+    "description": "Help text for rule_history option"
+  },
+  "rule_list": {
+    "message": "Список правил",
+    "description": "Title of the rules list"
+  },
+  "rule_modifyReceiveBody": {
+    "message": "Изменить тело ответа",
+    "description": "Response body option in modal"
+  },
+  "rule_modifyReceiveHeader": {
+    "message": "Изменить заголовки ответа",
+    "description": "Response header option in modal"
+  },
+  "rule_modifySendHeader": {
+    "message": "Изменить заголовки запроса",
+    "description": "Request header option in modal"
+  },
+  "rule_redirect": {
+    "message": "Перенаправить запрос",
+    "description": "Redirect option in modal"
+  },
+  "rule_switch": {
+    "message": "Включить быстрое переключение правил",
+    "description": "Use the menu to switch rule content"
+  },
+  "rule_switch_help": {
+    "message": "Переключать содержимое правил через меню",
+    "description": "Help text for rule_switch option"
+  },
+  "run_mode": {
+    "message": "Режим работы",
+    "description": "Run mode for rule"
+  },
+  "run_mode_auto": {
+    "message": "Авто",
+    "description": "auto mode"
+  },
+  "run_mode_dnr": {
+    "message": "declarativeNetRequest",
+    "description": "DNR mode"
+  },
+  "run_mode_web_request": {
+    "message": "Web Request",
+    "description": "web_request mode"
+  },
+  "save": {
+    "message": "Сохранить",
+    "description": "Button to save a rule"
+  },
+  "save_to": {
+    "message": "Сохранить в",
+    "description": "Save rule to"
+  },
+  "saved": {
+    "message": "Сохранено",
+    "description": "Displays when rule saved successfully"
+  },
+  "select_all": {
+    "message": "Выбрать/снять выделение со всех",
+    "description": "Button to select or unselect all rules in batch management mode"
+  },
+  "select_or_download": {
+    "message": "Импортируйте из файла или скачайте правила",
+    "description": "A notice in import card"
+  },
+  "share": {
+    "message": "Поделиться",
+    "description": "Share button title"
+  },
+  "showQuickPreview": {
+    "message": "Показывать быстрый просмотр",
+    "description": "Show quick preview"
+  },
+  "show_rules_on_popup": {
+    "message": "Показывать эти правила во всплывающем окне",
+    "description": "Options"
+  },
+  "stage_request": {
+    "message": "Запрос",
+    "description": "Request stage"
+  },
+  "stage_response": {
+    "message": "Ответ",
+    "description": "Response stage"
+  },
+  "suggested_group": {
+    "message": "Рекомендуемая группа",
+    "description": "The suggested group name provided by the rule author"
+  },
+  "switch_empty": {
+    "message": "Нет правил быстрого переключения",
+    "description": "Description text"
+  },
+  "switch_success": {
+    "message": "Переключено",
+    "description": "Toast message when quick switch successfully"
+  },
+  "switch_title": {
+    "message": "Быстрое переключение",
+    "description": "Title of the quick switch feature"
+  },
+  "test_custom_code": {
+    "message": "Тестирование пользовательского кода не поддерживается",
+    "description": "Label to test a redirect rule"
+  },
+  "test_exclude": {
+    "message": "Совпало, но исключено",
+    "description": "Label to test a redirect rule"
+  },
+  "test_invalid_regexp": {
+    "message": "Недопустимое регулярное выражение",
+    "description": "Label to test a redirect rule"
+  },
+  "test_match": {
+    "message": "Совпадение",
+    "description": "Label to test a redirect rule"
+  },
+  "test_mismatch": {
+    "message": "Нет совпадения",
+    "description": "Label to test a redirect rule"
+  },
+  "test_url": {
+    "message": "Тест (без сохранения)",
+    "description": "Label to test a redirect rule"
+  },
+  "third_party_rules": {
+    "message": "Сторонние правила",
+    "description": "Link to find more third party rules"
+  },
+  "ungrouped": {
+    "message": "Без группы",
+    "description": "The default group name"
+  },
+  "update_available": {
+    "message": "Доступно обновление расширения",
+    "description": "An update of the extension is available"
+  },
+  "update_throttled": {
+    "message": "Превышен лимит частоты проверки обновлений",
+    "description": "Update is throttled"
+  },
+  "upload": {
+    "message": "Загрузить",
+    "description": "Upload button"
+  },
+  "url_cloud_backup": {
+    "message": "https://he.firefoxcn.net/en-US/guide/cloud-backup.html",
+    "description": "URL of documentations, if not translated, please use english version"
+  },
+  "url_help": {
+    "message": "https://he.firefoxcn.net/en-US/guide",
+    "description": "URL of documentations, if not translated, please use english version"
+  },
+  "url_third_party_rules": {
+    "message": "https://he.firefoxcn.net/en-US/guide/third-party-rules.html",
+    "description": "URL of documentations, if not translated, please use english version"
+  },
+  "view": {
+    "message": "Просмотр",
+    "description": "View rule or a link"
+  },
+  "width": {
+    "message": "Ширина",
+    "description": "Width"
+  }
+}
