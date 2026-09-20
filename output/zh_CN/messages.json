@@ -245,6 +245,10 @@
     "message": "头名称不能为空",
     "description": "Message for saving a rule without header name"
   },
+  "height": {
+    "message": "高度",
+    "description": "Height"
+  },
   "help": {
     "message": "帮助",
     "description": "Help link"
@@ -660,5 +664,9 @@
   "view": {
     "message": "查看",
     "description": "View rule or a link"
+  },
+  "width": {
+    "message": "宽度",
+    "description": "Width"
   }
 }
