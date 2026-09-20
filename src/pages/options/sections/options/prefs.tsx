@@ -8,7 +8,6 @@ const Prefs = createPrefsComponent([
   'is-debug',
   'rule-switch',
   'rule-history',
-  'quick-edit',
   'dark-mode',
   'show-quick-preview',
 ]);
