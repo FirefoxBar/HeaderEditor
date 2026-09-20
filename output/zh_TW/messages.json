@@ -116,6 +116,15 @@
     "message": "您確定要刪除這些規則嗎？",
     "description": "A confirmation box shows when user want to delete rules"
   },
+  "delete_single_confirm": {
+    "message": "您確定要刪除規則「$rule$」嗎？",
+    "description": "A confirmation box shows when user want to delete a rule",
+    "placeholders": {
+      "rule": {
+        "content": "$1"
+      }
+    }
+  },
   "description": {
     "message": "管理瀏覽器要求",
     "description": "Extension description"
@@ -236,6 +245,10 @@
     "message": "標頭名稱不能為空",
     "description": "Message for saving a rule without header name"
   },
+  "height": {
+    "message": "高度",
+    "description": "Height"
+  },
   "help": {
     "message": "說明",
     "description": "Help link"
@@ -247,6 +260,18 @@
   "import_drop": {
     "message": "不要匯入",
     "description": "do not import a rule"
+  },
+  "import_function_warning_content": {
+    "message": "自訂函數可能包含惡意程式碼。請確認此內容來自可信任的發行者，或您已審閱過函數內容。",
+    "description": "Content for the warning modal"
+  },
+  "import_function_warning_title": {
+    "message": "本次匯入包含自訂函數",
+    "description": "Title for the warning modal"
+  },
+  "import_item_function_tooltip": {
+    "message": "此規則含有自訂函數，請檢查後再匯入。點選檢視程式碼",
+    "description": "Tooltip for import item with custom function"
   },
   "import_new": {
     "message": "新增",
@@ -639,5 +664,9 @@
   "view": {
     "message": "檢視",
     "description": "View rule or a link"
+  },
+  "width": {
+    "message": "寬度",
+    "description": "Width"
   }
 }
