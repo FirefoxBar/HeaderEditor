@@ -47,7 +47,7 @@ Header Editor require those permissions:
 
 Contribute codes: [Submitting a pull request](https://github.com/FirefoxBar/HeaderEditor/compare)
 
-Thanks to them for their contribution: [YFdyh000](https://github.com/yfdyh000) [iNaru](https://github.com/Inaru)
+Thanks to them for their contribution: [YFdyh000](https://github.com/yfdyh000) [iNaru](https://github.com/Inaru) [hzfi](https://github.com/hzfi) [ghcsd](https://github.com/ghcsd)
 
 ### Translation
 
@@ -55,7 +55,7 @@ English: Please submit a issue or pull request to file `locale/original/messages
 
 Other language: Please translate them on [Transifex](https://app.transifex.com/sytec/header-editor/)
 
-Please note that some languages (such as zh-Hans) will not be translated on transifex because the browser does not support them, [view full list](https://developer.chrome.com/docs/webstore/i18n/#choosing-locales-to-support).
+Please note that some languages (such as zh-Hans) will not be translated on transifex because the browser does not support them, [view full list](https://developer.chrome.com/docs/extensions/reference/api/i18n?hl=en#locales).
 
 ## How to build
 

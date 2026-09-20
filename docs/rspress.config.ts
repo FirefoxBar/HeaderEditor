@@ -1,15 +1,19 @@
 import * as path from 'node:path';
 import { defineConfig } from 'rspress/config';
 
+const logo =
+  'https://img11.360buyimg.com/ddimg/jfs/t1/326703/8/3750/3031/689b3984F025bfb7f/25762954ccab7604.jpg';
+const rawLogo =
+  'https://raw.githubusercontent.com/FirefoxBar/HeaderEditor/refs/heads/master/public/assets/images/128.png';
+
 export default defineConfig({
   root: path.join(__dirname, 'docs'),
   title: 'Header Editor',
   logoText: 'Header Editor',
-  icon: 'https://img11.360buyimg.com/ddimg/jfs/t1/326703/8/3750/3031/689b3984F025bfb7f/25762954ccab7604.jpg',
+  icon: rawLogo,
   logo: {
-    light:
-      'https://img11.360buyimg.com/ddimg/jfs/t1/326703/8/3750/3031/689b3984F025bfb7f/25762954ccab7604.jpg',
-    dark: 'https://img11.360buyimg.com/ddimg/jfs/t1/326703/8/3750/3031/689b3984F025bfb7f/25762954ccab7604.jpg',
+    light: logo,
+    dark: rawLogo,
   },
   themeConfig: {
     socialLinks: [
