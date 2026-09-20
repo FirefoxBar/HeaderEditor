@@ -245,6 +245,10 @@
     "message": "Header name cannot be empty",
     "description": "Message for saving a rule without header name"
   },
+  "height": {
+    "message": "Height",
+    "description": "Height"
+  },
   "help": {
     "message": "Help",
     "description": "Help link"
@@ -660,5 +664,9 @@
   "view": {
     "message": "View",
     "description": "View rule or a link"
+  },
+  "width": {
+    "message": "Width",
+    "description": "Width"
   }
 }
