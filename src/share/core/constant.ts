@@ -47,6 +47,8 @@ export const defaultPrefValue: PrefValue = {
   'quick-edit': true,
   'popup-show-rules': 'common',
   'show-quick-preview': ['popup', 'manage'],
+  'popup-height': 460,
+  'popup-width': 380,
 };
 
 export enum APIs {

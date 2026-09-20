@@ -126,6 +126,7 @@ const RuleGroupCard = (props: RuleCardProps) => {
             position="top"
             content={<RuleDetail rule={item} />}
             style={{ maxWidth: '300px' }}
+            autoAdjustOverflow
           >
             <div className={textEllipsis}>{value}</div>
           </Popover>

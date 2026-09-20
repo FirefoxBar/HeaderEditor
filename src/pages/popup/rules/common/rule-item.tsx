@@ -57,6 +57,7 @@ const RuleItem: FC<RuleItemProps> = ({ rule }) => {
       position="top"
       content={<RuleDetail rule={rule} size="small" />}
       style={{ maxWidth: '300px' }}
+      autoAdjustOverflow
     >
       <div className={cx(textEllipsis, 'name')}>{rule.name}</div>
     </Popover>

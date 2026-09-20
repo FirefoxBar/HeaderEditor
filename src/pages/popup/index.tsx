@@ -1,139 +1,11 @@
-import { IconMenu, IconSetting } from '@douyinfe/semi-icons';
-import { Nav, Switch, Tooltip } from '@douyinfe/semi-ui';
-import type { OnSelectedData } from '@douyinfe/semi-ui/lib/es/navigation';
-import { css, cx } from '@emotion/css';
-import React, { useCallback, useEffect, useState } from 'react';
+// run init first
+import './init';
+
+import React from 'react';
 import ReactDOM from 'react-dom/client';
-import browser from 'webextension-polyfill';
-import SemiLocale from '@/share/components/semi-locale';
-import { t } from '@/share/core/browser';
-import { prefs } from '@/share/core/prefs';
-import { IS_ANDROID } from '@/share/core/utils';
-import Api from '@/share/pages/api';
-import isDarkMode from '@/share/pages/is-dark-mode';
-import Rules from './rules';
+import { Popup } from './popup';
 
 import './global.css';
-
-const basicStyle = css`
-  min-width: 380px;
-  min-height: 460px;
-  height: 100vh;
-  width: 100vw;
-  justify-content: stretch;
-  display: flex;
-  flex-direction: row;
-
-  > .navbar {
-    flex-grow: 0;
-    flex-shrink: 0;
-  }
-
-  > .main-content {
-    flex-grow: 1;
-    flex-shrink: 1;
-    overflow: auto;
-    background-color: var(--semi-color-fill-0);
-    display: flex;
-    flex-direction: column;
-
-    .group-title {
-      padding: 8px;
-      font-weight: bold;
-      color: var(--semi-color-tertiary);
-      display: flex;
-      align-items: center;
-      justify-content: space-between;
-
-      &.toggle {
-        padding-top: 4px;
-        padding-right: 4px;
-        padding-bottom: 4px;
-      }
-    }
-
-    .main-list {
-      display: flex;
-      flex-direction: column;
-    }
-  }
-`;
-
-const mobileStyle = css`
-  min-height: auto;
-  min-width: auto;
-  min-width: auto;
-  max-width: auto;
-`;
-
-const Popup = () => {
-  const [enable, setEnable] = useState(true);
-
-  useEffect(() => {
-    document.body.setAttribute('data-page-name', 'popup');
-    prefs.ready(() => {
-      setEnable(!prefs.get('disable-all'));
-      // Get dark mode setting
-      if (isDarkMode()) {
-        document.body.setAttribute('theme-mode', 'dark');
-      }
-    });
-  }, []);
-
-  const handleEnableChange = useCallback((checked: boolean) => {
-    setEnable(checked);
-    Api.setPrefs('disable-all', !checked);
-  }, []);
-
-  const handleNavSelect = useCallback((data: OnSelectedData) => {
-    const newActive = data.itemKey as string;
-    if (newActive === 'setting') {
-      Api.openURL(browser.runtime.getURL('options.html'));
-      window.close();
-    }
-  }, []);
-
-  return (
-    <SemiLocale>
-      <div
-        className={cx(basicStyle, {
-          [mobileStyle]: IS_ANDROID,
-        })}
-      >
-        <Nav
-          className="navbar semi-always-dark"
-          selectedKeys={['rules']}
-          onSelect={handleNavSelect}
-          header={{
-            logo: (
-              <img src="/assets/images/128.png" style={{ width: '36px' }} />
-            ),
-            text: 'Header Editor',
-          }}
-          items={[
-            { itemKey: 'rules', text: t('rule_list'), icon: <IconMenu /> },
-            { itemKey: 'setting', text: t('manage'), icon: <IconSetting /> },
-          ]}
-          isCollapsed
-          footer={
-            <div>
-              <Tooltip content={t('enable_he')} position="right">
-                <Switch
-                  checked={enable}
-                  onChange={handleEnableChange}
-                  size="small"
-                />
-              </Tooltip>
-            </div>
-          }
-        />
-        <main className="main-content">
-          <Rules />
-        </main>
-      </div>
-    </SemiLocale>
-  );
-};
 
 const rootEl = document.getElementById('root');
 if (rootEl) {
@@ -143,8 +15,4 @@ if (rootEl) {
       <Popup />
     </React.StrictMode>,
   );
-}
-
-if (typeof window !== 'undefined' && typeof window.browser === 'undefined') {
-  window.browser = browser;
 }

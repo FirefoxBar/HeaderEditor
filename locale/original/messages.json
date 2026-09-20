@@ -660,5 +660,13 @@
   "view": {
     "message": "View",
     "description": "View rule or a link"
+  },
+  "height": {
+    "message": "Height",
+    "description": "Height"
+  },
+  "width": {
+    "message": "Width",
+    "description": "Width"
   }
 }

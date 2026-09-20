@@ -87,8 +87,27 @@ class Prefs {
     }
   }
 
-  bindAPI(apiName: string, apiMethod: (value: any) => any) {
-    this.boundMethods[apiName] = apiMethod;
+  watchKey<K extends keyof PrefValue>(
+    key: K,
+    cb: (value: PrefValue[K]) => void,
+  ) {
+    const c = (changedKey: keyof PrefValue, value: any) => {
+      if (changedKey === key) {
+        cb(value);
+      }
+    };
+    emitter.on(emitter.EVENT_PREFS_UPDATE, c);
+    return () => {
+      emitter.off(emitter.EVENT_PREFS_UPDATE, c);
+    };
+  }
+
+  getAndWatch<K extends keyof PrefValue>(
+    key: K,
+    cb: (value: PrefValue[K]) => void,
+  ) {
+    this.ready(() => cb(this.get(key)));
+    return this.watchKey(key, cb);
   }
 
   remove(key: string) {
