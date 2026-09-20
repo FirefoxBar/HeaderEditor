@@ -1,0 +1,672 @@
+{
+  "action": {
+    "message": "操作",
+    "description": "Table title in management page"
+  },
+  "add": {
+    "message": "追加",
+    "description": "Button to add somethings"
+  },
+  "all_rules": {
+    "message": "すべてのルール",
+    "description": "Options"
+  },
+  "auto": {
+    "message": "自動",
+    "description": "Auto detect dark mode"
+  },
+  "auto_enable_modify_body": {
+    "message": "「レスポンス本文の変更」が自動的に有効になりました。不要な場合は手動で無効にしてください。",
+    "description": "A message"
+  },
+  "basic_information": {
+    "message": "基本情報",
+    "description": "Basic information of a rule"
+  },
+  "batch_delete": {
+    "message": "一括削除",
+    "description": "Button to delete multiple rules"
+  },
+  "batch_mode": {
+    "message": "一括操作",
+    "description": "Button to enter batch operation mode"
+  },
+  "browser_version": {
+    "message": "ブラウザーのバージョン",
+    "description": "Browser version"
+  },
+  "cancel": {
+    "message": "キャンセル",
+    "description": "Button to close modal without save"
+  },
+  "check_update": {
+    "message": "更新を確認",
+    "description": "Check for updates"
+  },
+  "choose": {
+    "message": "選択",
+    "description": "Choose a group"
+  },
+  "clone": {
+    "message": "複製",
+    "description": "Clone rule"
+  },
+  "cloud_backup": {
+    "message": "クラウドバックアップ",
+    "description": "Cloud backup button"
+  },
+  "cloud_backup_at": {
+    "message": "最後のバックアップ: $date$",
+    "description": "Display last backup time if any backup found",
+    "placeholders": {
+      "date": {
+        "content": "$1"
+      }
+    }
+  },
+  "cloud_no_backup": {
+    "message": "バックアップなし",
+    "description": "Display if no backup found"
+  },
+  "cloud_over_limit": {
+    "message": "バックアップのサイズ上限を超えました",
+    "description": "Message display when exceeded backup size limit"
+  },
+  "code": {
+    "message": "コード",
+    "description": "Label for code section in modal"
+  },
+  "code_empty": {
+    "message": "コードを空にすることはできません",
+    "description": "Tips when a rule is custom function but code is empty"
+  },
+  "common_mark": {
+    "message": "よく使うに設定",
+    "description": "Mark a rule/group as common, it will display at the popup panel"
+  },
+  "common_mark_tip": {
+    "message": "ルールやグループをよく使うに設定すると、ここに表示されます",
+    "description": "Display at the popup panel"
+  },
+  "common_unmark": {
+    "message": "よく使うを解除",
+    "description": "Unmark a common rule/group"
+  },
+  "dark_mode": {
+    "message": "ダークモード",
+    "description": "Dark mode select"
+  },
+  "dark_mode_help": {
+    "message": "ダークモードは試験的な機能です。効果を確認するにはページを再読み込みしてください。",
+    "description": "Dark help text"
+  },
+  "debug_mode_enable": {
+    "message": "デバッグモードを有効にする",
+    "description": "Enable debug mode"
+  },
+  "debug_mode_enable_help": {
+    "message": "デバッグモードを有効にすると、バックグラウンドページにログが出力されます",
+    "description": "Debug mode description"
+  },
+  "delete": {
+    "message": "削除",
+    "description": "Delete button"
+  },
+  "delete_confirm": {
+    "message": "これらのルールを削除してもよろしいですか？",
+    "description": "A confirmation box shows when user want to delete rules"
+  },
+  "delete_single_confirm": {
+    "message": "ルール「$rule$」を削除してもよろしいですか？",
+    "description": "A confirmation box shows when user want to delete a rule",
+    "placeholders": {
+      "rule": {
+        "content": "$1"
+      }
+    }
+  },
+  "description": {
+    "message": "ブラウザーのリクエストを管理",
+    "description": "Extension description"
+  },
+  "disable": {
+    "message": "無効",
+    "description": "disable"
+  },
+  "display_common_header": {
+    "message": "編集時によく使うヘッダーを表示",
+    "description": "An option to enable header auto-complete when editing rules"
+  },
+  "display_common_header_help": {
+    "message": "ルールの編集時によく使われるリクエストヘッダーとレスポンスヘッダーの名前を表示します",
+    "description": "Help text for display_common_header_help option"
+  },
+  "do_not_show_again": {
+    "message": "今後表示しない",
+    "description": "Don't show again"
+  },
+  "download": {
+    "message": "ダウンロード",
+    "description": "Download button"
+  },
+  "download_rule": {
+    "message": "ルールをダウンロード",
+    "description": "Title of the rule download area"
+  },
+  "edge_upgrade_tip": {
+    "message": "Edgeストア版はLiteバージョンにアップグレードされます",
+    "description": "Edge store channel tip"
+  },
+  "edit": {
+    "message": "編集",
+    "description": "Edit something"
+  },
+  "enable": {
+    "message": "有効",
+    "description": "Switch one rule on/off in table title"
+  },
+  "enable_he": {
+    "message": "Header Editor を有効にする",
+    "description": "If not checked, all rules will take no effects"
+  },
+  "encoding": {
+    "message": "文字エンコーディング",
+    "description": "Label for responseBody's character encoding"
+  },
+  "encoding_desc": {
+    "message": "デコード専用",
+    "description": "encoding description"
+  },
+  "enter_group_name": {
+    "message": "グループ名を入力してください",
+    "description": "Prompt the user when the user click add group button"
+  },
+  "env_info": {
+    "message": "環境情報",
+    "description": "Version info, etc"
+  },
+  "excludeRule": {
+    "message": "除外ルール",
+    "description": "Label for exclude rule in modal"
+  },
+  "exec_function": {
+    "message": "カスタム関数",
+    "description": "Custom function in execute type"
+  },
+  "exec_normal": {
+    "message": "通常",
+    "description": "Normal option in execute type"
+  },
+  "exec_type": {
+    "message": "実行タイプ",
+    "description": "Label for execute type in modal"
+  },
+  "execution": {
+    "message": "実行",
+    "description": "Execution settings of a rule"
+  },
+  "export": {
+    "message": "エクスポート",
+    "description": "Button to export all rules as a json file"
+  },
+  "export_and_import": {
+    "message": "エクスポートとインポート",
+    "description": "The tab title in the top"
+  },
+  "extButtonTitle": {
+    "message": "Header Editor",
+    "description": "Toolbar tooltip"
+  },
+  "extName": {
+    "message": "Header Editor",
+    "description": "Extension name"
+  },
+  "ext_version": {
+    "message": "拡張機能のバージョン",
+    "description": "Extension version"
+  },
+  "feedback": {
+    "message": "フィードバック",
+    "description": "Feedback link"
+  },
+  "group": {
+    "message": "グループ",
+    "description": "Group button"
+  },
+  "headerName": {
+    "message": "ヘッダー名",
+    "description": "Label for header name in modal"
+  },
+  "headerValue": {
+    "message": "ヘッダーの値",
+    "description": "Label for header value in modal"
+  },
+  "header_empty": {
+    "message": "ヘッダー名を空にすることはできません",
+    "description": "Message for saving a rule without header name"
+  },
+  "height": {
+    "message": "高さ",
+    "description": "Height"
+  },
+  "help": {
+    "message": "ヘルプ",
+    "description": "Help link"
+  },
+  "import": {
+    "message": "インポート",
+    "description": "Button to import rules from a file"
+  },
+  "import_drop": {
+    "message": "インポートしない",
+    "description": "do not import a rule"
+  },
+  "import_function_warning_content": {
+    "message": "カスタム関数には悪意のあるコードが含まれている可能性があります。信頼できる配布元のコンテンツであるか、関数の内容を確認したうえでインポートしてください。",
+    "description": "Content for the warning modal"
+  },
+  "import_function_warning_title": {
+    "message": "このインポートにはカスタム関数が含まれています",
+    "description": "Title for the warning modal"
+  },
+  "import_item_function_tooltip": {
+    "message": "このルールにはカスタム関数が含まれています。インポートする前にコードを確認してください。クリックするとコードを表示します。",
+    "description": "Tooltip for import item with custom function"
+  },
+  "import_new": {
+    "message": "追加",
+    "description": "Add a new rule"
+  },
+  "import_override": {
+    "message": "既存を上書き",
+    "description": "Overrides already existing rule"
+  },
+  "import_success": {
+    "message": "インポートしました",
+    "description": "Displays when import successfully"
+  },
+  "include_header_in_custom_function": {
+    "message": "カスタム関数にリクエストヘッダーを含める",
+    "description": "An option to enable this feature"
+  },
+  "include_header_in_custom_function_help": {
+    "message": "レスポンスヘッダーを処理するカスタム関数にリクエストヘッダーを渡します。有効にするとパフォーマンスが低下する可能性があります。",
+    "description": "Help text for include_header_in_custom_function option"
+  },
+  "init_rule_failed": {
+    "message": "ルールの初期化に失敗しました",
+    "description": "Failed to initialize rule"
+  },
+  "lite_edit_tip": {
+    "message": "Liteバージョンでは一部の機能がサポートされていません",
+    "description": "Tip at the edit panel for lite version"
+  },
+  "lite_not_support": {
+    "message": "この機能はLiteバージョンではサポートされていません",
+    "description": "Message at the not support features"
+  },
+  "manage": {
+    "message": "管理",
+    "description": "Manage rules, options and more"
+  },
+  "manage_collapse_group": {
+    "message": "既定でグループを折りたたむ",
+    "description": "All groups will be collapsed when open the management page"
+  },
+  "marked_as_common": {
+    "message": "よく使うに設定済み",
+    "description": "Options"
+  },
+  "matchRule": {
+    "message": "照合ルール",
+    "description": "Label for match rule in modal"
+  },
+  "matchType": {
+    "message": "照合タイプ",
+    "description": "Label for match type in modal"
+  },
+  "match_all": {
+    "message": "すべて",
+    "description": "All option in modal"
+  },
+  "match_domain": {
+    "message": "ドメイン",
+    "description": "Domain option in modal"
+  },
+  "match_method": {
+    "message": "メソッド",
+    "description": "Request method"
+  },
+  "match_prefix": {
+    "message": "URLプレフィックス",
+    "description": "URL prefix option in modal"
+  },
+  "match_regexp": {
+    "message": "正規表現",
+    "description": "Regular expression option in modal"
+  },
+  "match_resourceType": {
+    "message": "リソースタイプ",
+    "description": "Request resource type"
+  },
+  "match_rule_empty": {
+    "message": "照合ルールを空にすることはできません",
+    "description": "Message for saving a rule without match rule"
+  },
+  "match_url": {
+    "message": "URL",
+    "description": "URL option in modal"
+  },
+  "match_url_filter": {
+    "message": "URL フィルター",
+    "description": "URL Filter option"
+  },
+  "modify_body": {
+    "message": "レスポンス本文を変更",
+    "description": "Option to enable/disable modify body"
+  },
+  "modify_body_help": {
+    "message": "レスポンス本文の変更を許可します。有効にするとパフォーマンスが低下する可能性があります。",
+    "description": "Help text for modify_body option"
+  },
+  "more_information": {
+    "message": "詳細情報",
+    "description": "More Information"
+  },
+  "name": {
+    "message": "名前",
+    "description": "Label for name in modal"
+  },
+  "name_empty": {
+    "message": "名前を空にすることはできません",
+    "description": "Message for saving a rule without name"
+  },
+  "no_update": {
+    "message": "更新はありません",
+    "description": "No update"
+  },
+  "ok": {
+    "message": "OK",
+    "description": "OK Button"
+  },
+  "options": {
+    "message": "オプション",
+    "description": "Heading for options section on manage page."
+  },
+  "pack_up_or_unfurl": {
+    "message": "グループを折りたたむ/展開する",
+    "description": "Button to pack up or unfurl a group"
+  },
+  "popupPanel": {
+    "message": "ポップアップパネル",
+    "description": "Popup panel"
+  },
+  "quick_edit": {
+    "message": "クイック編集",
+    "description": "Display edit button on the popup panel"
+  },
+  "quick_edit_help": {
+    "message": "ポップアップパネルに編集ボタンを表示",
+    "description": "Help text for quick_edit option"
+  },
+  "redirectTo": {
+    "message": "リダイレクト先",
+    "description": "Label for redirect to in modal"
+  },
+  "redirect_empty": {
+    "message": "リダイレクト先を空にすることはできません",
+    "description": "Message for saving a rule without redirect target if rule type is redirect"
+  },
+  "rename": {
+    "message": "名前を変更",
+    "description": "Rename group"
+  },
+  "request_headers": {
+    "message": "リクエストヘッダー",
+    "description": "Request headers"
+  },
+  "request_stage": {
+    "message": "リクエスト段階",
+    "description": "Request stage"
+  },
+  "resourceType_csp_report": {
+    "message": "CSPレポート（Content-Security-Policyヘッダーで指定）",
+    "description": "Resource type"
+  },
+  "resourceType_font": {
+    "message": "ウェブフォント",
+    "description": "Resource type"
+  },
+  "resourceType_image": {
+    "message": "画像",
+    "description": "Resource type"
+  },
+  "resourceType_main_frame": {
+    "message": "メインフレーム（タブに読み込まれる最上位のドキュメント）",
+    "description": "Resource type"
+  },
+  "resourceType_media": {
+    "message": "メディア（動画と音声）",
+    "description": "Resource type"
+  },
+  "resourceType_object": {
+    "message": "オブジェクト（<object>または<embed>要素で読み込まれるリソース）",
+    "description": "Resource type"
+  },
+  "resourceType_other": {
+    "message": "その他",
+    "description": "Resource type"
+  },
+  "resourceType_ping": {
+    "message": "Ping（ハイパーリンクのping属性で指定）",
+    "description": "Resource type"
+  },
+  "resourceType_script": {
+    "message": "スクリプト",
+    "description": "Resource type"
+  },
+  "resourceType_stylesheet": {
+    "message": "CSSスタイルシート",
+    "description": "Resource type"
+  },
+  "resourceType_sub_frame": {
+    "message": "サブフレーム（<iframe>または<frame>要素で読み込まれるドキュメント）",
+    "description": "Resource type"
+  },
+  "resourceType_websocket": {
+    "message": "WebSocket",
+    "description": "Resource type"
+  },
+  "resourceType_xmlhttprequest": {
+    "message": "XMLHttpRequest / Fetch",
+    "description": "Resource type"
+  },
+  "response_content": {
+    "message": "レスポンス本文",
+    "description": "Response content"
+  },
+  "response_headers": {
+    "message": "レスポンスヘッダー",
+    "description": "Response headers"
+  },
+  "ruleType": {
+    "message": "ルールタイプ",
+    "description": "Label for rule type in modal"
+  },
+  "rule_cancel": {
+    "message": "リクエストを中止",
+    "description": "Cancel request option in modal"
+  },
+  "rule_history": {
+    "message": "ルール履歴を自動的に記録",
+    "description": "If checked, rule history will automatically record to the switch list"
+  },
+  "rule_history_help": {
+    "message": "ルール履歴を切り替えリストに自動的に記録します",
+    "description": "Help text for rule_history option"
+  },
+  "rule_list": {
+    "message": "ルール一覧",
+    "description": "Title of the rules list"
+  },
+  "rule_modifyReceiveBody": {
+    "message": "レスポンス本文を変更",
+    "description": "Response body option in modal"
+  },
+  "rule_modifyReceiveHeader": {
+    "message": "レスポンスヘッダーを変更",
+    "description": "Response header option in modal"
+  },
+  "rule_modifySendHeader": {
+    "message": "リクエストヘッダーを変更",
+    "description": "Request header option in modal"
+  },
+  "rule_redirect": {
+    "message": "リクエストをリダイレクト",
+    "description": "Redirect option in modal"
+  },
+  "rule_switch": {
+    "message": "ルールのクイック切り替えを有効にする",
+    "description": "Use the menu to switch rule content"
+  },
+  "rule_switch_help": {
+    "message": "メニューからルールの内容をすばやく切り替えます",
+    "description": "Help text for rule_switch option"
+  },
+  "run_mode": {
+    "message": "実行モード",
+    "description": "Run mode for rule"
+  },
+  "run_mode_auto": {
+    "message": "自動",
+    "description": "auto mode"
+  },
+  "run_mode_dnr": {
+    "message": "declarativeNetRequest",
+    "description": "DNR mode"
+  },
+  "run_mode_web_request": {
+    "message": "Web Request",
+    "description": "web_request mode"
+  },
+  "save": {
+    "message": "保存",
+    "description": "Button to save a rule"
+  },
+  "save_to": {
+    "message": "保存先",
+    "description": "Save rule to"
+  },
+  "saved": {
+    "message": "保存しました",
+    "description": "Displays when rule saved successfully"
+  },
+  "select_all": {
+    "message": "すべて選択/選択解除",
+    "description": "Button to select or unselect all rules in batch management mode"
+  },
+  "select_or_download": {
+    "message": "ファイルからインポートするか、ルールをダウンロードしてください",
+    "description": "A notice in import card"
+  },
+  "share": {
+    "message": "共有",
+    "description": "Share button title"
+  },
+  "showQuickPreview": {
+    "message": "クイックプレビューを表示",
+    "description": "Show quick preview"
+  },
+  "show_rules_on_popup": {
+    "message": "ポップアップにこれらのルールを表示",
+    "description": "Options"
+  },
+  "stage_request": {
+    "message": "リクエスト",
+    "description": "Request stage"
+  },
+  "stage_response": {
+    "message": "レスポンス",
+    "description": "Response stage"
+  },
+  "suggested_group": {
+    "message": "推奨グループ",
+    "description": "The suggested group name provided by the rule author"
+  },
+  "switch_empty": {
+    "message": "クイック切り替えのルールがありません",
+    "description": "Description text"
+  },
+  "switch_success": {
+    "message": "切り替えました",
+    "description": "Toast message when quick switch successfully"
+  },
+  "switch_title": {
+    "message": "クイック切り替え",
+    "description": "Title of the quick switch feature"
+  },
+  "test_custom_code": {
+    "message": "カスタム関数のテストには対応していません",
+    "description": "Label to test a redirect rule"
+  },
+  "test_exclude": {
+    "message": "一致しましたが除外されました",
+    "description": "Label to test a redirect rule"
+  },
+  "test_invalid_regexp": {
+    "message": "正規表現が無効です",
+    "description": "Label to test a redirect rule"
+  },
+  "test_match": {
+    "message": "一致しました",
+    "description": "Label to test a redirect rule"
+  },
+  "test_mismatch": {
+    "message": "一致しません",
+    "description": "Label to test a redirect rule"
+  },
+  "test_url": {
+    "message": "テスト（保存されません）",
+    "description": "Label to test a redirect rule"
+  },
+  "third_party_rules": {
+    "message": "サードパーティ製ルール",
+    "description": "Link to find more third party rules"
+  },
+  "ungrouped": {
+    "message": "未グループ",
+    "description": "The default group name"
+  },
+  "update_available": {
+    "message": "拡張機能の更新があります",
+    "description": "An update of the extension is available"
+  },
+  "update_throttled": {
+    "message": "更新のレート制限を超えました",
+    "description": "Update is throttled"
+  },
+  "upload": {
+    "message": "アップロード",
+    "description": "Upload button"
+  },
+  "url_cloud_backup": {
+    "message": "https://he.firefoxcn.net/en-US/guide/cloud-backup.html",
+    "description": "URL of documentations, if not translated, please use english version"
+  },
+  "url_help": {
+    "message": "https://he.firefoxcn.net/en-US/guide",
+    "description": "URL of documentations, if not translated, please use english version"
+  },
+  "url_third_party_rules": {
+    "message": "https://he.firefoxcn.net/en-US/guide/third-party-rules.html",
+    "description": "URL of documentations, if not translated, please use english version"
+  },
+  "view": {
+    "message": "表示",
+    "description": "View rule or a link"
+  },
+  "width": {
+    "message": "幅",
+    "description": "Width"
+  }
+}
