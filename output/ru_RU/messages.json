@@ -458,6 +458,14 @@
     "message": "Свернуть/развернуть группу",
     "description": "Button to pack up or unfurl a group"
   },
+  "password": {
+    "message": "Пароль",
+    "description": "Password for WebDAV"
+  },
+  "path": {
+    "message": "Путь",
+    "description": "Path"
+  },
   "popupPanel": {
     "message": "Всплывающая панель",
     "description": "Popup panel"
@@ -725,6 +733,10 @@
   "url_third_party_rules": {
     "message": "https://he.firefoxcn.net/en-US/guide/third-party-rules.html",
     "description": "URL of documentations, if not translated, please use english version"
+  },
+  "username": {
+    "message": "Имя пользователя​",
+    "description": "Username for WebDAV"
   },
   "view": {
     "message": "Просмотр",
