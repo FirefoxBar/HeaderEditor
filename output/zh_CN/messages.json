@@ -19,6 +19,10 @@
     "message": "已自动开启“修改响应体”，如不需要请手动关闭",
     "description": "A message"
   },
+  "backup_list": {
+    "message": "备份列表",
+    "description": "Backup list title"
+  },
   "basic_information": {
     "message": "基本信息",
     "description": "Basic information of a rule"
@@ -30,6 +34,10 @@
   "batch_mode": {
     "message": "批量操作",
     "description": "Button to enter batch operation mode"
+  },
+  "browser_sync": {
+    "message": "浏览器同步",
+    "description": "Browser sync feature"
   },
   "browser_version": {
     "message": "浏览器版本",
@@ -92,6 +100,10 @@
     "message": "取消常用",
     "description": "Unmark a common rule/group"
   },
+  "created_time": {
+    "message": "创建时间",
+    "description": "Created time title"
+  },
   "dark_mode": {
     "message": "暗黑模式",
     "description": "Dark mode select"
@@ -115,6 +127,15 @@
   "delete_confirm": {
     "message": "您确认要删除这些规则吗？",
     "description": "A confirmation box shows when user want to delete rules"
+  },
+  "delete_file_confirm": {
+    "message": "您确认要删除文件 \"$name$\" 吗？",
+    "description": "Delete file confirm dialog",
+    "placeholders": {
+      "name": {
+        "content": "$1"
+      }
+    }
   },
   "delete_single_confirm": {
     "message": "您确认要删除规则“$rule$”吗？",
@@ -148,6 +169,10 @@
   "download": {
     "message": "下载",
     "description": "Download button"
+  },
+  "download_local": {
+    "message": "下载到本地",
+    "description": "Download to local button"
   },
   "download_rule": {
     "message": "下载规则",
@@ -213,6 +238,14 @@
     "message": "导出和导入",
     "description": "The tab title in the top"
   },
+  "export_filename": {
+    "message": "导出文件名",
+    "description": "Export file name"
+  },
+  "export_success": {
+    "message": "导出成功",
+    "description": "Exported successfully"
+  },
   "extButtonTitle": {
     "message": "Header Editor",
     "description": "Toolbar tooltip"
@@ -228,6 +261,14 @@
   "feedback": {
     "message": "问题反馈",
     "description": "Feedback link"
+  },
+  "filename": {
+    "message": "文件名",
+    "description": "File name title"
+  },
+  "filesize": {
+    "message": "文件大小",
+    "description": "File size title"
   },
   "group": {
     "message": "分组",
@@ -305,6 +346,18 @@
     "message": "Lite版本不支持该功能",
     "description": "Message at the not support features"
   },
+  "local_file": {
+    "message": "本地文件",
+    "description": "Local file title"
+  },
+  "logout": {
+    "message": "退出登录",
+    "description": "Logout button"
+  },
+  "logout_success": {
+    "message": "退出登录成功",
+    "description": "Successfully logged out"
+  },
   "manage": {
     "message": "管理",
     "description": "Manage rules, options and more"
@@ -380,6 +433,10 @@
   "name_empty": {
     "message": "名称不能为空",
     "description": "Message for saving a rule without name"
+  },
+  "no_backup": {
+    "message": "未找到备份文件",
+    "description": "No backup found"
   },
   "no_update": {
     "message": "没有更新",
@@ -576,6 +633,10 @@
   "showQuickPreview": {
     "message": "显示快速预览",
     "description": "Show quick preview"
+  },
+  "show_backup": {
+    "message": "查看备份",
+    "description": "Show backups button"
   },
   "show_rules_on_popup": {
     "message": "在弹出面板上显示规则",
