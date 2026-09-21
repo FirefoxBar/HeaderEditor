@@ -28,10 +28,10 @@ function handleStyleVar() {
     const height = prefs.get('popup-height');
     const width = prefs.get('popup-width');
     if (height) {
-      styles.push(`height:${height}px`);
+      styles.push(`height:${height}px !important`);
     }
     if (width) {
-      styles.push(`width:${width}px`);
+      styles.push(`width:${width}px !important`);
     }
     styleEl.innerHTML = `body{${styles.length === 0 ? '' : styles.join(';')}}`;
   });
