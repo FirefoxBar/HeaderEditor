@@ -274,6 +274,7 @@ const createDriveComponent = (drive: Drive) => {
                 let fileName = getExportName();
                 Modal.confirm({
                   title: t('export_filename'),
+                  icon: null,
                   content: (
                     <Input
                       defaultValue={fileName}

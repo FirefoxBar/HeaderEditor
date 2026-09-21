@@ -2,6 +2,7 @@ import { Form } from '@douyinfe/semi-ui';
 import type { FormApi } from '@douyinfe/semi-ui/lib/es/form';
 import type { WebDAVClient } from 'webdav/web';
 import Modal from '@/share/components/modal';
+import { t } from '@/share/core/browser';
 import emitter from '@/share/core/emitter';
 import { getLocal, getSingle } from '@/share/core/storage';
 import { Toast } from '@/share/pages/toast';
@@ -60,12 +61,13 @@ const WebDAV = createDriveComponent({
     let formApi: FormApi;
     Modal.confirm({
       title: 'WebDAV',
+      icon: null,
       content: (
         <Form getFormApi={a => (formApi = a)}>
-          <Form.Input field="url" label="URL" />
-          <Form.Input field="username" label="Username" />
-          <Form.Input field="password" label="Password" />
-          <Form.Input field="path" label="Path" />
+          <Form.Input field="url" label={t('match_url')} />
+          <Form.Input field="username" label={t('username')} />
+          <Form.Input field="password" label={t('password')} />
+          <Form.Input field="path" label={t('path')} defaultValue="/" />
         </Form>
       ),
       onOk: async () => {
@@ -108,7 +110,7 @@ const WebDAV = createDriveComponent({
   },
   deleteFile: async (file: FileItem) => {
     const [_, client] = await getWebDAVClient();
-    await client.deleteFile(`${file.key}`);
+    await client.deleteFile(file.key);
   },
   writeFile: async (fileName: string, content: string) => {
     const [auth, client] = await getWebDAVClient();

@@ -733,5 +733,17 @@
   "width": {
     "message": "Width",
     "description": "Width"
+  },
+  "username": {
+    "message": "Username",
+    "description": "Username for WebDAV"
+  },
+  "password": {
+    "message": "Password",
+    "description": "Password for WebDAV"
+  },
+  "path": {
+    "message": "Path",
+    "description": "Path"
   }
 }
