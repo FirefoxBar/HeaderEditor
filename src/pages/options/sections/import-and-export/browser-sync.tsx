@@ -3,7 +3,7 @@ import {
   IconExternalOpen,
   IconUpload,
 } from '@douyinfe/semi-icons';
-import { Button, Space, Tag, Toast } from '@douyinfe/semi-ui';
+import { Button, Space, Tag } from '@douyinfe/semi-ui';
 import { css } from '@emotion/css';
 import dayjs from 'dayjs';
 import localizedFormat from 'dayjs/plugin/localizedFormat';
@@ -15,6 +15,7 @@ import { getSync } from '@/share/core/storage';
 import type { BasicRule } from '@/share/core/types';
 import { IS_CHROME } from '@/share/core/utils';
 import Api from '@/share/pages/api';
+import { Toast } from '@/share/pages/toast';
 import { type ImportContent, useImportAndExportContext } from './context';
 
 dayjs.extend(localizedFormat);
@@ -147,7 +148,7 @@ const BrowserSyncComponent = () => {
       await browserSync.getMeta();
       refresh();
     } catch {
-      Toast.error('cloud_over_limit');
+      Toast().error('cloud_over_limit');
     }
   };
 

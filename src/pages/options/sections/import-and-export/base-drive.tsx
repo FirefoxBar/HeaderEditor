@@ -5,7 +5,7 @@ import {
   IconImport,
   IconSave,
 } from '@douyinfe/semi-icons';
-import { Button, Input, Space, Spin, Table, Toast } from '@douyinfe/semi-ui';
+import { Button, Input, Space, Spin, Table } from '@douyinfe/semi-ui';
 import { useRequest } from 'ahooks';
 import { useEffect, useState } from 'react';
 import { withErrorBoundary } from '@/share/components/error-boundary';
@@ -13,6 +13,7 @@ import Modal from '@/share/components/modal';
 import { t } from '@/share/core/browser';
 import emitter from '@/share/core/emitter';
 import { save as saveFile } from '@/share/pages/file';
+import { Toast } from '@/share/pages/toast';
 import { getExportName } from '../../utils';
 import {
   type ImportAndExportContext,
@@ -57,7 +58,7 @@ const createDriveComponent = (drive: Drive) => {
         startImport(JSON.parse(content));
         onSuccess?.();
       },
-      onError: error => Toast.error((error as Error).message),
+      onError: error => Toast().error((error as Error).message),
     });
 
     return (
@@ -79,7 +80,7 @@ const createDriveComponent = (drive: Drive) => {
         saveFile(content, file.name);
         onSuccess?.();
       },
-      onError: error => Toast.error((error as Error).message),
+      onError: error => Toast().error((error as Error).message),
     });
 
     return (
@@ -98,7 +99,7 @@ const createDriveComponent = (drive: Drive) => {
     const { loading, run } = useRequest(() => drive.deleteFile(file), {
       manual: true,
       onSuccess: () => onSuccess?.(),
-      onError: error => Toast.error((error as Error).message),
+      onError: error => Toast().error((error as Error).message),
     });
 
     return (
@@ -205,7 +206,7 @@ const createDriveComponent = (drive: Drive) => {
             ),
           });
         },
-        onError: error => Toast.error((error as Error).message),
+        onError: error => Toast().error((error as Error).message),
       },
     );
 
@@ -216,18 +217,18 @@ const createDriveComponent = (drive: Drive) => {
       },
       {
         manual: true,
-        onSuccess: () => Toast.success(t('export_success')),
-        onError: error => Toast.error((error as Error).message),
+        onSuccess: () => Toast().success(t('export_success')),
+        onError: error => Toast().error((error as Error).message),
       },
     );
 
     const { run: logout, loading: logoutLoading } = useRequest(drive.logout, {
       manual: true,
       onSuccess: () => {
-        Toast.success(t('logout_success'));
+        Toast().success(t('logout_success'));
         refreshAuth();
       },
-      onError: error => Toast.error((error as Error).message),
+      onError: error => Toast().error((error as Error).message),
     });
 
     useEffect(() => {

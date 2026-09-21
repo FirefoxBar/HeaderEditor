@@ -1,9 +1,10 @@
 import { IconFolderOpen, IconSave } from '@douyinfe/semi-icons';
-import { Button, Space, Toast } from '@douyinfe/semi-ui';
+import { Button, Space } from '@douyinfe/semi-ui';
 import { getExportName } from '@/pages/options/utils';
 import { withErrorBoundary } from '@/share/components/error-boundary';
 import { t } from '@/share/core/browser';
 import * as file from '@/share/pages/file';
+import { Toast } from '@/share/pages/toast';
 import { useImportAndExportContext } from './context';
 
 const LocalFile = () => {
@@ -14,7 +15,7 @@ const LocalFile = () => {
       try {
         startImport(JSON.parse(content));
       } catch (e) {
-        Toast.error((e as Error).message);
+        Toast().error((e as Error).message);
       }
     });
   };
