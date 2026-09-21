@@ -24,7 +24,7 @@ const main = () => {
     }
     case 'ext.firefoxcn.net':
       if (pathname.includes('login/callback/google.html')) {
-        data.type = 'google';
+        data.type = 'google-drive';
         const hashQuery = new URLSearchParams(hash.substring(1));
         data.accessToken = hashQuery.get('access_token') || '';
         data.expireIn = hashQuery.get('expires_in') || '';

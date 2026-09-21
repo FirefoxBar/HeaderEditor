@@ -107,9 +107,8 @@ const getAuth = async () => {
 const handleLogin = async (code: string) => {
   await fetchToken({ code, grant_type: 'authorization_code' });
   // check folder
-  const result = await callApi('drive/special/approot/children');
-  const has = result.value.some((x: any) => x.name === 'header-editor');
-  if (!has) {
+  const result = await callApi('drive/special/approot/header-editor');
+  if (result.error) {
     try {
       const info = await callApi('drive/special/approot');
       await callApi(

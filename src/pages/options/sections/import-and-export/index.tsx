@@ -7,6 +7,7 @@ import Api from '@/share/pages/api';
 import ImportDrawer from '../../components/import-drawer';
 import BrowserSync from './browser-sync';
 import { ImportAndExportContext, type ImportContent } from './context';
+import GoogleDrive from './google-drive';
 import LocalFile from './local-file';
 import OneDrive from './onedrive';
 
@@ -41,6 +42,9 @@ const ImportAndExport = ({ visible }: Props) => {
         </Card>
         <Card title="OneDrive">
           <OneDrive />
+        </Card>
+        <Card title="GoogleDrive">
+          <GoogleDrive />
         </Card>
       </ImportAndExportContext.Provider>
       <ImportDrawer ref={importRef} />
