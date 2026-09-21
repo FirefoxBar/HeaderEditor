@@ -1,5 +1,6 @@
 import {
   IconCustomerSupport,
+  IconDownload,
   IconFolderOpen,
   IconHelpCircle,
   IconMenu,
@@ -26,6 +27,7 @@ import RulesSection from './sections/rules';
 import Edit from './sections/rules/edit';
 
 import './global.css';
+import Download from './sections/download';
 
 const Options = () => {
   const [editShow, setEditShow] = useState(false);
@@ -137,6 +139,11 @@ const Options = () => {
               text: t('export_and_import'),
               icon: <IconFolderOpen />,
             },
+            {
+              itemKey: 'download',
+              text: t('download_rule'),
+              icon: <IconDownload />,
+            },
             { itemKey: 'help', text: t('help'), icon: <IconHelpCircle /> },
             {
               itemKey: 'feedback',
@@ -154,6 +161,7 @@ const Options = () => {
           <RulesSection visible={active === 'rules'} onEdit={handleEdit} />
           <OptionsSection visible={active === 'options'} />
           <ImportAndExportSection visible={active === 'export_and_import'} />
+          <Download visible={active === 'download'} />
           {active === 'help' && (
             <div
               className={css`

@@ -60,6 +60,7 @@ export enum APIs {
   UPDATE_CACHE = 'update_cache',
   SET_PREFS = 'set_pref',
   ON_EVENT = 'event',
+  ON_DRIVE_LOGIN = 'on_drive_login',
 }
 
 export enum IS_MATCH {

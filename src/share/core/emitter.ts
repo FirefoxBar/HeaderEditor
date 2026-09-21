@@ -12,6 +12,9 @@ class Emitter extends EventEmitter {
 
   INNER_RULE_UPDATE = 'c1';
   INNER_RULE_REMOVE = 'c2';
+
+  INNER_DRIVE_READY = 'd1';
+  INNER_DRIVE_LOADING = 'd2';
 }
 const emitter = new Emitter();
 

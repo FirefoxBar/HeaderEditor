@@ -16,6 +16,15 @@ const baseManifest = {
     page: 'options.html',
     open_in_tab: true,
   },
+  content_scripts: [
+    {
+      matches: [
+        'https://login.microsoftonline.com/common/oauth2/nativeclient*',
+        'https://ext.firefoxcn.net/login/callback/*',
+      ],
+      js: ['scripts/content-cloud-drive.js'],
+    },
+  ],
 };
 
 const action = {
@@ -43,11 +52,11 @@ function getManifest(browser, options) {
   // background
   if (config.MANIFEST_VER === 'v2' || browser.startsWith('firefox')) {
     manifest.background = {
-      scripts: ['assets/js/background.js'],
+      scripts: ['scripts/background.js'],
     };
   } else {
     manifest.background = {
-      service_worker: 'assets/js/background.js',
+      service_worker: 'scripts/background.js',
     };
   }
 

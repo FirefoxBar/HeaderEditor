@@ -40,7 +40,7 @@ import { getTableName } from '@/share/core/utils';
 import useMarkCommon from '@/share/hooks/use-mark-common';
 import usePref from '@/share/hooks/use-pref';
 import Api from '@/share/pages/api';
-import file from '@/share/pages/file';
+import { save as saveFile } from '@/share/pages/file';
 import { clone } from '@/share/pages/rule-utils';
 import { textEllipsis } from '@/share/pages/styles';
 import { remove, toggleRule } from './utils';
@@ -303,7 +303,7 @@ const RuleGroupCard = (props: RuleCardProps) => {
                     result[tb] = [];
                   });
                   rules.forEach(e => result[getTableName(e.ruleType)].push(e));
-                  file.save(
+                  saveFile(
                     JSON.stringify(createExport(result), null, '\t'),
                     getExportName(),
                   );

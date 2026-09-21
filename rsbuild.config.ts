@@ -94,10 +94,17 @@ export default defineConfig({
             import: './src/pages/background/index.ts',
             html: false,
           },
+          'content-cloud-drive': {
+            import: './src/pages/content-cloud-drive/index.ts',
+            html: false,
+          },
         },
       },
       output: {
         target: 'web',
+        distPath: {
+          js: 'scripts',
+        },
         copy: [
           {
             from: './public',

@@ -189,6 +189,7 @@ export default class ImportDrawer extends React.Component<
         visible={this.state.visible}
         onCancel={this.handleCancel}
         title={t('import')}
+        keepDOM={false}
         width="100vw"
         className={css`
           .semi-sidesheet-inner {

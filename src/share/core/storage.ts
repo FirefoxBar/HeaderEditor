@@ -22,6 +22,17 @@ export function getLocal() {
   return browser.storage.local;
 }
 
+export async function getSingle<T = unknown>(
+  storage: browser.Storage.StorageArea,
+  key: string,
+) {
+  const res = await storage.get(key);
+  if (typeof res === 'object' && key in res) {
+    return res[key] as T;
+  }
+  return undefined;
+}
+
 function createFakeSession() {
   const mapKey = (key: string) => `sess_${key}`;
 
