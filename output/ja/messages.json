@@ -19,6 +19,10 @@
     "message": "「レスポンス本文の変更」が自動的に有効になりました。不要な場合は手動で無効にしてください。",
     "description": "A message"
   },
+  "backup_list": {
+    "message": "バックアップ一覧",
+    "description": "Backup list title"
+  },
   "basic_information": {
     "message": "基本情報",
     "description": "Basic information of a rule"
@@ -30,6 +34,10 @@
   "batch_mode": {
     "message": "一括操作",
     "description": "Button to enter batch operation mode"
+  },
+  "browser_sync": {
+    "message": "ブラウザ同期",
+    "description": "Browser sync feature"
   },
   "browser_version": {
     "message": "ブラウザーのバージョン",
@@ -92,6 +100,10 @@
     "message": "よく使うを解除",
     "description": "Unmark a common rule/group"
   },
+  "created_time": {
+    "message": "作成日時",
+    "description": "Created time title"
+  },
   "dark_mode": {
     "message": "ダークモード",
     "description": "Dark mode select"
@@ -115,6 +127,15 @@
   "delete_confirm": {
     "message": "これらのルールを削除してもよろしいですか？",
     "description": "A confirmation box shows when user want to delete rules"
+  },
+  "delete_file_confirm": {
+    "message": "ファイル「$name$」を削除してもよろしいですか？",
+    "description": "Delete file confirm dialog",
+    "placeholders": {
+      "name": {
+        "content": "$1"
+      }
+    }
   },
   "delete_single_confirm": {
     "message": "ルール「$rule$」を削除してもよろしいですか？",
@@ -148,6 +169,10 @@
   "download": {
     "message": "ダウンロード",
     "description": "Download button"
+  },
+  "download_local": {
+    "message": "ローカルにダウンロード",
+    "description": "Download to local button"
   },
   "download_rule": {
     "message": "ルールをダウンロード",
@@ -213,6 +238,14 @@
     "message": "エクスポートとインポート",
     "description": "The tab title in the top"
   },
+  "export_filename": {
+    "message": "エクスポートファイル名",
+    "description": "Export file name"
+  },
+  "export_success": {
+    "message": "エクスポートしました",
+    "description": "Exported successfully"
+  },
   "extButtonTitle": {
     "message": "Header Editor",
     "description": "Toolbar tooltip"
@@ -228,6 +261,14 @@
   "feedback": {
     "message": "フィードバック",
     "description": "Feedback link"
+  },
+  "filename": {
+    "message": "ファイル名",
+    "description": "File name title"
+  },
+  "filesize": {
+    "message": "ファイルサイズ",
+    "description": "File size title"
   },
   "group": {
     "message": "グループ",
@@ -305,6 +346,18 @@
     "message": "この機能はLiteバージョンではサポートされていません",
     "description": "Message at the not support features"
   },
+  "local_file": {
+    "message": "ローカルファイル",
+    "description": "Local file title"
+  },
+  "logout": {
+    "message": "ログアウト",
+    "description": "Logout button"
+  },
+  "logout_success": {
+    "message": "ログアウトしました",
+    "description": "Successfully logged out"
+  },
   "manage": {
     "message": "管理",
     "description": "Manage rules, options and more"
@@ -380,6 +433,10 @@
   "name_empty": {
     "message": "名前を空にすることはできません",
     "description": "Message for saving a rule without name"
+  },
+  "no_backup": {
+    "message": "バックアップが見つかりません",
+    "description": "No backup found"
   },
   "no_update": {
     "message": "更新はありません",
@@ -576,6 +633,10 @@
   "showQuickPreview": {
     "message": "クイックプレビューを表示",
     "description": "Show quick preview"
+  },
+  "show_backup": {
+    "message": "バックアップを表示",
+    "description": "Show backups button"
   },
   "show_rules_on_popup": {
     "message": "ポップアップにこれらのルールを表示",
