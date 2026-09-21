@@ -187,7 +187,12 @@ const OneDrive = createDriveComponent({
       'text',
     ),
   deleteFile: (file: FileItem) =>
-    callApi(`drive/special/approot:/header-editor/${file.key}:/`, '', 'DELETE'),
+    callApi(
+      `drive/special/approot:/header-editor/${file.key}:/`,
+      '',
+      'DELETE',
+      'text',
+    ),
   writeFile: (fileName: string, content: string) =>
     callApi(
       `drive/special/approot:/header-editor/${fileName}:/content`,

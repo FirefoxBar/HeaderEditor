@@ -63,11 +63,11 @@ const WebDAV = createDriveComponent({
       title: 'WebDAV',
       icon: null,
       content: (
-        <Form getFormApi={a => (formApi = a)}>
+        <Form getFormApi={a => (formApi = a)} initValues={{ path: '/' }}>
           <Form.Input field="url" label={t('match_url')} />
           <Form.Input field="username" label={t('username')} />
           <Form.Input field="password" label={t('password')} />
-          <Form.Input field="path" label={t('path')} defaultValue="/" />
+          <Form.Input field="path" label={t('path')} />
         </Form>
       ),
       onOk: async () => {
@@ -90,7 +90,6 @@ const WebDAV = createDriveComponent({
   listFiles: async () => {
     const [auth, client] = await getWebDAVClient();
     const result = await client.getDirectoryContents(auth.path);
-    console.log(result);
     return result
       .filter(x => x.type === 'file')
       .map(
