@@ -35,7 +35,7 @@ const getWebDAVClient = async (
   if (_client && _auth === JSON.stringify(auth)) {
     return [auth, _client];
   }
-  const c = await import('webdav/web');
+  const c = await import(/* webpackChunkName: 'webdav' */ 'webdav/web');
   _client = c.createClient(auth.url, {
     username: auth.username,
     password: auth.password,

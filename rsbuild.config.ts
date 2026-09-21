@@ -78,9 +78,6 @@ export default defineConfig({
       },
     },
     rspack: {
-      output: {
-        asyncChunks: false,
-      },
       node: {
         global: false,
       },
@@ -118,6 +115,13 @@ export default defineConfig({
         },
       },
       plugins: [pluginManifest()],
+      tools: {
+        rspack: {
+          output: {
+            asyncChunks: false,
+          },
+        },
+      },
     },
     web: {
       source: {
