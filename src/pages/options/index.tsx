@@ -20,14 +20,14 @@ import type { Rule } from '@/share/core/types';
 import Api from '@/share/pages/api';
 import isDarkMode from '@/share/pages/is-dark-mode';
 import { Message } from './message';
+import Download from './sections/download';
 import GroupSelect from './sections/group-select';
 import ImportAndExportSection from './sections/import-and-export';
 import OptionsSection from './sections/options';
 import RulesSection from './sections/rules';
 import Edit from './sections/rules/edit';
 
-import './global.css';
-import Download from './sections/download';
+import './global.less';
 
 const Options = () => {
   const [editShow, setEditShow] = useState(false);
@@ -87,40 +87,7 @@ const Options = () => {
 
   return (
     <SemiLocale>
-      <div
-        className={css`
-        display: flex;
-        flex-direction: row;
-        height: 100vh;
-
-        > .navbar {
-          /* width: 240px; */
-          flex-grow: 0;
-          flex-shrink: 0;
-          height: 100vh;
-        }
-
-        > .main-content {
-          flex-grow: 1;
-          flex-shrink: 1;
-          height: 100vh;
-          overflow: auto;
-          box-sizing: border-box;
-          padding: 16px;
-          background-color: var(--semi-color-fill-0);
-
-          > .in-visible {
-            display: none;
-          }
-
-          > section {
-            > .semi-card {
-              margin-bottom: 16px;
-            }
-          }
-        }
-      `}
-      >
+      <div className="page">
         <Nav
           className="navbar semi-always-dark"
           selectedKeys={[active]}

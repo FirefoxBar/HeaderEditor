@@ -30,26 +30,30 @@ const ImportAndExport = ({ visible }: Props) => {
 
   return (
     <section
-      className={`section-import-export ${visible ? 'visible' : 'in-visible'}`}
+      className={`section-import-export tow-row ${visible ? 'visible' : 'in-visible'}`}
     >
       <ImportAndExportContext.Provider
         value={{ startImport, getExportContent }}
       >
-        <Card title="local">
-          <LocalFile />
-        </Card>
-        <Card title={t('cloud_backup')}>
-          <BrowserSync />
-        </Card>
-        <Card title="OneDrive">
-          <OneDrive />
-        </Card>
-        <Card title="GoogleDrive">
-          <GoogleDrive />
-        </Card>
-        <Card title="WebDAV">
-          <WebDAV />
-        </Card>
+        <div>
+          <Card title="local">
+            <LocalFile />
+          </Card>
+          <Card title={t('cloud_backup')}>
+            <BrowserSync />
+          </Card>
+          <Card title="WebDAV">
+            <WebDAV />
+          </Card>
+        </div>
+        <div>
+          <Card title="OneDrive">
+            <OneDrive />
+          </Card>
+          <Card title="Google Drive">
+            <GoogleDrive />
+          </Card>
+        </div>
       </ImportAndExportContext.Provider>
       <ImportDrawer ref={importRef} />
     </section>

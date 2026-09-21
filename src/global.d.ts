@@ -1,4 +1,5 @@
 declare module '*.css';
+declare module '*.less';
 
 declare const MANIFEST_VER: 'v2' | 'v3';
 declare const ENABLE_DNR: boolean;

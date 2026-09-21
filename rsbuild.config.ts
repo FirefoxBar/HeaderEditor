@@ -1,4 +1,5 @@
 import { defineConfig } from '@rsbuild/core';
+import { pluginLess } from '@rsbuild/plugin-less';
 import { pluginReact } from '@rsbuild/plugin-react';
 import browserConfigs from './scripts/browser-config/browser.config.json' with {
   type: 'json',
@@ -159,7 +160,7 @@ export default defineConfig({
           },
         ],
       },
-      plugins: [pluginReact()],
+      plugins: [pluginReact(), pluginLess()],
     },
   },
 });

@@ -1,8 +1,9 @@
-import { Button, List, Toast, Typography } from '@douyinfe/semi-ui';
+import { Button, List, Typography } from '@douyinfe/semi-ui';
 import { useRequest } from 'ahooks';
 import React from 'react';
 import browser from 'webextension-polyfill';
 import { t } from '@/share/core/browser';
+import { Toast } from '@/share/pages/toast';
 
 const Env = () => {
   const manifest = browser.runtime.getManifest();
@@ -14,16 +15,16 @@ const Env = () => {
       onSuccess: data => {
         switch (data[0]) {
           case 'no_update':
-            Toast.info(t('no_update'));
+            Toast().info(t('no_update'));
             break;
           case 'throttled':
-            Toast.warning(t('update_throttled'));
+            Toast().warning(t('update_throttled'));
             break;
           case 'update_available':
-            Toast.success(t('update_available'));
+            Toast().success(t('update_available'));
             break;
           default:
-            Toast.info(data[0]);
+            Toast().info(data[0]);
         }
       },
     },

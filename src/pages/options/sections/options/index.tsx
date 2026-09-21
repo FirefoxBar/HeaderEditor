@@ -27,16 +27,22 @@ const style = css`
 `;
 
 const Options = withErrorBoundary(({ visible }: OptionsProps) => (
-  <section className={`section-options ${visible ? 'visible' : 'in-visible'}`}>
-    <Card title={t('options')} className={style}>
-      <Prefs />
-    </Card>
-    <Card title={t('popupPanel')} className={style}>
-      <Popup />
-    </Card>
-    <Card title={t('env_info')} className={style}>
-      <Env />
-    </Card>
+  <section
+    className={`section-options tow-row ${visible ? 'visible' : 'in-visible'}`}
+  >
+    <div>
+      <Card title={t('options')} className={style}>
+        <Prefs />
+      </Card>
+    </div>
+    <div>
+      <Card title={t('popupPanel')} className={style}>
+        <Popup />
+      </Card>
+      <Card title={t('env_info')} className={style}>
+        <Env />
+      </Card>
+    </div>
   </section>
 ));
 
