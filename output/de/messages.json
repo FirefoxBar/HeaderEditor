@@ -458,6 +458,14 @@
     "message": "Gruppe einklappen/ausklappen",
     "description": "Button to pack up or unfurl a group"
   },
+  "password": {
+    "message": "Passwort",
+    "description": "Password for WebDAV"
+  },
+  "path": {
+    "message": "Pfad",
+    "description": "Path"
+  },
   "popupPanel": {
     "message": "Popup-Panel",
     "description": "Popup panel"
@@ -725,6 +733,10 @@
   "url_third_party_rules": {
     "message": "https://he.firefoxcn.net/en-US/guide/third-party-rules.html",
     "description": "URL of documentations, if not translated, please use english version"
+  },
+  "username": {
+    "message": "Benutzername",
+    "description": "Username for WebDAV"
   },
   "view": {
     "message": "Anzeigen",
