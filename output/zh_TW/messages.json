@@ -350,6 +350,10 @@
     "message": "本機檔案",
     "description": "Local file title"
   },
+  "login": {
+    "message": "登入",
+    "description": "Login button"
+  },
   "logout": {
     "message": "登出",
     "description": "Logout button"
