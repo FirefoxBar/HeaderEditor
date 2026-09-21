@@ -458,6 +458,14 @@
     "message": "Collapse/expand group",
     "description": "Button to pack up or unfurl a group"
   },
+  "password": {
+    "message": "Password",
+    "description": "Password for WebDAV"
+  },
+  "path": {
+    "message": "Path",
+    "description": "Path"
+  },
   "popupPanel": {
     "message": "Popup panel",
     "description": "Popup panel"
@@ -726,6 +734,10 @@
     "message": "https://he.firefoxcn.net/en-US/guide/third-party-rules.html",
     "description": "URL of documentations, if not translated, please use english version"
   },
+  "username": {
+    "message": "Username",
+    "description": "Username for WebDAV"
+  },
   "view": {
     "message": "View",
     "description": "View rule or a link"
@@ -733,17 +745,5 @@
   "width": {
     "message": "Width",
     "description": "Width"
-  },
-  "username": {
-    "message": "Username",
-    "description": "Username for WebDAV"
-  },
-  "password": {
-    "message": "Password",
-    "description": "Password for WebDAV"
-  },
-  "path": {
-    "message": "Path",
-    "description": "Path"
   }
 }
