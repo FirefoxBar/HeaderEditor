@@ -19,6 +19,10 @@
     "message": "已自動開啟「變更回應本文」，如不需要請手動關閉",
     "description": "A message"
   },
+  "backup_list": {
+    "message": "備份清單",
+    "description": "Backup list title"
+  },
   "basic_information": {
     "message": "基本資訊",
     "description": "Basic information of a rule"
@@ -30,6 +34,10 @@
   "batch_mode": {
     "message": "批次作業",
     "description": "Button to enter batch operation mode"
+  },
+  "browser_sync": {
+    "message": "瀏覽器同步",
+    "description": "Browser sync feature"
   },
   "browser_version": {
     "message": "瀏覽器版本",
@@ -92,6 +100,10 @@
     "message": "取消常用",
     "description": "Unmark a common rule/group"
   },
+  "created_time": {
+    "message": "建立時間",
+    "description": "Created time title"
+  },
   "dark_mode": {
     "message": "深色模式",
     "description": "Dark mode select"
@@ -115,6 +127,15 @@
   "delete_confirm": {
     "message": "您確定要刪除這些規則嗎？",
     "description": "A confirmation box shows when user want to delete rules"
+  },
+  "delete_file_confirm": {
+    "message": "您確認要刪除檔案「$name$」嗎？",
+    "description": "Delete file confirm dialog",
+    "placeholders": {
+      "name": {
+        "content": "$1"
+      }
+    }
   },
   "delete_single_confirm": {
     "message": "您確定要刪除規則「$rule$」嗎？",
@@ -148,6 +169,10 @@
   "download": {
     "message": "下載",
     "description": "Download button"
+  },
+  "download_local": {
+    "message": "下載至本機",
+    "description": "Download to local button"
   },
   "download_rule": {
     "message": "下載規則",
@@ -213,6 +238,14 @@
     "message": "匯出與匯入",
     "description": "The tab title in the top"
   },
+  "export_filename": {
+    "message": "匯出檔案名稱",
+    "description": "Export file name"
+  },
+  "export_success": {
+    "message": "匯出成功",
+    "description": "Exported successfully"
+  },
   "extButtonTitle": {
     "message": "Header Editor",
     "description": "Toolbar tooltip"
@@ -228,6 +261,14 @@
   "feedback": {
     "message": "意見反應",
     "description": "Feedback link"
+  },
+  "filename": {
+    "message": "檔案名稱",
+    "description": "File name title"
+  },
+  "filesize": {
+    "message": "檔案大小",
+    "description": "File size title"
   },
   "group": {
     "message": "分組",
@@ -305,6 +346,18 @@
     "message": "精簡版不支援此功能",
     "description": "Message at the not support features"
   },
+  "local_file": {
+    "message": "本機檔案",
+    "description": "Local file title"
+  },
+  "logout": {
+    "message": "登出",
+    "description": "Logout button"
+  },
+  "logout_success": {
+    "message": "登出成功",
+    "description": "Successfully logged out"
+  },
   "manage": {
     "message": "管理",
     "description": "Manage rules, options and more"
@@ -380,6 +433,10 @@
   "name_empty": {
     "message": "名稱不能為空",
     "description": "Message for saving a rule without name"
+  },
+  "no_backup": {
+    "message": "找不到備份檔案",
+    "description": "No backup found"
   },
   "no_update": {
     "message": "沒有更新",
@@ -576,6 +633,10 @@
   "showQuickPreview": {
     "message": "顯示快速預覽",
     "description": "Show quick preview"
+  },
+  "show_backup": {
+    "message": "顯示備份",
+    "description": "Show backups button"
   },
   "show_rules_on_popup": {
     "message": "在彈出式視窗中顯示規則",
