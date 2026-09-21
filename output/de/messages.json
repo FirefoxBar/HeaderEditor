@@ -19,6 +19,10 @@
     "message": "„Antworttext ändern“ wurde automatisch aktiviert. Bitte deaktivieren Sie diese Option manuell, falls sie nicht benötigt wird.",
     "description": "A message"
   },
+  "backup_list": {
+    "message": "Liste der Sicherungen",
+    "description": "Backup list title"
+  },
   "basic_information": {
     "message": "Basisinformationen",
     "description": "Basic information of a rule"
@@ -30,6 +34,10 @@
   "batch_mode": {
     "message": "Massenbearbeitung",
     "description": "Button to enter batch operation mode"
+  },
+  "browser_sync": {
+    "message": "Browser-Synchronisierung",
+    "description": "Browser sync feature"
   },
   "browser_version": {
     "message": "Browser-Version",
@@ -92,6 +100,10 @@
     "message": "Favoritenmarkierung aufheben",
     "description": "Unmark a common rule/group"
   },
+  "created_time": {
+    "message": "Erstellungszeit",
+    "description": "Created time title"
+  },
   "dark_mode": {
     "message": "Dunkelmodus",
     "description": "Dark mode select"
@@ -115,6 +127,15 @@
   "delete_confirm": {
     "message": "Möchten Sie diese Regeln löschen?",
     "description": "A confirmation box shows when user want to delete rules"
+  },
+  "delete_file_confirm": {
+    "message": "Möchten Sie die Datei „$name$“ löschen?",
+    "description": "Delete file confirm dialog",
+    "placeholders": {
+      "name": {
+        "content": "$1"
+      }
+    }
   },
   "delete_single_confirm": {
     "message": "Möchten Sie die Regel „$rule$“ löschen?",
@@ -148,6 +169,10 @@
   "download": {
     "message": "Herunterladen",
     "description": "Download button"
+  },
+  "download_local": {
+    "message": "Lokal herunterladen",
+    "description": "Download to local button"
   },
   "download_rule": {
     "message": "Regeln herunterladen",
@@ -213,6 +238,14 @@
     "message": "Exportieren und Importieren",
     "description": "The tab title in the top"
   },
+  "export_filename": {
+    "message": "Exportdateiname",
+    "description": "Export file name"
+  },
+  "export_success": {
+    "message": "Erfolgreich exportiert",
+    "description": "Exported successfully"
+  },
   "extButtonTitle": {
     "message": "Header Editor",
     "description": "Toolbar tooltip"
@@ -228,6 +261,14 @@
   "feedback": {
     "message": "Feedback",
     "description": "Feedback link"
+  },
+  "filename": {
+    "message": "Dateiname",
+    "description": "File name title"
+  },
+  "filesize": {
+    "message": "Dateigröße",
+    "description": "File size title"
   },
   "group": {
     "message": "Gruppe",
@@ -305,6 +346,18 @@
     "message": "Diese Funktion wird in der Lite-Version nicht unterstützt",
     "description": "Message at the not support features"
   },
+  "local_file": {
+    "message": "Lokale Datei",
+    "description": "Local file title"
+  },
+  "logout": {
+    "message": "Abmelden",
+    "description": "Logout button"
+  },
+  "logout_success": {
+    "message": "Erfolgreich abgemeldet",
+    "description": "Successfully logged out"
+  },
   "manage": {
     "message": "Verwalten",
     "description": "Manage rules, options and more"
@@ -380,6 +433,10 @@
   "name_empty": {
     "message": "Der Name darf nicht leer sein",
     "description": "Message for saving a rule without name"
+  },
+  "no_backup": {
+    "message": "Keine Sicherung gefunden",
+    "description": "No backup found"
   },
   "no_update": {
     "message": "Keine Updates verfügbar",
@@ -576,6 +633,10 @@
   "showQuickPreview": {
     "message": "Schnellvorschau anzeigen",
     "description": "Show quick preview"
+  },
+  "show_backup": {
+    "message": "Sicherungen anzeigen",
+    "description": "Show backups button"
   },
   "show_rules_on_popup": {
     "message": "Diese Regeln in einem Popup anzeigen",
