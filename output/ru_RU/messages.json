@@ -19,6 +19,10 @@
     "message": "«Изменение тела ответа» включено автоматически. Если это не требуется, отключите вручную.",
     "description": "A message"
   },
+  "backup_list": {
+    "message": "Список резервных копий",
+    "description": "Backup list title"
+  },
   "basic_information": {
     "message": "Основная информация",
     "description": "Basic information of a rule"
@@ -30,6 +34,10 @@
   "batch_mode": {
     "message": "Пакетные операции",
     "description": "Button to enter batch operation mode"
+  },
+  "browser_sync": {
+    "message": "Синхронизация браузера",
+    "description": "Browser sync feature"
   },
   "browser_version": {
     "message": "Версия браузера",
@@ -92,6 +100,10 @@
     "message": "Снять отметку",
     "description": "Unmark a common rule/group"
   },
+  "created_time": {
+    "message": "Время создания",
+    "description": "Created time title"
+  },
   "dark_mode": {
     "message": "Тёмная тема",
     "description": "Dark mode select"
@@ -115,6 +127,15 @@
   "delete_confirm": {
     "message": "Вы действительно хотите удалить эти правила?",
     "description": "A confirmation box shows when user want to delete rules"
+  },
+  "delete_file_confirm": {
+    "message": "Вы действительно хотите удалить файл «$name$»?",
+    "description": "Delete file confirm dialog",
+    "placeholders": {
+      "name": {
+        "content": "$1"
+      }
+    }
   },
   "delete_single_confirm": {
     "message": "Вы действительно хотите удалить правило «$rule$»?",
@@ -148,6 +169,10 @@
   "download": {
     "message": "Скачать",
     "description": "Download button"
+  },
+  "download_local": {
+    "message": "Скачать локально",
+    "description": "Download to local button"
   },
   "download_rule": {
     "message": "Скачать правила",
@@ -213,6 +238,14 @@
     "message": "Экспорт и импорт",
     "description": "The tab title in the top"
   },
+  "export_filename": {
+    "message": "Имя файла экспорта",
+    "description": "Export file name"
+  },
+  "export_success": {
+    "message": "Экспорт выполнен успешно",
+    "description": "Exported successfully"
+  },
   "extButtonTitle": {
     "message": "Header Editor",
     "description": "Toolbar tooltip"
@@ -228,6 +261,14 @@
   "feedback": {
     "message": "Обратная связь",
     "description": "Feedback link"
+  },
+  "filename": {
+    "message": "Имя файла",
+    "description": "File name title"
+  },
+  "filesize": {
+    "message": "Размер файла",
+    "description": "File size title"
   },
   "group": {
     "message": "Группа",
@@ -305,6 +346,18 @@
     "message": "Эта функция не поддерживается в версии Lite",
     "description": "Message at the not support features"
   },
+  "local_file": {
+    "message": "Локальный файл",
+    "description": "Local file title"
+  },
+  "logout": {
+    "message": "Выйти",
+    "description": "Logout button"
+  },
+  "logout_success": {
+    "message": "Выход выполнен успешно",
+    "description": "Successfully logged out"
+  },
   "manage": {
     "message": "Управление",
     "description": "Manage rules, options and more"
@@ -380,6 +433,10 @@
   "name_empty": {
     "message": "Имя не может быть пустым",
     "description": "Message for saving a rule without name"
+  },
+  "no_backup": {
+    "message": "Резервная копия не найдена",
+    "description": "No backup found"
   },
   "no_update": {
     "message": "Обновлений нет",
@@ -576,6 +633,10 @@
   "showQuickPreview": {
     "message": "Показывать быстрый просмотр",
     "description": "Show quick preview"
+  },
+  "show_backup": {
+    "message": "Показать резервные копии",
+    "description": "Show backups button"
   },
   "show_rules_on_popup": {
     "message": "Показывать эти правила во всплывающем окне",
