@@ -198,7 +198,7 @@ const BrowserSyncComponent = () => {
           {t('download')}
         </Button>
         <Button
-          type="secondary"
+          type="tertiary"
           onClick={handleHelp}
           icon={<IconExternalOpen />}
         >

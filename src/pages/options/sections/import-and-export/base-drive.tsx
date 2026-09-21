@@ -106,7 +106,7 @@ const createDriveComponent = (drive: Drive) => {
       <Button
         onClick={() => {
           Modal.warning({
-            title: t('confirm_delete'),
+            title: t('delete_file_confirm', file.name),
             onOk: run,
           });
         }}
@@ -135,7 +135,7 @@ const createDriveComponent = (drive: Drive) => {
             dataIndex: 'name',
           },
           {
-            title: t('size'),
+            title: t('filesize'),
             dataIndex: 'size',
             render: (text: number) => `${Math.round(text / 1024)} KB`,
           },
@@ -145,7 +145,7 @@ const createDriveComponent = (drive: Drive) => {
             render: (text: number) => new Date(text).toLocaleString(),
           },
           {
-            title: t('actions'),
+            title: t('action'),
             dataIndex: '',
             render: (_, record: FileItem) => (
               <Space>
@@ -187,12 +187,12 @@ const createDriveComponent = (drive: Drive) => {
         manual: true,
         onSuccess: fileList => {
           if (fileList.length === 0) {
-            Toast.info(t('no_backup'));
+            Toast().info(t('no_backup'));
             return;
           }
 
           const { destroy } = Modal.confirm({
-            title: t('confirm_show_backup'),
+            title: t('backup_list'),
             icon: null,
             size: 'large',
             hasCancel: false,
@@ -273,7 +273,7 @@ const createDriveComponent = (drive: Drive) => {
               onClick={() => {
                 let fileName = getExportName();
                 Modal.confirm({
-                  title: t('confirm_export'),
+                  title: t('export_filename'),
                   content: (
                     <Input
                       defaultValue={fileName}
@@ -299,12 +299,7 @@ const createDriveComponent = (drive: Drive) => {
             >
               {t('show_backup')}
             </Button>
-            <Button
-              onClick={logout}
-              theme="outline"
-              type="danger"
-              loading={logoutLoading}
-            >
+            <Button onClick={logout} type="danger" loading={logoutLoading}>
               {t('logout')}
             </Button>
           </Space>

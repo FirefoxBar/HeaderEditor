@@ -668,5 +668,66 @@
   "width": {
     "message": "Width",
     "description": "Width"
+  },
+  "browser_sync": {
+    "message": "Browser sync",
+    "description": "Browser sync feature"
+  },
+  "delete_file_confirm": {
+    "message": "Do you want to delete file \"$name$\"?",
+    "description": "Delete file confirm dialog",
+    "placeholders": {
+      "name": {
+        "content": "$1"
+      }
+    }
+  },
+  "filename": {
+    "message": "File name",
+    "description": "File name title"
+  },
+  "filesize": {
+    "message": "File size",
+    "description": "File size title"
+  },
+  "created_time": {
+    "message": "Created time",
+    "description": "Created time title"
+  },
+  "no_backup": {
+    "message": "No backup found",
+    "description": "No backup found"
+  },
+  "backup_list": {
+    "message": "Backup list",
+    "description": "Backup list title"
+  },
+  "export_success": {
+    "message": "Exported successfully",
+    "description": "Exported successfully"
+  },
+  "logout_success": {
+    "message": "Successfully logged out",
+    "description": "Successfully logged out"
+  },
+  "export_filename": {
+    "message": "Export file name",
+    "description": "Export file name"
+  },
+  "show_backup": {
+    "message": "Show backups",
+    "description": "Show backups button"
+  },
+  "logout": {
+    "message": "Logout",
+    "description": "Logout button"
+  },
+  "download_local": {
+    "message": "Download to local",
+    "description": "Download to local button"
+  },
+  "local_file": {
+    "message": "Local file",
+    "description": "Local file title"
   }
 }

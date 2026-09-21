@@ -36,10 +36,10 @@ const ImportAndExport = ({ visible }: Props) => {
         value={{ startImport, getExportContent }}
       >
         <div>
-          <Card title="local">
+          <Card title={t('local_file')}>
             <LocalFile />
           </Card>
-          <Card title={t('cloud_backup')}>
+          <Card title={t('browser_sync')}>
             <BrowserSync />
           </Card>
           <Card title="WebDAV">
