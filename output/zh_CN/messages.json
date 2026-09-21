@@ -350,6 +350,10 @@
     "message": "本地文件",
     "description": "Local file title"
   },
+  "login": {
+    "message": "登录",
+    "description": "Login button"
+  },
   "logout": {
     "message": "退出登录",
     "description": "Logout button"
