@@ -350,6 +350,10 @@
     "message": "Fichier local",
     "description": "Local file title"
   },
+  "login": {
+    "message": "Connexion",
+    "description": "Login button"
+  },
   "logout": {
     "message": "Déconnexion",
     "description": "Logout button"
