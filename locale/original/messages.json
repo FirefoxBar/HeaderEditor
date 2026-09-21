@@ -729,5 +729,9 @@
   "width": {
     "message": "Width",
     "description": "Width"
+  },
+  "login": {
+    "message": "Login",
+    "description": "Login button"
   }
 }
