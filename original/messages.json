@@ -350,6 +350,10 @@
     "message": "Local file",
     "description": "Local file title"
   },
+  "login": {
+    "message": "Login",
+    "description": "Login button"
+  },
   "logout": {
     "message": "Logout",
     "description": "Logout button"
