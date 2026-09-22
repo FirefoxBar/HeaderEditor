@@ -64,10 +64,27 @@ const WebDAV = createDriveComponent({
       icon: null,
       content: (
         <Form getFormApi={a => (formApi = a)} initValues={{ path: '/' }}>
-          <Form.Input field="url" label={t('match_url')} />
-          <Form.Input field="username" label={t('username')} />
-          <Form.Input field="password" label={t('password')} />
-          <Form.Input field="path" label={t('path')} />
+          <Form.Input
+            field="url"
+            label={t('match_url')}
+            rules={[{ required: true }, { type: 'url' }]}
+          />
+          <Form.Input
+            field="username"
+            label={t('username')}
+            rules={[{ required: true }]}
+          />
+          <Form.Input
+            field="password"
+            label={t('password')}
+            type="password"
+            rules={[{ required: true }]}
+          />
+          <Form.Input
+            field="path"
+            label={t('path')}
+            rules={[{ required: true }]}
+          />
         </Form>
       ),
       onOk: async () => {

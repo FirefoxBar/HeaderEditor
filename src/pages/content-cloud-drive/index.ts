@@ -14,7 +14,7 @@ const main = () => {
   };
   switch (hostname) {
     case 'login.microsoftonline.com': {
-      if (!window.location.pathname.includes('common/oauth2/nativeclient')) {
+      if (!pathname.includes('common/oauth2/nativeclient')) {
         return;
       }
       data.type = 'onedrive';
