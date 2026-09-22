@@ -21,6 +21,7 @@ const baseManifest = {
       matches: [
         'https://login.microsoftonline.com/common/oauth2/nativeclient*',
         'https://ext.firefoxcn.net/login/callback/*',
+        'https://oauth.yandex.ru/verification_code*',
       ],
       js: ['scripts/content-cloud-drive.js'],
     },

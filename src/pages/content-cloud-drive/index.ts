@@ -22,6 +22,13 @@ const main = () => {
       data.code = query.get('code') || '';
       break;
     }
+    case 'oauth.yandex.ru': {
+      data.type = 'yandex';
+      const hashQuery = new URLSearchParams(hash.substring(1));
+      data.accessToken = hashQuery.get('access_token') || '';
+      data.expireIn = hashQuery.get('expires_in') || '';
+      break;
+    }
     case 'ext.firefoxcn.net':
       if (pathname.includes('login/callback/google.html')) {
         data.type = 'google-drive';

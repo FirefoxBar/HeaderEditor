@@ -11,6 +11,7 @@ import GoogleDrive from './google-drive';
 import LocalFile from './local-file';
 import OneDrive from './onedrive';
 import WebDAV from './webdav';
+import Yandex from './yandex';
 
 const getExportContent = async () => {
   const result = await Api.getAllRules();
@@ -52,6 +53,9 @@ const ImportAndExport = ({ visible }: Props) => {
           </Card>
           <Card title="Google Drive">
             <GoogleDrive />
+          </Card>
+          <Card title="Yandex">
+            <Yandex />
           </Card>
         </div>
       </ImportAndExportContext.Provider>

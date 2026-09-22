@@ -1,6 +1,3 @@
-import browser, { type Runtime } from 'webextension-polyfill';
-import { APIs } from '@/share/core/constant';
-import emitter from '@/share/core/emitter';
 import { getLocal, getSingle } from '@/share/core/storage';
 import Api from '@/share/pages/api';
 import { createDriveComponent, type FileItem } from './base-drive';
@@ -128,29 +125,9 @@ const handleLogin = async (code: string) => {
 const OneDrive = createDriveComponent({
   name: 'OneDrive',
   key: 'onedrive',
-  onMounted: () => {
-    const handler: Runtime.OnMessageListenerNoResponse = (
-      request: any,
-      sender,
-    ) => {
-      if (
-        request.method === APIs.ON_DRIVE_LOGIN &&
-        request.type === 'onedrive'
-      ) {
-        const code = request.code;
-        if (sender.tab?.id) {
-          browser.tabs.remove(sender.tab.id);
-        }
-        emitter.emit(emitter.INNER_DRIVE_LOADING, 'onedrive');
-        handleLogin(code).finally(() =>
-          emitter.emit(emitter.INNER_DRIVE_READY, 'onedrive'),
-        );
-      }
-    };
-    browser.runtime.onMessage.addListener(handler);
-    return () => {
-      browser.runtime.onMessage.removeListener(handler);
-    };
+  handleLoginMessage: async (request: any) => {
+    const code = request.code;
+    await handleLogin(code);
   },
   checkAuth: async () => {
     const auth = await getAuth();

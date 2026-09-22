@@ -1,6 +1,3 @@
-import browser, { type Runtime } from 'webextension-polyfill';
-import { APIs } from '@/share/core/constant';
-import emitter from '@/share/core/emitter';
 import { getLocal, getSingle } from '@/share/core/storage';
 import Api from '@/share/pages/api';
 import { createDriveComponent, type FileItem } from './base-drive';
@@ -60,7 +57,6 @@ const getAuth = async () => {
   if (!authInfo) {
     return null;
   }
-  console.log('authInfo', authInfo, Date.now());
   if (authInfo.expires_at <= Date.now()) {
     await storage.remove('drive_google');
     return null;
@@ -90,29 +86,9 @@ const handleLogin = async (access_token: string) => {
 const GoogleDrive = createDriveComponent({
   name: 'GoogleDrive',
   key: 'google-drive',
-  onMounted: () => {
-    const handler: Runtime.OnMessageListenerNoResponse = (
-      request: any,
-      sender,
-    ) => {
-      if (
-        request.method === APIs.ON_DRIVE_LOGIN &&
-        request.type === 'google-drive'
-      ) {
-        const accessToken = request.accessToken;
-        if (sender.tab?.id) {
-          browser.tabs.remove(sender.tab.id);
-        }
-        emitter.emit(emitter.INNER_DRIVE_LOADING, 'google-drive');
-        handleLogin(accessToken).finally(() =>
-          emitter.emit(emitter.INNER_DRIVE_READY, 'google-drive'),
-        );
-      }
-    };
-    browser.runtime.onMessage.addListener(handler);
-    return () => {
-      browser.runtime.onMessage.removeListener(handler);
-    };
+  handleLoginMessage: async (request: any) => {
+    const accessToken = request.accessToken;
+    await handleLogin(accessToken);
   },
   checkAuth: async () => {
     const auth = await getAuth();

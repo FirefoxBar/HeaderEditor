@@ -8,9 +8,11 @@ import {
 import { Button, Input, Space, Spin, Table } from '@douyinfe/semi-ui';
 import { useRequest } from 'ahooks';
 import { useEffect, useState } from 'react';
+import browser, { type Runtime } from 'webextension-polyfill';
 import { withErrorBoundary } from '@/share/components/error-boundary';
 import Modal from '@/share/components/modal';
 import { t } from '@/share/core/browser';
+import { APIs } from '@/share/core/constant';
 import emitter from '@/share/core/emitter';
 import { save as saveFile } from '@/share/pages/file';
 import { Toast } from '@/share/pages/toast';
@@ -38,6 +40,7 @@ interface Drive {
   downloadFile: (file: FileItem) => Promise<string>;
   deleteFile: (file: FileItem) => Promise<void>;
   writeFile: (fileName: string, content: string) => Promise<void>;
+  handleLoginMessage?: (request: any) => Promise<void>;
 }
 
 interface ActionBtnProps extends ImportAndExportContext {
@@ -244,9 +247,36 @@ const createDriveComponent = (drive: Drive) => {
         }
       };
 
-      let onMounted: ReturnType<NonNullable<Drive['onMounted']>>;
+      const unmount: Array<() => void> = [];
       if (drive.onMounted) {
-        onMounted = drive.onMounted();
+        const unmountHandler = drive.onMounted();
+        if (unmountHandler) {
+          unmount.push(unmountHandler);
+        }
+      }
+
+      if (drive.handleLoginMessage) {
+        const handler: Runtime.OnMessageListenerNoResponse = (
+          request: any,
+          sender,
+        ) => {
+          if (
+            request.method === APIs.ON_DRIVE_LOGIN &&
+            request.type === drive.key
+          ) {
+            if (sender.tab?.id) {
+              browser.tabs.remove(sender.tab.id);
+            }
+            emitter.emit(emitter.INNER_DRIVE_LOADING, drive.key);
+            drive.handleLoginMessage!(request).finally(() =>
+              emitter.emit(emitter.INNER_DRIVE_READY, drive.key),
+            );
+          }
+        };
+        browser.runtime.onMessage.addListener(handler);
+        unmount.push(() => {
+          browser.runtime.onMessage.removeListener(handler);
+        });
       }
 
       emitter.on(emitter.INNER_DRIVE_READY, handleDriveReady);
@@ -255,9 +285,7 @@ const createDriveComponent = (drive: Drive) => {
       return () => {
         emitter.off(emitter.INNER_DRIVE_READY, handleDriveReady);
         emitter.off(emitter.INNER_DRIVE_LOADING, handleDriveLoading);
-        if (onMounted) {
-          onMounted();
-        }
+        unmount.forEach(handler => handler());
       };
     }, []);
 
