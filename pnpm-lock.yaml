@@ -15,6 +15,9 @@ importers:
 
   .:
     dependencies:
+      '@bradenmacdonald/s3-lite-client':
+        specifier: ^1.0.0
+        version: 1.0.0
       '@codemirror/lang-javascript':
         specifier: ^6.1.4
         version: 6.1.4
@@ -241,6 +244,9 @@ packages:
     engines: {node: '>=14.21.3'}
     cpu: [x64]
     os: [win32]
+
+  '@bradenmacdonald/s3-lite-client@1.0.0':
+    resolution: {integrity: sha512-j83jujGwsJDfXPybSF+wA3orT9hO9xIM1HseCk9IDCmdn3zU2WdCK3vk6DSuys7VilB/cVNXcmb7zOpUgor/jQ==}
 
   '@codemirror/autocomplete@6.4.2':
     resolution: {integrity: sha512-8WE2xp+D0MpWEv5lZ6zPW1/tf4AGb358T5GWYiKEuCP8MvFfT3tH2mIF9Y2yr2e3KbHuSvsVhosiEyqCpiJhZQ==}
@@ -3327,6 +3333,8 @@ snapshots:
 
   '@biomejs/cli-win32-x64@2.1.2':
     optional: true
+
+  '@bradenmacdonald/s3-lite-client@1.0.0': {}
 
   '@codemirror/autocomplete@6.4.2':
     dependencies:

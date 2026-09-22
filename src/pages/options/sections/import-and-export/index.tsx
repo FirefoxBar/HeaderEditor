@@ -10,6 +10,7 @@ import { ImportAndExportContext, type ImportContent } from './context';
 import GoogleDrive from './google-drive';
 import LocalFile from './local-file';
 import OneDrive from './onedrive';
+import S3 from './s3';
 import WebDAV from './webdav';
 import Yandex from './yandex';
 
@@ -40,11 +41,11 @@ const ImportAndExport = ({ visible }: Props) => {
           <Card title={t('local_file')}>
             <LocalFile />
           </Card>
-          <Card title={t('browser_sync')}>
-            <BrowserSync />
-          </Card>
           <Card title="WebDAV">
             <WebDAV />
+          </Card>
+          <Card title="S3">
+            <S3 />
           </Card>
         </div>
         <div>
@@ -56,6 +57,9 @@ const ImportAndExport = ({ visible }: Props) => {
           </Card>
           <Card title="Yandex">
             <Yandex />
+          </Card>
+          <Card title={t('browser_sync')}>
+            <BrowserSync />
           </Card>
         </div>
       </ImportAndExportContext.Provider>

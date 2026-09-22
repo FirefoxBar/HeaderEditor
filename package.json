@@ -22,6 +22,7 @@
     "test:unit": "cross-env NODE_OPTIONS=\"$NODE_OPTIONS --experimental-vm-modules\" npx mocha --config ./tests/unit/.mocharc.json"
   },
   "dependencies": {
+    "@bradenmacdonald/s3-lite-client": "^1.0.0",
     "@codemirror/lang-javascript": "^6.1.4",
     "@douyinfe/semi-icons": "^2.83.0",
     "@douyinfe/semi-ui": "^2.83.0",

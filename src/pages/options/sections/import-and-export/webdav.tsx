@@ -185,6 +185,7 @@ const WebDAV = createDriveComponent({
     Modal.confirm({
       title: 'WebDAV',
       icon: null,
+      maskClosable: false,
       content: (
         <Form getFormApi={a => (formApi = a)} initValues={{ path: '/' }}>
           <Form.Input
@@ -219,7 +220,7 @@ const WebDAV = createDriveComponent({
           Toast().error((error as Error).message);
           throw error;
         }
-        getLocal().set({
+        await getLocal().set({
           drive_webdav: auth,
         });
         emitter.emit(emitter.INNER_DRIVE_READY, 'webdav');
