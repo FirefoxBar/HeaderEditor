@@ -1,6 +1,7 @@
 import { Form } from '@douyinfe/semi-ui';
 import type { FormApi } from '@douyinfe/semi-ui/lib/es/form';
 import Modal from '@/share/components/modal';
+import SemiLocale from '@/share/components/semi-locale';
 import { t } from '@/share/core/browser';
 import emitter from '@/share/core/emitter';
 import { getLocal, getSingle } from '@/share/core/storage';
@@ -76,43 +77,49 @@ const S3 = createDriveComponent({
       icon: null,
       maskClosable: false,
       content: (
-        <Form
-          getFormApi={a => (formApi = a)}
-          initValues={{ endPoint: 'https://', region: 'us-east-1', path: '/' }}
-        >
-          <Form.Input
-            field="endPoint"
-            label="Endpoint"
-            placeholder="https://s3.example.com"
-            rules={[{ required: true }, { type: 'url' }]}
-          />
-          <Form.Input
-            field="region"
-            label="Region"
-            rules={[{ required: true }]}
-          />
-          <Form.Input
-            field="bucket"
-            label="Bucket"
-            rules={[{ required: true }]}
-          />
-          <Form.Input
-            field="accessKey"
-            label="Access Key"
-            rules={[{ required: true }]}
-          />
-          <Form.Input
-            field="secretKey"
-            label="Secret Key"
-            type="password"
-            rules={[{ required: true }]}
-          />
-          <Form.Input
-            field="path"
-            label={t('path')}
-            rules={[{ required: true }]}
-          />
-        </Form>
+        <SemiLocale>
+          <Form
+            getFormApi={a => (formApi = a)}
+            initValues={{
+              endPoint: 'https://',
+              region: 'us-east-1',
+              path: '/',
+            }}
+          >
+            <Form.Input
+              field="endPoint"
+              label="Endpoint"
+              placeholder="https://s3.example.com"
+              rules={[{ required: true }, { type: 'url' }]}
+            />
+            <Form.Input
+              field="region"
+              label="Region"
+              rules={[{ required: true }]}
+            />
+            <Form.Input
+              field="bucket"
+              label="Bucket"
+              rules={[{ required: true }]}
+            />
+            <Form.Input
+              field="accessKey"
+              label="Access Key"
+              rules={[{ required: true }]}
+            />
+            <Form.Input
+              field="secretKey"
+              label="Secret Key"
+              type="password"
+              rules={[{ required: true }]}
+            />
+            <Form.Input
+              field="path"
+              label={t('path')}
+              rules={[{ required: true }]}
+            />
+          </Form>
+        </SemiLocale>
       ),
       onOk: async () => {
         const values = await formApi.validate();

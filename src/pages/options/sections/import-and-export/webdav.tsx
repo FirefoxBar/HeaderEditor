@@ -1,6 +1,7 @@
 import { Form } from '@douyinfe/semi-ui';
 import type { FormApi } from '@douyinfe/semi-ui/lib/es/form';
 import Modal from '@/share/components/modal';
+import SemiLocale from '@/share/components/semi-locale';
 import { t } from '@/share/core/browser';
 import emitter from '@/share/core/emitter';
 import { getLocal, getSingle } from '@/share/core/storage';
@@ -187,29 +188,35 @@ const WebDAV = createDriveComponent({
       icon: null,
       maskClosable: false,
       content: (
-        <Form getFormApi={a => (formApi = a)} initValues={{ path: '/' }}>
-          <Form.Input
-            field="url"
-            label={t('match_url')}
-            rules={[{ required: true }, { type: 'url' }]}
-          />
-          <Form.Input
-            field="username"
-            label={t('username')}
-            rules={[{ required: true }]}
-          />
-          <Form.Input
-            field="password"
-            label={t('password')}
-            type="password"
-            rules={[{ required: true }]}
-          />
-          <Form.Input
-            field="path"
-            label={t('path')}
-            rules={[{ required: true }]}
-          />
-        </Form>
+        <SemiLocale>
+          <Form
+            getFormApi={a => (formApi = a)}
+            initValues={{ url: 'https://', path: '/' }}
+          >
+            <Form.Input
+              field="url"
+              label={t('match_url')}
+              placeholder="https://example.com/webdav"
+              rules={[{ required: true }, { type: 'url' }]}
+            />
+            <Form.Input
+              field="username"
+              label={t('username')}
+              rules={[{ required: true }]}
+            />
+            <Form.Input
+              field="password"
+              label={t('password')}
+              type="password"
+              rules={[{ required: true }]}
+            />
+            <Form.Input
+              field="path"
+              label={t('path')}
+              rules={[{ required: true }]}
+            />
+          </Form>
+        </SemiLocale>
       ),
       onOk: async () => {
         const values = await formApi.validate();

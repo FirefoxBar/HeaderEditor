@@ -28,7 +28,7 @@ const style = css`
 
 const Options = withErrorBoundary(({ visible }: OptionsProps) => (
   <section
-    className={`section-options tow-row ${visible ? 'visible' : 'in-visible'}`}
+    className={`section-options two-row ${visible ? 'visible' : 'in-visible'}`}
   >
     <div>
       <Card title={t('options')} className={style}>

@@ -28,14 +28,14 @@ const LocalFile = () => {
   };
 
   return (
-    <Space>
+    <>
       <Button onClick={handleExport} icon={<IconSave />}>
         {t('export')}
       </Button>
       <Button onClick={handleImport} icon={<IconFolderOpen />}>
         {t('import')}
       </Button>
-    </Space>
+    </>
   );
 };
 

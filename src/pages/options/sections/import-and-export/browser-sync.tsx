@@ -1,9 +1,10 @@
 import {
+  IconCloud,
   IconDownload,
   IconExternalOpen,
   IconUpload,
 } from '@douyinfe/semi-icons';
-import { Button, Space, Tag } from '@douyinfe/semi-ui';
+import { Button, Modal, Space, Tag } from '@douyinfe/semi-ui';
 import { css } from '@emotion/css';
 import dayjs from 'dayjs';
 import localizedFormat from 'dayjs/plugin/localizedFormat';
@@ -123,6 +124,7 @@ const browserSync = {
 };
 
 const BrowserSyncComponent = () => {
+  const [visible, setVisible] = useState(false);
   const [has, setHas] = useState(false);
   const [time, setTime] = useState(0);
 
@@ -166,46 +168,64 @@ const BrowserSyncComponent = () => {
   const handleHelp = () => Api.openURL(t('url_cloud_backup'));
 
   return (
-    <div
-      className={css`
-        .next-tag {
-          border: none;
-          margin-bottom: 12px;
-          .next-tag-body {
-            padding-left: 0;
+    <>
+      <Button onClick={() => setVisible(true)} icon={<IconCloud />}>
+        {t('browser_sync')}
+      </Button>
+      <Modal
+        className={css`
+          width: 480px;
+          font-size: 14px;
+
+          .next-tag {
+            border: none;
+
+            .next-tag-body {
+              padding-left: 0;
+            }
           }
+        `}
+        title={t('cloud_backup')}
+        footer={
+          <div className="buttons">
+            <Button
+              type="tertiary"
+              onClick={handleHelp}
+              icon={<IconExternalOpen />}
+            >
+              {t('help')}
+            </Button>
+            <Button
+              theme="solid"
+              type="primary"
+              onClick={handleDownload}
+              disabled={!has}
+              icon={<IconDownload />}
+            >
+              {t('download')}
+            </Button>
+            <Button
+              theme="solid"
+              type="primary"
+              onClick={handleUpload}
+              icon={<IconUpload />}
+            >
+              {t('upload')}
+            </Button>
+          </div>
         }
-      `}
-    >
-      <div style={{ marginBottom: 12 }}>
-        {has && (
+        visible={visible}
+        onCancel={() => setVisible(false)}
+      >
+        {has ? (
           <Tag closable size="large" onClose={handleDelete}>
             {t('cloud_backup_at', dayjs(time).format('lll'))}
           </Tag>
+        ) : (
+          t('cloud_no_backup')
         )}
-        {!has && t('cloud_no_backup')}
-      </div>
-      <Space className="buttons">
-        <Button type="primary" onClick={handleUpload} icon={<IconUpload />}>
-          {t('upload')}
-        </Button>
-        <Button
-          type="primary"
-          onClick={handleDownload}
-          disabled={!has}
-          icon={<IconDownload />}
-        >
-          {t('download')}
-        </Button>
-        <Button
-          type="tertiary"
-          onClick={handleHelp}
-          icon={<IconExternalOpen />}
-        >
-          {t('help')}
-        </Button>
-      </Space>
-    </div>
+      </Modal>
+    </>
   );
 };
 

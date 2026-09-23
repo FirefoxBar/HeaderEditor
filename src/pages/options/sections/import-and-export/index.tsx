@@ -1,4 +1,4 @@
-import { Card } from '@douyinfe/semi-ui';
+import { Card, Space } from '@douyinfe/semi-ui';
 import { useCallback, useRef } from 'react';
 import { withErrorBoundary } from '@/share/components/error-boundary';
 import { t } from '@/share/core/browser';
@@ -32,14 +32,17 @@ const ImportAndExport = ({ visible }: Props) => {
 
   return (
     <section
-      className={`section-import-export tow-row ${visible ? 'visible' : 'in-visible'}`}
+      className={`section-import-export two-row ${visible ? 'visible' : 'in-visible'}`}
     >
       <ImportAndExportContext.Provider
         value={{ startImport, getExportContent }}
       >
         <div>
           <Card title={t('local_file')}>
-            <LocalFile />
+            <Space>
+              <LocalFile />
+              <BrowserSync />
+            </Space>
           </Card>
           <Card title="WebDAV">
             <WebDAV />
@@ -57,9 +60,6 @@ const ImportAndExport = ({ visible }: Props) => {
           </Card>
           <Card title="Yandex">
             <Yandex />
-          </Card>
-          <Card title={t('browser_sync')}>
-            <BrowserSync />
           </Card>
         </div>
       </ImportAndExportContext.Provider>

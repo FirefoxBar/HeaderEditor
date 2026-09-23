@@ -235,19 +235,29 @@ const createDriveComponent = (drive: Drive) => {
     });
 
     useEffect(() => {
+      const unmount: Array<() => void> = [];
+
       const handleDriveReady = (key: string) => {
         if (drive.key === key) {
           setLoading(false);
           refreshAuth();
         }
       };
+      emitter.on(emitter.INNER_DRIVE_READY, handleDriveReady);
+      unmount.push(() =>
+        emitter.off(emitter.INNER_DRIVE_READY, handleDriveReady),
+      );
+
       const handleDriveLoading = (key: string) => {
         if (drive.key === key) {
           setLoading(true);
         }
       };
+      emitter.on(emitter.INNER_DRIVE_LOADING, handleDriveLoading);
+      unmount.push(() =>
+        emitter.off(emitter.INNER_DRIVE_LOADING, handleDriveLoading),
+      );
 
-      const unmount: Array<() => void> = [];
       if (drive.onMounted) {
         const unmountHandler = drive.onMounted();
         if (unmountHandler) {
@@ -274,19 +284,10 @@ const createDriveComponent = (drive: Drive) => {
           }
         };
         browser.runtime.onMessage.addListener(handler);
-        unmount.push(() => {
-          browser.runtime.onMessage.removeListener(handler);
-        });
+        unmount.push(() => browser.runtime.onMessage.removeListener(handler));
       }
 
-      emitter.on(emitter.INNER_DRIVE_READY, handleDriveReady);
-      emitter.on(emitter.INNER_DRIVE_LOADING, handleDriveLoading);
-
-      return () => {
-        emitter.off(emitter.INNER_DRIVE_READY, handleDriveReady);
-        emitter.off(emitter.INNER_DRIVE_LOADING, handleDriveLoading);
-        unmount.forEach(handler => handler());
-      };
+      return () => unmount.forEach(handler => handler());
     }, []);
 
     if (authLoading || loading) {
