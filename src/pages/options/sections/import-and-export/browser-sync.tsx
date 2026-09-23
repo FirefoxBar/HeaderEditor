@@ -185,7 +185,7 @@ const BrowserSyncComponent = () => {
             }
           }
         `}
-        title={t('cloud_backup')}
+        title={t('browser_sync')}
         footer={
           <div className="buttons">
             <Button

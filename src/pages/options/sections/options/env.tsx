@@ -13,7 +13,8 @@ const Env = () => {
     {
       manual: true,
       onSuccess: data => {
-        switch (data[0]) {
+        const statusText = 'status' in data ? data.status : data[0];
+        switch (statusText) {
           case 'no_update':
             Toast().info(t('no_update'));
             break;
@@ -24,7 +25,7 @@ const Env = () => {
             Toast().success(t('update_available'));
             break;
           default:
-            Toast().info(data[0]);
+            Toast().info(statusText as string);
         }
       },
     },
