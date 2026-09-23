@@ -12,55 +12,6 @@ export function trimNewLines(s: string) {
   return s.replace(/^[\s\n]+/, '').replace(/[\s\n]+$/, '');
 }
 
-interface FetchUrlParam {
-  post?: any;
-  query?: any;
-  url: string;
-  header?: { [key: string]: string };
-}
-export async function fetchUrl(param: FetchUrlParam) {
-  const fetchParam: RequestInit = {
-    method: param.post ? 'POST' : 'GET',
-  };
-  const headers: Record<string, string> = {};
-  let { url } = param;
-  if (param.query) {
-    url += `?${new URLSearchParams(param.query).toString()}`;
-  }
-  if (fetchParam.method === 'POST') {
-    // 遍历一下，查找是否有File
-    let hasFile = false;
-    for (const name in param.post) {
-      if (param.post[name] instanceof File) {
-        hasFile = true;
-        break;
-      }
-    }
-    if (hasFile) {
-      const formBody = new FormData();
-      for (const name in param.post) {
-        if (param.post[name] instanceof File) {
-          formBody.append(name, param.post[name], param.post[name].name);
-        } else {
-          formBody.append(name, param.post[name]);
-        }
-      }
-      fetchParam.body = formBody;
-    } else {
-      headers['Content-Type'] = 'application/x-www-form-urlencoded';
-      fetchParam.body = new URLSearchParams(param.post).toString();
-    }
-  }
-  if (param.header) {
-    Object.keys(param.header).forEach(name => {
-      headers[name] = param.header![name];
-    });
-  }
-  fetchParam.headers = headers;
-  const res = await fetch(url, fetchParam);
-  return res.text();
-}
-
 export function getTableName(ruleType: RULE_TYPE): TABLE_NAMES {
   switch (ruleType) {
     case RULE_TYPE.CANCEL:

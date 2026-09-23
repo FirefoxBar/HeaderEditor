@@ -1,13 +1,17 @@
-import { IconDownload, IconSearch } from '@douyinfe/semi-icons';
+import {
+  IconDelete,
+  IconDownload,
+  IconEdit,
+  IconSearch,
+} from '@douyinfe/semi-icons';
 import { Button, Card, Input, Space, Table, Toast } from '@douyinfe/semi-ui';
 import { css } from '@emotion/css';
-import { useGetState } from 'ahooks';
+import { useGetState, useRequest } from 'ahooks';
 import React, { useCallback, useEffect, useRef, useState } from 'react';
 import { openURL } from '@/pages/background/utils';
 import { withErrorBoundary } from '@/share/components/error-boundary';
 import { t } from '@/share/core/browser';
 import { getLocal } from '@/share/core/storage';
-import { fetchUrl } from '@/share/core/utils';
 import ImportDrawer from '../../components/import-drawer';
 
 interface IEProps {
@@ -17,7 +21,6 @@ interface IEProps {
 function DownloadPage({ visible }: IEProps) {
   const importRef = useRef<ImportDrawer>(null);
   const [downloadUrl, setDownloadUrl, getDownloadUrl] = useGetState<string>('');
-  const [downloading, setDownloading] = useState<boolean>(false);
   const [downloadHistory, setDownloadHistory, getDownloadHistory] = useGetState<
     string[]
   >([]);
@@ -33,29 +36,29 @@ function DownloadPage({ visible }: IEProps) {
       });
   }, []);
 
-  const handleDownload = useCallback(async () => {
-    setDownloading(true);
-    try {
-      const u = getDownloadUrl();
-      const res = await fetchUrl({
-        url: u,
-      });
-      importRef.current!.show(JSON.parse(res));
-
-      if (!getDownloadHistory().includes(u)) {
-        setDownloadHistory(prev => {
-          const result = [...prev, u];
-          getLocal().set({
-            dl_history: result,
+  const { run: startDownload, loading: downloading } = useRequest(
+    (url: string) => fetch(url).then(res => res.json()),
+    {
+      manual: true,
+      onSuccess: (data, params) => {
+        importRef.current!.show(data);
+        if (!getDownloadHistory().includes(params[0])) {
+          setDownloadHistory(prev => {
+            const result = [...prev, params[0]];
+            getLocal().set({
+              dl_history: result,
+            });
+            return result;
           });
-          return result;
-        });
-      }
-    } catch (e) {
-      Toast.error((e as Error).message);
-      setDownloading(false);
-    }
-  }, []);
+        }
+      },
+      onError: e => {
+        Toast.error((e as Error).message);
+      },
+    },
+  );
+
+  const handleDownload = useCallback(() => startDownload(getDownloadUrl()), []);
 
   return (
     <section
@@ -108,24 +111,22 @@ function DownloadPage({ visible }: IEProps) {
               render: (_, record) => (
                 <Space>
                   <Button
-                    size="small"
-                    onClick={() => {
-                      setDownloadUrl(record.url);
-                      handleDownload();
-                    }}
+                    theme="borderless"
+                    icon={<IconDownload />}
+                    onClick={() => startDownload(record.url)}
                   >
                     {t('download')}
                   </Button>
                   <Button
-                    size="small"
-                    onClick={() => {
-                      setDownloadUrl(record.url);
-                    }}
+                    theme="borderless"
+                    icon={<IconEdit />}
+                    onClick={() => setDownloadUrl(record.url)}
                   >
                     {t('edit')}
                   </Button>
                   <Button
-                    size="small"
+                    theme="borderless"
+                    icon={<IconDelete />}
                     onClick={() => {
                       const newHistory = [...downloadHistory];
                       const index = newHistory.indexOf(record.url);
