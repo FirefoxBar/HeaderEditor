@@ -7,11 +7,11 @@ import {
 import { Button, Card, Input, Space, Table, Toast } from '@douyinfe/semi-ui';
 import { css } from '@emotion/css';
 import { useGetState, useRequest } from 'ahooks';
-import React, { useCallback, useEffect, useRef, useState } from 'react';
+import { useCallback, useEffect, useRef } from 'react';
 import { openURL } from '@/pages/background/utils';
 import { withErrorBoundary } from '@/share/components/error-boundary';
 import { t } from '@/share/core/browser';
-import { getLocal } from '@/share/core/storage';
+import { getLocal, getSingle } from '@/share/core/storage';
 import ImportDrawer from '../../components/import-drawer';
 
 interface IEProps {
@@ -27,13 +27,11 @@ function DownloadPage({ visible }: IEProps) {
 
   useEffect(() => {
     // Load download history
-    getLocal()
-      .get('dl_history')
-      .then(r => {
-        if (Array.isArray(r.dl_history)) {
-          setDownloadHistory(r.dl_history);
-        }
-      });
+    getSingle(getLocal(), 'dl_history').then(r => {
+      if (Array.isArray(r)) {
+        setDownloadHistory(r);
+      }
+    });
   }, []);
 
   const { run: startDownload, loading: downloading } = useRequest(

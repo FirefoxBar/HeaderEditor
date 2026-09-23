@@ -23,6 +23,7 @@ const baseManifest = {
         'https://ext.firefoxcn.net/login/callback/*',
         'https://oauth.yandex.ru/verification_code*',
       ],
+      run_at: 'document_start',
       js: ['scripts/content-cloud-drive.js'],
     },
   ],
