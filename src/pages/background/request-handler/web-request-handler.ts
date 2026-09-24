@@ -120,59 +120,6 @@ class WebRequestHandler {
     browser.webRequest.onHeadersReceived.removeListener(this.handleReceived);
   }
 
-  // Current not work
-  private checkHooks() {
-    const { onBeforeRequest, onBeforeSendHeaders, onHeadersReceived } =
-      browser.webRequest;
-
-    if (this.disableAll) {
-      return;
-    }
-
-    if (!onBeforeRequest.hasListener(this.handleBeforeRequest)) {
-      const rules = getRules(TABLE_NAMES.request, {
-        runner: 'web_request',
-      });
-      if (isValidArray(rules)) {
-        onBeforeRequest.addListener(
-          this.handleBeforeRequest,
-          { urls: ['<all_urls>'] },
-          ['blocking'],
-        );
-      }
-    }
-
-    if (!onBeforeSendHeaders.hasListener(this.handleBeforeSend)) {
-      const rules = getRules(TABLE_NAMES.sendHeader, {
-        runner: 'web_request',
-      });
-      if (isValidArray(rules)) {
-        onBeforeSendHeaders.addListener(
-          this.handleBeforeSend,
-          { urls: ['<all_urls>'] },
-          createHeaderListener('requestHeaders'),
-        );
-      }
-    }
-
-    if (!onHeadersReceived.hasListener(this.handleReceived)) {
-      const rules = getRules(TABLE_NAMES.receiveHeader, {
-        runner: 'web_request',
-      });
-      // response also can modify headers
-      const respRules = getRules(TABLE_NAMES.receiveBody, {
-        runner: 'web_request',
-      });
-      if (isValidArray(rules) || isValidArray(respRules)) {
-        onHeadersReceived.addListener(
-          this.handleReceived,
-          { urls: ['<all_urls>'] },
-          createHeaderListener('responseHeaders'),
-        );
-      }
-    }
-  }
-
   private loadPrefs() {
     emitter.on(emitter.EVENT_PREFS_UPDATE, (key: string, val: any) => {
       switch (key) {
