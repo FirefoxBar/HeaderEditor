@@ -47,9 +47,8 @@ interface CustomFunctionDetail {
   browser: 'firefox' | 'chrome';
 }
 
-function createHeaderListener(type: string): any {
-  const result = ['blocking'];
-  result.push(type);
+function createHeaderListener(spec: string): any {
+  const result = ['blocking', spec];
   if (
     IS_CHROME &&
     Object.hasOwn(chrome.webRequest.OnBeforeSendHeadersOptions, 'EXTRA_HEADERS')
@@ -93,7 +92,7 @@ class WebRequestHandler {
       onBeforeRequest.addListener(
         this.handleBeforeRequest,
         { urls: ['<all_urls>'] },
-        ['blocking'],
+        ['blocking', 'requestBody'],
       );
     }
     if (!onBeforeSendHeaders.hasListener(this.handleBeforeSend)) {
@@ -340,8 +339,7 @@ class WebRequestHandler {
       method: request.method,
       frame: request.frameId,
       parentFrame: request.parentFrameId,
-      // @ts-ignore
-      proxy: request.proxyInfo || null,
+      proxy: (request as any).proxyInfo || null,
       type: request.type,
       time: request.timeStamp,
       originUrl: request.originUrl || '',
@@ -353,14 +351,17 @@ class WebRequestHandler {
       browser: BROWSER_TYPE,
     };
 
-    ['statusCode', 'statusLine', 'requestHeaders', 'responseHeaders'].forEach(
-      p => {
-        if (p in request) {
-          // @ts-ignore
-          details[p] = request[p];
-        }
-      },
-    );
+    [
+      'statusCode',
+      'statusLine',
+      'requestHeaders',
+      'responseHeaders',
+      'requestBody',
+    ].forEach(p => {
+      if (p in request) {
+        (details as any)[p] = (request as any)[p];
+      }
+    });
 
     return details;
   }
