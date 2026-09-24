@@ -8,6 +8,10 @@ title: 自訂函數
 
 自訂函數也受比較規則和排除規則的限制。只有滿足比較規則且不滿足排除規則的要求會被自訂函數處理。
 
+注意：
+* 規則的執行順序是不確定的。請勿依賴規則的執行順序來實現功能。
+* 在可以使用一般規則完成的情況下，請盡量使用一般規則，而非自訂函數。
+
 自訂函數的優先等級不是確定的。可能自訂函數比普通規則更早的作用到要求上，也可能更遲。多個自訂函數的執行順序也不定。
 
 在可以使用普通規則完成的情況下，請盡量使用普通規則，而不是自訂函數
@@ -15,7 +19,7 @@ title: 自訂函數
 自訂函數編寫**不包括**函數頭尾，只包括函數主體。即：
 
 ```javascript
-function(val, detail) { //不包括這一行
+function customFunction(val, detail) { //不包括這一行
 // 你需要編寫的部分
 } //不包括這一行
 ```
@@ -28,7 +32,7 @@ function(val, detail) { //不包括這一行
 
 ## 重新導向要求
 
-傳入參數為完整URL的字串，若函數不處理可返回NULL或原參數。例如，下面語法會將要求都加上一個`_test`：
+傳入參數為完整URL的字串，若函數不處理可返回`null`或原參數。例如，下面語法會將要求都加上一個`_test`：
 
 ```javascript
 if (val.includes('_test.')) {
@@ -57,9 +61,9 @@ if (val.includes('utm_source')) {
 因JS傳遞Object時是參照傳遞，因此自訂函數不需要任何傳回值，只需要變更傳入的參數即可生效。例如，此語法會將`User-Agent`加上` HE/2.0.0`：
 
 ```javascript
-for (let a in val) {
-	if (val[a].name.toLowerCase() === 'user-agent') {
-		val[a].value += ' HE/2.0.0';
+for (const item of val) {
+	if (item.name.toLowerCase() === 'user-agent') {
+		item.value += ' HE/2.0.0';
 		break;
 	}
 }
@@ -68,9 +72,9 @@ for (let a in val) {
 注意：浏览器要求value必须是String，即：
 
 ```javascript
-let value = 123;
-val.push({"name": "test", "value": value}); //不合法，因为value是number
-val.push({"name": "test", "value": value.toString()}); //合法
+const value = 123;
+val.push({"name": "test", "value": value}); // 不合法，因为value是number
+val.push({"name": "test", "value": String(value)}); // 合法
 ```
 
 ## detail对象

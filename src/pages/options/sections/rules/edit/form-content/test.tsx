@@ -104,7 +104,7 @@ const Test = () => {
 
   return (
     <>
-      <Input value={url} onChange={setUrl} />
+      <Input value={url} onChange={setUrl} placeholder="https://..." />
       <pre>{result}</pre>
     </>
   );

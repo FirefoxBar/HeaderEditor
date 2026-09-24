@@ -8,14 +8,14 @@ title: 自定义函数
 
 自定义函数也受匹配规则和排除规则的限制。只有满足匹配规则且不满足排除规则的请求会被自定义函数处理。
 
-自定义函数的优先级不是确定的。可能自定义函数比普通规则更早的作用到请求上，也可能更迟。多个自定义函数的执行顺序也不定。
-
-在可以使用普通规则完成的情况下，请尽量使用普通规则，而不是自定义函数
+注意：
+* 规则的执行顺序是不确定的。不要依赖于规则的执行顺序来实现功能。
+* 在可以使用普通规则完成的情况下，请尽量使用普通规则，而不是自定义函数
 
 自定义函数编写**不包括**函数头尾，只包括函数主体。即：
 
 ```javascript
-function(val, detail) { //不包括这一行
+function customFunction(val, detail) { //不包括这一行
 // 你需要编写的部分
 } //不包括这一行
 ```
@@ -28,7 +28,7 @@ function(val, detail) { //不包括这一行
 
 ## 重定向请求
 
-传入参数为完整URL的字符串，若函数不处理可返回NULL或原参数。例如，下面代码会将请求都加上一个`_test`：
+传入参数为完整URL的字符串，若函数不处理可返回`null`或原参数。例如，下面代码会将请求都加上一个`_test`：
 
 ```javascript
 if (val.includes('_test.')) {
@@ -57,9 +57,9 @@ if (val.includes('utm_source')) {
 因JS传递Object时是引用传递，因此自定义函数不需要任何返回值，只需要修改传入的参数即可生效。例如，此代码会将`User-Agent`加上` HE/2.0.0`：
 
 ```javascript
-for (const a in val) {
-	if (val[a].name.toLowerCase() === 'user-agent') {
-		val[a].value += ' HE/2.0.0';
+for (const item of val) {
+	if (item.name.toLowerCase() === 'user-agent') {
+		item.value += ' HE/2.0.0';
 		break;
 	}
 }
@@ -68,12 +68,12 @@ for (const a in val) {
 注意：浏览器要求value必须是String，即：
 
 ```javascript
-let value = 123;
-val.push({"name": "test", "value": value}); //不合法，因为value是number
-val.push({"name": "test", "value": value.toString()}); //合法
+const value = 123;
+val.push({"name": "test", "value": value}); // 不合法，因为 value 是 number
+val.push({"name": "test", "value": String(value)}); // 合法
 ```
 
-## detail对象
+## detail 对象
 
 自2.3.0开始，自定义函数增加参数`detail`，用于实现更精确的控制
 

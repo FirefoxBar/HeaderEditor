@@ -4,6 +4,10 @@ title: Rule
 
 ## Rule
 
+HE itself does not possess any built-in functionality; it merely provides the capability to manage and write rules. You must write rules to implement the desired functionality.
+
+Note: The execution order of rules is indeterminate. Do not rely on the execution order of rules to implement functionality.
+
 ### Match type
 
 Rules will apply to the URL that meets the matching criteria. If multiple conditions are checked, all conditions must be met at the same time for this rule to be applied.

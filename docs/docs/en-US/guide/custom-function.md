@@ -15,7 +15,7 @@ When you can use normal rules to complete the case, please try to use the genera
 Custom function writing does **NOT** include the function head and tail, including only the function body. which is:
 
 ```javascript
-function(val, detail) { // does not include this line
+function customFunction(val, detail) { // does not include this line
 // The codes you need to write
 } // does not include this line
 ```
@@ -28,7 +28,7 @@ The custom function passes the arguments `val` and `detail`, where `detail` is t
 
 ## Redirect request
 
-Pass the string with the full URL, if the function is not processed to return NULL or the original argument. For example, the following code will add a `_test` to every request:
+Pass the string with the full URL, if the function is not processed to return `null` or the original argument. For example, the following code will add a `_test` to every request:
 
 ```javascript
 if (val.includes('_test.')) {
@@ -57,9 +57,9 @@ The incoming parameter is an array containing all header information in the foll
 Because JS pass the Object by reference, the custom function does not need any return value, only need to modify the incoming parameters to take effect. For example, this code will add ` HE/2.0.0` to the end of `User-Agent`:
 
 ```javascript
-for (const a in val) {
-	if (val[a].name.toLowerCase() === 'user-agent') {
-		val[a].value += ' HE/2.0.0';
+for (const item of val) {
+	if (item.name.toLowerCase() === 'user-agent') {
+		item.value += ' HE/2.0.0';
 		break;
 	}
 }
@@ -68,9 +68,9 @@ for (const a in val) {
 Note: the browser requires that value must be String, i.e.
 
 ```javascript
-let value = 123;
-val.push({"name": "test", "value": value}); //Invalid, because value is number
-val.push({"name": "test", "value": value.toString()}); //Valid
+const value = 123;
+val.push({"name": "test", "value": value}); // Invalid, because value is number
+val.push({"name": "test", "value": String(value)}); // Valid
 ```
 
 ## detail object
