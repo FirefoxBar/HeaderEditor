@@ -19,6 +19,7 @@ import { convertToRule } from '@/share/core/rule-utils';
 import type { Rule } from '@/share/core/types';
 import Api from '@/share/pages/api';
 import isDarkMode from '@/share/pages/is-dark-mode';
+import Help from './help';
 import { Message } from './message';
 import Download from './sections/download';
 import GroupSelect from './sections/group-select';
@@ -119,22 +120,7 @@ const Options = () => {
           <OptionsSection visible={active === 'options'} />
           <ImportAndExportSection visible={active === 'export_and_import'} />
           <Download visible={active === 'download'} />
-          {active === 'help' && (
-            <div
-              className={css`
-            width: 100%;
-            height: 100%;
-
-            > iframe {
-              border: 0;
-              width: 100%;
-              height: 100%;
-            }
-          `}
-            >
-              <iframe src={t('url_help')} />
-            </div>
-          )}
+          <Help visible={active === 'help'} />
         </main>
         <GroupSelect />
         <Edit visible={editShow} rule={editRule} onClose={handleEditClose} />

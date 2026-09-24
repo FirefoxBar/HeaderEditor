@@ -50,5 +50,14 @@ export default defineConfig({
         IS_DEV: JSON.stringify(true),
       },
     },
+    html: {
+      tags: [
+        {
+          tag: 'script',
+          children:
+            ';(function(){var a=new URLSearchParams(location.search);a.has("is_dark")&&(a="1"===a.get("is_dark"),document.documentElement.classList.toggle("dark",a),document.documentElement.style.colorScheme=a?"dark":"light")})()',
+        },
+      ],
+    },
   },
 });
