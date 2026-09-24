@@ -106,7 +106,7 @@ jobs:
         AMO_KEY: ${{ secrets.ORG_AMO_KEY }}
         AMO_SECRET: ${{ secrets.ORG_AMO_SECRET }}
         CRX_PRIV_KEY: ${{ secrets.CRX_PRIV_KEY }}
-        PACK_PLATFORM: xpi,crx
+        PACK_PLATFORM: crx
     - name: Upload snapshot release
       uses: actions/upload-artifact@v7
       with:
