@@ -10,7 +10,7 @@ import { Nav } from '@douyinfe/semi-ui';
 import type { OnSelectedData } from '@douyinfe/semi-ui/lib/es/navigation';
 import { css } from '@emotion/css';
 import { useGetState, useResponsive } from 'ahooks';
-import React, { useCallback, useEffect, useRef, useState } from 'react';
+import React, { useCallback, useEffect, useState } from 'react';
 import ReactDOM from 'react-dom/client';
 import SemiLocale from '@/share/components/semi-locale';
 import { t } from '@/share/core/browser';
@@ -34,8 +34,6 @@ const Options = () => {
   const [editRule, setEditRule] = useState<Rule>();
   const [navCollapse, setNavCollapse, getNavCollapse] = useGetState(false);
   const [active, setActive, getActive] = useGetState('rules');
-  // 保存切换到帮助前是否为展开状态
-  const isCollapsedRef = useRef(true);
 
   const responsive = useResponsive();
 
@@ -55,14 +53,6 @@ const Options = () => {
       return;
     }
     if (newActive && newActive !== getActive()) {
-      if (newActive === 'help') {
-        isCollapsedRef.current = getNavCollapse();
-      }
-      if (getActive() === 'help') {
-        setNavCollapse(isCollapsedRef.current);
-      } else {
-        setNavCollapse(getNavCollapse() || newActive === 'help');
-      }
       setActive(newActive);
       window.scrollTo(0, 0);
     }
