@@ -9,13 +9,10 @@ interface Props {
 const Help = ({ visible }: Props) => {
   const [render, setRender] = useState(false);
 
-  const isDark = isDarkMode();
+  const isDark = isDarkMode() ? 1 : 0;
   let helpUrl = t('url_help');
-  if (isDark) {
-    helpUrl = helpUrl.includes('?')
-      ? `${helpUrl}&is_dark=1`
-      : `${helpUrl}?is_dark=1`;
-  }
+  const gap = helpUrl.includes('?') ? '&' : '?';
+  helpUrl = `${helpUrl}${gap}is_dark=${isDark}`;
 
   useEffect(() => {
     if (visible) {
