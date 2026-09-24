@@ -77,9 +77,9 @@ function getManifest(browser, options) {
 
   if (config.ENABLE_DNR || config.ENABLE_WEB_REQUEST) {
     if (config.MANIFEST_VER === 'v3') {
-      manifest.host_permissions = ['*://*/*'];
+      manifest.host_permissions = ['*://*/*', 'ws://*/*', 'wss://*/*'];
     } else {
-      manifest.permissions.push('*://*/*');
+      manifest.permissions.push('*://*/*', 'ws://*/*', 'wss://*/*');
     }
   }
 
