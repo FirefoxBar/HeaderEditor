@@ -1,0 +1,749 @@
+{
+  "action": {
+    "message": "작업",
+    "description": "Table title in management page"
+  },
+  "add": {
+    "message": "추가",
+    "description": "Button to add somethings"
+  },
+  "all_rules": {
+    "message": "모든 규칙",
+    "description": "Options"
+  },
+  "auto": {
+    "message": "자동",
+    "description": "Auto detect dark mode"
+  },
+  "auto_enable_modify_body": {
+    "message": "'응답 본문 수정'이 자동으로 활성화되었습니다. 필요하지 않은 경우 수동으로 비활성화해 주세요.",
+    "description": "A message"
+  },
+  "backup_list": {
+    "message": "백업 목록",
+    "description": "Backup list title"
+  },
+  "basic_information": {
+    "message": "기본 정보",
+    "description": "Basic information of a rule"
+  },
+  "batch_delete": {
+    "message": "일괄 삭제",
+    "description": "Button to delete multiple rules"
+  },
+  "batch_mode": {
+    "message": "일괄 작업",
+    "description": "Button to enter batch operation mode"
+  },
+  "browser_sync": {
+    "message": "브라우저 동기화",
+    "description": "Browser sync feature"
+  },
+  "browser_version": {
+    "message": "브라우저 버전",
+    "description": "Browser version"
+  },
+  "cancel": {
+    "message": "취소",
+    "description": "Button to close modal without save"
+  },
+  "check_update": {
+    "message": "업데이트 확인",
+    "description": "Check for updates"
+  },
+  "choose": {
+    "message": "선택",
+    "description": "Choose a group"
+  },
+  "clone": {
+    "message": "복제",
+    "description": "Clone rule"
+  },
+  "cloud_backup": {
+    "message": "클라우드 백업",
+    "description": "Cloud backup button"
+  },
+  "cloud_backup_at": {
+    "message": "마지막 백업: $date$",
+    "description": "Display last backup time if any backup found",
+    "placeholders": {
+      "date": {
+        "content": "$1"
+      }
+    }
+  },
+  "cloud_no_backup": {
+    "message": "백업 없음",
+    "description": "Display if no backup found"
+  },
+  "cloud_over_limit": {
+    "message": "백업 크기 제한 초과",
+    "description": "Message display when exceeded backup size limit"
+  },
+  "code": {
+    "message": "코드",
+    "description": "Label for code section in modal"
+  },
+  "code_empty": {
+    "message": "코드는 비워둘 수 없습니다.",
+    "description": "Tips when a rule is custom function but code is empty"
+  },
+  "common_mark": {
+    "message": "즐겨찾기로 설정",
+    "description": "Mark a rule/group as common, it will display at the popup panel"
+  },
+  "common_mark_tip": {
+    "message": "규칙이나 그룹을 즐겨찾기로 설정하면 여기에 표시됩니다.",
+    "description": "Display at the popup panel"
+  },
+  "common_unmark": {
+    "message": "즐겨찾기 해제",
+    "description": "Unmark a common rule/group"
+  },
+  "created_time": {
+    "message": "생성 시간",
+    "description": "Created time title"
+  },
+  "dark_mode": {
+    "message": "다크 모드",
+    "description": "Dark mode select"
+  },
+  "dark_mode_help": {
+    "message": "다크 모드는 실험적 기능입니다. 효과를 확인하려면 페이지를 새로고침하세요.",
+    "description": "Dark help text"
+  },
+  "debug_mode_enable": {
+    "message": "디버그 모드 활성화",
+    "description": "Enable debug mode"
+  },
+  "debug_mode_enable_help": {
+    "message": "디버그 모드가 활성화되면 백그라운드 페이지에 로그가 출력됩니다.",
+    "description": "Debug mode description"
+  },
+  "delete": {
+    "message": "삭제",
+    "description": "Delete button"
+  },
+  "delete_confirm": {
+    "message": "이 규칙들을 삭제하시겠습니까?",
+    "description": "A confirmation box shows when user want to delete rules"
+  },
+  "delete_file_confirm": {
+    "message": "\"$name$\" 파일을 삭제하시겠습니까?",
+    "description": "Delete file confirm dialog",
+    "placeholders": {
+      "name": {
+        "content": "$1"
+      }
+    }
+  },
+  "delete_single_confirm": {
+    "message": "\"$rule$\" 규칙을 삭제하시겠습니까?",
+    "description": "A confirmation box shows when user want to delete a rule",
+    "placeholders": {
+      "rule": {
+        "content": "$1"
+      }
+    }
+  },
+  "description": {
+    "message": "브라우저 요청 관리",
+    "description": "Extension description"
+  },
+  "disable": {
+    "message": "비활성화",
+    "description": "disable"
+  },
+  "display_common_header": {
+    "message": "편집 시 일반적인 헤더 표시",
+    "description": "An option to enable header auto-complete when editing rules"
+  },
+  "display_common_header_help": {
+    "message": "규칙 편집 시 일반적인 요청 및 응답 헤더 이름을 표시합니다.",
+    "description": "Help text for display_common_header_help option"
+  },
+  "do_not_show_again": {
+    "message": "다시 표시하지 않음",
+    "description": "Don't show again"
+  },
+  "download": {
+    "message": "다운로드",
+    "description": "Download button"
+  },
+  "download_local": {
+    "message": "로컬로 다운로드",
+    "description": "Download to local button"
+  },
+  "download_rule": {
+    "message": "규칙 다운로드",
+    "description": "Title of the rule download area"
+  },
+  "edge_upgrade_tip": {
+    "message": "Edge 스토어 채널은 Lite 버전으로 업그레이드됩니다.",
+    "description": "Edge store channel tip"
+  },
+  "edit": {
+    "message": "편집",
+    "description": "Edit something"
+  },
+  "enable": {
+    "message": "활성화",
+    "description": "Switch one rule on/off in table title"
+  },
+  "enable_he": {
+    "message": "Header Editor 활성화",
+    "description": "If not checked, all rules will take no effects"
+  },
+  "encoding": {
+    "message": "인코딩",
+    "description": "Label for responseBody's character encoding"
+  },
+  "encoding_desc": {
+    "message": "디코딩 전용",
+    "description": "encoding description"
+  },
+  "enter_group_name": {
+    "message": "그룹 이름을 입력하세요.",
+    "description": "Prompt the user when the user click add group button"
+  },
+  "env_info": {
+    "message": "환경 정보",
+    "description": "Version info, etc"
+  },
+  "excludeRule": {
+    "message": "제외 규칙",
+    "description": "Label for exclude rule in modal"
+  },
+  "exec_function": {
+    "message": "사용자 정의 함수",
+    "description": "Custom function in execute type"
+  },
+  "exec_normal": {
+    "message": "일반",
+    "description": "Normal option in execute type"
+  },
+  "exec_type": {
+    "message": "실행 유형",
+    "description": "Label for execute type in modal"
+  },
+  "execution": {
+    "message": "실행",
+    "description": "Execution settings of a rule"
+  },
+  "export": {
+    "message": "내보내기",
+    "description": "Button to export all rules as a json file"
+  },
+  "export_and_import": {
+    "message": "내보내기 및 가져오기",
+    "description": "The tab title in the top"
+  },
+  "export_filename": {
+    "message": "내보내기 파일 이름",
+    "description": "Export file name"
+  },
+  "export_success": {
+    "message": "성공적으로 내보냈습니다.",
+    "description": "Exported successfully"
+  },
+  "extButtonTitle": {
+    "message": "Header Editor",
+    "description": "Toolbar tooltip"
+  },
+  "extName": {
+    "message": "Header Editor",
+    "description": "Extension name"
+  },
+  "ext_version": {
+    "message": "확장 프로그램 버전",
+    "description": "Extension version"
+  },
+  "feedback": {
+    "message": "피드백",
+    "description": "Feedback link"
+  },
+  "filename": {
+    "message": "파일 이름",
+    "description": "File name title"
+  },
+  "filesize": {
+    "message": "파일 크기",
+    "description": "File size title"
+  },
+  "group": {
+    "message": "그룹",
+    "description": "Group button"
+  },
+  "headerName": {
+    "message": "헤더 이름",
+    "description": "Label for header name in modal"
+  },
+  "headerValue": {
+    "message": "헤더 값",
+    "description": "Label for header value in modal"
+  },
+  "header_empty": {
+    "message": "헤더 이름은 비워둘 수 없습니다.",
+    "description": "Message for saving a rule without header name"
+  },
+  "height": {
+    "message": "높이",
+    "description": "Height"
+  },
+  "help": {
+    "message": "도움말",
+    "description": "Help link"
+  },
+  "import": {
+    "message": "가져오기",
+    "description": "Button to import rules from a file"
+  },
+  "import_drop": {
+    "message": "가져오지 않음",
+    "description": "do not import a rule"
+  },
+  "import_function_warning_content": {
+    "message": "사용자 정의 함수에는 악성 코드가 포함될 수 있습니다. 콘텐츠가 신뢰할 수 있는 게시자로부터 온 것인지 확인하거나 함수 내용을 직접 검토했는지 확인해 주세요.",
+    "description": "Content for the warning modal"
+  },
+  "import_function_warning_title": {
+    "message": "이 가져오기에는 사용자 정의 함수가 포함되어 있습니다.",
+    "description": "Title for the warning modal"
+  },
+  "import_item_function_tooltip": {
+    "message": "이 규칙에는 사용자 정의 함수가 포함되어 있습니다. 가져오기 전에 코드를 확인하세요. 코드를 보려면 클릭하세요.",
+    "description": "Tooltip for import item with custom function"
+  },
+  "import_new": {
+    "message": "추가",
+    "description": "Add a new rule"
+  },
+  "import_override": {
+    "message": "기존 항목 덮어쓰기",
+    "description": "Overrides already existing rule"
+  },
+  "import_success": {
+    "message": "성공적으로 가져왔습니다.",
+    "description": "Displays when import successfully"
+  },
+  "include_header_in_custom_function": {
+    "message": "사용자 정의 함수에 요청 헤더 포함",
+    "description": "An option to enable this feature"
+  },
+  "include_header_in_custom_function_help": {
+    "message": "응답 헤더를 처리하는 사용자 정의 함수에 요청 헤더를 전달합니다. 이 기능은 성능을 저하시킬 수 있습니다.",
+    "description": "Help text for include_header_in_custom_function option"
+  },
+  "init_rule_failed": {
+    "message": "규칙 초기화 실패",
+    "description": "Failed to initialize rule"
+  },
+  "lite_edit_tip": {
+    "message": "Lite 버전에서는 일부 기능이 지원되지 않습니다.",
+    "description": "Tip at the edit panel for lite version"
+  },
+  "lite_not_support": {
+    "message": "이 기능은 Lite 버전에서 지원되지 않습니다.",
+    "description": "Message at the not support features"
+  },
+  "local_file": {
+    "message": "로컬 파일",
+    "description": "Local file title"
+  },
+  "login": {
+    "message": "로그인",
+    "description": "Login button"
+  },
+  "logout": {
+    "message": "로그아웃",
+    "description": "Logout button"
+  },
+  "logout_success": {
+    "message": "성공적으로 로그아웃되었습니다.",
+    "description": "Successfully logged out"
+  },
+  "manage": {
+    "message": "관리",
+    "description": "Manage rules, options and more"
+  },
+  "manage_collapse_group": {
+    "message": "기본적으로 그룹 접기",
+    "description": "All groups will be collapsed when open the management page"
+  },
+  "marked_as_common": {
+    "message": "즐겨찾기로 설정됨",
+    "description": "Options"
+  },
+  "matchRule": {
+    "message": "일치 규칙",
+    "description": "Label for match rule in modal"
+  },
+  "matchType": {
+    "message": "일치 유형",
+    "description": "Label for match type in modal"
+  },
+  "match_all": {
+    "message": "전체",
+    "description": "All option in modal"
+  },
+  "match_domain": {
+    "message": "도메인",
+    "description": "Domain option in modal"
+  },
+  "match_method": {
+    "message": "메서드",
+    "description": "Request method"
+  },
+  "match_prefix": {
+    "message": "URL 접두사",
+    "description": "URL prefix option in modal"
+  },
+  "match_regexp": {
+    "message": "정규 표현식",
+    "description": "Regular expression option in modal"
+  },
+  "match_resourceType": {
+    "message": "리소스 유형",
+    "description": "Request resource type"
+  },
+  "match_rule_empty": {
+    "message": "일치 규칙은 비워둘 수 없습니다.",
+    "description": "Message for saving a rule without match rule"
+  },
+  "match_url": {
+    "message": "URL",
+    "description": "URL option in modal"
+  },
+  "match_url_filter": {
+    "message": "URL 필터",
+    "description": "URL Filter option"
+  },
+  "modify_body": {
+    "message": "응답 본문 수정",
+    "description": "Option to enable/disable modify body"
+  },
+  "modify_body_help": {
+    "message": "응답 본문 수정을 허용합니다. 이 기능은 성능을 저하시킬 수 있습니다.",
+    "description": "Help text for modify_body option"
+  },
+  "more_information": {
+    "message": "추가 정보",
+    "description": "More Information"
+  },
+  "name": {
+    "message": "이름",
+    "description": "Label for name in modal"
+  },
+  "name_empty": {
+    "message": "이름은 비워둘 수 없습니다.",
+    "description": "Message for saving a rule without name"
+  },
+  "no_backup": {
+    "message": "백업을 찾을 수 없습니다.",
+    "description": "No backup found"
+  },
+  "no_update": {
+    "message": "사용 가능한 업데이트가 없습니다.",
+    "description": "No update"
+  },
+  "ok": {
+    "message": "확인",
+    "description": "OK Button"
+  },
+  "options": {
+    "message": "옵션",
+    "description": "Heading for options section on manage page."
+  },
+  "pack_up_or_unfurl": {
+    "message": "그룹 접기/펼치기",
+    "description": "Button to pack up or unfurl a group"
+  },
+  "password": {
+    "message": "비밀번호",
+    "description": "Password for WebDAV"
+  },
+  "path": {
+    "message": "경로",
+    "description": "Path"
+  },
+  "popupPanel": {
+    "message": "팝업 패널",
+    "description": "Popup panel"
+  },
+  "quick_edit": {
+    "message": "빠른 편집",
+    "description": "Display edit button on the popup panel"
+  },
+  "quick_edit_help": {
+    "message": "팝업 패널에 편집 버튼 표시",
+    "description": "Help text for quick_edit option"
+  },
+  "redirectTo": {
+    "message": "리디렉션 대상",
+    "description": "Label for redirect to in modal"
+  },
+  "redirect_empty": {
+    "message": "리디렉션 대상은 비워둘 수 없습니다.",
+    "description": "Message for saving a rule without redirect target if rule type is redirect"
+  },
+  "rename": {
+    "message": "이름 바꾸기",
+    "description": "Rename group"
+  },
+  "request_headers": {
+    "message": "요청 헤더",
+    "description": "Request headers"
+  },
+  "request_stage": {
+    "message": "요청 단계",
+    "description": "Request stage"
+  },
+  "resourceType_csp_report": {
+    "message": "CSP 보고서 (Content-Security-Policy 헤더에 지정됨)",
+    "description": "Resource type"
+  },
+  "resourceType_font": {
+    "message": "웹 폰트",
+    "description": "Resource type"
+  },
+  "resourceType_image": {
+    "message": "이미지",
+    "description": "Resource type"
+  },
+  "resourceType_main_frame": {
+    "message": "메인 프레임 (탭에 로드된 최상위 문서)",
+    "description": "Resource type"
+  },
+  "resourceType_media": {
+    "message": "미디어 (동영상 및 오디오)",
+    "description": "Resource type"
+  },
+  "resourceType_object": {
+    "message": "객체 (<object> 또는 <embed> 요소로 로드된 리소스)",
+    "description": "Resource type"
+  },
+  "resourceType_other": {
+    "message": "기타",
+    "description": "Resource type"
+  },
+  "resourceType_ping": {
+    "message": "핑 (하이퍼링크의 ping 속성에 지정됨)",
+    "description": "Resource type"
+  },
+  "resourceType_script": {
+    "message": "스크립트",
+    "description": "Resource type"
+  },
+  "resourceType_stylesheet": {
+    "message": "CSS 스타일시트",
+    "description": "Resource type"
+  },
+  "resourceType_sub_frame": {
+    "message": "하위 프레임 (<iframe> 또는 <frame> 요소에 로드된 문서)",
+    "description": "Resource type"
+  },
+  "resourceType_websocket": {
+    "message": "WebSocket",
+    "description": "Resource type"
+  },
+  "resourceType_xmlhttprequest": {
+    "message": "XMLHttpRequest / Fetch",
+    "description": "Resource type"
+  },
+  "response_content": {
+    "message": "응답 콘텐츠",
+    "description": "Response content"
+  },
+  "response_headers": {
+    "message": "응답 헤더",
+    "description": "Response headers"
+  },
+  "ruleType": {
+    "message": "규칙 유형",
+    "description": "Label for rule type in modal"
+  },
+  "rule_cancel": {
+    "message": "요청 취소",
+    "description": "Cancel request option in modal"
+  },
+  "rule_history": {
+    "message": "규칙 기록 자동 저장",
+    "description": "If checked, rule history will automatically record to the switch list"
+  },
+  "rule_history_help": {
+    "message": "전환 목록에 규칙 기록 자동 저장",
+    "description": "Help text for rule_history option"
+  },
+  "rule_list": {
+    "message": "규칙 목록",
+    "description": "Title of the rules list"
+  },
+  "rule_modifyReceiveBody": {
+    "message": "응답 본문 수정",
+    "description": "Response body option in modal"
+  },
+  "rule_modifyReceiveHeader": {
+    "message": "응답 헤더 수정",
+    "description": "Response header option in modal"
+  },
+  "rule_modifySendHeader": {
+    "message": "요청 헤더 수정",
+    "description": "Request header option in modal"
+  },
+  "rule_redirect": {
+    "message": "요청 리디렉션",
+    "description": "Redirect option in modal"
+  },
+  "rule_switch": {
+    "message": "규칙 빠른 전환 활성화",
+    "description": "Use the menu to switch rule content"
+  },
+  "rule_switch_help": {
+    "message": "메뉴를 사용하여 규칙 콘텐츠 전환",
+    "description": "Help text for rule_switch option"
+  },
+  "run_mode": {
+    "message": "실행 모드",
+    "description": "Run mode for rule"
+  },
+  "run_mode_auto": {
+    "message": "자동",
+    "description": "auto mode"
+  },
+  "run_mode_dnr": {
+    "message": "declarativeNetRequest",
+    "description": "DNR mode"
+  },
+  "run_mode_web_request": {
+    "message": "Web Request",
+    "description": "web_request mode"
+  },
+  "save": {
+    "message": "저장",
+    "description": "Button to save a rule"
+  },
+  "save_to": {
+    "message": "저장 위치",
+    "description": "Save rule to"
+  },
+  "saved": {
+    "message": "저장됨",
+    "description": "Displays when rule saved successfully"
+  },
+  "select_all": {
+    "message": "전체 선택/해제",
+    "description": "Button to select or unselect all rules in batch management mode"
+  },
+  "select_or_download": {
+    "message": "로컬 파일에서 가져오거나 규칙을 다운로드하세요.",
+    "description": "A notice in import card"
+  },
+  "share": {
+    "message": "공유",
+    "description": "Share button title"
+  },
+  "showQuickPreview": {
+    "message": "빠른 미리보기 표시",
+    "description": "Show quick preview"
+  },
+  "show_backup": {
+    "message": "백업 표시",
+    "description": "Show backups button"
+  },
+  "show_rules_on_popup": {
+    "message": "팝업에 이 규칙 표시",
+    "description": "Options"
+  },
+  "stage_request": {
+    "message": "요청",
+    "description": "Request stage"
+  },
+  "stage_response": {
+    "message": "응답",
+    "description": "Response stage"
+  },
+  "suggested_group": {
+    "message": "추천 그룹",
+    "description": "The suggested group name provided by the rule author"
+  },
+  "switch_empty": {
+    "message": "빠른 전환 규칙 없음",
+    "description": "Description text"
+  },
+  "switch_success": {
+    "message": "성공적으로 전환되었습니다.",
+    "description": "Toast message when quick switch successfully"
+  },
+  "switch_title": {
+    "message": "빠른 전환",
+    "description": "Title of the quick switch feature"
+  },
+  "test_custom_code": {
+    "message": "사용자 정의 코드 테스트는 지원되지 않습니다.",
+    "description": "Label to test a redirect rule"
+  },
+  "test_exclude": {
+    "message": "일치하지만 제외됨",
+    "description": "Label to test a redirect rule"
+  },
+  "test_invalid_regexp": {
+    "message": "잘못된 정규 표현식",
+    "description": "Label to test a redirect rule"
+  },
+  "test_match": {
+    "message": "일치함",
+    "description": "Label to test a redirect rule"
+  },
+  "test_mismatch": {
+    "message": "일치하지 않음",
+    "description": "Label to test a redirect rule"
+  },
+  "test_url": {
+    "message": "테스트 (저장되지 않음)",
+    "description": "Label to test a redirect rule"
+  },
+  "third_party_rules": {
+    "message": "타사 규칙",
+    "description": "Link to find more third party rules"
+  },
+  "ungrouped": {
+    "message": "그룹 없음",
+    "description": "The default group name"
+  },
+  "update_available": {
+    "message": "확장 프로그램 업데이트 사용 가능",
+    "description": "An update of the extension is available"
+  },
+  "update_throttled": {
+    "message": "업데이트 속도 제한 초과",
+    "description": "Update is throttled"
+  },
+  "upload": {
+    "message": "업로드",
+    "description": "Upload button"
+  },
+  "url_cloud_backup": {
+    "message": "https://he.firefoxcn.net/en-US/guide/cloud-backup.html",
+    "description": "URL of documentations, if not translated, please use english version"
+  },
+  "url_help": {
+    "message": "https://he.firefoxcn.net/en-US/guide",
+    "description": "URL of documentations, if not translated, please use english version"
+  },
+  "url_third_party_rules": {
+    "message": "https://he.firefoxcn.net/en-US/guide/third-party-rules.html",
+    "description": "URL of documentations, if not translated, please use english version"
+  },
+  "username": {
+    "message": "사용자 이름",
+    "description": "Username for WebDAV"
+  },
+  "view": {
+    "message": "보기",
+    "description": "View rule or a link"
+  },
+  "width": {
+    "message": "너비",
+    "description": "Width"
+  }
+}
