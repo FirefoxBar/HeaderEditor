@@ -28,7 +28,7 @@
     "description": "Basic information of a rule"
   },
   "batch_delete": {
-    "message": "Batch delete",
+    "message": "Eliminar por lotes",
     "description": "Button to delete multiple rules"
   },
   "batch_mode": {
@@ -85,7 +85,7 @@
     "description": "Label for code section in modal"
   },
   "code_empty": {
-    "message": "Code cannot be empty",
+    "message": "El código no puede estar vacío.",
     "description": "Tips when a rule is custom function but code is empty"
   },
   "common_mark": {
@@ -109,7 +109,7 @@
     "description": "Dark mode select"
   },
   "dark_mode_help": {
-    "message": "Dark mode is experimental. Refresh the page to see the effect.",
+    "message": "El modo oscuro es experimental. Actualice la página para ver el efecto.",
     "description": "Dark help text"
   },
   "debug_mode_enable": {
@@ -147,7 +147,7 @@
     }
   },
   "description": {
-    "message": "Manage browser requests",
+    "message": "Administrar solicitudes del navegador",
     "description": "Extension description"
   },
   "disable": {
@@ -155,7 +155,7 @@
     "description": "disable"
   },
   "display_common_header": {
-    "message": "Display common headers",
+    "message": "Mostrar encabezados comunes",
     "description": "An option to enable header auto-complete when editing rules"
   },
   "display_common_header_help": {
@@ -175,7 +175,7 @@
     "description": "Download to local button"
   },
   "download_rule": {
-    "message": "Download rules",
+    "message": "Descargar reglas",
     "description": "Title of the rule download area"
   },
   "edge_upgrade_tip": {
@@ -283,7 +283,7 @@
     "description": "Label for header value in modal"
   },
   "header_empty": {
-    "message": "Header name cannot be empty",
+    "message": "El nombre del encabezado no puede estar vacío.",
     "description": "Message for saving a rule without header name"
   },
   "height": {
@@ -319,7 +319,7 @@
     "description": "Add a new rule"
   },
   "import_override": {
-    "message": "Override existing",
+    "message": "Sobrescribir existentes",
     "description": "Overrides already existing rule"
   },
   "import_success": {
@@ -407,7 +407,7 @@
     "description": "Request resource type"
   },
   "match_rule_empty": {
-    "message": "Match rule cannot be empty",
+    "message": "La regla de coincidencia no puede estar vacía.",
     "description": "Message for saving a rule without match rule"
   },
   "match_url": {
@@ -419,7 +419,7 @@
     "description": "URL Filter option"
   },
   "modify_body": {
-    "message": "Modify response body",
+    "message": "Modificar cuerpo de respuesta",
     "description": "Option to enable/disable modify body"
   },
   "modify_body_help": {
@@ -435,7 +435,7 @@
     "description": "Label for name in modal"
   },
   "name_empty": {
-    "message": "Name cannot be empty",
+    "message": "El nombre no puede estar vacío.",
     "description": "Message for saving a rule without name"
   },
   "no_backup": {
@@ -455,7 +455,7 @@
     "description": "Heading for options section on manage page."
   },
   "pack_up_or_unfurl": {
-    "message": "Collapse/expand group",
+    "message": "Colapsar/expandir grupo",
     "description": "Button to pack up or unfurl a group"
   },
   "password": {
@@ -483,7 +483,7 @@
     "description": "Label for redirect to in modal"
   },
   "redirect_empty": {
-    "message": "Redirect target cannot be empty",
+    "message": "El destino de redireccionamiento no puede estar vacío.",
     "description": "Message for saving a rule without redirect target if rule type is redirect"
   },
   "rename": {
@@ -631,7 +631,7 @@
     "description": "Displays when rule saved successfully"
   },
   "select_all": {
-    "message": "Select/Deselect all",
+    "message": "Seleccionar/deseleccionar todo",
     "description": "Button to select or unselect all rules in batch management mode"
   },
   "select_or_download": {
@@ -679,7 +679,7 @@
     "description": "Title of the quick switch feature"
   },
   "test_custom_code": {
-    "message": "Custom code testing not supported",
+    "message": "Las pruebas de código personalizado no son compatibles.",
     "description": "Label to test a redirect rule"
   },
   "test_exclude": {
@@ -687,7 +687,7 @@
     "description": "Label to test a redirect rule"
   },
   "test_invalid_regexp": {
-    "message": "Invalid regular expression",
+    "message": "Expresión regular no válida.",
     "description": "Label to test a redirect rule"
   },
   "test_match": {
@@ -695,11 +695,11 @@
     "description": "Label to test a redirect rule"
   },
   "test_mismatch": {
-    "message": "No match",
+    "message": "Sin coincidencia",
     "description": "Label to test a redirect rule"
   },
   "test_url": {
-    "message": "Test (Not saved)",
+    "message": "Probar (No guardado)",
     "description": "Label to test a redirect rule"
   },
   "third_party_rules": {
