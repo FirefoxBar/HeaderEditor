@@ -13,7 +13,7 @@
       "id": "jhigoaelcgmfbidkocglkcnhmfacajle",
       "public_key": "MIIBIjANBgkqhkiG9w0BAQEFAAOCAQ8AMIIBCgKCAQEA3WVywUi4v+NIFhkHO17QGQx6Js/qQmZYY5q1GGhAG0hPuiUm3QLb3HQAE38aYTHIRV4k1MpjR4ZcUs237FCz0Sry5NC7vaojN7VuCTF5J+4q1KResGAG014DPaPhuxvp6jy5XoGaNbIcO8DX3o+SygTVWgT9QI2MMb0RQCswQZ3KRJkACyBZwO7V/3Aq6qicm4NG8C4KhLx7laQ23rGUo3cU+k0SOCWDz7/SBkbZVp1EA3xv5031c/dmc1XPJSON02x90l7wjcSV2dLfagkCb8Gkxe9mDu+VeULczjmCKfiDnbh8ZCmOnh77y2rqz+8qGVmveOWU79CLLi/3cf4oOwIDAQAB",
       "priv_key": "CRX_PRIV_KEY",
-      "min_version": "63.0.0"
+      "min_version": "90.0.0"
     }
   ],
   "cws": [

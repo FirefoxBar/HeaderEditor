@@ -1,9 +1,10 @@
+import { IS_CHROME } from './build-inject-constant';
 import { RULE_TYPE, TABLE_NAMES } from './constant';
 import type { Rule } from './types';
 
+export * from './build-inject-constant';
+
 export const IS_ANDROID = navigator.userAgent.includes('Android');
-export const IS_FIREFOX = BROWSER_TYPE === 'firefox';
-export const IS_CHROME = BROWSER_TYPE === 'chrome';
 
 export const isValidArray = <T = any>(v: any): v is T[] =>
   Array.isArray(v) && v.length > 0;

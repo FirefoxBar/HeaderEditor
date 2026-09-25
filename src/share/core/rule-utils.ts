@@ -1,3 +1,5 @@
+import { getBrowserVersion } from './browser';
+import { IS_FIREFOX } from './build-inject-constant';
 import {
   IS_MATCH,
   RULE_MATCH_TYPE,
@@ -7,6 +9,14 @@ import {
 import type { BasicRule, InitdRule, RULE_ACTION_OBJ, Rule } from './types';
 import { isBasicRule } from './types';
 import { getDomain, isValidArray } from './utils';
+
+export function isSupportHeaderInfo() {
+  if (IS_FIREFOX) {
+    return false;
+  }
+  const chromeVersion = getBrowserVersion();
+  return chromeVersion >= 128;
+}
 
 export function detectRunner(rule: BasicRule): 'web_request' | 'dnr' {
   if (rule.forceRunner && rule.forceRunner !== 'auto') {

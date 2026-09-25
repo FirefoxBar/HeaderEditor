@@ -1,6 +1,7 @@
 import browser from 'webextension-polyfill';
 import type { DeclarativeNetRequest } from 'webextension-polyfill/namespaces/declarativeNetRequest';
-import { t } from '@/share/core/browser';
+import { getBrowserVersion, t } from '@/share/core/browser';
+import { IS_FIREFOX } from '@/share/core/build-inject-constant';
 import {
   ALL_RESOURCE_TYPES,
   RULE_MATCH_TYPE,
@@ -10,11 +11,22 @@ import {
 import emitter from '@/share/core/emitter';
 import logger from '@/share/core/logger';
 import { prefs } from '@/share/core/prefs';
-import { detectRunner } from '@/share/core/rule-utils';
+import { detectRunner, isSupportHeaderInfo } from '@/share/core/rule-utils';
 import SessionMessage from '@/share/core/session-message';
 import type { RULE_ACTION_OBJ, Rule } from '@/share/core/types';
-import { getTableName, isRedirectRule, isValidArray } from '@/share/core/utils';
+import {
+  getTableName,
+  isModifyHeaderRule,
+  isRedirectRule,
+  isValidArray,
+} from '@/share/core/utils';
 import { getAll, waitLoad } from '../core/rules';
+
+interface HeaderInfo {
+  header: string;
+  values: string[];
+  excludedValues?: string[];
+}
 
 type DNRRule = DeclarativeNetRequest.Rule;
 
@@ -156,11 +168,7 @@ function createDNR(rule: Rule, id: number) {
     };
   };
 
-  if (
-    [RULE_TYPE.MODIFY_SEND_HEADER, RULE_TYPE.MODIFY_RECV_HEADER].includes(
-      rule.ruleType,
-    )
-  ) {
+  if (isModifyHeaderRule(rule.ruleType)) {
     res.action.type = 'modifyHeaders';
     const key =
       rule.ruleType === RULE_TYPE.MODIFY_SEND_HEADER
@@ -174,6 +182,16 @@ function createDNR(rule: Rule, id: number) {
       const action = rule.action as RULE_ACTION_OBJ;
       res.action[key] = [createHeaderItem(action.name, action.value)];
     }
+  }
+
+  let matchResponseHeaders: HeaderInfo[] | undefined;
+  if (isSupportHeaderInfo()) {
+    if (rule.ruleType === RULE_TYPE.REDIRECT_AT_RESPONSE) {
+      matchResponseHeaders = [];
+    }
+  }
+  if (matchResponseHeaders) {
+    (res.condition as any).responseHeaders = matchResponseHeaders;
   }
 
   if (IS_DEV) {
