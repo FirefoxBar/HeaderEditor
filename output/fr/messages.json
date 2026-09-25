@@ -28,7 +28,7 @@
     "description": "Basic information of a rule"
   },
   "batch_delete": {
-    "message": "Supprimer en lot",
+    "message": "Suppression par lot",
     "description": "Button to delete multiple rules"
   },
   "batch_mode": {
@@ -113,11 +113,11 @@
     "description": "Dark help text"
   },
   "debug_mode_enable": {
-    "message": "Activer le mode débogage",
+    "message": "Activer le mode de débogage",
     "description": "Enable debug mode"
   },
   "debug_mode_enable_help": {
-    "message": "Lorsque le mode débogage est activé, les journaux sont affichés sur la page d'arrière-plan",
+    "message": "Lorsque le mode de débogage est activé, les journaux sont affichés sur la page d'arrière-plan",
     "description": "Debug mode description"
   },
   "delete": {
@@ -259,7 +259,7 @@
     "description": "Extension version"
   },
   "feedback": {
-    "message": "Retour d'information",
+    "message": "Signaler un problème",
     "description": "Feedback link"
   },
   "filename": {
@@ -459,7 +459,7 @@
     "description": "Button to pack up or unfurl a group"
   },
   "password": {
-    "message": "Mot de passe​",
+    "message": "Mot de passe",
     "description": "Password for WebDAV"
   },
   "path": {
@@ -735,7 +735,7 @@
     "description": "URL of documentations, if not translated, please use english version"
   },
   "username": {
-    "message": "Nom d'utilisateur​",
+    "message": "Nom d'utilisateur",
     "description": "Username for WebDAV"
   },
   "view": {
