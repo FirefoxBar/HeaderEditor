@@ -3,6 +3,7 @@
 ```js
 (() => {
   const setTheme = (isDark) => {
+    window.RSPRESS_THEME = isDark ? "dark" : "light";
     document.documentElement.classList.toggle("dark", isDark);
     document.documentElement.style.colorScheme = isDark ? "dark" : "light";
   }

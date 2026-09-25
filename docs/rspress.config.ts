@@ -69,7 +69,7 @@ export default defineConfig({
             const newTag = {
               tag: 'script',
               children:
-                ';(function(){var c=function(b){document.documentElement.classList.toggle("dark",b);document.documentElement.style.colorScheme=b?"dark":"light"},a=new URLSearchParams(location.search);if(a.has("is_dark"))c("1"===a.get("is_dark"));else{a=localStorage.getItem("rspress-theme-appearance");var d=window.matchMedia("(prefers-color-scheme: dark)").matches;c(a&&"auto"!==a?"dark"===a:d)}})()',
+                ';(function(){var c=function(b){window.RSPRESS_THEME=b?"dark":"light";document.documentElement.classList.toggle("dark",b);document.documentElement.style.colorScheme=b?"dark":"light"},a=new URLSearchParams(location.search);if(a.has("is_dark"))c("1"===a.get("is_dark"));else{a=localStorage.getItem("rspress-theme-appearance");var d=window.matchMedia("(prefers-color-scheme: dark)").matches;c(a&&"auto"!==a?"dark"===a:d)}})()',
             };
             if (Array.isArray(config.html?.tags)) {
               config.html.tags = config.html.tags.filter(
