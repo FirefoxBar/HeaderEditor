@@ -32,7 +32,7 @@
     "description": "Button to delete multiple rules"
   },
   "batch_mode": {
-    "message": "Massenbearbeitung",
+    "message": "Stapelverarbeitung",
     "description": "Button to enter batch operation mode"
   },
   "browser_sync": {
@@ -60,11 +60,11 @@
     "description": "Clone rule"
   },
   "cloud_backup": {
-    "message": "Cloud-Sicherung",
+    "message": "Cloud-Backup",
     "description": "Cloud backup button"
   },
   "cloud_backup_at": {
-    "message": "Letzte Sicherung am $date$",
+    "message": "Letztes Cloud-Backup am $date$",
     "description": "Display last backup time if any backup found",
     "placeholders": {
       "date": {
@@ -219,7 +219,7 @@
     "description": "Custom function in execute type"
   },
   "exec_normal": {
-    "message": "Normal",
+    "message": "Standard",
     "description": "Normal option in execute type"
   },
   "exec_type": {
@@ -375,11 +375,11 @@
     "description": "Options"
   },
   "matchRule": {
-    "message": "Vergleichsregeln",
+    "message": "Übereinstimmungsregeln",
     "description": "Label for match rule in modal"
   },
   "matchType": {
-    "message": "Vergleichstyp",
+    "message": "Übereinstimmungstyp",
     "description": "Label for match type in modal"
   },
   "match_all": {
@@ -407,7 +407,7 @@
     "description": "Request resource type"
   },
   "match_rule_empty": {
-    "message": "Die Vergleichsregel darf nicht leer sein",
+    "message": "Übereinstimmungsregel darf nicht leer sein",
     "description": "Message for saving a rule without match rule"
   },
   "match_url": {
@@ -455,7 +455,7 @@
     "description": "Heading for options section on manage page."
   },
   "pack_up_or_unfurl": {
-    "message": "Gruppe einklappen/ausklappen",
+    "message": "Gruppe ein-/ausklappen",
     "description": "Button to pack up or unfurl a group"
   },
   "password": {
@@ -475,7 +475,7 @@
     "description": "Display edit button on the popup panel"
   },
   "quick_edit_help": {
-    "message": "Bearbeiten-Schaltfläche im Popup-Panel anzeigen",
+    "message": "Schaltfläche „Bearbeiten“ im Popup-Panel anzeigen",
     "description": "Help text for quick_edit option"
   },
   "redirectTo": {
@@ -519,7 +519,7 @@
     "description": "Resource type"
   },
   "resourceType_object": {
-    "message": "Objekt (Ressourcen, die durch <object>- oder <embed>-Elemente geladen werden)",
+    "message": "Objekt (Ressourcen, die über <object>- oder <embed>-Elemente geladen werden)",
     "description": "Resource type"
   },
   "resourceType_other": {
@@ -571,7 +571,7 @@
     "description": "If checked, rule history will automatically record to the switch list"
   },
   "rule_history_help": {
-    "message": "Regelverlauf automatisch in der Umschaltliste aufzeichnen",
+    "message": "Regelverlauf automatisch in der Schnellumschaltliste aufzeichnen",
     "description": "Help text for rule_history option"
   },
   "rule_list": {
@@ -599,7 +599,7 @@
     "description": "Use the menu to switch rule content"
   },
   "rule_switch_help": {
-    "message": "Regelinhalt über das Menü umschalten",
+    "message": "Regelinhalt über das Menü schnell umschalten",
     "description": "Help text for rule_switch option"
   },
   "run_mode": {
