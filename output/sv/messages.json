@@ -16,7 +16,7 @@
     "description": "Auto detect dark mode"
   },
   "auto_enable_modify_body": {
-    "message": "„Ändra svarstext“ har aktiverats automatiskt. Inaktivera det manuellt om det inte behövs.",
+    "message": "\"Ändra svarstext\" har aktiverats automatiskt. Inaktivera den manuellt om det inte behövs.",
     "description": "A message"
   },
   "backup_list": {
@@ -323,7 +323,7 @@
     "description": "Overrides already existing rule"
   },
   "import_success": {
-    "message": "Importerad",
+    "message": "Importen lyckades",
     "description": "Displays when import successfully"
   },
   "include_header_in_custom_function": {
@@ -351,7 +351,7 @@
     "description": "Local file title"
   },
   "login": {
-    "message": "Logga in​",
+    "message": "Logga in",
     "description": "Login button"
   },
   "logout": {
@@ -367,7 +367,7 @@
     "description": "Manage rules, options and more"
   },
   "manage_collapse_group": {
-    "message": "Fäll in grupper som standard",
+    "message": "Komprimera grupper som standard",
     "description": "All groups will be collapsed when open the management page"
   },
   "marked_as_common": {
@@ -455,7 +455,7 @@
     "description": "Heading for options section on manage page."
   },
   "pack_up_or_unfurl": {
-    "message": "Fäll in/ut grupp",
+    "message": "Komprimera/expandera grupp",
     "description": "Button to pack up or unfurl a group"
   },
   "password": {
@@ -651,7 +651,7 @@
     "description": "Show backups button"
   },
   "show_rules_on_popup": {
-    "message": "Visa dessa regler i en popup",
+    "message": "Visa dessa regler på popup-panelen",
     "description": "Options"
   },
   "stage_request": {
@@ -671,7 +671,7 @@
     "description": "Description text"
   },
   "switch_success": {
-    "message": "Växlad",
+    "message": "Växlingen lyckades",
     "description": "Toast message when quick switch successfully"
   },
   "switch_title": {
@@ -715,7 +715,7 @@
     "description": "An update of the extension is available"
   },
   "update_throttled": {
-    "message": "Kontroll av uppdateringar sker för ofta",
+    "message": "Frekvensgränsen för uppdateringskontroll har överskridits",
     "description": "Update is throttled"
   },
   "upload": {
