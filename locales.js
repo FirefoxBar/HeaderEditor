@@ -74,7 +74,7 @@ function main() {
         // add placeholder
         if (
           basicLanguage[k].placeholders &&
-          typeof currentLanguage[k].placeholders === 'undefined'
+          typeof currentLanguage[k] !== 'undefined'
         ) {
           console.log('[' + lang + '/' + file + '] add placeholder: ' + k);
           currentLanguage[k].placeholders = basicLanguage[k].placeholders;
