@@ -3,7 +3,8 @@ name: sync-locale
 on:
   push:
     branches:
-    - sync-locale
+      - sync-locale
+  workflow_dispatch:
 
 concurrency:
   group: ${{ github.workflow }}-${{ github.ref }}
