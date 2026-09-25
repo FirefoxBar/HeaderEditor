@@ -5,6 +5,7 @@ import React from 'react';
 import { t } from '@/share/core/browser';
 import type { Rule } from '@/share/core/types';
 import { RULE_TYPE } from '../core/constant';
+import { isRedirectRule } from '../core/utils';
 import { tagList } from '../pages/styles';
 
 interface RuleDetailProps {
@@ -127,7 +128,7 @@ const RuleDetail = (props: RuleDetailProps) => {
       key: t('exec_type'),
       value: t(`exec_${rule.isFunction ? 'function' : 'normal'}`),
     },
-    rule.ruleType === RULE_TYPE.REDIRECT
+    isRedirectRule(rule.ruleType)
       ? {
           key: t('redirectTo'),
           value: (
@@ -137,7 +138,6 @@ const RuleDetail = (props: RuleDetailProps) => {
           ),
         }
       : undefined,
-
     rule.ruleType === RULE_TYPE.MODIFY_RECV_BODY
       ? {
           key: t('encoding'),

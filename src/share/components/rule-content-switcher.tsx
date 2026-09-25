@@ -12,9 +12,14 @@ import { css, cx } from '@emotion/css';
 import { useLatest } from 'ahooks';
 import { type FC, useMemo } from 'react';
 import { t } from '@/share/core/browser';
-import { RULE_TYPE } from '@/share/core/constant';
+import type { RULE_TYPE } from '@/share/core/constant';
 import type { Rule } from '@/share/core/types';
-import { getVirtualKey, isValidArray } from '@/share/core/utils';
+import {
+  getVirtualKey,
+  isModifyHeaderRule,
+  isRedirectRule,
+  isValidArray,
+} from '@/share/core/utils';
 import useStorage from '@/share/hooks/use-storage';
 import Api from '@/share/pages/api';
 import { Toast } from '@/share/pages/toast';
@@ -142,12 +147,9 @@ const RuleContentSwitcher: FC<RuleContentSwitcherProps> = props => {
   const [isEnable] = usePref('rule-switch');
 
   const menu = useMemo(() => {
-    const isHeader = [
-      RULE_TYPE.MODIFY_RECV_HEADER,
-      RULE_TYPE.MODIFY_SEND_HEADER,
-    ].includes(rule.ruleType);
+    const isHeader = isModifyHeaderRule(rule.ruleType);
 
-    if ((!isHeader && type !== RULE_TYPE.REDIRECT) || rule.isFunction) {
+    if ((!isHeader && !isRedirectRule(rule.ruleType)) || rule.isFunction) {
       return [];
     }
 
@@ -231,7 +233,7 @@ const RuleContentSwitcher: FC<RuleContentSwitcherProps> = props => {
             if (isHeader) {
               updateRule('headers', x);
             }
-            if (type === RULE_TYPE.REDIRECT) {
+            if (isRedirectRule(rule.ruleType)) {
               updateRule('action', x);
             }
           },
@@ -297,14 +299,7 @@ const RuleContentSwitcher: FC<RuleContentSwitcherProps> = props => {
     return null;
   }
 
-  if (
-    ![
-      RULE_TYPE.MODIFY_SEND_HEADER,
-      RULE_TYPE.MODIFY_RECV_HEADER,
-      RULE_TYPE.REDIRECT,
-    ].includes(type) ||
-    rule.isFunction
-  ) {
+  if ((!isModifyHeaderRule(type) && !isRedirectRule(type)) || rule.isFunction) {
     return null;
   }
 

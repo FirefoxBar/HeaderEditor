@@ -8,6 +8,7 @@ import Modal from '@/share/components/modal';
 import { t } from '@/share/core/browser';
 import { RULE_TYPE } from '@/share/core/constant';
 import type { Rule } from '@/share/core/types';
+import { isModifyHeaderRule, isRedirectRule } from '@/share/core/utils';
 import usePref from '@/share/hooks/use-pref';
 import Api from '@/share/pages/api';
 import { Toast } from '@/share/pages/toast';
@@ -32,7 +33,7 @@ const QuickEdit = ({ rule }: QuickEditProps) => {
     const newRule = { ...ruleRef.current };
 
     let content: ReactNode = null;
-    if (newRule.ruleType === RULE_TYPE.REDIRECT) {
+    if (isRedirectRule(newRule.ruleType)) {
       content = (
         <Form.Slot label={t('redirectTo')}>
           <Input defaultValue={newRule.to} onChange={v => (newRule.to = v)} />
@@ -40,11 +41,7 @@ const QuickEdit = ({ rule }: QuickEditProps) => {
       );
     }
 
-    if (
-      [RULE_TYPE.MODIFY_RECV_HEADER, RULE_TYPE.MODIFY_SEND_HEADER].includes(
-        newRule.ruleType,
-      )
-    ) {
+    if (isModifyHeaderRule(newRule.ruleType)) {
       const defaultValue = Object.entries(newRule.headers || {}).map(
         ([name, value]) => ({
           name,
@@ -118,11 +115,7 @@ const QuickEdit = ({ rule }: QuickEditProps) => {
 
   if (
     isFunction ||
-    ![
-      RULE_TYPE.MODIFY_RECV_HEADER,
-      RULE_TYPE.MODIFY_SEND_HEADER,
-      RULE_TYPE.REDIRECT,
-    ].includes(ruleType)
+    (!isModifyHeaderRule(ruleType) && !isRedirectRule(ruleType))
   ) {
     return null;
   }

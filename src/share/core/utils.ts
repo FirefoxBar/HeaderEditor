@@ -20,12 +20,27 @@ export function getTableName(ruleType: RULE_TYPE): TABLE_NAMES {
     case RULE_TYPE.MODIFY_SEND_HEADER:
       return TABLE_NAMES.sendHeader;
     case RULE_TYPE.MODIFY_RECV_HEADER:
+    case RULE_TYPE.REDIRECT_AT_RESPONSE:
       return TABLE_NAMES.receiveHeader;
     case RULE_TYPE.MODIFY_RECV_BODY:
       return TABLE_NAMES.receiveBody;
     default:
       return TABLE_NAMES.request;
   }
+}
+
+export function isRedirectRule(ruleType: RULE_TYPE) {
+  return (
+    ruleType === RULE_TYPE.REDIRECT ||
+    ruleType === RULE_TYPE.REDIRECT_AT_RESPONSE
+  );
+}
+
+export function isModifyHeaderRule(ruleType: RULE_TYPE) {
+  return (
+    ruleType === RULE_TYPE.MODIFY_SEND_HEADER ||
+    ruleType === RULE_TYPE.MODIFY_RECV_HEADER
+  );
 }
 
 export function canAccess(url?: string) {

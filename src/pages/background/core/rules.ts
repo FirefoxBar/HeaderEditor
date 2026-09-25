@@ -30,6 +30,8 @@ import type {
 import {
   getTableName,
   getVirtualKey,
+  isModifyHeaderRule,
+  isRedirectRule,
   isValidArray,
   sleep,
 } from '@/share/core/utils';
@@ -185,21 +187,13 @@ function saveRuleHistory(rule: Rule) {
   if (
     prefs.get('rule-history') &&
     !rule.isFunction &&
-    [
-      RULE_TYPE.MODIFY_RECV_HEADER,
-      RULE_TYPE.MODIFY_SEND_HEADER,
-      RULE_TYPE.REDIRECT,
-    ].includes(rule.ruleType)
+    (isRedirectRule(rule.ruleType) || isModifyHeaderRule(rule.ruleType))
   ) {
     let writeValue: any;
-    if (rule.ruleType === RULE_TYPE.REDIRECT) {
+    if (isRedirectRule(rule.ruleType)) {
       writeValue = rule.to || '';
     }
-    if (
-      [RULE_TYPE.MODIFY_RECV_HEADER, RULE_TYPE.MODIFY_SEND_HEADER].includes(
-        rule.ruleType,
-      )
-    ) {
+    if (isModifyHeaderRule(rule.ruleType)) {
       if (rule.headers) {
         writeValue = rule.headers;
       } else {

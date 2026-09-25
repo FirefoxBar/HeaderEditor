@@ -156,30 +156,10 @@ class WebRequestHandler {
     return true;
   }
 
-  /**
-   * BeforeRequest事件，可撤销、重定向
-   * @param any e
-   */
-  handleBeforeRequest(e: WebRequest.OnBeforeRequestDetailsType) {
-    if (!this.beforeAll(e)) {
-      return;
-    }
-    logger.debug(`[web-request-handler] handle before request ${e.url}`, e);
-    // 可用：重定向，阻止加载
-    const rule = getRules(TABLE_NAMES.request, {
-      url: e.url,
-      enable: true,
-      runner: 'web_request',
-      resourceType: e.type,
-      method: e.method.toLowerCase(),
-    });
-    // Browser is starting up, pass all requests
-    if (rule === null) {
-      return;
-    }
+  private getRedirectUrl(rules: InitdRule[], e: AnyRequestDetails) {
     let redirectTo = e.url;
     const detail = this.makeDetails(e);
-    for (const item of rule) {
+    for (const item of rules) {
       if (item.ruleType === RULE_TYPE.CANCEL && !item.isFunction) {
         return { cancel: true };
       }
@@ -223,6 +203,30 @@ class WebRequestHandler {
       }
       return { redirectUrl: redirectTo };
     }
+  }
+
+  /**
+   * BeforeRequest事件，可撤销、重定向
+   * @param any e
+   */
+  handleBeforeRequest(e: WebRequest.OnBeforeRequestDetailsType) {
+    if (!this.beforeAll(e)) {
+      return;
+    }
+    logger.debug(`[web-request-handler] handle before request ${e.url}`, e);
+    // 可用：重定向，阻止加载
+    const rule = getRules(TABLE_NAMES.request, {
+      url: e.url,
+      enable: true,
+      runner: 'web_request',
+      resourceType: e.type,
+      method: e.method.toLowerCase(),
+    });
+    // Browser is starting up, pass all requests
+    if (rule === null) {
+      return;
+    }
+    return this.getRedirectUrl(rule, e);
   }
 
   /**
@@ -272,6 +276,21 @@ class WebRequestHandler {
       detail.requestHeaders = this.savedRequestHeader.get(e.requestId) || null;
       this.savedRequestHeader.delete(e.requestId);
       this.deleteHeaderQueue.delete(e.requestId);
+    }
+    // 优先执行重定向
+    const redirectRules = getRules(TABLE_NAMES.receiveBody, {
+      url: e.url,
+      enable: true,
+      type: RULE_TYPE.REDIRECT_AT_RESPONSE,
+      runner: 'web_request',
+      resourceType: e.type,
+      method: e.method.toLowerCase(),
+    });
+    if (redirectRules && redirectRules.length > 0) {
+      const result = this.getRedirectUrl(redirectRules, e);
+      if (result) {
+        return result;
+      }
     }
     // 修改响应体
     if (this.modifyBody) {

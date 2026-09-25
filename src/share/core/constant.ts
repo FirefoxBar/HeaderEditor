@@ -15,6 +15,7 @@ export const VIRTUAL_KEY = '_v_key';
 export enum RULE_TYPE {
   CANCEL = 'cancel',
   REDIRECT = 'redirect',
+  REDIRECT_AT_RESPONSE = 'redirectAtResponse',
   MODIFY_SEND_HEADER = 'modifySendHeader',
   MODIFY_RECV_HEADER = 'modifyReceiveHeader',
   MODIFY_RECV_BODY = 'modifyReceiveBody',

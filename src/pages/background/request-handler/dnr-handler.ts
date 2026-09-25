@@ -13,7 +13,7 @@ import { prefs } from '@/share/core/prefs';
 import { detectRunner } from '@/share/core/rule-utils';
 import SessionMessage from '@/share/core/session-message';
 import type { RULE_ACTION_OBJ, Rule } from '@/share/core/types';
-import { getTableName, isValidArray } from '@/share/core/utils';
+import { getTableName, isRedirectRule, isValidArray } from '@/share/core/utils';
 import { getAll, waitLoad } from '../core/rules';
 
 type DNRRule = DeclarativeNetRequest.Rule;
@@ -121,7 +121,7 @@ function createDNR(rule: Rule, id: number) {
   if (rule.ruleType === RULE_TYPE.CANCEL) {
     res.action.type = 'block';
   }
-  if (rule.ruleType === RULE_TYPE.REDIRECT) {
+  if (isRedirectRule(rule.ruleType)) {
     res.action.type = 'redirect';
     if (isRegex) {
       res.action.redirect = {
