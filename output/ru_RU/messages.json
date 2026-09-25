@@ -28,7 +28,7 @@
     "description": "Basic information of a rule"
   },
   "batch_delete": {
-    "message": "Пакетное удаление",
+    "message": "Массовое удаление",
     "description": "Button to delete multiple rules"
   },
   "batch_mode": {
@@ -89,15 +89,15 @@
     "description": "Tips when a rule is custom function but code is empty"
   },
   "common_mark": {
-    "message": "Отметить как часто используемое",
+    "message": "Добавить в избранное",
     "description": "Mark a rule/group as common, it will display at the popup panel"
   },
   "common_mark_tip": {
-    "message": "Если вы отметите правило или группу как часто используемые, они появятся здесь",
+    "message": "Если вы добавите правило или группу в избранное, они появятся здесь",
     "description": "Display at the popup panel"
   },
   "common_unmark": {
-    "message": "Снять отметку",
+    "message": "Убрать из избранного",
     "description": "Unmark a common rule/group"
   },
   "created_time": {
@@ -371,7 +371,7 @@
     "description": "All groups will be collapsed when open the management page"
   },
   "marked_as_common": {
-    "message": "Отмечено как часто используемое",
+    "message": "Добавлено в избранное",
     "description": "Options"
   },
   "matchRule": {
