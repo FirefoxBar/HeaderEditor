@@ -40,7 +40,7 @@ In Chrome, you can choose when to intercept the request.
 In Firefox, this is always the response stage.
 
 ### Custom Function
-The function takes two parameters: the first is the decoded text, and the second is the custom function's detail object. The function returns the modified text.
+The function takes two parameters: the `val` parameter is the decoded text, and the `detail` parameter is the custom function's detail object. The function returns the modified text.
 
 For example, the following function replaces all occurrences of "baidu" on a webpage with "Google."
 ```js

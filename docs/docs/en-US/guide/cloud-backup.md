@@ -6,21 +6,21 @@ title: Cloud backup
 
 Support for cloud backup started with Header Editor 4.0.5.
 
-**Important: To use cloud backup, you should login your browser's account (like Firefox account, Google account, etc), and enable synchronize in browser's setting.**
+**Important: To use cloud backup, you should log in to your browser account (like Firefox account, Google account, etc), and enable sync in the browser settings.**
 
-Cloud backup is supported through your browser's sync feature, as in Firefox Sync, or Chrome Sync, i.e. It means that HE has no server to storage your backup, your backup is storage at your browser's provider's server (like Mozilla, Google, etc). If your browser does not support sync, this feature will take no effect.
+Cloud backup is supported through your browser's sync feature, as in Firefox Sync, or Chrome Sync. It means that HE has no server to store your backup, your backup is stored on your browser provider's server (like Mozilla, Google, etc). If your browser does not support sync, this feature will take no effect.
 
-## What contents can be backup?
+## What contents will be backed up?
 
-Your setting will be synchronize automatically, the backup feature only backup your rules, include groups.
+Your settings will be synchronized automatically, the backup feature only backs up your rules, including groups.
 
 ## Limit
 
-Both Chrome and Firefox have its space limit, about 100KB. If you have too many rules, upload will be failed, but you can use the export normally.
+Both Chrome and Firefox have its space limit, about 100KB. If you have too many rules, the upload may fail, but you can still import and export in the traditional way.
 
 As I know, Chrome has limits on the number of operations per unit of time. It means that you **can not** upload frequently.
 
-## Other caveats
+## Other technical details
 
 ### Chrome/Chromium
 

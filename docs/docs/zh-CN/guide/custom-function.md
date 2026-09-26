@@ -24,25 +24,31 @@ function customFunction(val, detail) { //不包括这一行
 
 ![image](https://img13.360buyimg.com/ddimg/jfs/t1/302163/31/25689/8426/68a4ab87Fffa8fbd6/4581fc50eaa1b2dc.jpg)
 
-自定义函数会传入参数`val`和`detail`，其中`detail`是2.3.0版本新增的参数，请参见页面下方说明。返回类型根据规则类型不同而不同。
+自定义函数会传入参数 `val` 和 `detail`。其中：
+* `val` 根据规则类型不同而不同。
+  * 重定向请求时，此参数为完整URL的字符串；
+  * 修改请求头和响应头时，此参数为一个数组，包含所有头信息；
+  * 修改响应体时，此参数为响应体的字符串。
+* `detail` 是2.3.0版本新增的参数。
+  * 在大多数情况下，此参数与本页面下方的`detail`对象相同。
+  * 在 Chrome 中修改响应体时，此参数有区别；详见[修改响应体](./modify-body)。
+* 自定义函数的返回类型根据规则类型不同而不同
+  * 重定向请求时，返回值为新URL的字符串；
+  * 修改请求头和响应头时，不返回任何值；
+  * 修改响应体时，返回值为修改后的响应体字符串；
 
 ## 重定向请求
 
-传入参数为完整URL的字符串，若函数不处理可返回`null`或原参数。例如，下面代码会将请求都加上一个`_test`：
+传入参数 `val` 为完整URL的字符串，若函数不处理可返回 `null` 或原参数。例如，下面代码会将`.jpg`均重定向为`.gif`：
 
 ```javascript
-if (val.includes('_test.')) {
+if (!val.includes('.jpg')) {
 	return val;
 }
-let a = val.lastIndexOf('.');
-if (a < 0) {
-	return val;
-} else {
-	return val.substr(0, a) + '_test' + val.substr(a);
-}
+return val.replace('.jpg', '.gif');
 ```
 
-自4.0.3起，返回`_header_editor_cancel_`可取消此请求，如：
+自4.0.3起，返回 `_header_editor_cancel_` 可取消此请求，如：
 
 ```javascript
 if (val.includes('utm_source')) {
@@ -52,9 +58,9 @@ if (val.includes('utm_source')) {
 
 ## 修改请求头和响应头
 
-传入参数为一个数组，包含所有头信息，格式为：`[{"name": "头名称", "value": "头内容"} …… ]`。
+传入参数 `val` 为一个数组，包含所有头信息，格式为：`[{"name": "头名称", "value": "头内容"} …… ]`。
 
-因JS传递Object时是引用传递，因此自定义函数不需要任何返回值，只需要修改传入的参数即可生效。例如，此代码会将`User-Agent`加上` HE/2.0.0`：
+该自定义函数不需要任何返回值，只需要修改传入的参数即可生效。例如，此代码会将 `User-Agent` 加上 ` HE/2.0.0`：
 
 ```javascript
 for (const item of val) {
@@ -77,7 +83,7 @@ val.push({"name": "test", "value": String(value)}); // 合法
 
 自2.3.0开始，自定义函数增加参数`detail`，用于实现更精确的控制
 
-此参数为Object，且为只读参数。结构如下：
+此参数为 Object，且为只读参数。结构如下：
 
 ```javascript
 {

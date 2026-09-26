@@ -8,9 +8,9 @@ Use custom functions to achieve more flexible functionality. So far, custom func
 
 Custom functions are also limited by matching rules and exclusion rules. Only requests that meet the matching rules and do not satisfy the exclusion rule are processed by the custom function.
 
-The priority of the custom function is not determined. It may be possible to customize the function earlier than the normal rule to the request, or it may be later. The order of execution of multiple custom functions is also variable.
-
-When you can use normal rules to complete the case, please try to use the general rules, rather than custom function
+Note:
+* The execution order of rules is not determined. Do not rely on the execution order to implement features.
+* When you can use normal rules to complete the task, please try to use normal rules rather than custom functions
 
 Custom function writing does **NOT** include the function head and tail, including only the function body. which is:
 
@@ -24,22 +24,28 @@ For example:
 
 ![image](https://img13.360buyimg.com/ddimg/jfs/t1/302163/31/25689/8426/68a4ab87Fffa8fbd6/4581fc50eaa1b2dc.jpg)
 
-The custom function passes the arguments `val` and `detail`, where `detail` is the new parameter in version 2.3.0, see the description below. The return type varies depending on the rule type.
+The custom function takes the parameters `val` and `detail`. Where:
+* `val` varies depending on the rule type.
+  * When redirecting requests, this parameter is a string of the full URL;
+  * When modifying request headers and response headers, this parameter is an array containing all header information;
+  * When modifying the response body, this parameter is a string of the response body.
+* `detail` is a new parameter added in version 2.3.0.
+  * In most cases, this parameter is the same as the `detail` object below on this page.
+  * When modifying the response body in Chrome, this parameter is different; see [Modify response body](./modify-body).
+* The return type of the custom function varies depending on the rule type
+  * When redirecting requests, the return value is a string of the new URL;
+  * When modifying request headers and response headers, no value is returned;
+  * When modifying the response body, the return value is the modified response body string;
 
 ## Redirect request
 
-Pass the string with the full URL, if the function is not processed to return `null` or the original argument. For example, the following code will add a `_test` to every request:
+The incoming parameter `val` is a string of the full URL. If the function does not handle it, it can return `null` or the original parameter. For example, the following code redirects all `.jpg` to `.gif`:
 
 ```javascript
-if (val.includes('_test.')) {
+if (!val.includes('.jpg')) {
 	return val;
 }
-const a = val.lastIndexOf('.');
-if (a < 0) {
-	return val;
-} else {
-	return val.substr(0, a) + '_test' + val.substr(a);
-}
+return val.replace('.jpg', '.gif');
 ```
 
 Since 4.0.3, return `_header_editor_cancel_` will cancel this request, for example:
@@ -52,9 +58,9 @@ if (val.includes('utm_source')) {
 
 ## Modify the request headers and response headers
 
-The incoming parameter is an array containing all header information in the following format: `[{"name": "header name", "value": "header content"} ... ]`.
+The incoming parameter `val` is an array containing all header information in the following format: `[{"name": "header name", "value": "header content"} ... ]`.
 
-Because JS pass the Object by reference, the custom function does not need any return value, only need to modify the incoming parameters to take effect. For example, this code will add ` HE/2.0.0` to the end of `User-Agent`:
+This custom function does not need any return value, only needs to modify the incoming parameters to take effect. For example, this code will add ` HE/2.0.0` to the end of `User-Agent`:
 
 ```javascript
 for (const item of val) {
@@ -103,9 +109,8 @@ This parameter is Object and is a read-only parameter. The structure is as follo
 	// Request time
 	time: 1505613357577.7522,
 	// URL of the resource which triggered the request. For example, if "https://example.com" contains a link, and the user clicks the link, then the originUrl for the resulting request is "https://example.com".
-	// Since 4.1.0
 	originUrl: '',
-	// URL of the document in which the resource will be loaded. Only available in Firefox. Since 4.1.0
+	// URL of the document in which the resource will be loaded. Only available in Firefox.
 	documentUrl: '',
 	// Whether the request is from a private browsing window. Only available in Firefox.
 	incognito: false,
