@@ -12,6 +12,7 @@ export interface RuleFilterOptions {
   type?: RULE_TYPE;
   method?: string; // request method, lowercase
   resourceType?: DeclarativeNetRequest.ResourceType;
+  responseHeaders?: Array<{ name: string; value?: string }>;
 }
 
 /** @deprecated */
@@ -21,6 +22,12 @@ export interface RULE_ACTION_OBJ {
 }
 
 export type RULE_ACTION = 'cancel' | RULE_ACTION_OBJ;
+
+export interface HeaderMatchInfo {
+  header: string;
+  values: string[];
+  excludedValues?: string[];
+}
 
 export interface BasicRule {
   forceRunner?: 'auto' | 'web_request' | 'dnr';
@@ -53,6 +60,9 @@ export interface BasicRule {
     excludeMethod: string[];
     resourceTypes: DeclarativeNetRequest.ResourceType[];
     excludeResourceTypes: DeclarativeNetRequest.ResourceType[];
+    // response headers
+    responseHeaders?: HeaderMatchInfo[];
+    excludedResponseHeaders?: HeaderMatchInfo[];
   }>;
   headers?: Record<string, string>;
   body?: {

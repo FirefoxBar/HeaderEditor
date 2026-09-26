@@ -13,7 +13,11 @@ import logger from '@/share/core/logger';
 import { prefs } from '@/share/core/prefs';
 import { detectRunner, isSupportHeaderInfo } from '@/share/core/rule-utils';
 import SessionMessage from '@/share/core/session-message';
-import type { RULE_ACTION_OBJ, Rule } from '@/share/core/types';
+import type {
+  HeaderMatchInfo,
+  RULE_ACTION_OBJ,
+  Rule,
+} from '@/share/core/types';
 import {
   getTableName,
   isModifyHeaderRule,
@@ -21,12 +25,6 @@ import {
   isValidArray,
 } from '@/share/core/utils';
 import { getAll, waitLoad } from '../core/rules';
-
-interface HeaderInfo {
-  header: string;
-  values: string[];
-  excludedValues?: string[];
-}
 
 type DNRRule = DeclarativeNetRequest.Rule;
 
@@ -184,14 +182,15 @@ function createDNR(rule: Rule, id: number) {
     }
   }
 
-  let matchResponseHeaders: HeaderInfo[] | undefined;
   if (isSupportHeaderInfo()) {
+    let matchResponseHeaders: HeaderMatchInfo[] | undefined;
     if (rule.ruleType === RULE_TYPE.REDIRECT_AT_RESPONSE) {
       matchResponseHeaders = [];
     }
-  }
-  if (matchResponseHeaders) {
-    (res.condition as any).responseHeaders = matchResponseHeaders;
+    // TODO: responseHeaders and excludedResponseHeaders
+    if (matchResponseHeaders) {
+      (res.condition as any).responseHeaders = matchResponseHeaders;
+    }
   }
 
   if (IS_DEV) {

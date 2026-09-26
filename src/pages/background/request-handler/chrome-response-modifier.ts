@@ -258,6 +258,7 @@ class ChromeResponseModifier {
       const rules = filter(this.rules, {
         url,
         method: request.method.toLowerCase(),
+        responseHeaders: responseHeaders || [],
         resourceType:
           typeof resourceTypeMap[resourceType] === 'undefined'
             ? 'other'

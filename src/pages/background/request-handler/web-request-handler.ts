@@ -285,13 +285,14 @@ class WebRequestHandler {
       this.deleteHeaderQueue.delete(e.requestId);
     }
     // 优先执行重定向
-    const redirectRules = getRules(TABLE_NAMES.receiveBody, {
+    const redirectRules = getRules(TABLE_NAMES.receiveHeader, {
       url: e.url,
       enable: true,
       type: RULE_TYPE.REDIRECT_AT_RESPONSE,
       runner: 'web_request',
       resourceType: e.type,
       method: e.method.toLowerCase(),
+      responseHeaders: e.responseHeaders,
     });
     if (redirectRules && redirectRules.length > 0) {
       const result = this.getRedirectUrl(redirectRules, e);
@@ -324,6 +325,7 @@ class WebRequestHandler {
       runner: 'web_request',
       resourceType: e.type,
       method: e.method.toLowerCase(),
+      responseHeaders: e.responseHeaders,
     });
     const hasModified1 = this.modifyHeaders(
       e,
@@ -337,6 +339,7 @@ class WebRequestHandler {
       enable: true,
       resourceType: e.type,
       method: e.method.toLowerCase(),
+      responseHeaders: e.responseHeaders,
     });
     const hasModified2 = this.modifyHeaders(
       e,
@@ -515,6 +518,7 @@ class WebRequestHandler {
       type: RULE_TYPE.MODIFY_RECV_BODY,
       resourceType: e.type,
       method: e.method.toLowerCase(),
+      responseHeaders: e.responseHeaders,
     });
     if (!isValidArray(rule)) {
       return;

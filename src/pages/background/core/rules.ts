@@ -179,6 +179,10 @@ function filter(fromRules: InitdRule[], options?: RuleFilterOptions) {
       }
     }
 
+    if (options.responseHeaders && rule.condition) {
+      // TODO: responseHeaders and excludedResponseHeaders
+    }
+
     return true;
   });
 }
