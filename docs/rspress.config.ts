@@ -50,14 +50,40 @@ export default defineConfig({
         IS_DEV: JSON.stringify(true),
       },
     },
-    html: {
-      tags: [
-        {
-          tag: 'script',
-          children:
-            ';(function(){var a=new URLSearchParams(location.search);a.has("is_dark")&&(a="1"===a.get("is_dark"),document.documentElement.classList.toggle("dark",a),document.documentElement.style.colorScheme=a?"dark":"light")})()',
+    output: {
+      externals: [
+        ({ request }, callback) => {
+          // remove some pkgs from semi
+          if (['webextension-polyfill'].includes(request || '')) {
+            return callback(undefined, '{}', 'var');
+          }
+          callback();
         },
       ],
     },
+    plugins: [
+      {
+        name: 'my-plugin',
+        setup: api => {
+          api.modifyRsbuildConfig((config: any) => {
+            const newTag = {
+              tag: 'script',
+              children:
+                ';(function(){var c=function(b){window.RSPRESS_THEME=b?"dark":"light";document.documentElement.classList.toggle("dark",b);document.documentElement.style.colorScheme=b?"dark":"light"},a=new URLSearchParams(location.search);if(a.has("is_dark"))c("1"===a.get("is_dark"));else{a=localStorage.getItem("rspress-theme-appearance");var d=window.matchMedia("(prefers-color-scheme: dark)").matches;c(a&&"auto"!==a?"dark"===a:d)}})()',
+            };
+            if (Array.isArray(config.html?.tags)) {
+              config.html.tags = config.html.tags.filter(
+                (tag: any) =>
+                  tag.tag !== 'script' ||
+                  !tag.children.includes('rspress-theme-appearance'),
+              );
+              config.html.tags.push(newTag);
+            } else {
+              config.html.tags = [newTag];
+            }
+          });
+        },
+      },
+    ],
   },
 });

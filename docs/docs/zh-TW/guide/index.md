@@ -4,7 +4,7 @@ title: 安裝
 
 ## 安裝
 
-请根据您的平台不同，选择不同的安装方式：
+請根據您的平台不同，選擇不同的安裝方式：
 
 | | 瀏覽器 | 精簡版(Lite) | 完整版 |
 | --- | --- | --- | --- |
@@ -12,43 +12,45 @@ title: 安裝
 | ![Chrome Logo](https://cdnjs.cloudflare.com/ajax/libs/browser-logos/75.0.1/chrome/chrome_16x16.png) | Chrome | [Chrome Web Store](https://chrome.google.com/webstore/detail/header-editor/eningockdidmgiojffjmkdblpjocbhgh) | [安裝完整版](./install-full-version) |
 | ![Edge Logo](https://cdnjs.cloudflare.com/ajax/libs/browser-logos/75.0.1/edge/edge_16x16.png) | Edge | 暫無 | [Edge Addons](https://microsoftedge.microsoft.com/addons/detail/header-editor/afopnekiinpekooejpchnkgfffaeceko) |
 
-* 官方下載和 Mozilla Add-ons 完全一樣，但是 Mozilla Add-ons 的審核非常慢，通常需要一周以上的時間，你可能無法獲得最新版本。
-* `HeaderEditor-xxx-v2` 為完整版，`HeaderEditor-xxx-v3` 為精簡版。
+* 官方下載與 Mozilla Add-ons 完全一致，但 Mozilla Add-ons 審核非常緩慢，通常需要一週以上，您可能無法取得最新版本。
+* `HeaderEditor-xxx-v2`為完整版，`HeaderEditor-xxx-v3`為精簡版。
 
 ## 功能比較
 
-完整版（Header Editor）和精簡版（Header Editor Lite）的功能不同如下：
+完整版（Header Editor）和精簡版（Header Editor Lite）的功能有以下區別：
 
 * Firefox 瀏覽器
 
-| 功能 | 完整版 |精簡版 |
+| 功能 | 完整版 | 精簡版 |
 | --- | --- | --- |
-| 基本功能 | ✅ | ✅ |
-| DNR模式| ✅ | ✅ |
-| 規則 - 排除 - 正規表示式 | ✅ | ✅ |
+| Manifest 版本 | v2 | v3 |
+| 基礎功能 | ✅ | ✅ |
+| DNR 執行模式 | ✅ | ✅ |
+| 規則-排除-正規表示式 | ✅ | ✅ |
 | 自訂函數 | ✅ | ❌ |
 | 修改回應主體 | ✅ | ✅ |
 
 * Chrome/Edge 瀏覽器
 
-| 功能 | 完整版 |精簡版 |
+| 功能 | 完整版 | 精簡版 |
 | --- | --- | --- |
-| 基本功能 | ✅ | ✅ |
-| DNR模式 | ❌ | ✅ |
-| 規則 - 排除 - 正規表示式 | ✅ | ❌ |
+| Manifest 版本 | v2 | v3 |
+| 基礎功能 | ✅ | ✅ |
+| DNR 執行模式 | ❌ | ✅ |
+| 規則-排除-正規表示式 | ✅ | ❌ |
 | 自訂函數 | ✅ | ❌ |
 | 修改回應主體 | ✅ | ✅ |
 
-筆記：
-* DNR 模式性能更佳，如無特殊需求，建議使用 Lite 版本。
-* 如果不支援相應的功能，**整個規則**將不會生效，但仍會保留。您可以等待後續版本支持，或透過「匯入匯出」手動遷移到其他瀏覽器。
+備註：
+* DNR 模式具有更好的效能。如無特定需求，建議使用 Lite 版本。
+* 若不支援對應功能，**整個規則**不會生效，但仍然會被保留，您可以等待後續版本支援，或透過「匯入和匯出」功能，手動遷移到其他瀏覽器。
 
 ## 基本使用
 
-* 点击右上角的HE图标，打开HE管理面板
-* 在规则界面新建规则：点击右下角的添加按钮，填写规则内容后，保存即可。
-* 或者，您可以在“导入和导出”中下载他人的规则。
+* 點擊右上角的 HE 圖示，開啟 HE 管理面板
+* 新增規則：點擊右下角的新增按鈕，填寫規則內容後，儲存即可。
+* 或者，您可以在「匯入和匯出」中下載他人的規則。
 
-## 從其他類似擴展遷移
+## 從其他類似擴充功能遷移
 
-我們提供了一個小工具，可以協助你從一些類似的擴展，快速遷移到 Header Editor: [migrate-to-he.firefoxcn.net](https://migrate-to-he.firefoxcn.net/index_zh_tw.html)
+我們提供了一個小工具，可以協助你從一些類似的擴充功能，快速遷移到 Header Editor: [migrate-to-he.firefoxcn.net](https://migrate-to-he.firefoxcn.net/index_zh_tw.html)
