@@ -45,6 +45,7 @@ interface CustomFunctionDetail {
   statusCode?: number;
   statusLine?: string;
   browser: 'firefox' | 'chrome';
+  rawResponse?: Uint8Array;
 }
 
 function createHeaderListener(spec: string): any {
@@ -555,8 +556,10 @@ class WebRequestHandler {
         return;
       }
 
-      let finalBody: string | null = null;
+      let finalBody: string | Uint8Array | null = null;
       let hasChanged = false;
+
+      detail.rawResponse = buffers;
 
       for (const item of rule!) {
         const encoding = item.encoding || 'utf-8';
@@ -567,9 +570,13 @@ class WebRequestHandler {
               finalBody = body;
             }
           }
-          const text = item._func(finalBody, detail);
-          if (typeof text === 'string' && text !== finalBody) {
-            finalBody = text;
+          const result = item._func(finalBody, detail);
+          if (typeof result === 'string' && result !== finalBody) {
+            finalBody = result;
+            hasChanged = true;
+          }
+          if (typeof result === 'object' && result instanceof Uint8Array) {
+            finalBody = result;
             hasChanged = true;
           }
         } catch (err) {
@@ -578,7 +585,11 @@ class WebRequestHandler {
       }
 
       if (hasChanged && finalBody) {
-        filter.write(textEncode(finalBody));
+        if (typeof finalBody === 'string') {
+          filter.write(textEncode(finalBody));
+        } else {
+          filter.write(finalBody);
+        }
       } else {
         filter.write(buffers);
       }

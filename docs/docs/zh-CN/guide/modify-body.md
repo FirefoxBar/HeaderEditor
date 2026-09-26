@@ -40,16 +40,26 @@ HE 默认使用 UTF-8 来解码传输的内容。如果网站并非 UTF-8 编码
 
 ### 自定义函数
 
-函数共有两个参数：`val` 参数为解码后的文本，`detail` 参数为自定义函数的detail对象。返回修改后的文本。
+函数共有两个参数：`val` 参数初始情况下为解码后的文本（可能因有多条规则而变化），`detail` 参数为自定义函数的 detail 对象。返回修改后的文本或 Uint8Array。
+
+若有多个修改响应体的函数，则后一函数始终接收到的是前一函数的返回值，因此 `val` 也可能为 Uint8Array。
 
 例如，下面函数，会将网页中的所有“baidu”替换为“Google”
 ```js
-return val.replace(/baidu/g, 'Google');
+if (typeof val === 'string') {
+  return val.replace(/baidu/g, 'Google');
+}
 ```
 
-您可以通过 `detail.browser` 获取浏览器类型，取值为 `chrome` 或 `firefox`。
-* 在 Firefox 下，detail 对象与[自定义函数](./custom-function)中一致。
-* 在 Chrome 下，detail 对象格式为[Fetch.requestPaused](https://chromedevtools.github.io/devtools-protocol/tot/Fetch/#event-requestPaused)。
+您可以通过 `detail` 对象获取更多信息：
+* `detail.browser` 获取浏览器类型，取值为 `chrome` 或 `firefox`。
+* `detail.rawResponse` 获取原始响应体。
+
+在不同浏览器下，detail 对象的格式不同：
+| 说明项目 | Chrome | Firefox |
+| --- | --- | --- |
+| detail 对象格式 | [Fetch.requestPaused](https://chromedevtools.github.io/devtools-protocol/tot/Fetch/#event-requestPaused) | 与[自定义函数](./custom-function)中一致 |
+| `detail.rawResponse` | `{ base64Encoded: boolean, body: string }` | `Uint8Array` |
 
 ## 已知问题
 

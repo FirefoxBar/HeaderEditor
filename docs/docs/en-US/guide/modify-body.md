@@ -40,16 +40,26 @@ In Chrome, you can choose when to intercept the request.
 In Firefox, this is always the response stage.
 
 ### Custom Function
-The function takes two parameters: the `val` parameter is the decoded text, and the `detail` parameter is the custom function's detail object. The function returns the modified text.
+The function takes two parameters: the `val` parameter is initially the decoded text (which may change when multiple rules apply), and the `detail` parameter is the custom function's detail object. It returns the modified text or a Uint8Array.
+
+When multiple response-body functions apply, each subsequent function always receives the return value of the previous one, so `val` may also be a Uint8Array.
 
 For example, the following function replaces all occurrences of "baidu" on a webpage with "Google."
 ```js
-return val.replace(/baidu/g, 'Google');
+if (typeof val === 'string') {
+  return val.replace(/baidu/g, 'Google');
+}
 ```
 
-You can use `detail.browser` to get the browser type, which can be either `chrome` or `firefox`.
-* In Firefox, the detail object is the same as in the [custom function](./custom-function).
-* In Chrome, the detail object format is [Fetch.requestPaused](https://chromedevtools.github.io/devtools-protocol/tot/Fetch/#event-requestPaused).
+You can get more information from the `detail` object:
+* `detail.browser` gets the browser type, which can be either `chrome` or `firefox`.
+* `detail.rawResponse` gets the raw response body.
+
+The format of the detail object differs by browser:
+| Item | Chrome | Firefox |
+| --- | --- | --- |
+| detail object format | [Fetch.requestPaused](https://chromedevtools.github.io/devtools-protocol/tot/Fetch/#event-requestPaused) | Same as in the [custom function](./custom-function) |
+| `detail.rawResponse` | `{ base64Encoded: boolean, body: string }` | `Uint8Array` |
 
 ## Known Issues
 

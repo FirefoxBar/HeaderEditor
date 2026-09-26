@@ -40,16 +40,26 @@ HE 預設使用 UTF-8 來解碼傳輸的內容。如果網站並非 UTF-8 編碼
 
 ### 自訂函數
 
-函數共有兩個參數：`val` 參數為解碼後的文字，`detail` 參數為自訂函數的detail物件。返回修改後的文字。
+函數共有兩個參數：`val` 參數初始情況下為解碼後的文字（可能因有多條規則而變化），`detail` 參數為自訂函數的 detail 物件。返回修改後的文字或 Uint8Array。
+
+若有多個修改回應主體的函數，則後一函數始終接收到的是前一函數的返回值，因此 `val` 也可能為 Uint8Array。
 
 例如，下面函數會將網頁中的所有「baidu」替換為「Google」
 ```js
-return val.replace(/baidu/g, 'Google');
+if (typeof val === 'string') {
+  return val.replace(/baidu/g, 'Google');
+}
 ```
 
-您可以透過 `detail.browser` 取得瀏覽器類型，取值為 `chrome` 或 `firefox`。
-* 在 Firefox 下，detail 物件與[自訂函數](./custom-function)中一致。
-* 在 Chrome 下，detail 物件格式為[Fetch.requestPaused](https://chromedevtools.github.io/devtools-protocol/tot/Fetch/#event-requestPaused)。
+您可以透過 `detail` 物件取得更多資訊：
+* `detail.browser` 取得瀏覽器類型，取值為 `chrome` 或 `firefox`。
+* `detail.rawResponse` 取得原始回應主體。
+
+在不同瀏覽器下，detail 物件的格式不同：
+| 說明項目 | Chrome | Firefox |
+| --- | --- | --- |
+| detail 物件格式 | [Fetch.requestPaused](https://chromedevtools.github.io/devtools-protocol/tot/Fetch/#event-requestPaused) | 與[自訂函數](./custom-function)中一致 |
+| `detail.rawResponse` | `{ base64Encoded: boolean, body: string }` | `Uint8Array` |
 
 ## 已知問題
 

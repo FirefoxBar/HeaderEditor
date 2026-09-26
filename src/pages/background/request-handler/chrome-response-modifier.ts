@@ -21,6 +21,14 @@ function safeAtob(encoding: string, base64: string) {
   return textDecode(encoding, bytes);
 }
 
+function uint8ArrayToBase64(bytes: Uint8Array) {
+  let binary = '';
+  for (let i = 0; i < bytes.length; i++) {
+    binary += String.fromCharCode(bytes[i]);
+  }
+  return btoa(binary);
+}
+
 const resourceTypeMap: Record<string, DeclarativeNetRequest.ResourceType> = {
   Document: 'main_frame',
   Stylesheet: 'stylesheet',
@@ -277,13 +285,18 @@ class ChromeResponseModifier {
       }
       const newHeaders: Record<string, string> = {};
       const hasFunc = this.rules.some(item => item.isFunction);
-      let finalBody: any;
+      let finalBody: string | Uint8Array | undefined;
       let resp: any;
       if (hasFunc) {
         resp = await debuggerAPI.sendCommand(source, 'Fetch.getResponseBody', {
           requestId,
         });
       }
+      const detailObj = {
+        ...params,
+        rawResponse: resp?.body,
+        browser: 'chrome',
+      };
       for (const rule of rules) {
         if (!finalBody) {
           if (resp?.base64Encoded) {
@@ -299,11 +312,11 @@ class ChromeResponseModifier {
           Object.assign(newHeaders, rule.headers);
         }
         if (rule.isFunction) {
-          const body = rule._func(finalBody, {
-            ...params,
-            browser: 'chrome',
-          });
+          const body = rule._func(finalBody, detailObj);
           if (typeof body === 'string') {
+            finalBody = body;
+          }
+          if (typeof body === 'object' && body instanceof Uint8Array) {
             finalBody = body;
           }
         } else {
@@ -326,11 +339,20 @@ class ChromeResponseModifier {
           delete newHeaders[name];
         }
       }
+      let body: string | undefined;
+      if (finalBody) {
+        if (typeof finalBody === 'string') {
+          body = safeBtoa(finalBody);
+        }
+        if (typeof finalBody === 'object' && finalBody instanceof Uint8Array) {
+          body = uint8ArrayToBase64(finalBody);
+        }
+      }
       return debuggerAPI.sendCommand(source, 'Fetch.fulfillRequest', {
         requestId,
         responseCode: 200,
         responseHeaders: finalHeaders,
-        body: safeBtoa(finalBody),
+        body,
       });
     });
   }
