@@ -15,6 +15,7 @@ import { detectRunner, isSupportHeaderInfo } from '@/share/core/rule-utils';
 import SessionMessage from '@/share/core/session-message';
 import type {
   HeaderMatchInfo,
+  InitdRule,
   RULE_ACTION_OBJ,
   Rule,
 } from '@/share/core/types';
@@ -63,7 +64,9 @@ function createDNR(rule: Rule, id: number) {
       method,
       urlFilter,
     } = rule.condition;
-    res.condition.requestDomains = domain;
+    if (isValidArray(domain)) {
+      res.condition.requestDomains = domain;
+    }
     // 只能指定 urlFilter 或 regexFilter 中的一项。
     if (urlFilter) {
       res.condition.urlFilter = urlFilter;
@@ -200,26 +203,48 @@ function createDNR(rule: Rule, id: number) {
   return res;
 }
 
+const ruleIdStart = {
+  [TABLE_NAMES.request]: 0,
+  [TABLE_NAMES.sendHeader]: 100000,
+  [TABLE_NAMES.receiveHeader]: 200000,
+  [TABLE_NAMES.receiveBody]: 300000,
+};
 function getRuleId(id: number, table?: TABLE_NAMES, ruleType?: RULE_TYPE) {
-  const list = {
-    [TABLE_NAMES.request]: 0,
-    [TABLE_NAMES.sendHeader]: 100000,
-    [TABLE_NAMES.receiveHeader]: 200000,
-    [TABLE_NAMES.receiveBody]: 300000,
-  };
-
   const t = table || getTableName(ruleType || RULE_TYPE.REDIRECT);
-
-  return Number(id) + list[t];
+  return Number(id) + ruleIdStart[t];
 }
 
 class DNRRequestHandler {
   private disableAll = false;
+  private pending: Array<() => Promise<void>> = [];
+  private running = false;
+
+  private async runQueue() {
+    if (this.running) return; // 已在跑，排队即可
+    this.running = true;
+    while (this.pending.length) {
+      const fn = this.pending.shift();
+      if (!fn) {
+        this.running = false;
+        return;
+      }
+      try {
+        await fn();
+      } catch (err) {
+        console.error(err);
+      }
+    }
+    this.running = false;
+  }
+  private pushQueue(fn: () => Promise<void>) {
+    this.pending.push(fn);
+    this.runQueue();
+  }
 
   constructor() {
     this.loadPrefs();
     this.initHook();
-    this.initRules();
+    this.pushQueue(() => this.initRules());
   }
 
   private setDisableAll(to: boolean) {
@@ -233,9 +258,10 @@ class DNRRequestHandler {
     }
     if (to) {
       // disable all
-      this.clearRules();
+      this.pushQueue(() => this.clearRules());
     } else {
-      this.initRules();
+      // enable all
+      this.pushQueue(() => this.initRules());
     }
   }
 
@@ -256,18 +282,27 @@ class DNRRequestHandler {
     const v = Object.values(getAll());
 
     // if service worker restart, get exists rules
-    const current = (await browser.declarativeNetRequest.getSessionRules()).map(
-      x => x.id,
+    const current = new Set(
+      (await browser.declarativeNetRequest.getSessionRules()).map(x => x.id),
     );
-    const allRules = v.reduce((a, b) => [...a!, ...b!], []) || [];
+    const allRules = v.flat() as InitdRule[];
     const addOriginalRules: Rule[] = [];
     const addRules: DNRRule[] = [];
+    const toRemove: number[] = [];
     allRules.forEach(rule => {
       if (rule._runner !== 'dnr') {
+        // rule exists, but need to remove
+        if (current.has(rule.id)) {
+          toRemove.push(rule.id);
+        }
         return;
       }
       const ruleId = getRuleId(rule.id, undefined, rule.ruleType);
-      if (current.includes(ruleId)) {
+      if (current.has(ruleId)) {
+        if (!rule.enable) {
+          toRemove.push(rule.id);
+          return;
+        }
         // rule exists
         return;
       }
@@ -283,9 +318,18 @@ class DNRRequestHandler {
     if (IS_DEV) {
       console.log('init dnr rules', addRules, this.disableAll);
     }
-    if (isValidArray(addRules)) {
-      this.addRules(addRules, addOriginalRules);
+    const finalTasks: Promise<void>[] = [];
+    if (isValidArray(toRemove)) {
+      finalTasks.push(
+        browser.declarativeNetRequest.updateSessionRules({
+          removeRuleIds: toRemove,
+        }),
+      );
     }
+    if (isValidArray(addRules)) {
+      finalTasks.push(this.addRules(addRules, addOriginalRules));
+    }
+    await Promise.all(finalTasks);
   }
 
   private initHook() {
@@ -357,14 +401,15 @@ class DNRRequestHandler {
       return;
     }
     if (rules.length === 1) {
-      return this.addRule(rules[0], originalRules[0]);
+      await this.addRule(rules[0], originalRules[0]);
+      return;
     }
     try {
       await browser.declarativeNetRequest.updateSessionRules({
         addRules: rules,
       });
     } catch (_) {
-      return Promise.all(
+      await Promise.all(
         rules.map((rule, idx) => this.addRule(rule, originalRules[idx])),
       );
     }
