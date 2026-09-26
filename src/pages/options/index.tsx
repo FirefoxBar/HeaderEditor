@@ -8,7 +8,6 @@ import {
 } from '@douyinfe/semi-icons';
 import { Nav } from '@douyinfe/semi-ui';
 import type { OnSelectedData } from '@douyinfe/semi-ui/lib/es/navigation';
-import { css } from '@emotion/css';
 import { useGetState, useResponsive } from 'ahooks';
 import React, { useCallback, useEffect, useState } from 'react';
 import ReactDOM from 'react-dom/client';

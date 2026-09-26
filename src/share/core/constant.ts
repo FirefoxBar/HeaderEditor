@@ -1,6 +1,9 @@
 import type { DeclarativeNetRequest } from 'webextension-polyfill/namespaces/declarativeNetRequest';
 import type { PrefValue } from './types';
 
+export const RULE_CANCEL_MARK = '_header_editor_cancel_';
+export const RULE_REMOVE_MARK = '_header_editor_remove_';
+
 export enum TABLE_NAMES {
   request = 'request',
   sendHeader = 'sendHeader',

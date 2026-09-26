@@ -84,7 +84,7 @@ export interface InitdRule extends Rule {
   _runner: 'web_request' | 'dnr';
   _reg: RegExp;
   _exclude?: RegExp;
-  _func: (val: any, detail: any) => any;
+  _func: (val: any, detail: any, util: any) => any;
   _re2?: RE2JS;
   _filter_reg?: RegExp;
 }

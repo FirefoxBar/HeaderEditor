@@ -27,3 +27,23 @@ export function textEncode(text: string) {
   }
   return textEncoder.encode(text);
 }
+
+export function safeBtoa(str: string) {
+  const bytes = textEncode(str);
+  const binary = Array.from(bytes, b => String.fromCharCode(b)).join('');
+  return btoa(binary);
+}
+
+export function safeAtob(encoding: string, base64: string) {
+  const binary = atob(base64);
+  const bytes = Uint8Array.from(binary, c => c.charCodeAt(0));
+  return textDecode(encoding, bytes);
+}
+
+export function uint8ArrayToBase64(bytes: Uint8Array) {
+  let binary = '';
+  for (let i = 0; i < bytes.length; i++) {
+    binary += String.fromCharCode(bytes[i]);
+  }
+  return btoa(binary);
+}

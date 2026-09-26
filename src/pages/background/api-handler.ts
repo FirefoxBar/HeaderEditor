@@ -5,7 +5,7 @@ import logger from '@/share/core/logger';
 import { prefs } from '@/share/core/prefs';
 import { getDatabase } from './core/db';
 import * as rules from './core/rules';
-import { openURL } from './utils';
+import { openURL } from './utils/open-url';
 
 function execute(request: any) {
   if (request.method === 'notifyBackground') {

@@ -8,10 +8,10 @@ import { Button, Card, Input, Space, Table, Toast } from '@douyinfe/semi-ui';
 import { css } from '@emotion/css';
 import { useGetState, useRequest } from 'ahooks';
 import { useCallback, useEffect, useRef } from 'react';
-import { openURL } from '@/pages/background/utils';
 import { withErrorBoundary } from '@/share/components/error-boundary';
 import { t } from '@/share/core/browser';
 import { getLocal, getSingle } from '@/share/core/storage';
+import Api from '@/share/pages/api';
 import ImportDrawer from '../../components/import-drawer';
 
 interface IEProps {
@@ -86,11 +86,7 @@ function DownloadPage({ visible }: IEProps) {
           <Button
             className="btn-icon"
             icon={<IconSearch />}
-            onClick={() =>
-              openURL({
-                url: t('url_third_party_rules'),
-              })
-            }
+            onClick={() => Api.openURL(t('url_third_party_rules'))}
           >
             {t('third_party_rules')}
           </Button>

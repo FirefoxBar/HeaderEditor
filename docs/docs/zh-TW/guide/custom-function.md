@@ -131,6 +131,27 @@ if (detail.type === "media") {
 }
 ```
 
+## 工具函數
+
+自 5.4.2 起，Header Editor 提供了一些工具函數，用於簡化自訂函數編寫。您可以在自訂函數中透過 `util` 呼叫它們。例如 `util._.clone(val)`。
+
+類型定義如下：
+```ts
+declare const util: {
+  // lodash 函數
+  _: { clone, cloneDeep, cloneDeepWith, cloneWith, difference, differenceBy, differenceWith, eq, first, flatten, get, has, head, isEqual, isEqualWith, last, pick, pickBy, random, set, setWith, uniq, uniqBy, uniqWith },
+  // 經過安全封裝的 atob/btoa 函數，解決原生僅支援 ASCII 字元集的問題
+  atob: (encoding: string, base64: string): string | undefined,
+  btoa: (str: string): string,
+  uint8ArrayToBase64: (uint8Array: Uint8Array): string,
+  // 經過封裝的 TextDecoder/TextEncoder
+  textDecode: (encoding: string, buffer: Uint8Array): string | undefined,
+  textEncode: (text: string): Uint8Array<ArrayBuffer>,
+}
+```
+
+lodash 函數請參考[官方文件](https://lodash.com/docs/4.17.21)
+
 ## 如何除錯自訂函數
 
 所有自訂函數的運行均位於背景頁面，因此，要除錯自訂函數，請開啟背景頁面的主控台

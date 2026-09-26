@@ -131,6 +131,27 @@ if (detail.type === "media") {
 }
 ```
 
+## 工具函数
+
+自 5.4.2 起，Header Editor 提供了一些工具函数，用于简化自定义函数编写。您可以在自定义函数中通过 `util` 调用它们。例如 `util._.clone(val)`。
+
+类型定义如下：
+```ts
+declare const util: {
+  // lodash 函数
+  _: { clone, cloneDeep, cloneDeepWith, cloneWith, difference, differenceBy, differenceWith, eq, first, flatten, get, has, head, isEqual, isEqualWith, last, pick, pickBy, random, set, setWith, uniq, uniqBy, uniqWith },
+  // 经过安全封装的 atob/btoa 函数，解决原生仅支持 ASCII 字符集的问题
+  atob: (encoding: string, base64: string): string | undefined,
+  btoa: (str: string): string,
+  uint8ArrayToBase64: (uint8Array: Uint8Array): string,
+  // 经过封装的 TextDecoder/TextEncoder
+  textDecode: (encoding: string, buffer: Uint8Array): string | undefined,
+  textEncode: (text: string): Uint8Array<ArrayBuffer>,
+}
+```
+
+lodash 函数请参考[官方文档](https://lodash.com/docs/4.17.21)
+
 ## 如何调试自定义函数
 
 所有自定义函数的运行均位于后台页面，因此，要调试自定义函数，请打开后台页面的控制台

@@ -1,10 +1,10 @@
 import browser from 'webextension-polyfill';
 import type { DeclarativeNetRequest } from 'webextension-polyfill/namespaces/declarativeNetRequest';
-import { getBrowserVersion, t } from '@/share/core/browser';
-import { IS_FIREFOX } from '@/share/core/build-inject-constant';
+import { t } from '@/share/core/browser';
 import {
   ALL_RESOURCE_TYPES,
   RULE_MATCH_TYPE,
+  RULE_REMOVE_MARK,
   RULE_TYPE,
   TABLE_NAMES,
 } from '@/share/core/constant';
@@ -33,7 +33,7 @@ type DNRRule = DeclarativeNetRequest.Rule;
 function hasImageSet() {
   try {
     return 'IMAGESET' in chrome.declarativeNetRequest.ResourceType;
-  } catch (e) {
+  } catch (_) {
     return false;
   }
 }
@@ -151,7 +151,7 @@ function createDNR(rule: Rule, id: number) {
     value: any,
   ): DeclarativeNetRequest.RuleActionResponseHeadersItemType => {
     if (
-      value === '_header_editor_remove_' ||
+      value === RULE_REMOVE_MARK ||
       value === '' ||
       value === null ||
       typeof value === 'undefined'

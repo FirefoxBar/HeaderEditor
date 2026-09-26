@@ -1,33 +1,18 @@
 import browser from 'webextension-polyfill';
 import type { DeclarativeNetRequest } from 'webextension-polyfill/namespaces/declarativeNetRequest';
-import { RULE_TYPE, TABLE_NAMES } from '@/share/core/constant';
+import {
+  RULE_REMOVE_MARK,
+  RULE_TYPE,
+  TABLE_NAMES,
+} from '@/share/core/constant';
 import emitter from '@/share/core/emitter';
 import logger from '@/share/core/logger';
 import { prefs } from '@/share/core/prefs';
 import type { InitdRule, Rule } from '@/share/core/types';
 import { isValidArray } from '@/share/core/utils';
 import { filter, get, waitLoad } from '../core/rules';
-import { textDecode, textEncode } from './utils';
-
-function safeBtoa(str: string) {
-  const bytes = textEncode(str);
-  const binary = Array.from(bytes, b => String.fromCharCode(b)).join('');
-  return btoa(binary);
-}
-
-function safeAtob(encoding: string, base64: string) {
-  const binary = atob(base64);
-  const bytes = Uint8Array.from(binary, c => c.charCodeAt(0));
-  return textDecode(encoding, bytes);
-}
-
-function uint8ArrayToBase64(bytes: Uint8Array) {
-  let binary = '';
-  for (let i = 0; i < bytes.length; i++) {
-    binary += String.fromCharCode(bytes[i]);
-  }
-  return btoa(binary);
-}
+import { util } from '../utils/function-util';
+import { safeAtob, safeBtoa, uint8ArrayToBase64 } from '../utils/text-coder';
 
 const resourceTypeMap: Record<string, DeclarativeNetRequest.ResourceType> = {
   Document: 'main_frame',
@@ -312,7 +297,7 @@ class ChromeResponseModifier {
           Object.assign(newHeaders, rule.headers);
         }
         if (rule.isFunction) {
-          const body = rule._func(finalBody, detailObj);
+          const body = rule._func(finalBody, detailObj, util);
           if (typeof body === 'string') {
             finalBody = body;
           }
@@ -330,7 +315,7 @@ class ChromeResponseModifier {
           if (newHeaders[name] === undefined) {
             continue;
           }
-          if (newHeaders[name] === '_header_editor_remove_') {
+          if (newHeaders[name] === RULE_REMOVE_MARK) {
             finalHeaders.splice(i, 1);
             i--;
           } else {

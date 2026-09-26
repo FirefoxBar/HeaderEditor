@@ -132,6 +132,27 @@ if (detail.type === "media") {
 }
 ```
 
+## Utility functions
+
+Since 5.4.2, Header Editor provides some utility functions to simplify writing custom functions. You can call them via `util` in custom functions. For example `util._.clone(val)`.
+
+The type definitions are as follows:
+```ts
+declare const util: {
+  // lodash functions
+  _: { clone, cloneDeep, cloneDeepWith, cloneWith, difference, differenceBy, differenceWith, eq, first, flatten, get, has, head, isEqual, isEqualWith, last, pick, pickBy, random, set, setWith, uniq, uniqBy, uniqWith },
+  // Safely wrapped atob/btoa functions that solve the problem that the native ones only support the ASCII character set
+  atob: (encoding: string, base64: string): string | undefined,
+  btoa: (str: string): string,
+  uint8ArrayToBase64: (uint8Array: Uint8Array): string,
+  // Wrapped TextDecoder/TextEncoder
+  textDecode: (encoding: string, buffer: Uint8Array): string | undefined,
+  textEncode: (text: string): Uint8Array<ArrayBuffer>,
+}
+```
+
+For lodash functions, see the [official documentation](https://lodash.com/docs/4.17.21)
+
 ## How to debug a custom function
 
 All custom functions are run in the background page, so to debug custom functions, open the console of the background page

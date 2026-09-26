@@ -1,14 +1,20 @@
 import { last } from 'lodash-es';
 import browser, { type WebRequest } from 'webextension-polyfill';
 import { IS_SUPPORT_STREAM_FILTER } from '@/share/core/browser';
-import { RULE_TYPE, TABLE_NAMES } from '@/share/core/constant';
+import {
+  RULE_CANCEL_MARK,
+  RULE_REMOVE_MARK,
+  RULE_TYPE,
+  TABLE_NAMES,
+} from '@/share/core/constant';
 import emitter from '@/share/core/emitter';
 import logger from '@/share/core/logger';
 import { prefs } from '@/share/core/prefs';
 import type { InitdRule, RULE_ACTION_OBJ } from '@/share/core/types';
 import { IS_CHROME, isValidArray } from '@/share/core/utils';
 import { get as getRules } from '../core/rules';
-import { textDecode, textEncode } from './utils';
+import { util } from '../utils/function-util';
+import { textDecode, textEncode } from '../utils/text-coder';
 
 // 最大修改8MB的Body
 const MAX_BODY_SIZE = 8 * 1024 * 1024;
@@ -166,7 +172,7 @@ class WebRequestHandler {
       }
       if (item.isFunction) {
         try {
-          const r = item._func(redirectTo, detail);
+          const r = item._func(redirectTo, detail, util);
           if (typeof r === 'string') {
             logger.debug(
               `[web-request-handler] [rule: ${item.id}] redirect ${redirectTo} to ${r}`,
@@ -174,7 +180,7 @@ class WebRequestHandler {
             redirectTo = r;
           }
           if (
-            r === '_header_editor_cancel_' ||
+            r === RULE_CANCEL_MARK ||
             (item.ruleType === RULE_TYPE.CANCEL && r === true)
           ) {
             logger.debug(`[web-request-handler] [rule: ${item.id}] cancel`);
@@ -436,7 +442,7 @@ class WebRequestHandler {
       if (typeof newHeaders[name] === 'undefined') {
         continue;
       }
-      if (newHeaders[name] === '_header_editor_remove_') {
+      if (newHeaders[name] === RULE_REMOVE_MARK) {
         headers.splice(i, 1);
         i--;
       } else {
@@ -445,7 +451,7 @@ class WebRequestHandler {
       }
     }
     for (const k in newHeaders) {
-      if (newHeaders[k] === '_header_editor_remove_') {
+      if (newHeaders[k] === RULE_REMOVE_MARK) {
         continue;
       }
       headers.push({
@@ -455,13 +461,13 @@ class WebRequestHandler {
     }
     if (functions.length > 0) {
       const detail = presetDetail || this.makeDetails(request);
-      functions.forEach(item => {
+      for (const item of functions) {
         try {
-          item._func(headers, detail);
+          item._func(headers, detail, util);
         } catch (e) {
           console.error(e);
         }
-      });
+      }
     }
     return true;
   }
@@ -570,7 +576,7 @@ class WebRequestHandler {
               finalBody = body;
             }
           }
-          const result = item._func(finalBody, detail);
+          const result = item._func(finalBody, detail, util);
           if (typeof result === 'string' && result !== finalBody) {
             finalBody = result;
             hasChanged = true;
