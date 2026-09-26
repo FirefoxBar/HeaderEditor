@@ -165,7 +165,7 @@ function createDNR(rule: Rule, id: number) {
     return {
       header,
       operation: 'set',
-      value,
+      value: String(value),
     };
   };
 
@@ -176,8 +176,8 @@ function createDNR(rule: Rule, id: number) {
         ? 'requestHeaders'
         : 'responseHeaders';
     if (rule.headers) {
-      res.action[key] = Object.keys(rule.headers).map(key =>
-        createHeaderItem(key, rule.headers![key]),
+      res.action[key] = Object.keys(rule.headers).map(headerKey =>
+        createHeaderItem(headerKey, rule.headers![headerKey]),
       );
     } else if (typeof rule.action === 'object') {
       const action = rule.action as RULE_ACTION_OBJ;
