@@ -24,7 +24,7 @@ class Notify {
       if (request.method !== APIs.ON_EVENT) {
         return;
       }
-      logger.debug(`[${key}] ${request.event}`, request);
+      logger.debug(`[${key}] ${request.event}`, () => [request]);
       this.event.emit(request.event, request);
     };
 

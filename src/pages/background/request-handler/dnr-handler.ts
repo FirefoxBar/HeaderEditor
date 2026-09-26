@@ -226,10 +226,10 @@ class DNRRequestHandler {
     if (this.disableAll === to) {
       return;
     }
-    logger.debug('[dnr-handler] disableAll', to);
+    logger.debug('[dnr-handler] disableAll', () => [to]);
     this.disableAll = to;
     if (IS_DEV) {
-      console.log('[dnr-handler] disableAll', to);
+      console.log('[dnr-handler] disableAll', () => [to]);
     }
     if (to) {
       // disable all
@@ -302,7 +302,7 @@ class DNRRequestHandler {
         if (this.disableAll) {
           return;
         }
-        logger.debug('[dnr-handler] rules update', from, target);
+        logger.debug('[dnr-handler] rules update', () => [from, target]);
         if (from) {
           const old = getRuleId(from.id, undefined, from.ruleType);
           await browser.declarativeNetRequest.updateSessionRules({

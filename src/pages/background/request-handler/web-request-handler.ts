@@ -12,7 +12,7 @@ import logger from '@/share/core/logger';
 import { prefs } from '@/share/core/prefs';
 import type { InitdRule, RULE_ACTION_OBJ } from '@/share/core/types';
 import { IS_CHROME, isValidArray } from '@/share/core/utils';
-import { get as getRules } from '../core/rules';
+import { filter, get as getRules } from '../core/rules';
 import { util } from '../utils/function-util';
 import { textDecode, textEncode } from '../utils/text-coder';
 
@@ -81,7 +81,10 @@ class WebRequestHandler {
   }
 
   private setDisableAll(to: boolean, forceCheckHook = false) {
-    logger.debug(`[web-request-handler] disableAll`, this.disableAll, to);
+    logger.debug(`[web-request-handler] disableAll`, () => [
+      this.disableAll,
+      to,
+    ]);
     if (this.disableAll !== to || forceCheckHook) {
       this.disableAll = to;
       if (to) {
@@ -220,7 +223,9 @@ class WebRequestHandler {
     if (!this.beforeAll(e)) {
       return;
     }
-    logger.debug(`[web-request-handler] handle before request ${e.url}`, e);
+    logger.debug(`[web-request-handler] handle before request ${e.url}`, () => [
+      e,
+    ]);
     // 可用：重定向，阻止加载
     const rule = getRules(TABLE_NAMES.request, {
       url: e.url,
@@ -248,10 +253,9 @@ class WebRequestHandler {
     if (!e.requestHeaders) {
       return;
     }
-    logger.debug(
-      `[web-request-handler] handle before send ${e.url}`,
+    logger.debug(`[web-request-handler] handle before send ${e.url}`, () => [
       e.requestHeaders,
-    );
+    ]);
     const rule = getRules(TABLE_NAMES.sendHeader, {
       url: e.url,
       enable: true,
@@ -263,13 +267,13 @@ class WebRequestHandler {
     if (this.modifyHeaders(e, REQUEST_TYPE.REQUEST, rule)) {
       logger.debug(
         `[web-request-handler] handle before send:finish ${e.url}`,
-        e.requestHeaders,
+        () => [e.requestHeaders],
       );
       return { requestHeaders: e.requestHeaders };
     }
     logger.debug(
       `[web-request-handler] handle before send:finish ${e.url}, no modify`,
-      e.requestHeaders,
+      () => [e.requestHeaders],
     );
   }
 
@@ -284,15 +288,18 @@ class WebRequestHandler {
       this.savedRequestHeader.delete(e.requestId);
       this.deleteHeaderQueue.delete(e.requestId);
     }
+    const receiveHeaderRules =
+      getRules(TABLE_NAMES.receiveHeader, {
+        url: e.url,
+        enable: true,
+        runner: 'web_request',
+        resourceType: e.type,
+        method: e.method.toLowerCase(),
+        responseHeaders: e.responseHeaders,
+      }) || [];
     // 优先执行重定向
-    const redirectRules = getRules(TABLE_NAMES.receiveHeader, {
-      url: e.url,
-      enable: true,
+    const redirectRules = filter(receiveHeaderRules, {
       type: RULE_TYPE.REDIRECT_AT_RESPONSE,
-      runner: 'web_request',
-      resourceType: e.type,
-      method: e.method.toLowerCase(),
-      responseHeaders: e.responseHeaders,
     });
     if (redirectRules && redirectRules.length > 0) {
       const result = this.getRedirectUrl(redirectRules, e);
@@ -300,6 +307,14 @@ class WebRequestHandler {
         return result;
       }
     }
+    // 先查找receiveBody的规则，后面复用
+    const receiveBodyRules = getRules(TABLE_NAMES.receiveBody, {
+      url: e.url,
+      enable: true,
+      resourceType: e.type,
+      method: e.method.toLowerCase(),
+      responseHeaders: e.responseHeaders,
+    });
     // 修改响应体
     if (this.modifyBody) {
       // 检查有没有Content-Length头，如有，则不能超过MAX_BODY_SIZE，否则不进行修改
@@ -308,24 +323,18 @@ class WebRequestHandler {
           ?.value,
       );
       if (Number.isNaN(contentLength) || contentLength < MAX_BODY_SIZE) {
-        this.modifyReceivedBody(e, detail);
+        this.modifyReceivedBody(receiveBodyRules || [], e, detail);
       }
     }
     // 修改响应头
     if (!e.responseHeaders) {
       return;
     }
-    logger.debug(
-      `[web-request-handler] handle received ${e.url}`,
+    logger.debug(`[web-request-handler] handle received ${e.url}`, () => [
       e.responseHeaders,
-    );
-    const rule = getRules(TABLE_NAMES.receiveHeader, {
-      url: e.url,
-      enable: true,
-      runner: 'web_request',
-      resourceType: e.type,
-      method: e.method.toLowerCase(),
-      responseHeaders: e.responseHeaders,
+    ]);
+    const rule = filter(receiveHeaderRules, {
+      type: RULE_TYPE.MODIFY_RECV_HEADER,
     });
     const hasModified1 = this.modifyHeaders(
       e,
@@ -334,29 +343,22 @@ class WebRequestHandler {
       detail,
     );
     // response also can modify headers
-    const respRule = getRules(TABLE_NAMES.receiveBody, {
-      url: e.url,
-      enable: true,
-      resourceType: e.type,
-      method: e.method.toLowerCase(),
-      responseHeaders: e.responseHeaders,
-    });
     const hasModified2 = this.modifyHeaders(
       e,
       REQUEST_TYPE.RESPONSE,
-      respRule,
+      receiveBodyRules,
       detail,
     );
     if (hasModified1 || hasModified2) {
       logger.debug(
         `[web-request-handler] handle received:finish ${e.url}`,
-        e.responseHeaders,
+        () => [e.responseHeaders],
       );
       return { responseHeaders: e.responseHeaders };
     }
     logger.debug(
       `[web-request-handler] handle received:finish ${e.url}, no modify`,
-      e.responseHeaders,
+      () => [e.responseHeaders],
     );
   }
 
@@ -504,6 +506,7 @@ class WebRequestHandler {
   }
 
   private modifyReceivedBody(
+    baseRules: InitdRule[],
     e: WebRequest.OnHeadersReceivedDetailsType,
     detail: CustomFunctionDetail,
   ) {
@@ -511,14 +514,9 @@ class WebRequestHandler {
       return;
     }
 
-    const rule = getRules(TABLE_NAMES.receiveBody, {
-      url: e.url,
-      enable: true,
+    const rule = filter(baseRules, {
       runner: 'web_request',
       type: RULE_TYPE.MODIFY_RECV_BODY,
-      resourceType: e.type,
-      method: e.method.toLowerCase(),
-      responseHeaders: e.responseHeaders,
     });
     if (!isValidArray(rule)) {
       return;
@@ -526,45 +524,60 @@ class WebRequestHandler {
     const hasCustomFunction = rule.some(item => item.isFunction);
     // simple execute
     if (!hasCustomFunction) {
-      const filter = browser.webRequest.filterResponseData(e.requestId);
-      filter.onstop = () => {
+      const responseFilter = browser.webRequest.filterResponseData(e.requestId);
+      responseFilter.onstop = () => {
         const finalBody = last(rule)?.body?.value;
         if (typeof finalBody !== 'undefined') {
-          filter.write(textEncode(finalBody));
+          responseFilter.write(textEncode(finalBody));
         }
-        filter.close();
+        responseFilter.close();
       };
       return;
     }
 
-    const filter = browser.webRequest.filterResponseData(e.requestId);
-    let buffers: Uint8Array | null = null;
+    const responseFilter = browser.webRequest.filterResponseData(e.requestId);
+    const chunks: ArrayBuffer[] = [];
+    let bufferedBytes = 0;
+    let passThrough = false; // 一旦判定超限就切纯透传，不再缓冲
 
-    filter.ondata = event => {
+    responseFilter.ondata = event => {
       const { data } = event;
-      if (buffers === null) {
-        buffers = new Uint8Array(data);
+      // 已判定超限：直接转发，零拷贝、零额外内存
+      if (passThrough) {
+        responseFilter.write(data);
         return;
       }
-      const buffer = new Uint8Array(buffers.byteLength + data.byteLength);
-      // 将响应分段数据收集拼接起来，在完成加载后整体替换。
-      // 这可能会改变浏览器接收数据分段渲染的行为。
-      buffer.set(buffers);
-      buffer.set(new Uint8Array(data), buffers.buffer.byteLength);
-      buffers = buffer;
-      // 如果长度已经超长了，那就不要尝试修改了
-      if (buffers.length > MAX_BODY_SIZE) {
-        buffers = null;
-        filter.close();
+
+      // 把超限判断前置，第一个分片也能覆盖到
+      if (bufferedBytes + data.byteLength > MAX_BODY_SIZE) {
+        // 先把已攒下来的原样吐出去，避免响应体被截断
+        for (const ab of chunks) responseFilter.write(ab);
+        chunks.length = 0;
+        bufferedBytes = 0;
+        passThrough = true;
+        responseFilter.write(data);
+        return;
       }
+
+      chunks.push(data); // 只存引用，不拷贝
+      bufferedBytes += data.byteLength;
     };
 
-    // @ts-ignore
-    filter.onstop = () => {
-      if (buffers === null) {
-        filter.close();
+    responseFilter.onstop = () => {
+      if (passThrough) {
+        chunks.length = 0;
+        responseFilter.close();
         return;
       }
+
+      // 分配 + 拷贝
+      const buffers = new Uint8Array(bufferedBytes);
+      let offset = 0;
+      for (const ab of chunks) {
+        buffers.set(new Uint8Array(ab), offset);
+        offset += ab.byteLength;
+      }
+      chunks.length = 0;
 
       let finalBody: string | Uint8Array | null = null;
       let hasChanged = false;
@@ -596,20 +609,23 @@ class WebRequestHandler {
 
       if (hasChanged && finalBody) {
         if (typeof finalBody === 'string') {
-          filter.write(textEncode(finalBody));
+          responseFilter.write(textEncode(finalBody));
         } else {
-          filter.write(finalBody);
+          responseFilter.write(finalBody);
         }
       } else {
-        filter.write(buffers);
+        responseFilter.write(buffers);
       }
-      buffers = null;
-      filter.close();
+      responseFilter.close();
     };
 
-    // @ts-ignore
-    filter.onerror = () => {
-      buffers = null;
+    responseFilter.onerror = () => {
+      if (bufferedBytes) {
+        for (const ab of chunks) responseFilter.write(ab);
+      }
+      passThrough = true;
+      chunks.length = 0;
+      responseFilter.close();
     };
   }
 }

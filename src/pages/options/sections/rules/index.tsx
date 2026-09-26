@@ -103,7 +103,7 @@ class Rules extends React.Component<RulesProps, RulesState> {
 
   // 事件响应 - 通知 - 规则更新
   handleRuleUpdateEvent(request: any) {
-    logger.debug('[options/rules] rules update', request);
+    logger.debug('[options/rules] rules update', () => [request]);
     const rule: Rule = request.target;
     // 寻找ID相同的
     let sameItem: Rule | null = null;

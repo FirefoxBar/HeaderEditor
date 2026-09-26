@@ -8,7 +8,7 @@ export interface LogItem {
 }
 
 class Logger {
-  debug(message: string, ...data: any[]) {
+  debug(message: string, getData?: () => any[]) {
     if (!prefs.get('is-debug')) {
       return;
     }
@@ -22,7 +22,7 @@ class Logger {
       'color:#5584ff;',
       'color:#ff9300;',
       '',
-      ...data,
+      ...(getData?.() || []),
     );
   }
 }

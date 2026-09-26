@@ -95,7 +95,7 @@ class ChromeResponseModifier {
       return;
     }
     try {
-      logger.debug('[chrome-response-modifier] detach tab', tabId);
+      logger.debug('[chrome-response-modifier] detach tab', () => [tabId]);
       await debuggerAPI.detach({ tabId });
       this.attached.delete(tabId);
     } catch (e) {
@@ -112,11 +112,14 @@ class ChromeResponseModifier {
     }
     try {
       this.pendingTabIds.add(tabId);
-      logger.debug('[chrome-response-modifier] attach tab', tabId);
+      logger.debug('[chrome-response-modifier] attach tab', () => [tabId]);
       await debuggerAPI.attach({ tabId }, '1.3');
       this.attached.add(tabId);
     } catch (e) {
-      logger.debug('[chrome-response-modifier] attach tab failed', tabId, e);
+      logger.debug('[chrome-response-modifier] attach tab failed', () => [
+        tabId,
+        e,
+      ]);
     }
     this.pendingTabIds.delete(tabId);
   }
@@ -131,7 +134,7 @@ class ChromeResponseModifier {
     }
     try {
       this.pendingTabIds.add(tabId);
-      logger.debug('[chrome-response-modifier] enable fetch', tabId);
+      logger.debug('[chrome-response-modifier] enable fetch', () => [tabId]);
       await debuggerAPI.sendCommand({ tabId: tabId }, 'Fetch.enable', {
         patterns: [
           {
@@ -146,7 +149,10 @@ class ChromeResponseModifier {
       });
       this.fetchEnabled.add(tabId);
     } catch (e) {
-      logger.debug('[chrome-response-modifier] enable fetch failed', tabId, e);
+      logger.debug('[chrome-response-modifier] enable fetch failed', () => [
+        tabId,
+        e,
+      ]);
     }
     this.pendingTabIds.delete(tabId);
   }
@@ -169,14 +175,13 @@ class ChromeResponseModifier {
   private async checkEnable() {
     const currentEnabled =
       this.rules.length > 0 && this.modifyBody && !this.disableAll;
-    logger.debug(
-      '[chrome-response-modifier] checkEnable: ',
+    logger.debug('[chrome-response-modifier] checkEnable: ', () => [
       currentEnabled,
       this.rules,
       this.modifyBody,
       this.disableAll,
       this.isEnabled,
-    );
+    ]);
     if (this.isEnabled === currentEnabled) {
       return;
     }
@@ -231,24 +236,23 @@ class ChromeResponseModifier {
     browser.tabs.onCreated.addListener(tab => this.enableFetch(tab.id));
     browser.tabs.onUpdated.addListener(tabId => this.enableFetch(tabId));
     browser.tabs.onRemoved.addListener(tabId => {
-      logger.debug('[chrome-response-modifier] tab onRemoved', tabId);
+      logger.debug('[chrome-response-modifier] tab onRemoved', () => [tabId]);
       this.attached.delete(tabId);
       this.fetchEnabled.delete(tabId);
     });
     chrome.debugger.onDetach.addListener(({ tabId }) => {
       if (tabId) {
-        logger.debug('[chrome-response-modifier] onDetach', tabId);
+        logger.debug('[chrome-response-modifier] onDetach', () => [tabId]);
         this.attached.delete(tabId);
         this.fetchEnabled.delete(tabId);
       }
     });
     chrome.debugger.onEvent.addListener(async (source, method, params) => {
-      logger.debug(
-        '[chrome-response-modifier] onEvent',
+      logger.debug('[chrome-response-modifier] onEvent', () => [
         source,
         method,
         params,
-      );
+      ]);
       if (method !== 'Fetch.requestPaused') {
         return;
       }
