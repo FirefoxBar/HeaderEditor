@@ -10,3 +10,9 @@ globalThis.ENABLE_DNR = true;
 globalThis.ENABLE_WEB_REQUEST = true;
 globalThis.ENABLE_EVAL = true;
 globalThis.IS_DEV = true;
+
+if (globalThis.navigator && !globalThis.navigator.userAgentData) {
+  globalThis.navigator.userAgentData = {
+    brands: [],
+  };
+}
