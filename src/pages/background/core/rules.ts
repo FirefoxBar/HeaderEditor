@@ -109,7 +109,7 @@ function updateSingleCache(type: TABLE_NAMES, id: number): Promise<void> {
         if (cache[type]) {
           const index = cache[type].findIndex(rule => rule.id === id);
           if (index !== -1) {
-            delete cache[type][index];
+            cache[type].splice(index, 1);
           }
         }
         req.onsuccess = () => {
@@ -353,7 +353,7 @@ function remove(tableName: TABLE_NAMES, id: number): Promise<void> {
         if (cache[tableName]) {
           const index = cache[tableName].findIndex(rule => rule.id === id);
           if (index !== -1) {
-            delete cache[tableName][index];
+            cache[tableName].splice(index, 1);
           }
         }
         notify.other({
