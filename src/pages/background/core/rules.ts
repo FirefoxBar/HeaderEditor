@@ -95,6 +95,51 @@ function updateCache(type: TABLE_NAMES): Promise<void> {
   return p;
 }
 
+function updateSingleCache(type: TABLE_NAMES, id: number): Promise<void> {
+  if (typeof updateCacheQueue[type] !== 'undefined') {
+    return updateCacheQueue[type];
+  }
+
+  const p = new Promise<void>((resolve, reject) => {
+    getDatabase()
+      .then(db => {
+        const tx = db.transaction([type], 'readonly');
+        const os = tx.objectStore(type);
+        const req = os.get(id);
+        if (cache[type]) {
+          const index = cache[type].findIndex(rule => rule.id === id);
+          if (index !== -1) {
+            delete cache[type][index];
+          }
+        }
+        req.onsuccess = () => {
+          const s: InitdRule = req.result;
+          // Init function here
+          try {
+            cache[type]?.push(initRule(s));
+          } catch (e) {
+            console.error('Init rule failed', s, e);
+            SessionMessage.add({
+              type: 'warning',
+              title: t('init_rule_failed'),
+              content: `Rule: [${s.id}] ${s.name}\nError: ${(e as Error).message}`,
+              more: `Rule: ${JSON.stringify(s)}`,
+            });
+          }
+          resolve();
+        };
+        req.onerror = () => {
+          // Rule not found, ignore
+        };
+      })
+      .catch(e => {
+        reject(e);
+      });
+  });
+
+  return p;
+}
+
 function filter(fromRules: InitdRule[], options?: RuleFilterOptions) {
   const rules = Array.from(fromRules);
 
@@ -253,7 +298,7 @@ async function save(o: Rule): Promise<Rule> {
           }
           const req = os.put(existsRule);
           req.onsuccess = () => {
-            updateCache(tableName).then(() => {
+            updateSingleCache(tableName, rule.id).then(() => {
               notify.other({
                 method: APIs.ON_EVENT,
                 event: EVENTs.RULE_UPDATE,
@@ -305,7 +350,12 @@ function remove(tableName: TABLE_NAMES, id: number): Promise<void> {
       const os = tx.objectStore(tableName);
       const request = os.delete(Number(id));
       request.onsuccess = () => {
-        updateCache(tableName);
+        if (cache[tableName]) {
+          const index = cache[tableName].findIndex(rule => rule.id === id);
+          if (index !== -1) {
+            delete cache[tableName][index];
+          }
+        }
         notify.other({
           method: APIs.ON_EVENT,
           event: EVENTs.RULE_DELETE,
