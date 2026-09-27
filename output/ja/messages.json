@@ -722,18 +722,6 @@
     "message": "アップロード",
     "description": "Upload button"
   },
-  "url_cloud_backup": {
-    "message": "https://he.firefoxcn.net/en-US/guide/cloud-backup.html",
-    "description": "URL of documentations, if not translated, please use english version"
-  },
-  "url_help": {
-    "message": "https://he.firefoxcn.net/en-US/guide",
-    "description": "URL of documentations, if not translated, please use english version"
-  },
-  "url_third_party_rules": {
-    "message": "https://he.firefoxcn.net/en-US/guide/third-party-rules.html",
-    "description": "URL of documentations, if not translated, please use english version"
-  },
   "username": {
     "message": "ユーザー名​",
     "description": "Username for WebDAV"
