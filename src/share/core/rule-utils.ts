@@ -6,6 +6,7 @@ import {
   RULE_TYPE,
   TABLE_NAMES_ARR,
 } from './constant';
+import { compileCondition } from './header-matcher';
 import type { BasicRule, InitdRule, RULE_ACTION_OBJ, Rule } from './types';
 import { isBasicRule } from './types';
 import { getDomain, isValidArray } from './utils';
@@ -39,6 +40,12 @@ export function detectRunner(rule: BasicRule): 'web_request' | 'dnr' {
   if (rule.ruleType === RULE_TYPE.MODIFY_RECV_BODY) {
     return 'web_request';
   }
+  if (
+    !isSupportHeaderInfo() &&
+    (rule.condition?.responseHeaders || rule.condition?.excludeResponseHeaders)
+  ) {
+    return 'web_request';
+  }
   return 'dnr';
 }
 
@@ -60,7 +67,13 @@ export function initRule(
     }
     // Init regexp
     if (rule.condition) {
-      const { regex, excludeRegex, urlFilter } = rule.condition;
+      const {
+        regex,
+        excludeRegex,
+        urlFilter,
+        responseHeaders,
+        excludeResponseHeaders,
+      } = rule.condition;
       if (urlFilter) {
         initd._filter_reg = createUrlFilterRegex(urlFilter);
       }
@@ -69,6 +82,13 @@ export function initRule(
       }
       if (excludeRegex) {
         initd._exclude = new RegExp(excludeRegex);
+      }
+
+      if (responseHeaders || excludeResponseHeaders) {
+        initd._response_headers_filter = compileCondition({
+          responseHeaders,
+          excludeResponseHeaders,
+        });
       }
     } else {
       if (initd.matchType === 'regexp' && initd.pattern) {
@@ -190,6 +210,21 @@ export function upgradeRuleFormat(s: OldRule) {
     if (s.exclude) {
       s.condition.excludeRegex = s.exclude;
     }
+  }
+
+  if (s.condition?.responseHeaders) {
+    s.condition.responseHeaders = s.condition.responseHeaders.map(e => ({
+      ...e,
+      header: e.header.toLowerCase(),
+    }));
+  }
+  if (s.condition?.excludeResponseHeaders) {
+    s.condition.excludeResponseHeaders = s.condition.excludeResponseHeaders.map(
+      e => ({
+        ...e,
+        header: e.header.toLowerCase(),
+      }),
+    );
   }
 
   delete s.matchType;

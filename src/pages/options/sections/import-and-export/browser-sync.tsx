@@ -16,6 +16,7 @@ import { getSync } from '@/share/core/storage';
 import type { BasicRule } from '@/share/core/types';
 import { IS_CHROME } from '@/share/core/utils';
 import Api from '@/share/pages/api';
+import { getHelpUrl } from '@/share/pages/get-help-url';
 import { Toast } from '@/share/pages/toast';
 import { type ImportContent, useImportAndExportContext } from './context';
 
@@ -165,7 +166,7 @@ const BrowserSyncComponent = () => {
     return true;
   };
 
-  const handleHelp = () => Api.openURL(t('url_cloud_backup'));
+  const handleHelp = () => Api.openURL(getHelpUrl('guide/cloud-backup'));
 
   return (
     <>

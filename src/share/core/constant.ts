@@ -35,6 +35,8 @@ export enum RULE_MATCH_TYPE {
   RESOURCE_TYPE = 'resourceType',
   // URL filter
   URL_FILTER = 'urlFilter',
+  // response headers
+  RESPONSE_HEADERS = 'responseHeaders',
 }
 
 export const defaultPrefValue: PrefValue = {
@@ -78,18 +80,33 @@ export enum EVENTs {
   RULE_DELETE = 'rule_delete',
 }
 
-export const ALL_RESOURCE_TYPES: DeclarativeNetRequest.ResourceType[] = [
-  'main_frame',
-  'sub_frame',
-  'stylesheet',
-  'script',
-  'image',
-  'font',
-  'object',
-  'xmlhttprequest',
-  'ping',
-  'csp_report',
-  'media',
-  'websocket',
-  'other',
-];
+export const ALL_RESOURCE_TYPES: DeclarativeNetRequest.ResourceType[] = (() => {
+  const baseList: DeclarativeNetRequest.ResourceType[] = [
+    'main_frame',
+    'sub_frame',
+    'stylesheet',
+    'script',
+    'image',
+    'font',
+    'object',
+    'xmlhttprequest',
+    'ping',
+    'csp_report',
+    'media',
+    'websocket',
+    'other',
+  ];
+  if (typeof chrome?.declarativeNetRequest === 'object') {
+    for (const it of Object.values(
+      chrome.declarativeNetRequest.ResourceType,
+    ) as any[]) {
+      if (it === 'imageset') {
+        continue;
+      }
+      if (!baseList.includes(it)) {
+        baseList.push(it);
+      }
+    }
+  }
+  return baseList;
+})();

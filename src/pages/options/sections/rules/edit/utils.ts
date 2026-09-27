@@ -1,12 +1,14 @@
 import { t } from '@/share/core/browser';
 import { RULE_MATCH_TYPE, RULE_TYPE } from '@/share/core/constant';
-import type { BasicRule } from '@/share/core/types';
+import type { BasicRule, HeaderMatchInfo } from '@/share/core/types';
 import { isValidArray } from '@/share/core/utils';
 
 export interface RuleInput extends BasicRule {
   editHeader?: Array<{ name: string; value: string }>;
   editMatchType?: RULE_MATCH_TYPE[];
-  editExcludeType?: Array<'method' | 'regex' | 'domain' | 'resourceType'>;
+  editExcludeType?: Array<
+    'method' | 'regex' | 'domain' | 'resourceType' | 'responseHeaders'
+  >;
 }
 
 export const EMPTY_RULE: BasicRule = {
@@ -20,6 +22,14 @@ export const EMPTY_RULE: BasicRule = {
 };
 
 export const EMPTY_ARR = [];
+
+export const isAllowFilterResponseHeaders = (ruleType: RULE_TYPE) => {
+  return [
+    RULE_TYPE.REDIRECT_AT_RESPONSE,
+    RULE_TYPE.MODIFY_RECV_HEADER,
+    RULE_TYPE.MODIFY_RECV_BODY,
+  ].includes(ruleType);
+};
 
 export function getInput(rule: BasicRule) {
   const res: RuleInput = { ...rule };
@@ -87,7 +97,7 @@ export function getInput(rule: BasicRule) {
 }
 
 export function getRuleFromInput(input: RuleInput): BasicRule {
-  const { editMatchType = [], condition = {} } = input;
+  const { editMatchType = [], editExcludeType = [], condition = {} } = input;
   const res = { ...input };
   if (
     res.ruleType === RULE_TYPE.MODIFY_SEND_HEADER ||
@@ -120,6 +130,47 @@ export function getRuleFromInput(input: RuleInput): BasicRule {
     delete res.condition.all;
     // urlFilter 不能和 regex 共存
     delete res.condition.regex;
+  }
+
+  const filterHeaderMatchInfo = (info?: HeaderMatchInfo[]) => {
+    if (!info) {
+      return undefined;
+    }
+    const h = info.filter(x => x.header);
+    h.forEach(x => {
+      if (x.values) {
+        x.values = x.values.filter(x => Boolean(x));
+        if (!isValidArray(x.values)) {
+          delete x.values;
+        }
+      }
+      if (x.excludedValues) {
+        x.excludedValues = x.excludedValues.filter(x => Boolean(x));
+        if (!isValidArray(x.excludedValues)) {
+          delete x.excludedValues;
+        }
+      }
+    });
+    if (!isValidArray(h)) {
+      return undefined;
+    }
+    return h;
+  };
+  if (
+    editMatchType.includes(RULE_MATCH_TYPE.RESPONSE_HEADERS) &&
+    isAllowFilterResponseHeaders(res.ruleType)
+  ) {
+    res.condition.responseHeaders = filterHeaderMatchInfo(
+      condition.responseHeaders,
+    );
+  }
+  if (
+    editExcludeType.includes('responseHeaders') &&
+    isAllowFilterResponseHeaders(res.ruleType)
+  ) {
+    res.condition.excludeResponseHeaders = filterHeaderMatchInfo(
+      condition.excludeResponseHeaders,
+    );
   }
 
   if (res.encoding) {

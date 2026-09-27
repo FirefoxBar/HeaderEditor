@@ -1,6 +1,7 @@
 import type { RE2JS } from 're2js';
 import type { DeclarativeNetRequest } from 'webextension-polyfill/namespaces/declarativeNetRequest';
 import type { RULE_MATCH_TYPE, RULE_TYPE, VIRTUAL_KEY } from './constant';
+import type { CompiledCondition } from './header-matcher';
 
 export interface RuleFilterOptions {
   enable?: boolean;
@@ -25,7 +26,7 @@ export type RULE_ACTION = 'cancel' | RULE_ACTION_OBJ;
 
 export interface HeaderMatchInfo {
   header: string;
-  values: string[];
+  values?: string[];
   excludedValues?: string[];
 }
 
@@ -62,7 +63,7 @@ export interface BasicRule {
     excludeResourceTypes: DeclarativeNetRequest.ResourceType[];
     // response headers
     responseHeaders?: HeaderMatchInfo[];
-    excludedResponseHeaders?: HeaderMatchInfo[];
+    excludeResponseHeaders?: HeaderMatchInfo[];
   }>;
   headers?: Record<string, string>;
   body?: {
@@ -89,7 +90,11 @@ export interface ImportRule extends Rule {
   importAction: number;
   importOldId: number;
 }
-
+export interface CompiledHeaderMatcher {
+  exact: Set<string>; // 字符串值：O(1) 命中
+  regex: RegExp[]; // 正则：去掉 g/y，保证可重复调用
+  empty: boolean; // 该侧是否为空（决定“存在即匹配”等语义）
+}
 export interface InitdRule extends Rule {
   _runner: 'web_request' | 'dnr';
   _reg: RegExp;
@@ -97,6 +102,7 @@ export interface InitdRule extends Rule {
   _func: (val: any, detail: any, util: any) => any;
   _re2?: RE2JS;
   _filter_reg?: RegExp;
+  _response_headers_filter?: CompiledCondition;
 }
 
 export interface PrefValue {

@@ -12,6 +12,7 @@ import { withErrorBoundary } from '@/share/components/error-boundary';
 import { t } from '@/share/core/browser';
 import { getLocal, getSingle } from '@/share/core/storage';
 import Api from '@/share/pages/api';
+import { getHelpUrl } from '@/share/pages/get-help-url';
 import ImportDrawer from '../../components/import-drawer';
 
 interface IEProps {
@@ -86,7 +87,7 @@ function DownloadPage({ visible }: IEProps) {
           <Button
             className="btn-icon"
             icon={<IconSearch />}
-            onClick={() => Api.openURL(t('url_third_party_rules'))}
+            onClick={() => Api.openURL(getHelpUrl('guide/third-party-rules'))}
           >
             {t('third_party_rules')}
           </Button>

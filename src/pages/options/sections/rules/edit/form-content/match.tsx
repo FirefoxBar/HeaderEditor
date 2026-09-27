@@ -1,17 +1,22 @@
 import { Form, useFormApi, useFormState } from '@douyinfe/semi-ui';
-import * as React from 'react';
 import { t } from '@/share/core/browser';
 import { RULE_MATCH_TYPE } from '@/share/core/constant';
+import { isSupportHeaderInfo } from '@/share/core/rule-utils';
 import { isValidArray } from '@/share/core/utils';
-import Domains from '../domains';
+import Domains from '../components/domains';
+import HeaderMatchInfo from '../components/header-match-info';
 import { METHOD_LIST, RESOURCE_TYPE_LIST } from '../options';
-import type { RuleInput } from '../utils';
+import { isAllowFilterResponseHeaders, type RuleInput } from '../utils';
 
 const Match = () => {
   const formApi = useFormApi();
   const { values } = useFormState();
 
-  const { editMatchType = [], editExcludeType = [] } = values as RuleInput;
+  const {
+    editMatchType = [],
+    editExcludeType = [],
+    ruleType,
+  } = values as RuleInput;
 
   return (
     <>
@@ -85,6 +90,13 @@ const Match = () => {
             value: RULE_MATCH_TYPE.RESOURCE_TYPE,
             disabled: editExcludeType.includes('resourceType'),
           },
+          {
+            label: t('response_headers'),
+            value: RULE_MATCH_TYPE.RESPONSE_HEADERS,
+            disabled:
+              (!ENABLE_WEB_REQUEST && !isSupportHeaderInfo()) ||
+              !isAllowFilterResponseHeaders(ruleType),
+          },
         ]}
         onChange={value => {
           if (value.includes(RULE_MATCH_TYPE.DOMAIN)) {
@@ -127,6 +139,11 @@ const Match = () => {
           field="condition.resourceTypes"
           optionList={RESOURCE_TYPE_LIST}
         />
+      )}
+      {editMatchType.includes(RULE_MATCH_TYPE.RESPONSE_HEADERS) && (
+        <Form.Slot label={t('response_headers')}>
+          <HeaderMatchInfo field="condition.responseHeaders" type="response" />
+        </Form.Slot>
       )}
     </>
   );

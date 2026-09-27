@@ -5,11 +5,11 @@ import {
   APIs,
   EVENTs,
   IS_MATCH,
-  RULE_TYPE,
   type TABLE_NAMES,
   TABLE_NAMES_ARR,
 } from '@/share/core/constant';
 import emitter from '@/share/core/emitter';
+import { matchCondition } from '@/share/core/header-matcher';
 import notify from '@/share/core/notify';
 import { prefs } from '@/share/core/prefs';
 import {
@@ -179,8 +179,12 @@ function filter(fromRules: InitdRule[], options?: RuleFilterOptions) {
       }
     }
 
-    if (options.responseHeaders && rule.condition) {
-      // TODO: responseHeaders and excludedResponseHeaders
+    if (options.responseHeaders && rule._response_headers_filter) {
+      if (
+        !matchCondition(rule._response_headers_filter, options.responseHeaders)
+      ) {
+        return false;
+      }
     }
 
     return true;
@@ -379,14 +383,14 @@ function waitLoad() {
 }
 
 export {
+  convertToBasicRule,
+  filter,
   get,
   getAll,
-  filter,
-  save,
-  remove,
-  updateCache,
-  convertToBasicRule,
-  waitLoad,
-  loaded,
   init,
+  loaded,
+  remove,
+  save,
+  updateCache,
+  waitLoad,
 };

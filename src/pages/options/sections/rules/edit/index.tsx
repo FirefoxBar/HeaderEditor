@@ -11,6 +11,7 @@ import { RULE_TYPE } from '@/share/core/constant';
 import { prefs } from '@/share/core/prefs';
 import type { Rule } from '@/share/core/types';
 import Api from '@/share/pages/api';
+import { getHelpUrl } from '@/share/pages/get-help-url';
 import FormContent from './form-content';
 import { EMPTY_RULE, getInput, getRuleFromInput } from './utils';
 
@@ -176,7 +177,7 @@ const Edit = ({ visible, rule: ruleProp, onClose }: EditProps) => {
           {MANIFEST_VER === 'v3' && (
             <Text
               type="tertiary"
-              link={{ href: t('url_help'), target: '_blank' }}
+              link={{ href: getHelpUrl(), target: '_blank' }}
             >
               {t('lite_edit_tip')}
             </Text>

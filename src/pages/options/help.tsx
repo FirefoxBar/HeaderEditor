@@ -1,18 +1,12 @@
 import { css, cx } from '@emotion/css';
 import { useEffect, useState } from 'react';
-import { t } from '@/share/core/browser';
-import isDarkMode from '@/share/pages/is-dark-mode';
+import { getHelpUrl } from '@/share/pages/get-help-url';
 
 interface Props {
   visible: boolean;
 }
 const Help = ({ visible }: Props) => {
   const [render, setRender] = useState(false);
-
-  const isDark = isDarkMode() ? 1 : 0;
-  let helpUrl = t('url_help');
-  const gap = helpUrl.includes('?') ? '&' : '?';
-  helpUrl = `${helpUrl}${gap}is_dark=${isDark}`;
 
   useEffect(() => {
     if (visible) {
@@ -37,7 +31,7 @@ const Help = ({ visible }: Props) => {
         `,
       )}
     >
-      {render && <iframe src={helpUrl} />}
+      {render && <iframe src={getHelpUrl()} />}
     </section>
   );
 };

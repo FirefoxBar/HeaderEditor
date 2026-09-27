@@ -6,7 +6,7 @@ import React from 'react';
 import { t } from '@/share/core/browser';
 import { AutoCompleteField } from './auto-complete';
 
-const commonHeaders = {
+export const commonHeaders = {
   request: [
     'a-im',
     'accept',
@@ -125,7 +125,7 @@ const commonHeaders = {
   ],
 };
 
-interface HeaderFieldProps {
+export interface HeaderFieldProps {
   field: string;
   size?: InputSize;
   className?: string;

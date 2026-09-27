@@ -17,6 +17,6 @@ export const METHOD_LIST = [
 }));
 
 export const RESOURCE_TYPE_LIST = ALL_RESOURCE_TYPES.map(e => ({
-  label: t(`resourceType_${e}`),
+  label: t(`resourceType_${e}`, undefined, e),
   value: e,
 }));

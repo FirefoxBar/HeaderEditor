@@ -19,7 +19,7 @@ const FormContent = ({ isEdit }: FormContentProps) => (
     <Collapse.Panel header={t('basic_information')} itemKey="basic">
       <Basic isEdit={isEdit} />
     </Collapse.Panel>
-    <Collapse.Panel header={t('matchType')} itemKey="match">
+    <Collapse.Panel header={t('matchRule')} itemKey="match">
       <Match />
     </Collapse.Panel>
     <Collapse.Panel header={t('excludeRule')} itemKey="exclude">
