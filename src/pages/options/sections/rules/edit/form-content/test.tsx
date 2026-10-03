@@ -42,7 +42,7 @@ const Test = () => {
 
           if (err && ENABLE_WEB_REQUEST) {
             try {
-              rule.current._reg = new RegExp(ruleContent.condition.regex);
+              rule.current._reg = new RegExp(ruleContent.condition.regex, 'g');
               rule.current.forceRunner = 'web_request';
               err = undefined;
             } catch (e) {

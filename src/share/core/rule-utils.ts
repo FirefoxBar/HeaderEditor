@@ -332,6 +332,7 @@ export function isMatchUrl(rule: InitdRule, url: string): IS_MATCH {
         result = rule._re2.matches(url);
       } else {
         const reg = rule._reg || new RegExp(regex);
+        reg.lastIndex = 0;
         result = result && reg.test(url);
       }
     }
