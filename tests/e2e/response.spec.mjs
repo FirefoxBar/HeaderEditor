@@ -7,6 +7,43 @@ import {
   testServer,
 } from './scripts/utils.mjs';
 
+describe('Redirect at response', () =>
+  runTest(
+    ['edge_v2', 'chrome_v3', 'firefox_v2', 'firefox_v3'],
+    async browser => {
+      const key1 = String(Math.random()).replace('.', '');
+      const key2 = String(Math.random()).replace('.', '');
+
+      const { remove } = await saveRule(browser.popup, {
+        enable: true,
+        ruleType: 'redirectAtResponse',
+        isFunction: false,
+        name: 'test redirect response',
+        condition: {
+          urlPrefix: `${testServer}match-response-header.php`,
+          responseHeaders: [
+            {
+              name: 'X-Test-Header',
+              values: [key1],
+            },
+          ],
+        },
+        to: `${testServer}match-response-header.php?header=${key2}`,
+        encoding: 'UTF-8',
+      });
+
+      try {
+        const value = await getPageValue(
+          browser.browser,
+          `match-response-header.php?header=${key1}`,
+        );
+        assert.strictEqual(value, JSON.stringify({ header: key2 }));
+      } finally {
+        await remove();
+      }
+    },
+  ));
+
 describe('Disable Modify Response', () =>
   runTest(['edge_v2', 'chrome_v3', 'firefox_v2'], async browser => {
     const key1 = String(Math.random()).replace('.', '');

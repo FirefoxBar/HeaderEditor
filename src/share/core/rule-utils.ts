@@ -11,7 +11,7 @@ import type { BasicRule, InitdRule, RULE_ACTION_OBJ, Rule } from './types';
 import { isBasicRule } from './types';
 import { getDomain, isValidArray } from './utils';
 
-export function isSupportHeaderInfo() {
+export function isSupportHeaderMatch() {
   if (IS_FIREFOX) {
     return false;
   }
@@ -41,8 +41,10 @@ export function detectRunner(rule: BasicRule): 'web_request' | 'dnr' {
     return 'web_request';
   }
   if (
-    !isSupportHeaderInfo() &&
-    (rule.condition?.responseHeaders || rule.condition?.excludeResponseHeaders)
+    !isSupportHeaderMatch() &&
+    (rule.condition?.responseHeaders ||
+      rule.condition?.excludeResponseHeaders) &&
+    ENABLE_WEB_REQUEST
   ) {
     return 'web_request';
   }

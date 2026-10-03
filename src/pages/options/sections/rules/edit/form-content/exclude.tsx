@@ -1,7 +1,7 @@
 import { Form, Typography, useFormApi, useFormState } from '@douyinfe/semi-ui';
 import { t } from '@/share/core/browser';
 import { RULE_MATCH_TYPE } from '@/share/core/constant';
-import { isSupportHeaderInfo } from '@/share/core/rule-utils';
+import { isSupportHeaderMatch } from '@/share/core/rule-utils';
 import { isValidArray } from '@/share/core/utils';
 import Domains from '../components/domains';
 import HeaderMatchInfo from '../components/header-match-info';
@@ -48,7 +48,7 @@ const Exclude = () => {
             label: t('response_headers'),
             value: 'responseHeaders',
             disabled:
-              (!ENABLE_WEB_REQUEST && !isSupportHeaderInfo()) ||
+              (!ENABLE_WEB_REQUEST && !isSupportHeaderMatch()) ||
               !isAllowFilterResponseHeaders(ruleType),
           },
         ]}

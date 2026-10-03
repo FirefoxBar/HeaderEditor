@@ -11,14 +11,9 @@ import {
 import emitter from '@/share/core/emitter';
 import logger from '@/share/core/logger';
 import { prefs } from '@/share/core/prefs';
-import { detectRunner, isSupportHeaderInfo } from '@/share/core/rule-utils';
+import { detectRunner, isSupportHeaderMatch } from '@/share/core/rule-utils';
 import SessionMessage from '@/share/core/session-message';
-import type {
-  HeaderMatchInfo,
-  InitdRule,
-  RULE_ACTION_OBJ,
-  Rule,
-} from '@/share/core/types';
+import type { InitdRule, RULE_ACTION_OBJ, Rule } from '@/share/core/types';
 import {
   getTableName,
   isModifyHeaderRule,
@@ -63,6 +58,8 @@ function createDNR(rule: Rule, id: number) {
       excludeMethod,
       method,
       urlFilter,
+      responseHeaders,
+      excludeResponseHeaders,
     } = rule.condition;
     if (isValidArray(domain)) {
       res.condition.requestDomains = domain;
@@ -103,6 +100,15 @@ function createDNR(rule: Rule, id: number) {
       res.condition.excludedResourceTypes = [...excludeResourceTypes];
       if (hasImageSet() && excludeResourceTypes.includes('image')) {
         res.condition.excludedResourceTypes.push('imageset');
+      }
+    }
+    if (isSupportHeaderMatch()) {
+      // responseHeaders and excludeResponseHeaders
+      if (isValidArray(responseHeaders)) {
+        (res.condition as any).responseHeaders = responseHeaders;
+      }
+      if (isValidArray(excludeResponseHeaders)) {
+        (res.condition as any).excludedResponseHeaders = excludeResponseHeaders;
       }
     }
   } else {
@@ -182,17 +188,6 @@ function createDNR(rule: Rule, id: number) {
     } else if (typeof rule.action === 'object') {
       const action = rule.action as RULE_ACTION_OBJ;
       res.action[key] = [createHeaderItem(action.name, action.value)];
-    }
-  }
-
-  if (isSupportHeaderInfo()) {
-    let matchResponseHeaders: HeaderMatchInfo[] | undefined;
-    if (rule.ruleType === RULE_TYPE.REDIRECT_AT_RESPONSE) {
-      matchResponseHeaders = [];
-    }
-    // TODO: responseHeaders and excludedResponseHeaders
-    if (matchResponseHeaders) {
-      (res.condition as any).responseHeaders = matchResponseHeaders;
     }
   }
 
