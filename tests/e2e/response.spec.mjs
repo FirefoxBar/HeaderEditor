@@ -23,7 +23,7 @@ describe('Redirect at response', () =>
           urlPrefix: `${testServer}match-response-header.php`,
           responseHeaders: [
             {
-              name: 'X-Test-Header',
+              header: 'X-Test-Header',
               values: [key1],
             },
           ],
@@ -38,6 +38,11 @@ describe('Redirect at response', () =>
           `match-response-header.php?header=${key1}`,
         );
         assert.strictEqual(value, JSON.stringify({ header: key2 }));
+        const value2 = await getPageValue(
+          browser.browser,
+          'match-response-header.php?header=OTHER_HEADER',
+        );
+        assert.strictEqual(value2, JSON.stringify({ header: 'OTHER_HEADER' }));
       } finally {
         await remove();
       }
