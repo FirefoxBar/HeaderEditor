@@ -1,5 +1,6 @@
 # Header Editor Docs
 
+
 ```js
 (() => {
   const setTheme = (isDark) => {

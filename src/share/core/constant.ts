@@ -96,7 +96,10 @@ export const ALL_RESOURCE_TYPES: DeclarativeNetRequest.ResourceType[] = (() => {
     'websocket',
     'other',
   ];
-  if (typeof chrome?.declarativeNetRequest === 'object') {
+  if (
+    typeof chrome === 'object' &&
+    typeof chrome.declarativeNetRequest === 'object'
+  ) {
     for (const it of Object.values(
       chrome.declarativeNetRequest.ResourceType,
     ) as any[]) {
