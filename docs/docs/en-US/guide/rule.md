@@ -26,6 +26,22 @@ Rules will apply to the URL that meets the matching criteria. If multiple condit
 Note:
 * The method and resource type can only be configured in either match or exclude.
 
+#### Response headers
+
+So far, response header matching only takes effect in modify response headers and modify response body rules.
+
+Configuration rules for response header matching:
+* Multiple response header rules can be configured. The rule is applied only when all match rules are satisfied.
+* For each response header rule:
+  * If no match or exclude conditions are configured, it matches when the response header exists
+  * If match rules are configured, it is a successful match when the response header matches any input
+  * If exclude rules are configured, it is excluded when the response header matches any input
+  * A successful match that is also excluded counts as not matched
+* For each match rule or exclude rule:
+  * A plain string can be entered, representing an exact match
+  * `*` can be entered, representing matching any string (including an empty string)
+  * `?` can be entered, representing matching any single character
+
 ### Exclude
 
 Regardless of whether the matching rules are met, as long as any exclusion condition is met, this item will not take effect on the current URL.

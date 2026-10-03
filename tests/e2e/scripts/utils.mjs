@@ -39,7 +39,7 @@ async function createBrowser(browserKey, pathToExtension) {
   const browserType =
     browserKey.indexOf('firefox') === 0 ? 'firefox' : 'chrome';
 
-  const headless = 'headless' in config ? config.headless : false;
+  const headless = 'headless' in config ? config.headless : true;
 
   if (browserType === 'firefox') {
     const manifest = await readFile(
