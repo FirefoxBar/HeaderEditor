@@ -39,6 +39,8 @@ async function createBrowser(browserKey, pathToExtension) {
   const browserType =
     browserKey.indexOf('firefox') === 0 ? 'firefox' : 'chrome';
 
+  const headless = 'headless' in config ? config.headless : false;
+
   if (browserType === 'firefox') {
     const manifest = await readFile(
       path.join(pathToExtension, 'manifest.json'),
@@ -57,7 +59,7 @@ async function createBrowser(browserKey, pathToExtension) {
       `📱 launch ${browserKey} from ${executablePath || 'default path'}`,
     );
     const browser = await puppeteer.launch({
-      // headless: false,
+      headless,
       browser: 'firefox',
       executablePath,
       args: [
@@ -94,7 +96,7 @@ async function createBrowser(browserKey, pathToExtension) {
     );
     return puppeteer.launch({
       executablePath,
-      // headless: false,
+      headless,
       args: [
         `--disable-extensions-except=${pathToExtension}`,
         `--load-extension=${pathToExtension}`,
@@ -254,6 +256,7 @@ export async function saveRule(popup, rule) {
       tabName = 'sendHeader';
       break;
     case 'modifyReceiveHeader':
+    case 'redirectAtResponse':
       tabName = 'receiveHeader';
       break;
     case 'modifyReceiveBody':
