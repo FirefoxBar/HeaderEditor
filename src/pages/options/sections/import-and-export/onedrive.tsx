@@ -11,20 +11,6 @@ const scope = [
 ];
 const apiPrefix = 'https://graph.microsoft.com/v1.0/me/';
 
-const getLoginUrl = () => {
-  const search = new URLSearchParams();
-  search.append('client_id', clientId);
-  search.append('response_type', 'code');
-  search.append(
-    'redirect_uri',
-    'https://login.microsoftonline.com/common/oauth2/nativeclient',
-  );
-  search.append('response_mode', 'query');
-  search.append('scope', scope.join(' '));
-  search.append('state', 'header-editor');
-  return `https://login.microsoftonline.com/common/oauth2/v2.0/authorize?${search.toString()}`;
-};
-
 interface OneDriveAuth {
   expires_at: number;
   refresh_token: string;
@@ -134,7 +120,9 @@ const OneDrive = createDriveComponent({
     return auth !== null;
   },
   startLogin: () => {
-    Api.openURL(getLoginUrl());
+    Api.openURL(
+      `http://ext.firefoxcn.net/login/go/onedrive.html?scope=${encodeURIComponent(scope.join(' '))}&state=header-editor`,
+    );
   },
   logout: async () => {
     const storage = getLocal();

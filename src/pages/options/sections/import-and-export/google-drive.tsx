@@ -2,25 +2,7 @@ import { getLocal, getSingle } from '@/share/core/storage';
 import Api from '@/share/pages/api';
 import { createDriveComponent, type FileItem } from './base-drive';
 
-const clientId =
-  '1093144396733-22kuva2susjn585850ka8euhf61n41ij.apps.googleusercontent.com';
-const scope = 'https://www.googleapis.com/auth/drive.appdata';
 const apiPrefix = 'https://www.googleapis.com/';
-
-const getLoginUrl = () => {
-  const search = new URLSearchParams();
-  search.append('scope', scope);
-  search.append('include_granted_scopes', 'true');
-  search.append('state', 'header-editor');
-  search.append(
-    'redirect_uri',
-    'https://ext.firefoxcn.net/login/callback/google.html',
-  );
-  search.append('response_type', 'token');
-  search.append('client_id', clientId);
-  return `https://accounts.google.com/o/oauth2/v2/auth?${search.toString()}`;
-};
-
 interface GoogleDriveAuth {
   access_token: string;
   expires_at: number;
@@ -95,7 +77,9 @@ const GoogleDrive = createDriveComponent({
     return auth !== null;
   },
   startLogin: () => {
-    Api.openURL(getLoginUrl());
+    Api.openURL(
+      'http://ext.firefoxcn.net/login/go/google.html?scope=https%3A%2F%2Fwww.googleapis.com%2Fauth%2Fdrive.appdata&state=header-editor',
+    );
   },
   logout: async () => {
     const storage = getLocal();

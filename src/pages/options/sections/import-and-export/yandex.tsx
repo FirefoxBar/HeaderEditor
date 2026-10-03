@@ -2,7 +2,6 @@ import { getLocal, getSingle } from '@/share/core/storage';
 import Api from '@/share/pages/api';
 import { createDriveComponent, type FileItem } from './base-drive';
 
-const clientId = '5e2610db11c448378cb5028f647a17a0';
 const apiPrefix = 'https://cloud-api.yandex.net/v1/disk/';
 const pathPrefix = 'app:/header-editor';
 
@@ -89,7 +88,7 @@ const Yandex = createDriveComponent({
   },
   startLogin: () => {
     Api.openURL(
-      `https://oauth.yandex.com/authorize?response_type=token&state=header-editor&client_id=${clientId}`,
+      'http://ext.firefoxcn.net/login/go/yandex.html?state=header-editor',
     );
   },
   logout: () => getLocal().remove('drive_yandex'),
