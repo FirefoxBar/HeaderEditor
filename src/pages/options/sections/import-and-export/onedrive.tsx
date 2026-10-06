@@ -10,6 +10,7 @@ const scope = [
   'files.readwrite.appfolder',
 ];
 const apiPrefix = 'https://graph.microsoft.com/v1.0/me/';
+const pathPrefix = 'special/approot:/header-editor';
 
 interface OneDriveAuth {
   expires_at: number;
@@ -90,7 +91,7 @@ const getAuth = async () => {
 const handleLogin = async (code: string) => {
   await fetchToken({ code, grant_type: 'authorization_code' });
   // check folder
-  const result = await callApi('drive/special/approot/header-editor');
+  const result = await callApi(`drive/${pathPrefix}`);
   if (result.error) {
     try {
       const info = await callApi('drive/special/approot');
@@ -121,7 +122,7 @@ const OneDrive = createDriveComponent({
   },
   startLogin: () => {
     Api.openURL(
-      `http://ext.firefoxcn.net/login/go/onedrive.html?scope=${encodeURIComponent(scope.join(' '))}&state=header-editor`,
+      `https://ext.firefoxcn.net/login/go/onedrive.html?scope=${encodeURIComponent(scope.join(' '))}&state=header-editor`,
     );
   },
   logout: async () => {
@@ -129,9 +130,7 @@ const OneDrive = createDriveComponent({
     await storage.remove('drive_onedrive');
   },
   listFiles: async () => {
-    const result = await callApi(
-      'drive/special/approot:/header-editor:/children',
-    );
+    const result = await callApi(`drive/${pathPrefix}:/children`);
     return result.value
       .filter((x: any) => !x.folder)
       .map(
@@ -146,24 +145,15 @@ const OneDrive = createDriveComponent({
   },
   downloadFile: (file: FileItem) =>
     callApi(
-      `drive/special/approot:/header-editor/${file.key}:/content`,
+      `drive/${pathPrefix}/${file.key}:/content`,
       undefined,
       'GET',
       'text',
     ),
   deleteFile: (file: FileItem) =>
-    callApi(
-      `drive/special/approot:/header-editor/${file.key}:/`,
-      '',
-      'DELETE',
-      'text',
-    ),
+    callApi(`drive/${pathPrefix}/${file.key}:/`, '', 'DELETE', 'text'),
   writeFile: (fileName: string, content: string) =>
-    callApi(
-      `drive/special/approot:/header-editor/${fileName}:/content`,
-      content,
-      'PUT',
-    ),
+    callApi(`drive/${pathPrefix}/${fileName}:/content`, content, 'PUT'),
 });
 
 export default OneDrive;

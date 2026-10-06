@@ -43,5 +43,17 @@ export const run = async ({ getVersion, readJSON, release }) => {
     tagName,
     releasePath,
     extName: 'header-editor',
+    getDescription: ({ current }) => {
+      const desc =
+        '> `HeaderEditor-xxx-v2` is full version, `HeaderEditor-xxx-v3` is lite version';
+      if (typeof current === 'object' && current.body) {
+        if (current.body.includes(desc)) {
+          return;
+        } else {
+          return `${current.body}\n\n${desc}`;
+        }
+      }
+      return desc;
+    },
   });
 };

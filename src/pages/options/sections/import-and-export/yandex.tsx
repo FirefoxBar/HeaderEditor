@@ -88,7 +88,7 @@ const Yandex = createDriveComponent({
   },
   startLogin: () => {
     Api.openURL(
-      'http://ext.firefoxcn.net/login/go/yandex.html?state=header-editor',
+      'https://ext.firefoxcn.net/login/go/yandex.html?state=header-editor',
     );
   },
   logout: () => getLocal().remove('drive_yandex'),
