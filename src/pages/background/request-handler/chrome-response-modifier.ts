@@ -13,6 +13,7 @@ import { isValidArray } from '@/share/core/utils';
 import { filter, get, waitLoad } from '../core/rules';
 import { util } from '../utils/function-util';
 import { safeAtob, safeBtoa, uint8ArrayToBase64 } from '../utils/text-coder';
+import { Timer } from './timer';
 
 const resourceTypeMap: Record<string, DeclarativeNetRequest.ResourceType> = {
   Document: 'main_frame',
@@ -54,11 +55,27 @@ class ChromeResponseModifier {
   private attached = new Set<number>();
   private fetchEnabled = new Set<number>();
   private pendingTabIds = new Set<number>();
+  private pendingRequestIds = new Set<string>();
+  private timer: Timer<[string, number]>;
 
   constructor() {
     this.initRules();
     this.initHook();
     this.loadPrefs();
+    this.timer = new Timer(2000, data => {
+      const curTime = Date.now();
+      let i = 0;
+      for (; i < data.length; i++) {
+        if (curTime - data[i][1] >= 1000) {
+          this.pendingRequestIds.delete(data[i][0]);
+        } else {
+          break;
+        }
+      }
+      if (i > 0) {
+        data.splice(0, i);
+      }
+    });
   }
 
   async initRules() {
@@ -135,7 +152,7 @@ class ChromeResponseModifier {
     try {
       this.pendingTabIds.add(tabId);
       logger.debug('[chrome-response-modifier] enable fetch', () => [tabId]);
-      await debuggerAPI.sendCommand({ tabId: tabId }, 'Fetch.enable', {
+      await debuggerAPI.sendCommand({ tabId }, 'Fetch.enable', {
         patterns: [
           {
             urlPattern: 'http://*',
@@ -146,6 +163,12 @@ class ChromeResponseModifier {
             requestStage: this.stage,
           },
         ],
+      });
+      // auto attach sub frames
+      await debuggerAPI.sendCommand({ tabId }, 'Target.setAutoAttach', {
+        autoAttach: true,
+        waitForDebuggerOnStart: false,
+        flatten: true,
       });
       this.fetchEnabled.add(tabId);
     } catch (e) {
@@ -165,7 +188,10 @@ class ChromeResponseModifier {
       return;
     }
     try {
-      await debuggerAPI.sendCommand({ tabId: tabId }, 'Fetch.disable');
+      await debuggerAPI.sendCommand({ tabId }, 'Fetch.disable');
+      await chrome.debugger.sendCommand({ tabId }, 'Target.setAutoAttach', {
+        autoAttach: false,
+      });
       this.fetchEnabled.delete(tabId);
     } catch (e) {
       console.error('Fetch.disable failed: ', e);
@@ -258,6 +284,12 @@ class ChromeResponseModifier {
       }
       const { requestId, responseHeaders, request, resourceType } =
         params as any;
+      const uniqId = `${source.tabId}:${source.sessionId || 'top'}:${requestId}`;
+      if (this.pendingRequestIds.has(uniqId)) {
+        return;
+      }
+      this.pendingRequestIds.add(uniqId);
+      this.timer.push([uniqId, Date.now()]);
       const { url } = request;
       const rules = filter(this.rules, {
         url,
@@ -269,6 +301,7 @@ class ChromeResponseModifier {
             : resourceTypeMap[resourceType],
       });
       if (!isValidArray(rules)) {
+        this.pendingRequestIds.delete(uniqId);
         return debuggerAPI.sendCommand(source, 'Fetch.continueRequest', {
           requestId,
         });
@@ -338,6 +371,7 @@ class ChromeResponseModifier {
           body = uint8ArrayToBase64(finalBody);
         }
       }
+      this.pendingRequestIds.delete(uniqId);
       return debuggerAPI.sendCommand(source, 'Fetch.fulfillRequest', {
         requestId,
         responseCode: 200,

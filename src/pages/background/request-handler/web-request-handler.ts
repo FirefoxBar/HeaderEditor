@@ -15,6 +15,7 @@ import { IS_CHROME, isValidArray } from '@/share/core/utils';
 import { filter, get as getRules } from '../core/rules';
 import { util } from '../utils/function-util';
 import { textDecode, textEncode } from '../utils/text-coder';
+import { Timer } from './timer';
 
 // 最大修改8MB的Body
 const MAX_BODY_SIZE = 8 * 1024 * 1024;
@@ -70,13 +71,26 @@ class WebRequestHandler {
   private includeHeaders = false;
   private modifyBody = false;
   private savedRequestHeader = new Map();
-  private deleteHeaderTimer: ReturnType<typeof setTimeout> | null = null;
-  private deleteHeaderQueue = new Map<string, number>();
+  private deleteHeaderTimer: Timer<[string, number]>;
 
   constructor() {
     this.handleBeforeRequest = this.handleBeforeRequest.bind(this);
     this.handleBeforeSend = this.handleBeforeSend.bind(this);
     this.handleReceived = this.handleReceived.bind(this);
+    this.deleteHeaderTimer = new Timer(10000, data => {
+      const curTime = Date.now();
+      let i = 0;
+      for (; i < data.length; i++) {
+        if (curTime - data[i][1] >= 9000) {
+          this.savedRequestHeader.delete(data[i][0]);
+        } else {
+          break;
+        }
+      }
+      if (i > 0) {
+        data.splice(0, i);
+      }
+    });
     this.loadPrefs();
   }
 
@@ -286,7 +300,6 @@ class WebRequestHandler {
     if (this.includeHeaders) {
       detail.requestHeaders = this.savedRequestHeader.get(e.requestId) || null;
       this.savedRequestHeader.delete(e.requestId);
-      this.deleteHeaderQueue.delete(e.requestId);
     }
     const receiveHeaderRules =
       getRules(TABLE_NAMES.receiveHeader, {
@@ -477,32 +490,8 @@ class WebRequestHandler {
     return true;
   }
 
-  private autoDeleteSavedHeader(id?: string) {
-    if (id) {
-      this.deleteHeaderQueue.set(id, Date.now());
-    }
-    if (this.deleteHeaderTimer !== null) {
-      return;
-    }
-    this.deleteHeaderTimer = setTimeout(() => {
-      // clear timeout
-      if (this.deleteHeaderTimer) {
-        clearTimeout(this.deleteHeaderTimer);
-      }
-      this.deleteHeaderTimer = null;
-      const curTime = Date.now();
-      // k: id, v: time
-      const iter = this.deleteHeaderQueue.entries();
-      for (const [k, v] of iter) {
-        if (curTime - v >= 9000) {
-          this.savedRequestHeader.delete(k);
-          this.deleteHeaderQueue.delete(k);
-        }
-      }
-      if (this.deleteHeaderQueue.size > 0) {
-        this.autoDeleteSavedHeader();
-      }
-    }, 10000);
+  private autoDeleteSavedHeader(id: string) {
+    this.deleteHeaderTimer.push([id, Date.now()]);
   }
 
   private modifyReceivedBody(
