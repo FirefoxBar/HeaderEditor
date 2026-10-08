@@ -33,7 +33,7 @@ export function textEncode(text: string) {
 // biome-ignore lint/suspicious/noControlCharactersInRegex: false
 const ASCII_RE = /^[\x00-\x7F]*$/;
 export function safeBtoa(str: string) {
-  // 快路径：绝大多数场景（token / id / JSON / URL）都是纯 ASCII，
+  // 快路径：很多场景都是纯 ASCII，
   // 此时 str 的每个 charCode 就是 Latin-1 字节，可直接进 btoa，完全跳过编解码往返
   if (ASCII_RE.test(str)) return btoa(str);
 
@@ -67,7 +67,7 @@ const HAS_HIGH_BYTE = /[\x80-\xFF]/;
 export function safeAtob(encoding: string, base64: string) {
   const binary = atob(base64);
 
-  // 快路径：纯 ASCII 内容（JWT / 大部分 token 的场景）下 binary 串 === 解码结果
+  // 快路径：纯 ASCII 内容下 binary 串 === 解码结果
   if (
     !HAS_HIGH_BYTE.test(binary) &&
     ASCII_SAFE_ENCODINGS.has(encoding.trim().toLowerCase())
@@ -75,15 +75,46 @@ export function safeAtob(encoding: string, base64: string) {
     return binary;
   }
 
-  // Uint8Array.from(fn) 的回调开销极大，手写循环填数组最快
-  const len = binary.length;
-  const bytes = new Uint8Array(len);
-  for (let i = 0; i < len; i++) bytes[i] = binary.charCodeAt(i);
+  let bytes: Uint8Array | undefined;
+  if (typeof Uint8Array.fromBase64 === 'function') {
+    // 支持原生 fromBase64
+    try {
+      bytes = Uint8Array.fromBase64(base64, {
+        alphabet: 'base64',
+      });
+    } catch (e) {
+      console.error(e);
+    }
+    if (!bytes) {
+      // 再次尝试 base64url
+      try {
+        bytes = Uint8Array.fromBase64(base64, {
+          alphabet: 'base64url',
+        });
+      } catch (e) {
+        console.error(e);
+      }
+    }
+  }
+
+  if (!bytes) {
+    // Uint8Array.from(fn) 的回调开销极大，手写循环填数组最快
+    const len = binary.length;
+    bytes = new Uint8Array(len);
+    for (let i = 0; i < len; i++) bytes[i] = binary.charCodeAt(i);
+  }
 
   return textDecode(encoding, bytes);
 }
 
 export function uint8ArrayToBase64(bytes: Uint8Array) {
+  // 优先使用原生 toBase64
+  if (typeof bytes.toBase64 === 'function') {
+    return bytes.toBase64({
+      alphabet: 'base64',
+    });
+  }
+
   const len = bytes.length;
 
   // 小数组：单块一次 apply，省掉累加开销
