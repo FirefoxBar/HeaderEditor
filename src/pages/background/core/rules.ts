@@ -4,19 +4,17 @@ import { t } from '@/share/core/browser';
 import {
   APIs,
   EVENTs,
-  IS_MATCH,
   type TABLE_NAMES,
   TABLE_NAMES_ARR,
 } from '@/share/core/constant';
 import emitter from '@/share/core/emitter';
-import { matchCondition } from '@/share/core/header-matcher';
 import notify from '@/share/core/notify';
 import { prefs } from '@/share/core/prefs';
 import {
   convertToBasicRule,
   convertToRule,
+  filter,
   initRule,
-  isMatchUrl,
   upgradeRuleFormat,
 } from '@/share/core/rule-utils';
 import SessionMessage from '@/share/core/session-message';
@@ -32,7 +30,6 @@ import {
   getVirtualKey,
   isModifyHeaderRule,
   isRedirectRule,
-  isValidArray,
   sleep,
 } from '@/share/core/utils';
 import { getDatabase } from './db';
@@ -138,102 +135,6 @@ function updateSingleCache(type: TABLE_NAMES, id: number): Promise<void> {
   });
 
   return p;
-}
-
-function filter(fromRules: InitdRule[], options?: RuleFilterOptions) {
-  const rules = Array.from(fromRules);
-
-  if (!options || typeof options !== 'object') {
-    return rules;
-  }
-
-  const url = typeof options.url !== 'undefined' ? options.url : null;
-
-  return rules.filter(rule => {
-    if (
-      typeof options.runner !== 'undefined' &&
-      rule._runner !== options.runner
-    ) {
-      return false;
-    }
-
-    if (options.group && rule.group !== options.group) {
-      return false;
-    }
-
-    if (typeof options.id !== 'undefined') {
-      if (Array.isArray(options.id)) {
-        if (!options.id.includes(rule.id)) {
-          return false;
-        }
-      } else if (rule.id !== Number(options.id)) {
-        return false;
-      }
-    }
-
-    if (typeof options.id !== 'undefined') {
-      if (Array.isArray(options.id)) {
-        if (!options.id.includes(rule.id)) {
-          return false;
-        }
-      } else if (rule.id !== Number(options.id)) {
-        return false;
-      }
-    }
-
-    if (options.name && rule.name !== options.name) {
-      return false;
-    }
-
-    if (
-      typeof options.enable !== 'undefined' &&
-      rule.enable !== options.enable
-    ) {
-      return false;
-    }
-
-    if (typeof options.type !== 'undefined' && rule.ruleType !== options.type) {
-      return false;
-    }
-
-    if (
-      options.method &&
-      isValidArray(rule.condition?.method) &&
-      !rule.condition.method.includes(options.method)
-    ) {
-      return false;
-    }
-
-    if (url !== null && isMatchUrl(rule, url) !== IS_MATCH.MATCH) {
-      return false;
-    }
-
-    if (options.resourceType && rule.condition) {
-      const { resourceTypes, excludeResourceTypes } = rule.condition;
-      if (
-        isValidArray(resourceTypes) &&
-        !resourceTypes.includes(options.resourceType)
-      ) {
-        return false;
-      }
-      if (
-        isValidArray(excludeResourceTypes) &&
-        excludeResourceTypes.includes(options.resourceType)
-      ) {
-        return false;
-      }
-    }
-
-    if (options.responseHeaders && rule._response_headers_filter) {
-      if (
-        !matchCondition(rule._response_headers_filter, options.responseHeaders)
-      ) {
-        return false;
-      }
-    }
-
-    return true;
-  });
 }
 
 function saveRuleHistory(rule: Rule) {
@@ -434,6 +335,7 @@ function waitLoad() {
 
 export {
   convertToBasicRule,
+  // 匹配逻辑已下沉至 share/core/rule-utils，此处仅 re-export 以兼容现有调用方
   filter,
   get,
   getAll,

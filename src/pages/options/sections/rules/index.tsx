@@ -2,6 +2,7 @@ import {
   IconCheckList,
   IconDelete,
   IconFavoriteList,
+  IconFilter,
   IconList,
   IconPlusCircle,
   IconSend,
@@ -33,6 +34,7 @@ import { prefs } from '@/share/core/prefs';
 import type { Rule, RuleWithVirtualKey } from '@/share/core/types';
 import { getVirtualKey } from '@/share/core/utils';
 import Api from '@/share/pages/api';
+import RuleFilterPanel from './filter';
 import Float from './float';
 import RuleGroupCard from './rule-group-card';
 import { batchShare, remove } from './utils';
@@ -54,6 +56,7 @@ interface RulesState {
   selectedKeys: string[];
   float: RuleWithVirtualKey[];
   collapsed: string[];
+  filterVisible: boolean;
 }
 
 class Rules extends React.Component<RulesProps, RulesState> {
@@ -74,6 +77,8 @@ class Rules extends React.Component<RulesProps, RulesState> {
     this.handleBatchShare = this.handleBatchShare.bind(this);
     this.handleBatchDelete = this.handleBatchDelete.bind(this);
     this.handlePreview = this.handlePreview.bind(this);
+    this.handleToggleFilter = this.handleToggleFilter.bind(this);
+    this.handleCloseFilter = this.handleCloseFilter.bind(this);
 
     this.state = {
       loading: false,
@@ -82,6 +87,7 @@ class Rules extends React.Component<RulesProps, RulesState> {
       selectedKeys: [],
       float: [],
       collapsed: [],
+      filterVisible: false,
     };
 
     prefs.ready(() => {
@@ -225,6 +231,26 @@ class Rules extends React.Component<RulesProps, RulesState> {
       isEnableSelect: !prevState.isEnableSelect,
       selectedKeys: [],
     }));
+  }
+
+  // 规则筛选相关
+  handleToggleFilter() {
+    this.setState(prevState => ({
+      filterVisible: !prevState.filterVisible,
+    }));
+  }
+
+  handleCloseFilter() {
+    this.setState({
+      filterVisible: false,
+    });
+  }
+
+  // 列表页当前展示的全部规则，保持原有顺序，供筛选使用
+  getAllRules(): RuleWithVirtualKey[] {
+    return ([] as RuleWithVirtualKey[]).concat(
+      ...Object.values(this.state.group).map(it => it.rules),
+    );
   }
   getSelectedRules() {
     const { selectedKeys, group } = this.state;
@@ -436,6 +462,14 @@ class Rules extends React.Component<RulesProps, RulesState> {
               </Button>
             </ButtonGroup>
             <Button
+              theme="light"
+              type="tertiary"
+              onClick={this.handleToggleFilter}
+              icon={<IconFilter />}
+            >
+              {t('filter_rules')}
+            </Button>
+            <Button
               type="primary"
               theme="solid"
               onClick={() => this.props.onEdit()}
@@ -478,6 +512,13 @@ class Rules extends React.Component<RulesProps, RulesState> {
             onClose={() => this.handlePreview(it)}
           />
         ))}
+        <RuleFilterPanel
+          visible={this.state.filterVisible}
+          rules={this.getAllRules()}
+          onClose={this.handleCloseFilter}
+          onRuleEdit={this.props.onEdit}
+          onRulePreview={this.handlePreview}
+        />
       </section>
     );
   }

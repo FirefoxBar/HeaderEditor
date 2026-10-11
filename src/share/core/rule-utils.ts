@@ -6,8 +6,14 @@ import {
   RULE_TYPE,
   TABLE_NAMES_ARR,
 } from './constant';
-import { compileCondition } from './header-matcher';
-import type { BasicRule, InitdRule, RULE_ACTION_OBJ, Rule } from './types';
+import { compileCondition, matchCondition } from './header-matcher';
+import type {
+  BasicRule,
+  InitdRule,
+  RULE_ACTION_OBJ,
+  Rule,
+  RuleFilterOptions,
+} from './types';
 import { isBasicRule } from './types';
 import { getDomain, isValidArray } from './utils';
 
@@ -344,6 +350,7 @@ export function isMatchUrl(rule: InitdRule, url: string): IS_MATCH {
     }
     if (excludeRegex) {
       const reg = rule._exclude || new RegExp(excludeRegex);
+      reg.lastIndex = 0;
       if (reg.test(url)) {
         return IS_MATCH.MATCH_BUT_EXCLUDE;
       }
@@ -353,7 +360,9 @@ export function isMatchUrl(rule: InitdRule, url: string): IS_MATCH {
 
   switch (rule.matchType) {
     case 'regexp': {
-      const reg = rule._reg;
+      const reg = rule._reg || new RegExp(rule.pattern || '');
+      // _reg 可能带 g 标志，lastIndex 跨调用残留会导致结果翻转
+      reg.lastIndex = 0;
       result = reg.test(url);
       break;
     }
@@ -374,10 +383,115 @@ export function isMatchUrl(rule: InitdRule, url: string): IS_MATCH {
   }
 
   if (rule._exclude) {
-    return rule._exclude.test(url)
-      ? IS_MATCH.MATCH_BUT_EXCLUDE
-      : IS_MATCH.MATCH;
+    const excludeReg = rule._exclude;
+    // 防御：用户传入的 pattern 若带 g 标志，lastIndex 会跨调用残留
+    excludeReg.lastIndex = 0;
+    return excludeReg.test(url) ? IS_MATCH.MATCH_BUT_EXCLUDE : IS_MATCH.MATCH;
   }
 
   return IS_MATCH.MATCH;
+}
+
+/**
+ * 按条件过滤规则列表（匹配逻辑与运行时一致）
+ *
+ * 注意：URL 匹配要求返回 IS_MATCH.MATCH，因此命中排除条件
+ * （IS_MATCH.MATCH_BUT_EXCLUDE）的规则不会出现在结果中。
+ */
+export function filter(
+  fromRules: InitdRule[],
+  options?: RuleFilterOptions,
+): InitdRule[] {
+  const rules = Array.from(fromRules);
+
+  if (!options || typeof options !== 'object') {
+    return rules;
+  }
+
+  const url = typeof options.url !== 'undefined' ? options.url : null;
+
+  return rules.filter(rule => {
+    if (
+      typeof options.runner !== 'undefined' &&
+      rule._runner !== options.runner
+    ) {
+      return false;
+    }
+
+    if (options.group && rule.group !== options.group) {
+      return false;
+    }
+
+    if (typeof options.id !== 'undefined') {
+      if (Array.isArray(options.id)) {
+        if (!options.id.includes(rule.id)) {
+          return false;
+        }
+      } else if (rule.id !== Number(options.id)) {
+        return false;
+      }
+    }
+
+    if (options.name && rule.name !== options.name) {
+      return false;
+    }
+
+    if (
+      typeof options.enable !== 'undefined' &&
+      rule.enable !== options.enable
+    ) {
+      return false;
+    }
+
+    if (typeof options.type !== 'undefined' && rule.ruleType !== options.type) {
+      return false;
+    }
+
+    if (
+      options.method &&
+      isValidArray(rule.condition?.method) &&
+      !rule.condition.method.includes(options.method)
+    ) {
+      return false;
+    }
+
+    // 排除方法：与 DNR 的 excludedRequestMethods 语义一致
+    if (
+      options.method &&
+      isValidArray(rule.condition?.excludeMethod) &&
+      rule.condition.excludeMethod.includes(options.method)
+    ) {
+      return false;
+    }
+
+    if (url !== null && isMatchUrl(rule, url) !== IS_MATCH.MATCH) {
+      return false;
+    }
+
+    if (options.resourceType && rule.condition) {
+      const { resourceTypes, excludeResourceTypes } = rule.condition;
+      if (
+        isValidArray(resourceTypes) &&
+        !resourceTypes.includes(options.resourceType)
+      ) {
+        return false;
+      }
+      if (
+        isValidArray(excludeResourceTypes) &&
+        excludeResourceTypes.includes(options.resourceType)
+      ) {
+        return false;
+      }
+    }
+
+    if (options.responseHeaders && rule._response_headers_filter) {
+      if (
+        !matchCondition(rule._response_headers_filter, options.responseHeaders)
+      ) {
+        return false;
+      }
+    }
+
+    return true;
+  });
 }

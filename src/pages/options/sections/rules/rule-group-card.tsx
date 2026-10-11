@@ -1,48 +1,27 @@
 import {
-  IconBranch,
   IconChevronDown,
-  IconCopyAdd,
   IconDelete,
   IconEdit,
-  IconFavoriteList,
   IconLock,
   IconMore,
-  IconSearch,
   IconSend,
   IconStar,
   IconUnlock,
 } from '@douyinfe/semi-icons';
-import {
-  Button,
-  ButtonGroup,
-  Card,
-  Dropdown,
-  Popover,
-  Switch,
-  Table,
-  Tooltip,
-} from '@douyinfe/semi-ui';
-import type {
-  ColumnProps,
-  RowSelectionProps,
-} from '@douyinfe/semi-ui/lib/es/table';
+import { Button, ButtonGroup, Card, Dropdown, Table } from '@douyinfe/semi-ui';
+import type { RowSelectionProps } from '@douyinfe/semi-ui/lib/es/table';
 import { css } from '@emotion/css';
-import { useResponsive } from 'ahooks';
 import { getExportName, selectGroup } from '@/pages/options/utils';
 import Modal from '@/share/components/modal';
-import RuleContentSwitcher from '@/share/components/rule-content-switcher';
-import RuleDetail from '@/share/components/rule-detail';
 import { t } from '@/share/core/browser';
 import { TABLE_NAMES_ARR, VIRTUAL_KEY } from '@/share/core/constant';
-import { convertToBasicRule, createExport } from '@/share/core/rule-utils';
+import { createExport } from '@/share/core/rule-utils';
 import type { RuleWithVirtualKey } from '@/share/core/types';
 import { getTableName } from '@/share/core/utils';
 import useMarkCommon from '@/share/hooks/use-mark-common';
-import usePref from '@/share/hooks/use-pref';
 import Api from '@/share/pages/api';
 import { save as saveFile } from '@/share/pages/file';
-import { clone } from '@/share/pages/rule-utils';
-import { textEllipsis } from '@/share/pages/styles';
+import { useRuleColumns } from './rule-columns';
 import { remove, toggleRule } from './utils';
 
 interface RuleCardProps {
@@ -74,13 +53,6 @@ const RuleGroupCard = (props: RuleCardProps) => {
     selectedKeys,
   } = props;
 
-  const responsive = useResponsive();
-
-  const {
-    keys: commonRuleKeys,
-    add: addCommonRule,
-    remove: removeCommonRule,
-  } = useMarkCommon('rule');
   const {
     keys: commonGroup,
     add: addCommonGroup,
@@ -95,154 +67,7 @@ const RuleGroupCard = (props: RuleCardProps) => {
       }
     : undefined;
 
-  const [pref] = usePref('show-quick-preview');
-  const showQuickPreview = pref.includes('manage');
-
-  const tableColumns: Array<ColumnProps<RuleWithVirtualKey>> = [
-    {
-      title: t('enable'),
-      className: 'cell-enable',
-      dataIndex: 'enable',
-      align: 'center',
-      width: 80,
-      render: (value: boolean, item) => (
-        <div className="switch-container">
-          <Switch
-            size="small"
-            checked={value}
-            onChange={checked => toggleRule(item, checked)}
-          />
-        </div>
-      ),
-    },
-    {
-      title: t('name'),
-      className: 'cell-name',
-      dataIndex: 'name',
-      render: (value: string, item) =>
-        showQuickPreview ? (
-          <Popover
-            showArrow
-            position="top"
-            content={<RuleDetail rule={item} />}
-            style={{ maxWidth: '300px' }}
-            autoAdjustOverflow
-          >
-            <div className={textEllipsis}>{value}</div>
-          </Popover>
-        ) : (
-          <div className={textEllipsis}>{value}</div>
-        ),
-    },
-    {
-      title: t('ruleType'),
-      className: 'cell-type',
-      dataIndex: 'ruleType',
-      width: 200,
-      render: (value: string) => t(`rule_${value}`),
-    },
-    {
-      title: t('action'),
-      className: 'cell-action',
-      dataIndex: 'action',
-      width: 160,
-      render: (v, item) => {
-        const isMarked = commonRuleKeys.includes(item[VIRTUAL_KEY]);
-        return (
-          <ButtonGroup>
-            <Tooltip content={t('edit')}>
-              <Button
-                theme="borderless"
-                type="tertiary"
-                onClick={() => onRuleEdit(item)}
-                icon={<IconEdit />}
-              />
-            </Tooltip>
-            <Tooltip content={t('view')}>
-              <Button
-                theme="borderless"
-                type="tertiary"
-                onClick={() => onRulePreview(item)}
-                icon={<IconSearch />}
-              />
-            </Tooltip>
-            <RuleContentSwitcher rule={item} type={item.ruleType} add>
-              <Button
-                theme="borderless"
-                type="tertiary"
-                icon={<IconBranch />}
-              />
-            </RuleContentSwitcher>
-            <Dropdown
-              position="bottomRight"
-              menu={[
-                {
-                  node: 'item',
-                  name: t(isMarked ? 'common_unmark' : 'common_mark'),
-                  onClick: () => {
-                    if (isMarked) {
-                      removeCommonRule(item[VIRTUAL_KEY]);
-                    } else {
-                      addCommonRule(item[VIRTUAL_KEY]);
-                    }
-                  },
-                  icon: (
-                    <IconStar
-                      style={
-                        isMarked ? { color: 'rgb(var(--semi-amber-5))' } : {}
-                      }
-                    />
-                  ),
-                },
-                {
-                  node: 'item',
-                  name: t('group'),
-                  onClick: async () => {
-                    const newGroup = await selectGroup(item.group);
-                    const oldGroup = item.group;
-                    if (oldGroup === newGroup) {
-                      return;
-                    }
-                    item.group = newGroup;
-                    return Api.saveRule(item);
-                  },
-                  icon: <IconFavoriteList />,
-                },
-                {
-                  node: 'item',
-                  name: t('clone'),
-                  onClick: () => clone(item),
-                  icon: <IconCopyAdd />,
-                },
-                {
-                  node: 'divider',
-                },
-                {
-                  node: 'item',
-                  name: t('delete'),
-                  onClick: () => {
-                    Modal.warning({
-                      title: t('delete_single_confirm', item.name),
-                      onOk: () => remove(item),
-                    });
-                  },
-                  type: 'danger',
-                  icon: <IconDelete />,
-                },
-              ]}
-            >
-              <Button theme="borderless" type="tertiary" icon={<IconMore />} />
-            </Dropdown>
-          </ButtonGroup>
-        );
-      },
-    },
-  ];
-
-  if (!responsive.lg) {
-    const index = tableColumns.findIndex(x => x.dataIndex === 'ruleType');
-    tableColumns.splice(index, 1);
-  }
+  const tableColumns = useRuleColumns({ onRuleEdit, onRulePreview });
 
   return (
     <Card
@@ -330,7 +155,7 @@ const RuleGroupCard = (props: RuleCardProps) => {
                   if (name === newGroup) {
                     return;
                   }
-                  // 更新规则
+                  // 鏇存柊瑙勫垯
                   return Promise.all(
                     rules.map(item => {
                       item.group = newGroup;

@@ -270,6 +270,39 @@
     "message": "File size",
     "description": "File size title"
   },
+  "advanced": {
+    "message": "Advanced",
+    "description": "Button to expand advanced filter fields"
+  },
+  "filter_delete_saved": {
+    "message": "Delete $name$",
+    "description": "Delete a saved filter",
+    "placeholders": {
+      "name": {
+        "content": "$1"
+      }
+    }
+  },
+  "reset": {
+    "message": "Reset",
+    "description": "Button to clear all filter inputs and results"
+  },
+  "filter_rules": {
+    "message": "Filter rules",
+    "description": "Button in the rule list toolbar to open the filter panel"
+  },
+  "filter_save_item": {
+    "message": "Save filter",
+    "description": "Button to save the current filter inputs"
+  },
+  "filter_saved_list": {
+    "message": "Saved filters",
+    "description": "Dropdown listing saved filters"
+  },
+  "filter_url_required": {
+    "message": "Please enter a URL",
+    "description": "Validation message when URL is empty"
+  },
   "group": {
     "message": "Group",
     "description": "Group button"
