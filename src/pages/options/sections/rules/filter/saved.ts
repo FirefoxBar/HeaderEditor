@@ -1,3 +1,4 @@
+import type { MockRequest } from '@/pages/options/components/request-mock';
 import { getLocal, getSingle } from '@/share/core/storage';
 
 const STORAGE_KEY = 'rule_filter_saved';
@@ -10,11 +11,8 @@ export interface SavedFilterResponseHeader {
 export interface SavedFilter {
   id: string;
   name: string;
-  url: string;
-  method?: string;
-  resourceType?: string;
-  responseHeaders?: SavedFilterResponseHeader[];
   createdAt: number;
+  filter: MockRequest;
 }
 
 export type SavedFilterInput = Omit<SavedFilter, 'id' | 'createdAt'>;

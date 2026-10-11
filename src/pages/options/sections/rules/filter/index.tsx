@@ -1,32 +1,25 @@
-import { IconCustomize, IconDelete, IconSave } from '@douyinfe/semi-icons';
+import { IconDelete, IconSave } from '@douyinfe/semi-icons';
 import {
   Button,
   Dropdown,
-  Form,
   Input,
   Modal,
   SideSheet,
-  Space,
   Table,
   Toast,
-  Typography,
 } from '@douyinfe/semi-ui';
-import type { FormApi } from '@douyinfe/semi-ui/lib/es/form';
 import { css } from '@emotion/css';
 import { useRequest } from 'ahooks';
 import { useEffect, useRef, useState } from 'react';
-import HeaderField from '@/share/components/header-field';
+import RequestMock, {
+  type RequestMockApi,
+} from '@/pages/options/components/request-mock';
 import { t } from '@/share/core/browser';
 import { VIRTUAL_KEY } from '@/share/core/constant';
 import { filter, initRule } from '@/share/core/rule-utils';
-import type {
-  InitdRule,
-  RuleFilterOptions,
-  RuleWithVirtualKey,
-} from '@/share/core/types';
+import type { InitdRule, RuleWithVirtualKey } from '@/share/core/types';
 import { getVirtualKey } from '@/share/core/utils';
 import Api from '@/share/pages/api';
-import { METHOD_LIST, RESOURCE_TYPE_LIST } from '../edit/options';
 import { useRuleColumns } from '../rule-columns';
 import {
   loadSavedFilters,
@@ -40,12 +33,6 @@ interface RuleFilterPanelProps {
   onClose: () => void;
   onRuleEdit: (rule: RuleWithVirtualKey) => void;
   onRulePreview: (rule: RuleWithVirtualKey) => void;
-}
-
-interface FilterFormValues {
-  method?: string;
-  resourceType?: string;
-  responseHeaders?: Array<{ name?: string; value?: string }>;
 }
 
 type InitdRuleWithVirtualKey = InitdRule & RuleWithVirtualKey;
@@ -62,13 +49,11 @@ const RuleFilterPanel = ({
   onRuleEdit,
   onRulePreview,
 }: RuleFilterPanelProps) => {
-  const formApi = useRef<FormApi<FilterFormValues>>();
-  const [advanced, setAdvanced] = useState(false);
-  // URL 用受控 state，输入变化才会触发下方的防抖自动筛选
-  const [url, setUrl] = useState('');
   const [savedList, setSavedList] = useState<SavedFilter[]>([]);
   const [saveVisible, setSaveVisible] = useState(false);
   const [saveName, setSaveName] = useState('');
+
+  const requestMockApi = useRef<RequestMockApi>();
 
   const getRulesRef = useRef<Promise<InitdRuleWithVirtualKey[]>>();
 
@@ -79,9 +64,6 @@ const RuleFilterPanel = ({
     showRuleType: false,
   });
 
-  const getFormValues = (): FilterFormValues =>
-    formApi.current?.getValues() || {};
-
   const {
     run,
     data: results,
@@ -91,32 +73,9 @@ const RuleFilterPanel = ({
       if (!getRulesRef.current) {
         return;
       }
-      const trimmed = url.trim();
-      if (!trimmed) {
+      const options = requestMockApi.current?.getValues();
+      if (!options || !options.url) {
         return;
-      }
-      const options: RuleFilterOptions = { url: trimmed };
-      // 高级字段默认态下隐藏，不参与匹配
-      if (advanced) {
-        const { method, resourceType, responseHeaders } = getFormValues();
-        if (method) {
-          options.method = method.toLowerCase();
-        }
-        if (resourceType) {
-          options.resourceType = resourceType as NonNullable<
-            RuleFilterOptions['resourceType']
-          >;
-        }
-        // 空 name 的行不参与匹配
-        const validHeaders = (responseHeaders || [])
-          .filter(it => Boolean(it?.name))
-          .map(it => ({
-            name: String(it.name).toLowerCase(),
-            value: it.value,
-          }));
-        if (validHeaders.length > 0) {
-          options.responseHeaders = validHeaders;
-        }
       }
       return filter(
         await getRulesRef.current,
@@ -124,14 +83,14 @@ const RuleFilterPanel = ({
       ) as InitdRuleWithVirtualKey[];
     },
     {
-      manual: Boolean(advanced),
+      manual: true,
       debounceWait: 300,
-      refreshDeps: advanced ? [] : [url],
     },
   );
 
   const handleRun = () => {
-    if (!url.trim()) {
+    const url = requestMockApi.current?.getUrl().trim();
+    if (!url) {
       Toast.warning(t('filter_url_required'));
       return;
     }
@@ -139,12 +98,11 @@ const RuleFilterPanel = ({
   };
 
   const handleReset = () => {
-    formApi.current?.reset();
-    setUrl('');
+    requestMockApi.current?.reset();
   };
 
   const handleOpenSave = () => {
-    if (!url.trim()) {
+    if (!requestMockApi.current?.getUrl().trim()) {
       Toast.warning(t('filter_url_required'));
       return;
     }
@@ -153,24 +111,18 @@ const RuleFilterPanel = ({
   };
 
   const handleSaveConfirm = async () => {
+    const value = requestMockApi.current?.getValues();
+    if (!value) {
+      return;
+    }
     const name = saveName.trim();
     if (!name) {
       Toast.warning(t('name'));
       return;
     }
-    const values = getFormValues();
-    // 默认态下高级字段隐藏，保存时不带上
-    const responseHeaders = advanced
-      ? (values.responseHeaders || [])
-          .filter(it => Boolean(it?.name))
-          .map(it => ({ name: String(it.name), value: it.value }))
-      : [];
     await saveFilter({
       name,
-      url: url.trim(),
-      method: advanced ? values.method || undefined : undefined,
-      resourceType: advanced ? values.resourceType || undefined : undefined,
-      responseHeaders: responseHeaders.length > 0 ? responseHeaders : undefined,
+      filter: value,
     });
     setSaveVisible(false);
     Toast.success(t('saved'));
@@ -179,18 +131,12 @@ const RuleFilterPanel = ({
 
   const handleLoadSaved = (item: SavedFilter) => {
     const hasAdvanced = Boolean(
-      item.method || item.resourceType || item.responseHeaders?.length,
+      item.filter.method ||
+        item.filter.resourceType ||
+        item.filter.responseHeaders?.length,
     );
-    const api = formApi.current;
-    api?.setValue('method', item.method || undefined);
-    api?.setValue('resourceType', item.resourceType || undefined);
-    api?.setValue(
-      'responseHeaders',
-      (item.responseHeaders || []).map(it => ({ ...it })),
-    );
-    setUrl(item.url);
-    // 载入属显式操作：有高级字段时自动展开并立即筛选，否则走自动筛选
-    setAdvanced(hasAdvanced);
+    requestMockApi.current?.setAdvanced(hasAdvanced);
+    requestMockApi.current?.setValues(item.filter);
     setTimeout(() => {
       run();
     }, 300);
@@ -247,16 +193,6 @@ const RuleFilterPanel = ({
             }
           }
         }
-
-        .url-input-wrapper {
-          display: flex;
-          align-items: center;
-          gap: 8px;
-
-          > .semi-input-wrapper {
-            flex: 1;
-          }
-        }
       `}
       footer={
         <div
@@ -296,60 +232,18 @@ const RuleFilterPanel = ({
         </div>
       }
     >
-      <Form<FilterFormValues>
-        labelCol={{ fixedSpan: 4 }}
-        getFormApi={api => {
-          formApi.current = api;
+      <RequestMock
+        submitText={t('filter')}
+        onSubmit={handleRun}
+        getApi={api => (requestMockApi.current = api)}
+        onReset={handleReset}
+        onUrlChange={() => {
+          if (requestMockApi.current?.getAdvanced()) {
+            return;
+          }
+          run();
         }}
-        labelPosition="left"
-        labelAlign="right"
-        labelWidth={140}
-        initValues={{}}
-      >
-        <div className="url-input-wrapper">
-          <Input
-            value={url}
-            onChange={setUrl}
-            placeholder="https://..."
-            showClear
-          />
-          <Button
-            icon={<IconCustomize />}
-            onClick={() => setAdvanced(!advanced)}
-          >
-            {t('filter_advanced')}
-          </Button>
-        </div>
-        {advanced && (
-          <>
-            <Form.Select
-              label={t('match_method')}
-              field="method"
-              showClear
-              optionList={METHOD_LIST}
-            />
-            <Form.Select
-              label={t('match_resourceType')}
-              field="resourceType"
-              showClear
-              optionList={RESOURCE_TYPE_LIST}
-            />
-            <Form.Slot label={t('response_headers')}>
-              <HeaderField field="responseHeaders" type="response" />
-            </Form.Slot>
-            <Form.Slot>
-              <Space>
-                <Button type="primary" theme="solid" onClick={handleRun}>
-                  {t('filter_rules')}
-                </Button>
-                <Button theme="light" type="tertiary" onClick={handleReset}>
-                  {t('reset')}
-                </Button>
-              </Space>
-            </Form.Slot>
-          </>
-        )}
-      </Form>
+      />
       <Table
         rowKey={VIRTUAL_KEY}
         dataSource={results}
@@ -373,9 +267,6 @@ const RuleFilterPanel = ({
           onChange={setSaveName}
           placeholder={t('name')}
         />
-        <Typography.Text type="tertiary" style={{ marginTop: 12 }}>
-          {url}
-        </Typography.Text>
       </Modal>
     </SideSheet>
   );
