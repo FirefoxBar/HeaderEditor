@@ -9,7 +9,7 @@ import {
   Toast,
 } from '@douyinfe/semi-ui';
 import { css } from '@emotion/css';
-import { useRequest } from 'ahooks';
+import { useDebounceFn, useRequest } from 'ahooks';
 import { useEffect, useRef, useState } from 'react';
 import RequestMock, {
   type RequestMockApi,
@@ -110,9 +110,10 @@ const RuleFilterPanel = ({
     },
     {
       manual: true,
-      debounceWait: 300,
     },
   );
+
+  const { run: debounceRun } = useDebounceFn(run, { wait: 600 });
 
   const handleRun = () => {
     const url = requestMockApi.current?.getUrl().trim();
@@ -272,7 +273,7 @@ const RuleFilterPanel = ({
           if (requestMockApi.current?.getAdvanced()) {
             return;
           }
-          run();
+          debounceRun();
         }}
       />
       <Table

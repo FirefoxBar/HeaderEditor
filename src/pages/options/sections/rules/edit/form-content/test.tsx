@@ -1,5 +1,5 @@
 import { Toast, useFormState } from '@douyinfe/semi-ui';
-import { useRequest } from 'ahooks';
+import { useDebounceFn, useRequest } from 'ahooks';
 import equal from 'fast-deep-equal';
 import { cloneDeep } from 'lodash-es';
 import { useEffect, useRef } from 'react';
@@ -112,13 +112,14 @@ const Test = () => {
     },
     {
       manual: true,
-      debounceWait: 300,
     },
   );
 
+  const { run: debounceRun } = useDebounceFn(run, { wait: 600 });
+
   // 规则表单变化时自动重测
   useEffect(() => {
-    run();
+    debounceRun();
   }, [values]);
 
   const handleRun = () => {
@@ -148,7 +149,7 @@ const Test = () => {
           if (requestMockApi.current?.getAdvanced()) {
             return;
           }
-          run();
+          debounceRun();
         }}
         hasResponseHeaders={hasResponseHeaders}
       />
