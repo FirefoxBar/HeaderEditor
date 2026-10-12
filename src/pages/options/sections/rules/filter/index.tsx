@@ -93,6 +93,7 @@ const RuleFilterPanel = ({
     run,
     data: results,
     loading,
+    mutate,
   } = useRequest(
     async () => {
       if (!getRulesRef.current) {
@@ -122,10 +123,7 @@ const RuleFilterPanel = ({
     run();
   };
 
-  const handleReset = () => {
-    // RequestMock 内部已重置 URL/表单，这里只清空筛选结果
-    run();
-  };
+  const handleReset = () => mutate();
 
   const handleOpenSave = () => {
     if (!requestMockApi.current?.getUrl().trim()) {
@@ -181,6 +179,7 @@ const RuleFilterPanel = ({
     } else {
       getRulesRef.current = undefined;
       setSavedList([]);
+      mutate();
     }
   }, [visible]);
 
@@ -208,6 +207,7 @@ const RuleFilterPanel = ({
       onCancel={onClose}
       title={t('filter_rules')}
       maskClosable={false}
+      keepDOM={false}
       width="100vw"
       className={css`
         .semi-sidesheet-inner {

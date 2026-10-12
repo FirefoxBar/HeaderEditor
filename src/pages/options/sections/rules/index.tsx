@@ -246,12 +246,6 @@ class Rules extends React.Component<RulesProps, RulesState> {
     });
   }
 
-  // 列表页当前展示的全部规则，保持原有顺序，供筛选使用
-  getAllRules(): RuleWithVirtualKey[] {
-    return ([] as RuleWithVirtualKey[]).concat(
-      ...Object.values(this.state.group).map(it => it.rules),
-    );
-  }
   getSelectedRules() {
     const { selectedKeys, group } = this.state;
     if (selectedKeys.length === 0) {
@@ -514,7 +508,6 @@ class Rules extends React.Component<RulesProps, RulesState> {
         ))}
         <RuleFilterPanel
           visible={this.state.filterVisible}
-          rules={this.getAllRules()}
           onClose={this.handleCloseFilter}
           onRuleEdit={this.props.onEdit}
           onRulePreview={this.handlePreview}
