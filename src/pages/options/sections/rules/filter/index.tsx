@@ -1,4 +1,4 @@
-import { IconDelete, IconSave } from '@douyinfe/semi-icons';
+import { IconChevronUp, IconDelete, IconSave } from '@douyinfe/semi-icons';
 import {
   Button,
   Dropdown,
@@ -15,7 +15,8 @@ import RequestMock, {
   type RequestMockApi,
 } from '@/pages/options/components/request-mock';
 import { t } from '@/share/core/browser';
-import { VIRTUAL_KEY } from '@/share/core/constant';
+import { EVENTs, VIRTUAL_KEY } from '@/share/core/constant';
+import notify from '@/share/core/notify';
 import { filter, initRule } from '@/share/core/rule-utils';
 import type { InitdRule, RuleWithVirtualKey } from '@/share/core/types';
 import { getVirtualKey } from '@/share/core/utils';
@@ -37,6 +38,29 @@ interface RuleFilterPanelProps {
 }
 
 type InitdRuleWithVirtualKey = InitdRule & RuleWithVirtualKey;
+
+const loadRules = () =>
+  Api.getAllRules().then(
+    res =>
+      Object.values(res)
+        .flat()
+        .map(x => {
+          try {
+            const initd = initRule(x, true);
+            // 与测试面板一致：DNR 规则编译 RE2，失败则回退 JS RegExp
+            compileRe2(initd);
+            return initd;
+          } catch (e) {
+            console.error('[rule-filter] Init rule failed', x, e);
+            return null;
+          }
+        })
+        .filter(Boolean)
+        .map(x => ({
+          ...x,
+          [VIRTUAL_KEY]: getVirtualKey(x!),
+        })) as InitdRuleWithVirtualKey[],
+  );
 
 /**
  * 规则筛选侧边栏
@@ -152,30 +176,30 @@ const RuleFilterPanel = ({
   // 打开时加载已保存的筛选项
   useEffect(() => {
     if (visible) {
+      getRulesRef.current = loadRules();
       loadSavedFilters().then(setSavedList);
-      getRulesRef.current = Api.getAllRules().then(
-        res =>
-          Object.values(res)
-            .flat()
-            .map(x => {
-              try {
-                const initd = initRule(x, true);
-                // 与测试面板一致：DNR 规则编译 RE2，失败则回退 JS RegExp
-                compileRe2(initd);
-                return initd;
-              } catch (e) {
-                console.error('[rule-filter] Init rule failed', x, e);
-                return null;
-              }
-            })
-            .filter(Boolean)
-            .map(x => ({
-              ...x,
-              [VIRTUAL_KEY]: getVirtualKey(x!),
-            })) as InitdRuleWithVirtualKey[],
-      );
+    } else {
+      getRulesRef.current = undefined;
+      setSavedList([]);
     }
   }, [visible]);
+
+  useEffect(() => {
+    const handleRuleUpdate = () => {
+      if (getRulesRef.current) {
+        getRulesRef.current = loadRules();
+        getRulesRef.current.then(run);
+      }
+    };
+
+    notify.event.on(EVENTs.RULE_UPDATE, handleRuleUpdate);
+    notify.event.on(EVENTs.RULE_DELETE, handleRuleUpdate);
+
+    return () => {
+      notify.event.off(EVENTs.RULE_UPDATE, handleRuleUpdate);
+      notify.event.off(EVENTs.RULE_DELETE, handleRuleUpdate);
+    };
+  }, []);
 
   return (
     <SideSheet
@@ -203,15 +227,15 @@ const RuleFilterPanel = ({
         <div
           style={{
             display: 'flex',
-            justifyContent: 'space-between',
+            justifyContent: 'flex-end',
             gap: '8px',
             alignItems: 'center',
           }}
         >
           {savedList.length > 0 && (
             <Dropdown
-              position="bottomRight"
-              trigger="click"
+              position="topRight"
+              autoAdjustOverflow
               menu={[
                 ...savedList.map(item => ({
                   node: 'item' as const,
@@ -228,7 +252,9 @@ const RuleFilterPanel = ({
                 })),
               ]}
             >
-              <Button>{t('filter_saved_list')}</Button>
+              <Button icon={<IconChevronUp />} iconPosition="right">
+                {t('filter_saved_list')}
+              </Button>
             </Dropdown>
           )}
           <Button icon={<IconSave />} onClick={handleOpenSave}>
