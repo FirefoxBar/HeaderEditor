@@ -295,10 +295,6 @@
     "message": "Saved filters",
     "description": "Dropdown listing saved filters"
   },
-  "filter_url_required": {
-    "message": "Please enter a URL",
-    "description": "Validation message when URL is empty"
-  },
   "group": {
     "message": "Group",
     "description": "Group button"
@@ -716,7 +712,7 @@
     "description": "Label to test a redirect rule"
   },
   "test_exclude": {
-    "message": "Matched but excluded",
+    "message": "Excluded",
     "description": "Label to test a redirect rule"
   },
   "test_invalid_regexp": {
@@ -754,6 +750,10 @@
   "upload": {
     "message": "Upload",
     "description": "Upload button"
+  },
+  "url_required": {
+    "message": "Please enter a URL",
+    "description": "Validation message when URL is empty"
   },
   "username": {
     "message": "Username",
