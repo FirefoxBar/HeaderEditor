@@ -1,26 +1,39 @@
-import { Input, useFormState } from '@douyinfe/semi-ui';
-import { useDebounceEffect } from 'ahooks';
+import { Toast, useFormState } from '@douyinfe/semi-ui';
+import { useRequest } from 'ahooks';
 import equal from 'fast-deep-equal';
 import { cloneDeep } from 'lodash-es';
-import { RE2JS } from 're2js';
-import { useRef, useState } from 'react';
+import { useEffect, useRef } from 'react';
+import RequestMock, {
+  type RequestMockApi,
+} from '@/pages/options/components/request-mock';
 import { t } from '@/share/core/browser';
 import { IS_MATCH } from '@/share/core/constant';
-import { detectRunner, initRule, isMatchUrl } from '@/share/core/rule-utils';
+import {
+  detectRunner,
+  initRule,
+  isMatchRule,
+  isSupportHeaderMatch,
+} from '@/share/core/rule-utils';
 import type { InitdRule } from '@/share/core/types';
 import useStateIfChanged from '@/share/hooks/use-state-if-changed';
-import { getRuleFromInput } from '../utils';
+import { compileRe2 } from '../../../rules/utils';
+import { getRuleFromInput, isAllowFilterResponseHeaders } from '../utils';
 
 const Test = () => {
   const rule = useRef<InitdRule>();
   const lastValue = useRef<any>();
   const { values } = useFormState();
-  const [url, setUrl] = useState('');
+  const requestMockApi = useRef<RequestMockApi>();
   const [result, setResult] = useStateIfChanged('');
 
-  useDebounceEffect(
-    () => {
-      if (url === '') {
+  const hasResponseHeaders =
+    (ENABLE_WEB_REQUEST || isSupportHeaderMatch()) &&
+    isAllowFilterResponseHeaders(values?.ruleType);
+
+  const { run } = useRequest(
+    async () => {
+      const options = requestMockApi.current?.getValues();
+      if (!options?.url) {
         setResult('');
         return;
       }
@@ -34,11 +47,7 @@ const Test = () => {
           err = e as Error;
         }
         if (ruleContent.condition?.regex && rule.current && !err) {
-          try {
-            rule.current._re2 = RE2JS.compile(ruleContent.condition.regex);
-          } catch (e) {
-            err = e as Error;
-          }
+          err = compileRe2(rule.current) || undefined;
 
           if (err && ENABLE_WEB_REQUEST) {
             try {
@@ -61,51 +70,91 @@ const Test = () => {
       }
 
       const initdRule = rule.current;
-      // 运行
-      const match = isMatchUrl(initdRule, url);
+      // 运行，与筛选/运行时使用同一套匹配逻辑
+      const match = isMatchRule(initdRule, options);
+      if (match === IS_MATCH.MATCH) {
+        // 匹配通过，实际运行
+        if (initdRule.isFunction) {
+          setResult(t('test_custom_code'));
+          return;
+        }
+        // 只有重定向支持测试详细功能，其他只返回匹配
+        if (initdRule.ruleType === 'redirect' && initdRule.to) {
+          const url = options.url as string;
+          let redirect = '';
+          if (
+            detectRunner(initdRule) === 'dnr' &&
+            initdRule._re2 &&
+            ENABLE_DNR
+          ) {
+            redirect = initdRule._re2.matcher(url).replaceAll(initdRule.to);
+          } else if (initdRule?._reg) {
+            redirect = url.replaceAll(initdRule._reg, initdRule.to);
+          } else {
+            redirect = initdRule.to;
+          }
+          if (detectRunner(initdRule) === 'web_request') {
+            if (/^(http|https|ftp|file)%3A/.test(redirect)) {
+              redirect = decodeURIComponent(redirect);
+            }
+          }
+          setResult(redirect);
+        } else {
+          setResult(t('test_match'));
+        }
+        return;
+      }
       const resultText: { [x: number]: string } = {
         [IS_MATCH.NOT_MATCH]: t('test_mismatch'),
-        [IS_MATCH.MATCH_BUT_EXCLUDE]: t('test_exclude'),
+        [IS_MATCH.EXCLUDE]: t('test_exclude'),
       };
-      if (typeof resultText[match] !== 'undefined') {
-        setResult(resultText[match]);
-        return;
-      }
-      // 匹配通过，实际运行
-      if (initdRule.isFunction) {
-        setResult(t('test_custom_code'));
-        return;
-      }
-      // 只有重定向支持测试详细功能，其他只返回匹配
-      if (initdRule.ruleType === 'redirect' && initdRule.to) {
-        let redirect = '';
-        if (detectRunner(initdRule) === 'dnr' && initdRule._re2 && ENABLE_DNR) {
-          redirect = initdRule._re2.matcher(url).replaceAll(initdRule.to);
-        } else if (initdRule?._reg) {
-          redirect = url.replaceAll(initdRule._reg, initdRule.to);
-        } else {
-          redirect = initdRule.to;
-        }
-        if (detectRunner(initdRule) === 'web_request') {
-          if (/^(http|https|ftp|file)%3A/.test(redirect)) {
-            redirect = decodeURIComponent(redirect);
-          }
-        }
-        setResult(redirect);
-      } else {
-        setResult(t('test_match'));
-      }
+      setResult(resultText[match] ?? t('test_mismatch'));
     },
-    undefined,
     {
-      wait: 300,
+      manual: true,
+      debounceWait: 300,
     },
   );
 
+  // 规则表单变化时自动重测
+  useEffect(() => {
+    run();
+  }, [values]);
+
+  const handleRun = () => {
+    const url = requestMockApi.current?.getUrl().trim();
+    if (!url) {
+      Toast.warning(t('url_required'));
+      return;
+    }
+    run();
+  };
+
+  // RequestMock 内部已重置表单，这里只清理测试状态
+  const handleReset = () => {
+    rule.current = undefined;
+    lastValue.current = undefined;
+    setResult('');
+  };
+
   return (
     <>
-      <Input value={url} onChange={setUrl} placeholder="https://..." />
-      <pre>{result}</pre>
+      <RequestMock
+        submitText={t('test_url')}
+        onSubmit={handleRun}
+        getApi={api => (requestMockApi.current = api)}
+        onReset={handleReset}
+        onUrlChange={() => {
+          if (requestMockApi.current?.getAdvanced()) {
+            return;
+          }
+          run();
+        }}
+        hasResponseHeaders={hasResponseHeaders}
+      />
+      <pre style={{ padding: 8, borderRadius: 4, backgroundColor: '#f5f5f5' }}>
+        {result ? result : <span>&nbsp;</span>}
+      </pre>
     </>
   );
 };

@@ -115,7 +115,7 @@ describe('rule-utils', () => {
         );
         assert.strictEqual(
           isMatchUrl(rule, 'https://sub.example.com/path'),
-          IS_MATCH.MATCH_BUT_EXCLUDE,
+          IS_MATCH.EXCLUDE,
         );
       });
 
@@ -133,7 +133,7 @@ describe('rule-utils', () => {
         );
         assert.strictEqual(
           isMatchUrl(rule, 'https://example.com/api/private/data'),
-          IS_MATCH.MATCH_BUT_EXCLUDE,
+          IS_MATCH.EXCLUDE,
         );
       });
 
@@ -155,7 +155,7 @@ describe('rule-utils', () => {
         );
       });
 
-      it('should return MATCH_BUT_EXCLUDE when urlFilter matches but excludeDomain matches', () => {
+      it('should return EXCLUDE when urlFilter matches but excludeDomain matches', () => {
         const rule = initRule({
           ...baseRule,
           condition: {
@@ -169,7 +169,7 @@ describe('rule-utils', () => {
         );
         assert.strictEqual(
           isMatchUrl(rule, 'https://api.example.com/path'),
-          IS_MATCH.MATCH_BUT_EXCLUDE,
+          IS_MATCH.EXCLUDE,
         );
       });
     });
@@ -259,7 +259,7 @@ describe('rule-utils', () => {
         );
         assert.strictEqual(
           isMatchUrl(rule, 'https://example.com/api/private/data'),
-          IS_MATCH.MATCH_BUT_EXCLUDE,
+          IS_MATCH.EXCLUDE,
         );
       });
     });

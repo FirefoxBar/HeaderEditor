@@ -21,6 +21,7 @@ import type { InitdRule, RuleWithVirtualKey } from '@/share/core/types';
 import { getVirtualKey } from '@/share/core/utils';
 import Api from '@/share/pages/api';
 import { useRuleColumns } from '../rule-columns';
+import { compileRe2 } from '../utils';
 import {
   loadSavedFilters,
   removeFilter,
@@ -91,19 +92,20 @@ const RuleFilterPanel = ({
   const handleRun = () => {
     const url = requestMockApi.current?.getUrl().trim();
     if (!url) {
-      Toast.warning(t('filter_url_required'));
+      Toast.warning(t('url_required'));
       return;
     }
     run();
   };
 
   const handleReset = () => {
-    requestMockApi.current?.reset();
+    // RequestMock 内部已重置 URL/表单，这里只清空筛选结果
+    run();
   };
 
   const handleOpenSave = () => {
     if (!requestMockApi.current?.getUrl().trim()) {
-      Toast.warning(t('filter_url_required'));
+      Toast.warning(t('url_required'));
       return;
     }
     setSaveName('');
@@ -157,7 +159,10 @@ const RuleFilterPanel = ({
             .flat()
             .map(x => {
               try {
-                return initRule(x, true);
+                const initd = initRule(x, true);
+                // 与测试面板一致：DNR 规则编译 RE2，失败则回退 JS RegExp
+                compileRe2(initd);
+                return initd;
               } catch (e) {
                 console.error('[rule-filter] Init rule failed', x, e);
                 return null;
@@ -233,7 +238,7 @@ const RuleFilterPanel = ({
       }
     >
       <RequestMock
-        submitText={t('filter')}
+        submitText={t('filter_rules')}
         onSubmit={handleRun}
         getApi={api => (requestMockApi.current = api)}
         onReset={handleReset}

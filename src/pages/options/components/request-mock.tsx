@@ -33,6 +33,7 @@ export interface RequestMockProps {
   onReset?: () => void;
   onUrlChange?: (url: string) => void;
   getApi: (api: RequestMockApi) => void;
+  hasResponseHeaders?: boolean;
 }
 
 const RequestMock = ({
@@ -42,12 +43,14 @@ const RequestMock = ({
   onAdvancedChange,
   onReset,
   onUrlChange,
+  hasResponseHeaders = true,
 }: RequestMockProps) => {
   const formApi = useRef<FormApi<MockRequest>>();
   const [advanced, setAdvanced, getAdvanced] = useGetState(false);
   const [url, setUrl, getUrl] = useGetState('');
 
   const onResetRef = useLatest(onReset);
+  const hasResponseHeadersRef = useLatest(hasResponseHeaders);
 
   const handleReset = useCallback(() => {
     setUrl('');
@@ -88,15 +91,17 @@ const RequestMock = ({
               RuleFilterOptions['resourceType']
             >;
           }
-          // 空 name 的行不参与匹配
-          const validHeaders = (responseHeaders || [])
-            .filter(it => Boolean(it?.name))
-            .map(it => ({
-              name: String(it.name).toLowerCase(),
-              value: it.value,
-            }));
-          if (validHeaders.length > 0) {
-            options.responseHeaders = validHeaders;
+          if (hasResponseHeadersRef.current) {
+            // 空 name 的行不参与匹配
+            const validHeaders = (responseHeaders || [])
+              .filter(it => Boolean(it?.name))
+              .map(it => ({
+                name: String(it.name).toLowerCase(),
+                value: it.value,
+              }));
+            if (validHeaders.length > 0) {
+              options.responseHeaders = validHeaders;
+            }
           }
         }
         return options;
@@ -144,7 +149,7 @@ const RequestMock = ({
             setAdvanced(!advanced);
           }}
         >
-          {t('filter_advanced')}
+          {t('advanced')}
         </Button>
       </div>
       {advanced && (
@@ -161,9 +166,11 @@ const RequestMock = ({
             showClear
             optionList={RESOURCE_TYPE_LIST}
           />
-          <Form.Slot label={t('response_headers')}>
-            <HeaderField field="responseHeaders" type="response" />
-          </Form.Slot>
+          {hasResponseHeaders && (
+            <Form.Slot label={t('response_headers')}>
+              <HeaderField field="responseHeaders" type="response" />
+            </Form.Slot>
+          )}
           <Form.Slot>
             <Space>
               <Button type="primary" theme="solid" onClick={onSubmit}>

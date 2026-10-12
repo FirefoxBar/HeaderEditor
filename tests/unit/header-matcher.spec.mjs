@@ -1,4 +1,5 @@
 import { strict as assert } from 'node:assert';
+import { IS_MATCH } from '@/share/core/constant';
 import { compileCondition, matchCondition } from '@/share/core/header-matcher';
 
 /** ['A', '1'] -> { header: 'A', value: '1' } */
@@ -16,7 +17,7 @@ describe('header-matcher', () => {
           'A',
           '1',
         ]),
-        true,
+        IS_MATCH.MATCH,
       );
     });
 
@@ -26,7 +27,7 @@ describe('header-matcher', () => {
           'A',
           '11',
         ]),
-        false,
+        IS_MATCH.NOT_MATCH,
       );
     });
 
@@ -40,7 +41,7 @@ describe('header-matcher', () => {
           },
           ['Content-Type', 'text/html'],
         ),
-        false,
+        IS_MATCH.NOT_MATCH,
       );
     });
 
@@ -51,14 +52,14 @@ describe('header-matcher', () => {
           'A',
           'a.b',
         ]),
-        true,
+        IS_MATCH.MATCH,
       );
       assert.equal(
         match({ responseHeaders: [{ header: 'A', values: ['a.b'] }] }, [
           'A',
           'axb',
         ]),
-        false,
+        IS_MATCH.NOT_MATCH,
       );
     });
 
@@ -68,18 +69,18 @@ describe('header-matcher', () => {
           'Content-Type',
           'text/html',
         ]),
-        false,
+        IS_MATCH.NOT_MATCH,
       );
     });
 
     it('header 存在但值为空字符串，仍按值比较', () => {
       assert.equal(
         match({ responseHeaders: [{ header: 'X', values: [''] }] }, ['X', '']),
-        true,
+        IS_MATCH.MATCH,
       );
       assert.equal(
         match({ responseHeaders: [{ header: 'X', values: ['a'] }] }, ['X', '']),
-        false,
+        IS_MATCH.NOT_MATCH,
       );
     });
   });
@@ -91,14 +92,14 @@ describe('header-matcher', () => {
           'A',
           'anything',
         ]),
-        true,
+        IS_MATCH.MATCH,
       );
     });
 
     it('`*` 匹配空字符串', () => {
       assert.equal(
         match({ responseHeaders: [{ header: 'A', values: ['*'] }] }, ['A', '']),
-        true,
+        IS_MATCH.MATCH,
       );
     });
 
@@ -106,37 +107,46 @@ describe('header-matcher', () => {
       const cond = {
         responseHeaders: [{ header: 'Content-Type', values: ['text/*'] }],
       };
-      assert.equal(match(cond, ['Content-Type', 'text/html']), true);
-      assert.equal(match(cond, ['Content-Type', 'text/plain']), true);
-      assert.equal(match(cond, ['Content-Type', 'application/json']), false);
+      assert.equal(match(cond, ['Content-Type', 'text/html']), IS_MATCH.MATCH);
+      assert.equal(match(cond, ['Content-Type', 'text/plain']), IS_MATCH.MATCH);
+      assert.equal(
+        match(cond, ['Content-Type', 'application/json']),
+        IS_MATCH.NOT_MATCH,
+      );
     });
 
     it('后缀通配 `*/json`', () => {
       const cond = {
         responseHeaders: [{ header: 'Content-Type', values: ['*/json'] }],
       };
-      assert.equal(match(cond, ['Content-Type', 'application/json']), true);
-      assert.equal(match(cond, ['Content-Type', 'application/xml']), false);
+      assert.equal(
+        match(cond, ['Content-Type', 'application/json']),
+        IS_MATCH.MATCH,
+      );
+      assert.equal(
+        match(cond, ['Content-Type', 'application/xml']),
+        IS_MATCH.NOT_MATCH,
+      );
     });
 
     it('中间通配 `v*2024`', () => {
       const cond = { responseHeaders: [{ header: 'X', values: ['v*2024'] }] };
-      assert.equal(match(cond, ['X', 'v1.2-2024']), true);
-      assert.equal(match(cond, ['X', 'v2024']), true); // * 可以匹配空
-      assert.equal(match(cond, ['X', 'v1.2-2023']), false);
+      assert.equal(match(cond, ['X', 'v1.2-2024']), IS_MATCH.MATCH);
+      assert.equal(match(cond, ['X', 'v2024']), IS_MATCH.MATCH); // * 可以匹配空
+      assert.equal(match(cond, ['X', 'v1.2-2023']), IS_MATCH.NOT_MATCH);
     });
 
     it('多个 `*` 同时出现', () => {
       const cond = { responseHeaders: [{ header: 'X', values: ['a*b*c'] }] };
-      assert.equal(match(cond, ['X', 'abc']), true);
-      assert.equal(match(cond, ['X', 'aXXbYYc']), true);
-      assert.equal(match(cond, ['X', 'ab']), false);
+      assert.equal(match(cond, ['X', 'abc']), IS_MATCH.MATCH);
+      assert.equal(match(cond, ['X', 'aXXbYYc']), IS_MATCH.MATCH);
+      assert.equal(match(cond, ['X', 'ab']), IS_MATCH.NOT_MATCH);
     });
 
     it('通配符匹配整值，不做子串匹配', () => {
       const cond = { responseHeaders: [{ header: 'X', values: ['ab*'] }] };
-      assert.equal(match(cond, ['X', 'abc']), true);
-      assert.equal(match(cond, ['X', 'xabc']), false); // 前面多出内容不匹配
+      assert.equal(match(cond, ['X', 'abc']), IS_MATCH.MATCH);
+      assert.equal(match(cond, ['X', 'xabc']), IS_MATCH.NOT_MATCH); // 前面多出内容不匹配
     });
 
     it('通配符大小写敏感', () => {
@@ -145,7 +155,7 @@ describe('header-matcher', () => {
           'X',
           'TEXT/HTML',
         ]),
-        false,
+        IS_MATCH.NOT_MATCH,
       );
     });
   });
@@ -153,41 +163,41 @@ describe('header-matcher', () => {
   describe('values：通配符 ?', () => {
     it('`?` 匹配单个字符', () => {
       const cond = { responseHeaders: [{ header: 'X', values: ['v?'] }] };
-      assert.equal(match(cond, ['X', 'v1']), true);
-      assert.equal(match(cond, ['X', 'v12']), false);
-      assert.equal(match(cond, ['X', 'v']), false);
+      assert.equal(match(cond, ['X', 'v1']), IS_MATCH.MATCH);
+      assert.equal(match(cond, ['X', 'v12']), IS_MATCH.NOT_MATCH);
+      assert.equal(match(cond, ['X', 'v']), IS_MATCH.NOT_MATCH);
     });
 
     it('多个 `?` 组合', () => {
       const cond = { responseHeaders: [{ header: 'X', values: ['??-??'] }] };
-      assert.equal(match(cond, ['X', 'ab-cd']), true);
-      assert.equal(match(cond, ['X', 'a-cd']), false);
+      assert.equal(match(cond, ['X', 'ab-cd']), IS_MATCH.MATCH);
+      assert.equal(match(cond, ['X', 'a-cd']), IS_MATCH.NOT_MATCH);
     });
 
     it('`*` 与 `?` 混用', () => {
       const cond = { responseHeaders: [{ header: 'X', values: ['*-????'] }] };
-      assert.equal(match(cond, ['X', 'release-2024']), true);
-      assert.equal(match(cond, ['X', 'release-24']), false);
+      assert.equal(match(cond, ['X', 'release-2024']), IS_MATCH.MATCH);
+      assert.equal(match(cond, ['X', 'release-24']), IS_MATCH.NOT_MATCH);
     });
   });
 
   describe('values：转义与特殊字符', () => {
     it('`\\*` 表示字面星号', () => {
       const cond = { responseHeaders: [{ header: 'X', values: ['a\\*'] }] };
-      assert.equal(match(cond, ['X', 'a*']), true);
-      assert.equal(match(cond, ['X', 'abc']), false);
+      assert.equal(match(cond, ['X', 'a*']), IS_MATCH.MATCH);
+      assert.equal(match(cond, ['X', 'abc']), IS_MATCH.NOT_MATCH);
     });
 
     it('`\\?` 表示字面问号', () => {
       const cond = { responseHeaders: [{ header: 'X', values: ['a\\?'] }] };
-      assert.equal(match(cond, ['X', 'a?']), true);
-      assert.equal(match(cond, ['X', 'ab']), false);
+      assert.equal(match(cond, ['X', 'a?']), IS_MATCH.MATCH);
+      assert.equal(match(cond, ['X', 'ab']), IS_MATCH.NOT_MATCH);
     });
 
     it('字面值含正则元字符组合仍按字面处理', () => {
       const cond = { responseHeaders: [{ header: 'X', values: ['(a)|[b]'] }] };
-      assert.equal(match(cond, ['X', '(a)|[b]']), true);
-      assert.equal(match(cond, ['X', 'ab']), false);
+      assert.equal(match(cond, ['X', '(a)|[b]']), IS_MATCH.MATCH);
+      assert.equal(match(cond, ['X', 'ab']), IS_MATCH.NOT_MATCH);
     });
   });
 
@@ -201,19 +211,28 @@ describe('header-matcher', () => {
           },
         ],
       };
-      assert.equal(match(cond, ['Content-Type', 'text/html']), true);
-      assert.equal(match(cond, ['Content-Type', 'application/json']), true);
-      assert.equal(match(cond, ['Content-Type', 'application/xml']), true);
-      assert.equal(match(cond, ['Content-Type', 'text/css']), false);
+      assert.equal(match(cond, ['Content-Type', 'text/html']), IS_MATCH.MATCH);
+      assert.equal(
+        match(cond, ['Content-Type', 'application/json']),
+        IS_MATCH.MATCH,
+      );
+      assert.equal(
+        match(cond, ['Content-Type', 'application/xml']),
+        IS_MATCH.MATCH,
+      );
+      assert.equal(
+        match(cond, ['Content-Type', 'text/css']),
+        IS_MATCH.NOT_MATCH,
+      );
     });
 
     it('多个通配符任一命中', () => {
       const cond = {
         responseHeaders: [{ header: 'X', values: ['foo*', '*bar'] }],
       };
-      assert.equal(match(cond, ['X', 'foo123']), true);
-      assert.equal(match(cond, ['X', '123bar']), true);
-      assert.equal(match(cond, ['X', '123baz']), false);
+      assert.equal(match(cond, ['X', 'foo123']), IS_MATCH.MATCH);
+      assert.equal(match(cond, ['X', '123bar']), IS_MATCH.MATCH);
+      assert.equal(match(cond, ['X', '123baz']), IS_MATCH.NOT_MATCH);
     });
   });
 
@@ -228,7 +247,7 @@ describe('header-matcher', () => {
           },
           ['CONTENT-TYPE', 'text/html'],
         ),
-        true,
+        IS_MATCH.MATCH,
       );
     });
 
@@ -242,7 +261,7 @@ describe('header-matcher', () => {
           },
           ['content-type', 'text/html'],
         ),
-        true,
+        IS_MATCH.MATCH,
       );
     });
 
@@ -252,7 +271,7 @@ describe('header-matcher', () => {
           { responseHeaders: [{ header: 'CoNtEnT-TyPe', values: ['text/*'] }] },
           ['cOnTeNt-tYpE', 'text/html'],
         ),
-        true,
+        IS_MATCH.MATCH,
       );
     });
   });
@@ -264,14 +283,14 @@ describe('header-matcher', () => {
           'X-Foo',
           'anything',
         ]),
-        true,
+        IS_MATCH.MATCH,
       );
     });
 
     it('header 存在且值为空字符串也算匹配', () => {
       assert.equal(
         match({ responseHeaders: [{ header: 'X' }] }, ['X', '']),
-        true,
+        IS_MATCH.MATCH,
       );
     });
 
@@ -281,18 +300,18 @@ describe('header-matcher', () => {
           'Content-Type',
           'text/html',
         ]),
-        false,
+        IS_MATCH.NOT_MATCH,
       );
     });
 
     it('values 为空数组等同于未设置', () => {
       assert.equal(
         match({ responseHeaders: [{ header: 'X', values: [] }] }, ['X', 'any']),
-        true,
+        IS_MATCH.MATCH,
       );
       assert.equal(
         match({ responseHeaders: [{ header: 'X', values: [] }] }, ['Y', 'any']),
-        false,
+        IS_MATCH.NOT_MATCH,
       );
     });
 
@@ -304,7 +323,7 @@ describe('header-matcher', () => {
           },
           ['X', 'any'],
         ),
-        true,
+        IS_MATCH.MATCH,
       );
     });
   });
@@ -316,7 +335,7 @@ describe('header-matcher', () => {
           'X',
           'bad',
         ]),
-        false,
+        IS_MATCH.EXCLUDE,
       );
     });
 
@@ -324,8 +343,8 @@ describe('header-matcher', () => {
       const cond = {
         responseHeaders: [{ header: 'X', excludedValues: ['*bad*'] }],
       };
-      assert.equal(match(cond, ['X', 'very-bad-value']), false);
-      assert.equal(match(cond, ['X', 'good-value']), true);
+      assert.equal(match(cond, ['X', 'very-bad-value']), IS_MATCH.EXCLUDE);
+      assert.equal(match(cond, ['X', 'good-value']), IS_MATCH.MATCH);
     });
 
     it('未命中 excludedValues 且无 values 时匹配', () => {
@@ -334,7 +353,7 @@ describe('header-matcher', () => {
           'X',
           'good',
         ]),
-        true,
+        IS_MATCH.MATCH,
       );
     });
 
@@ -344,7 +363,7 @@ describe('header-matcher', () => {
           'Y',
           'good',
         ]),
-        false,
+        IS_MATCH.NOT_MATCH,
       );
     });
 
@@ -354,7 +373,7 @@ describe('header-matcher', () => {
       };
       assert.equal(
         matchCondition(compileCondition(cond), H(['X', 'ok1'], ['X', 'bad'])),
-        false,
+        IS_MATCH.EXCLUDE,
       );
     });
 
@@ -362,17 +381,17 @@ describe('header-matcher', () => {
       const cond = {
         responseHeaders: [{ header: 'X', excludedValues: ['no1', '*no2*'] }],
       };
-      assert.equal(match(cond, ['X', 'yes']), true);
-      assert.equal(match(cond, ['X', 'no1']), false);
-      assert.equal(match(cond, ['X', 'xx-no2-xx']), false);
+      assert.equal(match(cond, ['X', 'yes']), IS_MATCH.MATCH);
+      assert.equal(match(cond, ['X', 'no1']), IS_MATCH.EXCLUDE);
+      assert.equal(match(cond, ['X', 'xx-no2-xx']), IS_MATCH.EXCLUDE);
     });
 
     it('`?` 在 excludedValues 中生效', () => {
       const cond = {
         responseHeaders: [{ header: 'X', excludedValues: ['err?'] }],
       };
-      assert.equal(match(cond, ['X', 'err1']), false);
-      assert.equal(match(cond, ['X', 'err12']), true);
+      assert.equal(match(cond, ['X', 'err1']), IS_MATCH.EXCLUDE);
+      assert.equal(match(cond, ['X', 'err12']), IS_MATCH.MATCH);
     });
   });
 
@@ -388,15 +407,21 @@ describe('header-matcher', () => {
     };
 
     it('两者都命中时以排除为准', () => {
-      assert.equal(match(cond, ['Content-Type', 'text/plain']), false);
+      assert.equal(
+        match(cond, ['Content-Type', 'text/plain']),
+        IS_MATCH.EXCLUDE,
+      );
     });
 
     it('values 命中且 excludedValues 未命中时成功', () => {
-      assert.equal(match(cond, ['Content-Type', 'text/html']), true);
+      assert.equal(match(cond, ['Content-Type', 'text/html']), IS_MATCH.MATCH);
     });
 
     it('values 未命中时失败（即使 excludedValues 也未命中）', () => {
-      assert.equal(match(cond, ['Content-Type', 'application/json']), false);
+      assert.equal(
+        match(cond, ['Content-Type', 'application/json']),
+        IS_MATCH.NOT_MATCH,
+      );
     });
 
     it('excludedValues 用通配符排除一类值', () => {
@@ -405,8 +430,11 @@ describe('header-matcher', () => {
           { header: 'Content-Type', values: ['*'], excludedValues: ['text/*'] },
         ],
       };
-      assert.equal(match(c, ['Content-Type', 'application/json']), true);
-      assert.equal(match(c, ['Content-Type', 'text/html']), false);
+      assert.equal(
+        match(c, ['Content-Type', 'application/json']),
+        IS_MATCH.MATCH,
+      );
+      assert.equal(match(c, ['Content-Type', 'text/html']), IS_MATCH.EXCLUDE);
     });
   });
 
@@ -418,7 +446,7 @@ describe('header-matcher', () => {
           { header: 'B', values: ['x*'] },
         ],
       };
-      assert.equal(match(cond, ['A', '1'], ['B', 'xyz']), true);
+      assert.equal(match(cond, ['A', '1'], ['B', 'xyz']), IS_MATCH.MATCH);
     });
 
     it('其一未命中 → 失败', () => {
@@ -428,18 +456,18 @@ describe('header-matcher', () => {
           { header: 'B', values: ['x*'] },
         ],
       };
-      assert.equal(match(cond, ['A', '1'], ['B', 'abc']), false);
+      assert.equal(match(cond, ['A', '1'], ['B', 'abc']), IS_MATCH.NOT_MATCH);
     });
 
     it('其一 header 缺失 → 失败', () => {
       const cond = {
         responseHeaders: [{ header: 'A', values: ['1'] }, { header: 'B' }],
       };
-      assert.equal(match(cond, ['A', '1']), false);
+      assert.equal(match(cond, ['A', '1']), IS_MATCH.NOT_MATCH);
     });
 
     it('空数组视为无约束 → 成功', () => {
-      assert.equal(match({ responseHeaders: [] }, ['A', '1']), true);
+      assert.equal(match({ responseHeaders: [] }, ['A', '1']), IS_MATCH.MATCH);
     });
   });
 
@@ -449,7 +477,7 @@ describe('header-matcher', () => {
         responseHeaders: [{ header: 'A', values: ['1'] }],
         excludeResponseHeaders: [{ header: 'A', values: ['1'] }],
       };
-      assert.equal(match(cond, ['A', '1']), false);
+      assert.equal(match(cond, ['A', '1']), IS_MATCH.EXCLUDE);
     });
 
     it('exclude 未命中时按 include 结果判定', () => {
@@ -457,7 +485,7 @@ describe('header-matcher', () => {
         responseHeaders: [{ header: 'A', values: ['1'] }],
         excludeResponseHeaders: [{ header: 'A', values: ['2'] }],
       };
-      assert.equal(match(cond, ['A', '1']), true);
+      assert.equal(match(cond, ['A', '1']), IS_MATCH.MATCH);
     });
 
     it('exclude 命中且 include 未命中时仍不匹配', () => {
@@ -465,7 +493,7 @@ describe('header-matcher', () => {
         responseHeaders: [{ header: 'A', values: ['9'] }],
         excludeResponseHeaders: [{ header: 'A', values: ['1'] }],
       };
-      assert.equal(match(cond, ['A', '1']), false);
+      assert.equal(match(cond, ['A', '1']), IS_MATCH.NOT_MATCH);
     });
 
     it('exclude 为空数组时不生效', () => {
@@ -473,17 +501,17 @@ describe('header-matcher', () => {
         responseHeaders: [{ header: 'A', values: ['1'] }],
         excludeResponseHeaders: [],
       };
-      assert.equal(match(cond, ['A', '1']), true);
+      assert.equal(match(cond, ['A', '1']), IS_MATCH.MATCH);
     });
 
     it('exclude 使用空规则（存在即排除）', () => {
       assert.equal(
         match({ excludeResponseHeaders: [{ header: 'A' }] }, ['A', '1']),
-        false,
+        IS_MATCH.EXCLUDE,
       );
       assert.equal(
         match({ excludeResponseHeaders: [{ header: 'A' }] }, ['B', '1']),
-        true,
+        IS_MATCH.MATCH,
       );
     });
 
@@ -491,29 +519,29 @@ describe('header-matcher', () => {
       const cond = {
         excludeResponseHeaders: [{ header: 'X', values: ['*debug*'] }],
       };
-      assert.equal(match(cond, ['X', 'a-debug-b']), false);
-      assert.equal(match(cond, ['X', 'a-release-b']), true);
+      assert.equal(match(cond, ['X', 'a-debug-b']), IS_MATCH.EXCLUDE);
+      assert.equal(match(cond, ['X', 'a-release-b']), IS_MATCH.MATCH);
     });
 
     it('exclude 使用 excludedValues 语义：未命中即排除', () => {
       const cond = {
         excludeResponseHeaders: [{ header: 'A', excludedValues: ['keep'] }],
       };
-      assert.equal(match(cond, ['A', 'drop-me']), false);
-      assert.equal(match(cond, ['A', 'keep']), true);
+      assert.equal(match(cond, ['A', 'drop-me']), IS_MATCH.EXCLUDE);
+      assert.equal(match(cond, ['A', 'keep']), IS_MATCH.MATCH);
     });
 
     it('exclude 组内多条需全部命中才触发排除', () => {
       const cond = {
         excludeResponseHeaders: [{ header: 'A' }, { header: 'B' }],
       };
-      assert.equal(match(cond, ['A', '1'], ['B', '2']), false); // 全部命中 → 排除
-      assert.equal(match(cond, ['A', '1']), true); // 只命中一条 → 不排除
+      assert.equal(match(cond, ['A', '1'], ['B', '2']), IS_MATCH.EXCLUDE); // 全部命中 → 排除
+      assert.equal(match(cond, ['A', '1']), IS_MATCH.MATCH); // 只命中一条 → 不排除
     });
 
     it('空 Condition 匹配任意响应头', () => {
-      assert.equal(match({}, ['A', '1']), true);
-      assert.equal(match({}), true);
+      assert.equal(match({}, ['A', '1']), IS_MATCH.MATCH);
+      assert.equal(match({}), IS_MATCH.MATCH);
     });
 
     it('只有 exclude 且未命中时匹配成功', () => {
@@ -522,14 +550,14 @@ describe('header-matcher', () => {
           'A',
           '2',
         ]),
-        true,
+        IS_MATCH.MATCH,
       );
       assert.equal(
         match({ excludeResponseHeaders: [{ header: 'A', values: ['1'] }] }, [
           'B',
           '1',
         ]),
-        true,
+        IS_MATCH.MATCH,
       );
     });
   });
@@ -544,7 +572,7 @@ describe('header-matcher', () => {
           compileCondition(cond),
           H(['Set-Cookie', 'aaa'], ['Set-Cookie', 'bbb']),
         ),
-        true,
+        IS_MATCH.MATCH,
       );
     });
 
@@ -557,7 +585,7 @@ describe('header-matcher', () => {
           compileCondition(cond),
           H(['Set-Cookie', 'a=1'], ['Set-Cookie', 'session=xyz']),
         ),
-        true,
+        IS_MATCH.MATCH,
       );
     });
 
@@ -570,7 +598,7 @@ describe('header-matcher', () => {
           compileCondition(cond),
           H(['Set-Cookie', 'aaa'], ['Set-Cookie', 'bbb']),
         ),
-        false,
+        IS_MATCH.NOT_MATCH,
       );
     });
 
@@ -583,7 +611,7 @@ describe('header-matcher', () => {
           compileCondition(cond),
           H(['X', 'bad-1'], ['X', 'bad-2']),
         ),
-        false,
+        IS_MATCH.EXCLUDE,
       );
     });
   });
@@ -593,19 +621,19 @@ describe('header-matcher', () => {
       const compiled = compileCondition({
         responseHeaders: [{ header: 'A', values: ['1', 'x*'] }],
       });
-      assert.equal(matchCondition(compiled, H(['A', '1'])), true);
-      assert.equal(matchCondition(compiled, H(['A', '2'])), false);
-      assert.equal(matchCondition(compiled, H(['A', 'xyz'])), true);
-      assert.equal(matchCondition(compiled, H()), false);
+      assert.equal(matchCondition(compiled, H(['A', '1'])), IS_MATCH.MATCH);
+      assert.equal(matchCondition(compiled, H(['A', '2'])), IS_MATCH.NOT_MATCH);
+      assert.equal(matchCondition(compiled, H(['A', 'xyz'])), IS_MATCH.MATCH);
+      assert.equal(matchCondition(compiled, H()), IS_MATCH.NOT_MATCH);
     });
 
     it('通配符编译成的正则不带 g/y 标志，复用结果稳定', () => {
       const compiled = compileCondition({
         responseHeaders: [{ header: 'A', values: ['a*'] }],
       });
-      assert.equal(matchCondition(compiled, H(['A', 'ab'])), true);
-      assert.equal(matchCondition(compiled, H(['A', 'ab'])), true);
-      assert.equal(matchCondition(compiled, H(['A', 'ab'])), true);
+      assert.equal(matchCondition(compiled, H(['A', 'ab'])), IS_MATCH.MATCH);
+      assert.equal(matchCondition(compiled, H(['A', 'ab'])), IS_MATCH.MATCH);
+      assert.equal(matchCondition(compiled, H(['A', 'ab'])), IS_MATCH.MATCH);
     });
 
     it('headerIndex 只包含规则中出现的 header，且键为小写', () => {
@@ -640,18 +668,21 @@ describe('header-matcher', () => {
 
   describe('边界情况', () => {
     it('空响应头数组 + 非空规则 → 失败', () => {
-      assert.equal(match({ responseHeaders: [{ header: 'A' }] }), false);
+      assert.equal(
+        match({ responseHeaders: [{ header: 'A' }] }),
+        IS_MATCH.NOT_MATCH,
+      );
     });
 
     it('空响应头数组 + 空规则 → 成功', () => {
-      assert.equal(match({}), true);
+      assert.equal(match({}), IS_MATCH.MATCH);
     });
 
     it('响应头中存在规则未涉及的 header 不影响判定', () => {
       const cond = { responseHeaders: [{ header: 'A', values: ['*'] }] };
       assert.equal(
         match(cond, ['X-Irrelevant', 'x'], ['A', '1'], ['Y-Irrelevant', 'y']),
-        true,
+        IS_MATCH.MATCH,
       );
     });
 
@@ -662,8 +693,8 @@ describe('header-matcher', () => {
           { header: 'A', excludedValues: ['xy'] },
         ],
       };
-      assert.equal(match(cond, ['A', 'xa']), true);
-      assert.equal(match(cond, ['A', 'xy']), false);
+      assert.equal(match(cond, ['A', 'xa']), IS_MATCH.MATCH);
+      assert.equal(match(cond, ['A', 'xy']), IS_MATCH.EXCLUDE);
     });
 
     it('真实场景：Content-Type 命中 + 排除健康检查路径', () => {
@@ -679,7 +710,7 @@ describe('header-matcher', () => {
           ['Content-Type', 'application/json'],
           ['X-Service', 'order-api'],
         ),
-        true,
+        IS_MATCH.MATCH,
       );
       assert.equal(
         match(
@@ -687,11 +718,11 @@ describe('header-matcher', () => {
           ['Content-Type', 'text/html'],
           ['X-Service', 'health-check'],
         ),
-        false,
+        IS_MATCH.EXCLUDE,
       );
       assert.equal(
         match(cond, ['Content-Type', 'image/png'], ['X-Service', 'order-api']),
-        false,
+        IS_MATCH.NOT_MATCH,
       );
     });
   });

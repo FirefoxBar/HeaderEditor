@@ -71,7 +71,7 @@ export enum APIs {
 
 export enum IS_MATCH {
   MATCH,
-  MATCH_BUT_EXCLUDE,
+  EXCLUDE,
   NOT_MATCH,
 }
 

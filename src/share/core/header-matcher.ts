@@ -3,8 +3,11 @@
  * - values / excludedValues 为字符串数组，元素支持通配符 `*`（任意长度，含空）与 `?`（单个字符）
  * - 设计原则：通配符解析、正则合成、字面值分表等全部在 compileCondition 里做完，
  *   matchCondition 只做「建 slot 索引 + 调闭包」两件事
+ * - matchCondition 返回 IS_MATCH：
+ *   MATCH 表示命中、MATCH_BUT_EXCLUDE 表示命中但被排除、NOT_MATCH 表示未命中
  */
 
+import { IS_MATCH } from './constant';
 import type { HeaderMatchInfo } from './types';
 
 export interface Condition {
@@ -19,13 +22,13 @@ export interface HeaderPair {
 
 type Slots = Array<string[] | undefined>; // slotId -> 该 header 的所有 value
 type ValuesTest = (values: string[]) => boolean;
-type RuleTest = (slots: Slots) => boolean;
-type GroupTest = (slots: Slots) => boolean;
+type RuleTest = (slots: Slots) => IS_MATCH;
+type GroupTest = (slots: Slots) => IS_MATCH;
 
 export interface CompiledCondition {
   headerIndex: Map<string, number>; // 小写 header 名 -> slotId
-  matchesInclude: GroupTest;
-  matchesExclude: GroupTest;
+  matchesInclude: GroupTest; // 正向组：MATCH / EXCLUDE / NOT_MATCH
+  matchesExclude: GroupTest; // 排除组：全部命中时为 MATCH（表示应触发排除）
 }
 
 /** 正则元字符（* ? \ 已在 glob 解析中单独处理） */
@@ -137,13 +140,22 @@ const makeValuesTest = (m: CompiledValues): ValuesTest => {
   };
 };
 
-/** 把若干 RuleTest 合成一个组判定；空组返回常量闭包 */
-const compileGroup = (tests: RuleTest[], emptyResult: boolean): GroupTest => {
+/**
+ * 把若干 RuleTest 合成一个组判定；空组返回常量闭包
+ * 组内语义（与 isMatchUrl 一致：先看正向，再看排除）：
+ * - 任一规则 NOT_MATCH → 整组 NOT_MATCH
+ * - 否则任一规则 EXCLUDE → 整组 EXCLUDE
+ * - 全部 MATCH → 整组 MATCH
+ */
+const compileGroup = (tests: RuleTest[], emptyResult: IS_MATCH): GroupTest => {
   if (tests.length === 0) return () => emptyResult;
   if (tests.length === 1) return tests[0];
   return slots => {
-    for (let i = 0; i < tests.length; i++) if (!tests[i](slots)) return false;
-    return true;
+    for (let i = 0; i < tests.length; i++) {
+      const r = tests[i](slots);
+      if (r === IS_MATCH.NOT_MATCH || r === IS_MATCH.EXCLUDE) return r;
+    }
+    return IS_MATCH.MATCH;
   };
 };
 
@@ -173,9 +185,9 @@ export const compileCondition = (c: Condition): CompiledCondition => {
       const bad = makeValuesTest(et);
       return slots => {
         const v = slots[slot];
-        if (v === undefined) return false;
-        if (bad(v)) return false;
-        return hit(v);
+        if (v === undefined) return IS_MATCH.NOT_MATCH;
+        if (bad(v)) return IS_MATCH.EXCLUDE;
+        return hit(v) ? IS_MATCH.MATCH : IS_MATCH.NOT_MATCH;
       };
     }
     if (vt) {
@@ -183,18 +195,21 @@ export const compileCondition = (c: Condition): CompiledCondition => {
       const hit = makeValuesTest(vt);
       return slots => {
         const v = slots[slot];
-        return v !== undefined && hit(v);
+        return v !== undefined && hit(v) ? IS_MATCH.MATCH : IS_MATCH.NOT_MATCH;
       };
     }
     if (et) {
-      // 仅排除
+      // 仅排除：header 存在且未被排除才算命中
       const bad = makeValuesTest(et);
       return slots => {
         const v = slots[slot];
-        return v !== undefined && !bad(v);
+        if (v === undefined) return IS_MATCH.NOT_MATCH;
+        return bad(v) ? IS_MATCH.EXCLUDE : IS_MATCH.MATCH;
       };
     }
-    return slots => slots[slot] !== undefined; // 两侧都空：存在即匹配
+    // 两侧都空：存在即匹配
+    return slots =>
+      slots[slot] !== undefined ? IS_MATCH.MATCH : IS_MATCH.NOT_MATCH;
   };
 
   const includeTests = (c.responseHeaders ?? []).map(compileRule);
@@ -202,8 +217,8 @@ export const compileCondition = (c: Condition): CompiledCondition => {
 
   return {
     headerIndex,
-    matchesInclude: compileGroup(includeTests, true), // 空 include：无正向约束 → 通过
-    matchesExclude: compileGroup(excludeTests, false), // 空 exclude：永不触发排除
+    matchesInclude: compileGroup(includeTests, IS_MATCH.MATCH), // 空 include：无正向约束 → 通过
+    matchesExclude: compileGroup(excludeTests, IS_MATCH.NOT_MATCH), // 空 exclude：没有排除规则命中 → 不触发排除
   };
 };
 
@@ -211,7 +226,7 @@ export const compileCondition = (c: Condition): CompiledCondition => {
 export const matchCondition = (
   compiled: CompiledCondition,
   headers: HeaderPair[],
-): boolean => {
+): IS_MATCH => {
   const slots: Slots = [];
   const idx = compiled.headerIndex;
   for (let i = 0; i < headers.length; i++) {
@@ -223,6 +238,13 @@ export const matchCondition = (
     if (arr === undefined) slots[slot] = [h.value ?? ''];
     else arr.push(h.value ?? '');
   }
-  // exclude 命中 → 整条规则不匹配；否则看 include 是否全中
-  return !compiled.matchesExclude(slots) && compiled.matchesInclude(slots);
+  // 先看正向：任一 include 规则未命中 → NOT_MATCH
+  const include = compiled.matchesInclude(slots);
+  if (include === IS_MATCH.NOT_MATCH) return IS_MATCH.NOT_MATCH;
+  // 再看排除：exclude 组全部命中 → 整条规则命中但被排除
+  if (compiled.matchesExclude(slots) === IS_MATCH.MATCH) {
+    return IS_MATCH.EXCLUDE;
+  }
+  // include 为 MATCH 或 MATCH_BUT_EXCLUDE（某条规则的 excludedValues 命中）
+  return include;
 };
