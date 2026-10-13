@@ -7,6 +7,10 @@
     "message": "新增",
     "description": "Button to add somethings"
   },
+  "advanced": {
+    "message": "進階",
+    "description": "Button to expand advanced filter fields"
+  },
   "all_rules": {
     "message": "所有規則",
     "description": "Options"
@@ -270,6 +274,27 @@
     "message": "檔案大小",
     "description": "File size title"
   },
+  "filter_delete_saved": {
+    "message": "刪除 $name$",
+    "description": "Delete a saved filter",
+    "placeholders": {
+      "name": {
+        "content": "$1"
+      }
+    }
+  },
+  "filter_rules": {
+    "message": "篩選規則",
+    "description": "Button in the rule list toolbar to open the filter panel"
+  },
+  "filter_save_item": {
+    "message": "儲存篩選項",
+    "description": "Button to save the current filter inputs"
+  },
+  "filter_saved_list": {
+    "message": "已儲存的篩選項",
+    "description": "Dropdown listing saved filters"
+  },
   "group": {
     "message": "分組",
     "description": "Group button"
@@ -498,6 +523,10 @@
     "message": "要求階段",
     "description": "Request stage"
   },
+  "reset": {
+    "message": "重設",
+    "description": "Button to clear all filter inputs and results"
+  },
   "resourceType_csp_report": {
     "message": "CSP 報告（在 Content-Security-Policy 標頭中設定）",
     "description": "Resource type"
@@ -594,6 +623,10 @@
     "message": "重新導向要求",
     "description": "Redirect option in modal"
   },
+  "rule_redirectAtResponse": {
+    "message": "重新導向（回應階段）",
+    "description": "Redirect at response option in modal"
+  },
   "rule_switch": {
     "message": "開啟規則快速切換",
     "description": "Use the menu to switch rule content"
@@ -683,7 +716,7 @@
     "description": "Label to test a redirect rule"
   },
   "test_exclude": {
-    "message": "已符合但被排除",
+    "message": "已排除",
     "description": "Label to test a redirect rule"
   },
   "test_invalid_regexp": {
@@ -721,6 +754,10 @@
   "upload": {
     "message": "上傳",
     "description": "Upload button"
+  },
+  "url_required": {
+    "message": "Please enter a URL",
+    "description": "Validation message when URL is empty"
   },
   "username": {
     "message": "使用者名稱​",
