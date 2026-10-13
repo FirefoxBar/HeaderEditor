@@ -7,6 +7,10 @@
     "message": "Aggiungi",
     "description": "Button to add somethings"
   },
+  "advanced": {
+    "message": "Avanzate",
+    "description": "Button to expand advanced filter fields"
+  },
   "all_rules": {
     "message": "Tutte le regole",
     "description": "Options"
@@ -270,6 +274,27 @@
     "message": "Dimensione del file",
     "description": "File size title"
   },
+  "filter_delete_saved": {
+    "message": "Elimina $name$",
+    "description": "Delete a saved filter",
+    "placeholders": {
+      "name": {
+        "content": "$1"
+      }
+    }
+  },
+  "filter_rules": {
+    "message": "Filtra regole",
+    "description": "Button in the rule list toolbar to open the filter panel"
+  },
+  "filter_save_item": {
+    "message": "Salva elemento filtro",
+    "description": "Button to save the current filter inputs"
+  },
+  "filter_saved_list": {
+    "message": "Elementi filtro salvati",
+    "description": "Dropdown listing saved filters"
+  },
   "group": {
     "message": "Gruppo",
     "description": "Group button"
@@ -498,6 +523,10 @@
     "message": "Fase della richiesta",
     "description": "Request stage"
   },
+  "reset": {
+    "message": "Ripristina",
+    "description": "Button to clear all filter inputs and results"
+  },
   "resourceType_csp_report": {
     "message": "Report CSP (Specificato nell'intestazione Content-Security-Policy)",
     "description": "Resource type"
@@ -594,6 +623,10 @@
     "message": "Reindirizza richiesta",
     "description": "Redirect option in modal"
   },
+  "rule_redirectAtResponse": {
+    "message": "Reindirizzamento (fase di risposta)",
+    "description": "Redirect at response option in modal"
+  },
   "rule_switch": {
     "message": "Abilita commutazione rapida delle regole",
     "description": "Use the menu to switch rule content"
@@ -683,7 +716,7 @@
     "description": "Label to test a redirect rule"
   },
   "test_exclude": {
-    "message": "Corrispondenza trovata ma esclusa",
+    "message": "Escluso",
     "description": "Label to test a redirect rule"
   },
   "test_invalid_regexp": {
@@ -721,6 +754,10 @@
   "upload": {
     "message": "Carica",
     "description": "Upload button"
+  },
+  "url_required": {
+    "message": "Please enter a URL",
+    "description": "Validation message when URL is empty"
   },
   "username": {
     "message": "Nome utente",
