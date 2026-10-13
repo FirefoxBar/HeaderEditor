@@ -6,7 +6,10 @@ const DOC_ALL_LOCALES = ['en-US', 'zh-TW'];
 const DOC_HOST = 'https://he.firefoxcn.net/';
 
 const lang = i18n.getUILanguage();
-const currentLocale = DOC_ALL_LOCALES.includes(lang) ? lang : 'en-US';
+const currentLocale =
+  DOC_ALL_LOCALES.includes(lang) || lang === DOC_DEFAULT_LOCALE
+    ? lang
+    : 'en-US';
 const localePrefix =
   currentLocale !== DOC_DEFAULT_LOCALE ? `${currentLocale}/` : '';
 

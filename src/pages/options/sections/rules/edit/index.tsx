@@ -1,5 +1,12 @@
-import { IconSave } from '@douyinfe/semi-icons';
-import { Button, Form, SideSheet, Toast, Typography } from '@douyinfe/semi-ui';
+import { IconExternalOpen, IconSave } from '@douyinfe/semi-icons';
+import {
+  Button,
+  Form,
+  SideSheet,
+  Space,
+  Toast,
+  Typography,
+} from '@douyinfe/semi-ui';
 import type { FormApi } from '@douyinfe/semi-ui/lib/es/form';
 import { css } from '@emotion/css';
 import { useRequest } from 'ahooks';
@@ -172,22 +179,33 @@ const Edit = ({ visible, rule: ruleProp, onClose }: EditProps) => {
             alignItems: 'center',
           }}
         >
-          {MANIFEST_VER === 'v3' && (
-            <Text
+          <span>
+            {MANIFEST_VER === 'v3' && (
+              <Text
+                type="tertiary"
+                link={{ href: getHelpUrl('guide/index'), target: '_blank' }}
+              >
+                {t('lite_edit_tip')}
+              </Text>
+            )}
+          </span>
+          <Space>
+            <Button
               type="tertiary"
-              link={{ href: getHelpUrl('guide/index'), target: '_blank' }}
+              icon={<IconExternalOpen />}
+              onClick={() => Api.openURL(getHelpUrl('guide/rule'))}
             >
-              {t('lite_edit_tip')}
-            </Text>
-          )}
-          <Button
-            theme="solid"
-            onClick={doSubmit}
-            icon={<IconSave />}
-            loading={loading}
-          >
-            {t('save')}
-          </Button>
+              {t('help')}
+            </Button>
+            <Button
+              theme="solid"
+              onClick={doSubmit}
+              icon={<IconSave />}
+              loading={loading}
+            >
+              {t('save')}
+            </Button>
+          </Space>
         </div>
       }
     >
