@@ -5,7 +5,7 @@ import type { BasicRule, HeaderMatchInfo } from '@/share/core/types';
 import { isValidArray } from '@/share/core/utils';
 
 export interface RuleInput extends BasicRule {
-  editHeader?: Array<NonNullable<HeaderPair>>;
+  editHeader?: Array<Required<HeaderPair>>;
   editMatchType?: RULE_MATCH_TYPE[];
   editExcludeType?: Array<
     'method' | 'regex' | 'domain' | 'resourceType' | 'responseHeaders'
@@ -107,9 +107,7 @@ export function getRuleFromInput(input: RuleInput): BasicRule {
   ) {
     if (Array.isArray(res.editHeader)) {
       res.headers = Object.fromEntries(
-        res.editHeader
-          .filter(x => Boolean(x.name))
-          .map(x => [x.name, x.value || '']),
+        res.editHeader.filter(x => Boolean(x.name)).map(x => [x.name, x.value]),
       );
     }
   }
