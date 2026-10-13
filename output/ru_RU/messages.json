@@ -7,6 +7,10 @@
     "message": "Добавить",
     "description": "Button to add somethings"
   },
+  "advanced": {
+    "message": "Расширенные",
+    "description": "Button to expand advanced filter fields"
+  },
   "all_rules": {
     "message": "Все правила",
     "description": "Options"
@@ -270,6 +274,27 @@
     "message": "Размер файла",
     "description": "File size title"
   },
+  "filter_delete_saved": {
+    "message": "Удалить $name$",
+    "description": "Delete a saved filter",
+    "placeholders": {
+      "name": {
+        "content": "$1"
+      }
+    }
+  },
+  "filter_rules": {
+    "message": "Фильтр правил",
+    "description": "Button in the rule list toolbar to open the filter panel"
+  },
+  "filter_save_item": {
+    "message": "Сохранить элемент фильтра",
+    "description": "Button to save the current filter inputs"
+  },
+  "filter_saved_list": {
+    "message": "Сохраненные элементы фильтра",
+    "description": "Dropdown listing saved filters"
+  },
   "group": {
     "message": "Группа",
     "description": "Group button"
@@ -447,7 +472,7 @@
     "description": "No update"
   },
   "ok": {
-    "message": "OK",
+    "message": "ОК",
     "description": "OK Button"
   },
   "options": {
@@ -497,6 +522,10 @@
   "request_stage": {
     "message": "Этап запроса",
     "description": "Request stage"
+  },
+  "reset": {
+    "message": "Сбросить",
+    "description": "Button to clear all filter inputs and results"
   },
   "resourceType_csp_report": {
     "message": "Отчёт CSP (указан в заголовке Content-Security-Policy)",
@@ -594,6 +623,10 @@
     "message": "Перенаправить запрос",
     "description": "Redirect option in modal"
   },
+  "rule_redirectAtResponse": {
+    "message": "Перенаправление (этап ответа)",
+    "description": "Redirect at response option in modal"
+  },
   "rule_switch": {
     "message": "Включить быстрое переключение правил",
     "description": "Use the menu to switch rule content"
@@ -683,7 +716,7 @@
     "description": "Label to test a redirect rule"
   },
   "test_exclude": {
-    "message": "Совпало, но исключено",
+    "message": "Исключено",
     "description": "Label to test a redirect rule"
   },
   "test_invalid_regexp": {
@@ -721,6 +754,10 @@
   "upload": {
     "message": "Загрузить",
     "description": "Upload button"
+  },
+  "url_required": {
+    "message": "Please enter a URL",
+    "description": "Validation message when URL is empty"
   },
   "username": {
     "message": "Имя пользователя​",
