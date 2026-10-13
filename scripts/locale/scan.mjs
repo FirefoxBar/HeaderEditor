@@ -12,6 +12,22 @@ const ZH_FILE = path.join(LOCALES_DIR, 'zh_CN', 'messages.json');
 const EN_FILE = path.join(LOCALES_DIR, 'en', 'messages.json');
 const OUT_DIR = path.join(ROOT, 'temp', 'locale');
 
+const localeMap = {
+  en: '英文',
+  zh_CN: '中文',
+  zh_TW: '繁体中文（港澳台）',
+  ja: '日语',
+  ko: '韩语',
+  de: '德语',
+  fr: '法语',
+  it: '意大利语',
+  pl: '波兰语',
+  pt_BR: '葡萄牙语（巴西）',
+  ru_RU: '俄语',
+  sv: '瑞典语',
+  es: '西班牙语',
+};
+
 // 除英语（en）和简体中文（zh_CN）外，其他语言都需要检查
 const SKIP_LANGS = new Set(['en', 'zh_CN']);
 const SKIP_KEYS = new Set([
@@ -48,6 +64,8 @@ function escapeField(value) {
 }
 
 function main() {
+  const isAllInOne = process.argv.some(x => x === '--all-in-one');
+
   const original = readJSON(ORIGINAL_FILE);
   const zhMap = fs.existsSync(ZH_FILE) ? readJSON(ZH_FILE) : {};
   // 英文文案以原始语言文件为准，public/_locales/en 仅作回退
@@ -79,6 +97,7 @@ function main() {
   fs.mkdirSync(OUT_DIR, { recursive: true });
 
   let totalLangs = 0;
+  const allLangs = {};
   for (const lang of langs) {
     const localeFile = path.join(LOCALES_DIR, lang, 'messages.json');
     const current = readJSON(localeFile);
@@ -93,7 +112,7 @@ function main() {
       if (typeof originMessage !== 'string') {
         continue;
       }
-      if (SKIP_KEYS.has(key) || key.startsWith('url_')) {
+      if (SKIP_KEYS.has(key)) {
         continue;
       }
       if (!(key in current)) {
@@ -110,37 +129,83 @@ function main() {
     translated.sort();
     untranslated.sort((a, b) => (a.key < b.key ? -1 : a.key > b.key ? 1 : 0));
 
+    allLangs[lang] = { untranslated, translated };
+
+    totalLangs += 1;
+    console.log(`[${lang}] untranslated=${untranslated.length}`);
+  }
+
+  if (isAllInOne) {
     const lines = [];
-    if (translated.length > 0) {
-      lines.push('已翻译文案');
-      for (const key of translated) {
-        lines.push(
-          `key:${escapeField(key)}\t英文:${escapeField(getMessage(enMap[key]))}\t中文:${escapeField(getMessage(zhMap[key]))}\t译文:${escapeField(getMessage(current[key]))}`,
-        );
+    lines.push('# 原始文案');
+    for (const key of originalKeys) {
+      lines.push(
+        `key:${escapeField(key)}\t英文:${escapeField(getMessage(enMap[key]))}\t中文:${escapeField(getMessage(zhMap[key]))}`,
+      );
+    }
+    lines.push('');
+    for (const lang of langs) {
+      const { untranslated, translated } = allLangs[lang];
+      lines.push(`# ${lang}（${localeMap[lang]}）`);
+      if (translated.length > 0) {
+        const localeFile = path.join(LOCALES_DIR, lang, 'messages.json');
+        const current = readJSON(localeFile);
+        lines.push('## 已翻译文案');
+        for (const key of translated) {
+          lines.push(
+            `key:${escapeField(key)}\t译文:${escapeField(getMessage(current[key]))}`,
+          );
+        }
+      }
+      if (untranslated.length > 0) {
+        lines.push('## 待翻译文案key');
+        lines.push(untranslated.map(x => x.key).join(','));
       }
       lines.push('');
     }
-    if (untranslated.length > 0) {
-      lines.push('待翻译文案');
-      for (const { key } of untranslated) {
-        const en = getMessage(enMap[key]) ?? getMessage(original[key]) ?? '';
-        const zh = getMessage(zhMap[key]) ?? '';
-        lines.push(
-          `key:${escapeField(key)}\t英文:${escapeField(en)}\t中文:${escapeField(zh)}`,
+    if (lines.length > 0) {
+      fs.writeFileSync(
+        path.join(OUT_DIR, 'all-in-one.txt'),
+        `${lines.join('\n')}\n`,
+        {
+          encoding: 'utf8',
+        },
+      );
+    }
+  } else {
+    for (const lang of langs) {
+      const { untranslated, translated } = allLangs[lang];
+      const lines = [];
+      if (translated.length > 0) {
+        lines.push('已翻译文案');
+        for (const key of translated) {
+          lines.push(
+            `key:${escapeField(key)}\t英文:${escapeField(getMessage(enMap[key]))}\t中文:${escapeField(getMessage(zhMap[key]))}\t译文:${escapeField(getMessage(current[key]))}`,
+          );
+        }
+        lines.push('');
+      }
+      if (untranslated.length > 0) {
+        lines.push('待翻译文案');
+        for (const { key } of untranslated) {
+          const en = getMessage(enMap[key]) ?? getMessage(original[key]) ?? '';
+          const zh = getMessage(zhMap[key]) ?? '';
+          lines.push(
+            `key:${escapeField(key)}\t英文:${escapeField(en)}\t中文:${escapeField(zh)}`,
+          );
+        }
+      }
+
+      if (lines.length > 0) {
+        fs.writeFileSync(
+          path.join(OUT_DIR, `${lang}.txt`),
+          `${lines.join('\n')}\n`,
+          {
+            encoding: 'utf8',
+          },
         );
       }
     }
-
-    const outFile = path.join(OUT_DIR, `${lang}.txt`);
-    if (lines.length > 0) {
-      fs.writeFileSync(outFile, `${lines.join('\n')}\n`, {
-        encoding: 'utf8',
-      });
-    }
-    totalLangs += 1;
-    console.log(
-      `[${lang}] untranslated=${untranslated.length} -> ${path.relative(ROOT, outFile)}`,
-    );
   }
 
   // output new

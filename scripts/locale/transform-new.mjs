@@ -11,7 +11,33 @@ function readJSON(filePath) {
   return JSON.parse(fs.readFileSync(filePath, { encoding: 'utf8' }));
 }
 
-function main() {
+function transformAllInOne() {
+  const file = path.join(TARGET_DIR, 'all-in-one.json');
+  const current = readJSON(file);
+
+  Object.keys(current).forEach(key => {
+    const newObj = {};
+    for (const key2 of Object.keys(current[key])) {
+      newObj[key2] = {
+        message: current[key][key2],
+      };
+    }
+
+    fs.writeFileSync(
+      path.join(TARGET_DIR, `${key}.json`),
+      JSON.stringify(newObj, null, 2),
+      {
+        encoding: 'utf8',
+      },
+    );
+  });
+
+  console.log(
+    `done: langs=${Object.keys(current).length}, outDir=${path.relative(ROOT, TARGET_DIR)}`,
+  );
+}
+
+function transformLangs() {
   const entries = fs.readdirSync(TARGET_DIR, { withFileTypes: true });
   const langs = entries
     .filter(e => e.isFile())
@@ -44,6 +70,16 @@ function main() {
   console.log(
     `done: langs=${totalLangs}, outDir=${path.relative(ROOT, TARGET_DIR)}`,
   );
+}
+
+function main() {
+  const isAllInOne = process.argv.some(x => x === '--all-in-one');
+
+  if (isAllInOne) {
+    transformAllInOne();
+  } else {
+    transformLangs();
+  }
 }
 
 main();
