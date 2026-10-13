@@ -5,7 +5,7 @@ import { CodeEditorField } from '@/share/components/code-editor';
 import HeaderField from '@/share/components/header-field';
 import { t } from '@/share/core/browser';
 import { RULE_TYPE } from '@/share/core/constant';
-import { IS_FIREFOX } from '@/share/core/utils';
+import { IS_FIREFOX, isRedirectRule } from '@/share/core/utils';
 import usePref from '@/share/hooks/use-pref';
 import ENCODING_LIST from '../encoding';
 import type { RuleInput } from '../utils';
@@ -63,7 +63,7 @@ const Execution = () => {
         ]}
       />
       {/* Redirect */}
-      {ruleType === 'redirect' && !isFunction && (
+      {isRedirectRule(ruleType) && !isFunction && (
         <Form.Input label={t('redirectTo')} field="to" />
       )}
       {/* Header modify */}

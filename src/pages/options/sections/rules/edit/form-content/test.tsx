@@ -15,6 +15,7 @@ import {
   isSupportHeaderMatch,
 } from '@/share/core/rule-utils';
 import type { InitdRule } from '@/share/core/types';
+import { isRedirectRule } from '@/share/core/utils';
 import useStateIfChanged from '@/share/hooks/use-state-if-changed';
 import { compileRe2 } from '../../../rules/utils';
 import { getRuleFromInput, isAllowFilterResponseHeaders } from '../utils';
@@ -79,7 +80,7 @@ const Test = () => {
           return;
         }
         // 只有重定向支持测试详细功能，其他只返回匹配
-        if (initdRule.ruleType === 'redirect' && initdRule.to) {
+        if (isRedirectRule(initdRule.ruleType) && initdRule.to) {
           const url = options.url as string;
           let redirect = '';
           if (

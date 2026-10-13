@@ -6,7 +6,6 @@ import { type ReactNode, useCallback } from 'react';
 import HeaderField from '@/share/components/header-field';
 import Modal from '@/share/components/modal';
 import { t } from '@/share/core/browser';
-import { RULE_TYPE } from '@/share/core/constant';
 import type { Rule } from '@/share/core/types';
 import { isModifyHeaderRule, isRedirectRule } from '@/share/core/utils';
 import usePref from '@/share/hooks/use-pref';
@@ -80,17 +79,11 @@ const QuickEdit = ({ rule }: QuickEditProps) => {
       content,
 
       onOk: async () => {
-        if (
-          newRule.ruleType === 'redirect' &&
-          (!newRule.to || newRule.to === '')
-        ) {
+        if (isRedirectRule(newRule.ruleType) && !newRule.to) {
           Toast().error(t('redirect_empty'));
           return;
         }
-        if (
-          newRule.ruleType === 'modifySendHeader' ||
-          newRule.ruleType === 'modifyReceiveHeader'
-        ) {
+        if (isModifyHeaderRule(newRule.ruleType)) {
           const validateValue = Object.entries(newRule.headers || {}).filter(
             ([k]) => Boolean(k),
           );

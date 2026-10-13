@@ -400,12 +400,22 @@ export function isMatchRule(
     return IS_MATCH.MATCH;
   }
 
-  const url = typeof options.url !== 'undefined' ? options.url : null;
-
   if (
     typeof options.runner !== 'undefined' &&
     rule._runner !== options.runner
   ) {
+    return IS_MATCH.NOT_MATCH;
+  }
+
+  if (options.name && rule.name !== options.name) {
+    return IS_MATCH.NOT_MATCH;
+  }
+
+  if (typeof options.enable !== 'undefined' && rule.enable !== options.enable) {
+    return IS_MATCH.NOT_MATCH;
+  }
+
+  if (typeof options.type !== 'undefined' && rule.ruleType !== options.type) {
     return IS_MATCH.NOT_MATCH;
   }
 
@@ -423,39 +433,15 @@ export function isMatchRule(
     }
   }
 
-  if (options.name && rule.name !== options.name) {
-    return IS_MATCH.NOT_MATCH;
-  }
+  if (options.method && rule.condition) {
+    const { method, excludeMethod } = rule.condition;
+    if (isValidArray(method) && !method.includes(options.method)) {
+      return IS_MATCH.NOT_MATCH;
+    }
 
-  if (typeof options.enable !== 'undefined' && rule.enable !== options.enable) {
-    return IS_MATCH.NOT_MATCH;
-  }
-
-  if (typeof options.type !== 'undefined' && rule.ruleType !== options.type) {
-    return IS_MATCH.NOT_MATCH;
-  }
-
-  if (
-    options.method &&
-    isValidArray(rule.condition?.method) &&
-    !rule.condition.method.includes(options.method)
-  ) {
-    return IS_MATCH.NOT_MATCH;
-  }
-
-  // 排除方法：与 DNR 的 excludedRequestMethods 语义一致
-  if (
-    options.method &&
-    isValidArray(rule.condition?.excludeMethod) &&
-    rule.condition.excludeMethod.includes(options.method)
-  ) {
-    return IS_MATCH.EXCLUDE;
-  }
-
-  if (url !== null) {
-    const res = isMatchUrl(rule, url);
-    if (res !== IS_MATCH.MATCH) {
-      return res;
+    // 排除方法：与 DNR 的 excludedRequestMethods 语义一致
+    if (isValidArray(excludeMethod) && excludeMethod.includes(options.method)) {
+      return IS_MATCH.EXCLUDE;
     }
   }
 
@@ -472,6 +458,13 @@ export function isMatchRule(
       excludeResourceTypes.includes(options.resourceType)
     ) {
       return IS_MATCH.EXCLUDE;
+    }
+  }
+
+  if (typeof options.url !== 'undefined') {
+    const res = isMatchUrl(rule, options.url);
+    if (res !== IS_MATCH.MATCH) {
+      return res;
     }
   }
 

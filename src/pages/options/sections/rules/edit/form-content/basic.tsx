@@ -31,6 +31,10 @@ const Basic = ({ isEdit }: BasicProps) => {
             value: RULE_TYPE.MODIFY_RECV_HEADER,
           },
           {
+            label: t('rule_redirectAtResponse'),
+            value: RULE_TYPE.REDIRECT_AT_RESPONSE,
+          },
+          {
             label: t('rule_modifyReceiveBody'),
             value: RULE_TYPE.MODIFY_RECV_BODY,
             disabled: IS_FIREFOX && !IS_SUPPORT_STREAM_FILTER,

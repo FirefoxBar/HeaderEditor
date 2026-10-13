@@ -10,6 +10,7 @@ import { t } from '@/share/core/browser';
 import { RULE_TYPE } from '@/share/core/constant';
 import { prefs } from '@/share/core/prefs';
 import type { Rule } from '@/share/core/types';
+import { isModifyHeaderRule, isRedirectRule } from '@/share/core/utils';
 import Api from '@/share/pages/api';
 import { getHelpUrl } from '@/share/pages/get-help-url';
 import FormContent from './form-content';
@@ -98,13 +99,10 @@ const Edit = ({ visible, rule: ruleProp, onClose }: EditProps) => {
           throw new Error(t('code_empty'));
         }
       } else {
-        if (rule.ruleType === 'redirect' && (!rule.to || rule.to === '')) {
+        if (isRedirectRule(rule.ruleType) && !rule.to) {
           throw new Error(t('redirect_empty'));
         }
-        if (
-          rule.ruleType === 'modifySendHeader' ||
-          rule.ruleType === 'modifyReceiveHeader'
-        ) {
+        if (isModifyHeaderRule(rule.ruleType)) {
           const validateValue = Object.entries(rule.headers || {}).filter(
             ([k]) => Boolean(k),
           );

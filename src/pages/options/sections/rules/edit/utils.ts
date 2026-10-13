@@ -109,8 +109,9 @@ export function getRuleFromInput(input: RuleInput): BasicRule {
         res.editHeader.filter(x => Boolean(x.name)).map(x => [x.name, x.value]),
       );
     }
-    delete res.editHeader;
   }
+  // 非 header 类型不需要 editHeader，避免切换规则类型后残留入库
+  delete res.editHeader;
 
   if (!res.condition) {
     res.condition = {};
