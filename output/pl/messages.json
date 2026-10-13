@@ -7,6 +7,10 @@
     "message": "Dodaj",
     "description": "Button to add somethings"
   },
+  "advanced": {
+    "message": "Zaawansowane",
+    "description": "Button to expand advanced filter fields"
+  },
   "all_rules": {
     "message": "Wszystkie reguły",
     "description": "Options"
@@ -270,6 +274,27 @@
     "message": "Rozmiar pliku",
     "description": "File size title"
   },
+  "filter_delete_saved": {
+    "message": "Usuń $name$",
+    "description": "Delete a saved filter",
+    "placeholders": {
+      "name": {
+        "content": "$1"
+      }
+    }
+  },
+  "filter_rules": {
+    "message": "Filtruj reguły",
+    "description": "Button in the rule list toolbar to open the filter panel"
+  },
+  "filter_save_item": {
+    "message": "Zapisz element filtra",
+    "description": "Button to save the current filter inputs"
+  },
+  "filter_saved_list": {
+    "message": "Zapisane elementy filtra",
+    "description": "Dropdown listing saved filters"
+  },
   "group": {
     "message": "Grupa",
     "description": "Group button"
@@ -498,6 +523,10 @@
     "message": "Etap żądania",
     "description": "Request stage"
   },
+  "reset": {
+    "message": "Resetuj",
+    "description": "Button to clear all filter inputs and results"
+  },
   "resourceType_csp_report": {
     "message": "Raport CSP (określony w nagłówku Content-Security-Policy)",
     "description": "Resource type"
@@ -594,6 +623,10 @@
     "message": "Przekieruj żądanie",
     "description": "Redirect option in modal"
   },
+  "rule_redirectAtResponse": {
+    "message": "Przekierowanie (etap odpowiedzi)",
+    "description": "Redirect at response option in modal"
+  },
   "rule_switch": {
     "message": "Włącz szybkie przełączanie reguł",
     "description": "Use the menu to switch rule content"
@@ -683,7 +716,7 @@
     "description": "Label to test a redirect rule"
   },
   "test_exclude": {
-    "message": "Dopasowane, ale wykluczone",
+    "message": "Wykluczone",
     "description": "Label to test a redirect rule"
   },
   "test_invalid_regexp": {
@@ -721,6 +754,10 @@
   "upload": {
     "message": "Prześlij",
     "description": "Upload button"
+  },
+  "url_required": {
+    "message": "Please enter a URL",
+    "description": "Validation message when URL is empty"
   },
   "username": {
     "message": "Nazwa użytkownika",
