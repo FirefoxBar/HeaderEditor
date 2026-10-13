@@ -7,6 +7,10 @@
     "message": "Add",
     "description": "Button to add somethings"
   },
+  "advanced": {
+    "message": "Advanced",
+    "description": "Button to expand advanced filter fields"
+  },
   "all_rules": {
     "message": "All rules",
     "description": "Options"
@@ -270,10 +274,6 @@
     "message": "File size",
     "description": "File size title"
   },
-  "advanced": {
-    "message": "Advanced",
-    "description": "Button to expand advanced filter fields"
-  },
   "filter_delete_saved": {
     "message": "Delete $name$",
     "description": "Delete a saved filter",
@@ -282,10 +282,6 @@
         "content": "$1"
       }
     }
-  },
-  "reset": {
-    "message": "Reset",
-    "description": "Button to clear all filter inputs and results"
   },
   "filter_rules": {
     "message": "Filter rules",
@@ -298,10 +294,6 @@
   "filter_saved_list": {
     "message": "Saved filters",
     "description": "Dropdown listing saved filters"
-  },
-  "url_required": {
-    "message": "Please enter a URL",
-    "description": "Validation message when URL is empty"
   },
   "group": {
     "message": "Group",
@@ -531,6 +523,10 @@
     "message": "Request stage",
     "description": "Request stage"
   },
+  "reset": {
+    "message": "Reset",
+    "description": "Button to clear all filter inputs and results"
+  },
   "resourceType_csp_report": {
     "message": "CSP Report (Specified in Content-Security-Policy header)",
     "description": "Resource type"
@@ -758,6 +754,10 @@
   "upload": {
     "message": "Upload",
     "description": "Upload button"
+  },
+  "url_required": {
+    "message": "Please enter a URL",
+    "description": "Validation message when URL is empty"
   },
   "username": {
     "message": "Username",
