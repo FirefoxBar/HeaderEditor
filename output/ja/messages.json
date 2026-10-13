@@ -7,6 +7,10 @@
     "message": "追加",
     "description": "Button to add somethings"
   },
+  "advanced": {
+    "message": "Advanced",
+    "description": "Button to expand advanced filter fields"
+  },
   "all_rules": {
     "message": "すべてのルール",
     "description": "Options"
@@ -270,6 +274,27 @@
     "message": "ファイルサイズ",
     "description": "File size title"
   },
+  "filter_delete_saved": {
+    "message": "Delete $name$",
+    "description": "Delete a saved filter",
+    "placeholders": {
+      "name": {
+        "content": "$1"
+      }
+    }
+  },
+  "filter_rules": {
+    "message": "Filter rules",
+    "description": "Button in the rule list toolbar to open the filter panel"
+  },
+  "filter_save_item": {
+    "message": "Save filter",
+    "description": "Button to save the current filter inputs"
+  },
+  "filter_saved_list": {
+    "message": "Saved filters",
+    "description": "Dropdown listing saved filters"
+  },
   "group": {
     "message": "グループ",
     "description": "Group button"
@@ -498,6 +523,10 @@
     "message": "リクエスト段階",
     "description": "Request stage"
   },
+  "reset": {
+    "message": "Reset",
+    "description": "Button to clear all filter inputs and results"
+  },
   "resourceType_csp_report": {
     "message": "CSPレポート（Content-Security-Policyヘッダーで指定）",
     "description": "Resource type"
@@ -594,6 +623,10 @@
     "message": "リクエストをリダイレクト",
     "description": "Redirect option in modal"
   },
+  "rule_redirectAtResponse": {
+    "message": "Redirect at response",
+    "description": "Redirect at response option in modal"
+  },
   "rule_switch": {
     "message": "ルールのクイック切り替えを有効にする",
     "description": "Use the menu to switch rule content"
@@ -683,7 +716,7 @@
     "description": "Label to test a redirect rule"
   },
   "test_exclude": {
-    "message": "一致しましたが除外されました",
+    "message": "Excluded",
     "description": "Label to test a redirect rule"
   },
   "test_invalid_regexp": {
@@ -721,6 +754,10 @@
   "upload": {
     "message": "アップロード",
     "description": "Upload button"
+  },
+  "url_required": {
+    "message": "Please enter a URL",
+    "description": "Validation message when URL is empty"
   },
   "username": {
     "message": "ユーザー名​",
