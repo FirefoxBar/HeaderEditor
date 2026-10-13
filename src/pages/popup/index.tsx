@@ -5,7 +5,7 @@ import React from 'react';
 import ReactDOM from 'react-dom/client';
 import { Popup } from './popup';
 
-import './global.css';
+import './global.less';
 
 const rootEl = document.getElementById('root');
 if (rootEl) {

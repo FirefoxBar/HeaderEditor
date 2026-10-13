@@ -152,13 +152,6 @@ export default defineConfig({
       },
       html: {
         title: 'Header Editor',
-        tags: [
-          {
-            tag: 'style',
-            children:
-              'body{margin:0;background-color:var(--semi-color-bg-0);color:var(--semi-color-text-0)}',
-          },
-        ],
       },
       plugins: [pluginReact(), pluginLess()],
     },
