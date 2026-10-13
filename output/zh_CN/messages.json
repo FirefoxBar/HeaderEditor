@@ -7,6 +7,10 @@
     "message": "添加",
     "description": "Button to add somethings"
   },
+  "advanced": {
+    "message": "高级",
+    "description": "Button to expand advanced filter fields"
+  },
   "all_rules": {
     "message": "所有规则",
     "description": "Options"
@@ -270,6 +274,27 @@
     "message": "文件大小",
     "description": "File size title"
   },
+  "filter_delete_saved": {
+    "message": "删除 $name$",
+    "description": "Delete a saved filter",
+    "placeholders": {
+      "name": {
+        "content": "$1"
+      }
+    }
+  },
+  "filter_rules": {
+    "message": "筛选规则",
+    "description": "Button in the rule list toolbar to open the filter panel"
+  },
+  "filter_save_item": {
+    "message": "保存筛选项",
+    "description": "Button to save the current filter inputs"
+  },
+  "filter_saved_list": {
+    "message": "已保存的筛选项",
+    "description": "Dropdown listing saved filters"
+  },
   "group": {
     "message": "分组",
     "description": "Group button"
@@ -498,6 +523,10 @@
     "message": "请求阶段",
     "description": "Request stage"
   },
+  "reset": {
+    "message": "重置",
+    "description": "Button to clear all filter inputs and results"
+  },
   "resourceType_csp_report": {
     "message": "CSP报告（在Content-Security-Policy头中设置）",
     "description": "Resource type"
@@ -594,6 +623,10 @@
     "message": "重定向请求",
     "description": "Redirect option in modal"
   },
+  "rule_redirectAtResponse": {
+    "message": "重定向（响应阶段）",
+    "description": "Redirect at response option in modal"
+  },
   "rule_switch": {
     "message": "开启规则快捷切换",
     "description": "Use the menu to switch rule content"
@@ -683,7 +716,7 @@
     "description": "Label to test a redirect rule"
   },
   "test_exclude": {
-    "message": "已匹配但被排除",
+    "message": "被排除",
     "description": "Label to test a redirect rule"
   },
   "test_invalid_regexp": {
@@ -721,6 +754,10 @@
   "upload": {
     "message": "上传",
     "description": "Upload button"
+  },
+  "url_required": {
+    "message": "请输入 URL",
+    "description": "Validation message when URL is empty"
   },
   "username": {
     "message": "用户名",
