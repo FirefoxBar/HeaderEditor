@@ -8,7 +8,7 @@
     "description": "Button to add somethings"
   },
   "advanced": {
-    "message": "Advanced",
+    "message": "高度な設定",
     "description": "Button to expand advanced filter fields"
   },
   "all_rules": {
@@ -275,7 +275,7 @@
     "description": "File size title"
   },
   "filter_delete_saved": {
-    "message": "Delete $name$",
+    "message": "$name$ を削除",
     "description": "Delete a saved filter",
     "placeholders": {
       "name": {
@@ -284,15 +284,15 @@
     }
   },
   "filter_rules": {
-    "message": "Filter rules",
+    "message": "ルールをフィルタリング",
     "description": "Button in the rule list toolbar to open the filter panel"
   },
   "filter_save_item": {
-    "message": "Save filter",
+    "message": "フィルターを保存",
     "description": "Button to save the current filter inputs"
   },
   "filter_saved_list": {
-    "message": "Saved filters",
+    "message": "保存されたフィルター",
     "description": "Dropdown listing saved filters"
   },
   "group": {
@@ -524,7 +524,7 @@
     "description": "Request stage"
   },
   "reset": {
-    "message": "Reset",
+    "message": "リセット",
     "description": "Button to clear all filter inputs and results"
   },
   "resourceType_csp_report": {
@@ -624,7 +624,7 @@
     "description": "Redirect option in modal"
   },
   "rule_redirectAtResponse": {
-    "message": "Redirect at response",
+    "message": "リダイレクト（レスポンス段階）",
     "description": "Redirect at response option in modal"
   },
   "rule_switch": {
@@ -716,7 +716,7 @@
     "description": "Label to test a redirect rule"
   },
   "test_exclude": {
-    "message": "Excluded",
+    "message": "除外されました",
     "description": "Label to test a redirect rule"
   },
   "test_invalid_regexp": {
@@ -756,7 +756,7 @@
     "description": "Upload button"
   },
   "url_required": {
-    "message": "Please enter a URL",
+    "message": "URLを入力してください",
     "description": "Validation message when URL is empty"
   },
   "username": {
