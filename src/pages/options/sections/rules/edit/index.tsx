@@ -175,7 +175,7 @@ const Edit = ({ visible, rule: ruleProp, onClose }: EditProps) => {
           {MANIFEST_VER === 'v3' && (
             <Text
               type="tertiary"
-              link={{ href: getHelpUrl(), target: '_blank' }}
+              link={{ href: getHelpUrl('guide/index'), target: '_blank' }}
             >
               {t('lite_edit_tip')}
             </Text>

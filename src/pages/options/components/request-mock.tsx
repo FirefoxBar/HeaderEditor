@@ -7,6 +7,7 @@ import { useCallback, useEffect, useRef } from 'react';
 import type { DeclarativeNetRequest } from 'webextension-polyfill';
 import HeaderField from '@/share/components/header-field';
 import { t } from '@/share/core/browser';
+import type { HeaderPair } from '@/share/core/header-matcher';
 import type { RuleFilterOptions } from '@/share/core/types';
 import { METHOD_LIST, RESOURCE_TYPE_LIST } from './constant';
 
@@ -14,7 +15,7 @@ export interface MockRequest {
   url?: string;
   method?: string;
   resourceType?: DeclarativeNetRequest.ResourceType;
-  responseHeaders?: Array<{ name: string; value: string }>;
+  responseHeaders?: Array<HeaderPair>;
 }
 
 export interface RequestMockApi {

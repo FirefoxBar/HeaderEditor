@@ -1,4 +1,4 @@
-import { Toast, useFormState } from '@douyinfe/semi-ui';
+import { Toast, useFormApi, useFormState } from '@douyinfe/semi-ui';
 import { useDebounceFn, useRequest } from 'ahooks';
 import equal from 'fast-deep-equal';
 import { cloneDeep } from 'lodash-es';
@@ -24,6 +24,7 @@ const Test = () => {
   const rule = useRef<InitdRule>();
   const lastValue = useRef<any>();
   const { values } = useFormState();
+  const formApi = useFormApi();
   const requestMockApi = useRef<RequestMockApi>();
   const [result, setResult] = useStateIfChanged('');
 
@@ -39,8 +40,10 @@ const Test = () => {
         return;
       }
 
-      if (!equal(lastValue.current, values) || !rule.current) {
-        const ruleContent = getRuleFromInput(values);
+      const formValue = formApi.getValues();
+
+      if (!equal(lastValue.current, formValue) || !rule.current) {
+        const ruleContent = getRuleFromInput(formValue);
         let err: Error | undefined;
         try {
           rule.current = initRule(ruleContent, true);
@@ -64,7 +67,7 @@ const Test = () => {
           setResult(err.message);
           return;
         }
-        lastValue.current = cloneDeep(values);
+        lastValue.current = cloneDeep(formValue);
       }
       if (!rule.current) {
         return;

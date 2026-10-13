@@ -1,7 +1,7 @@
 import type { RE2JS } from 're2js';
 import type { DeclarativeNetRequest } from 'webextension-polyfill/namespaces/declarativeNetRequest';
 import type { RULE_MATCH_TYPE, RULE_TYPE, VIRTUAL_KEY } from './constant';
-import type { CompiledCondition } from './header-matcher';
+import type { CompiledCondition, HeaderPair } from './header-matcher';
 
 export interface RuleFilterOptions {
   enable?: boolean;
@@ -13,7 +13,7 @@ export interface RuleFilterOptions {
   type?: RULE_TYPE;
   method?: string; // request method, lowercase
   resourceType?: DeclarativeNetRequest.ResourceType;
-  responseHeaders?: Array<{ name: string; value?: string }>;
+  responseHeaders?: Array<HeaderPair>;
 }
 
 /** @deprecated */

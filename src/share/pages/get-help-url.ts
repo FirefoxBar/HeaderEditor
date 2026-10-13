@@ -12,6 +12,6 @@ const localePrefix =
 
 export const getHelpUrl = (path: string = '') => {
   const isDark = isDarkMode() ? 1 : 0;
-  const isHtml = !path.endsWith('/');
+  const isHtml = path !== '' && !path.endsWith('/');
   return `${DOC_HOST}${localePrefix}${path}${isHtml ? '.html' : ''}?is_dark=${isDark}`;
 };

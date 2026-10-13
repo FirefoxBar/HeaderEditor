@@ -166,7 +166,7 @@ const HeaderMatchInfo = ({
             {type ? (
               <AutoCompleteField
                 noLabel
-                field={`${subField}.name`}
+                field={`${subField}.header`}
                 placeholder={t('headerName')}
                 list={commonHeaders[type]}
                 fieldClassName="name-input"
@@ -176,7 +176,7 @@ const HeaderMatchInfo = ({
             ) : (
               <Form.Input
                 noLabel
-                field={`${subField}.name`}
+                field={`${subField}.header`}
                 placeholder={t('headerName')}
                 fieldClassName="name-input"
                 size={size}
@@ -186,7 +186,7 @@ const HeaderMatchInfo = ({
             <ValueEditorField
               title={t('matchRule')}
               noLabel
-              field={`${subField}.value`}
+              field={`${subField}.values`}
               fieldClassName="value-editor-field"
             />
             <ValueEditorField
