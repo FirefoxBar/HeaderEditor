@@ -12,8 +12,6 @@ import Api from '@/share/pages/api';
 import isDarkMode from '@/share/pages/is-dark-mode';
 import Rules from './rules';
 
-import './global.css';
-
 const basicStyle = css`
   height: 100vh;
   width: 100vw;
