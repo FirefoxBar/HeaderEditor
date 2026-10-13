@@ -623,6 +623,10 @@
     "message": "Redirect request",
     "description": "Redirect option in modal"
   },
+  "rule_redirectAtResponse": {
+    "message": "Redirect at response",
+    "description": "Redirect at response option in modal"
+  },
   "rule_switch": {
     "message": "Enable rule quick switching",
     "description": "Use the menu to switch rule content"
