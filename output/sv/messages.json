@@ -7,12 +7,16 @@
     "message": "Lägg till",
     "description": "Button to add somethings"
   },
+  "advanced": {
+    "message": "Avancerat",
+    "description": "Button to expand advanced filter fields"
+  },
   "all_rules": {
     "message": "Alla regler",
     "description": "Options"
   },
   "auto": {
-    "message": "Auto",
+    "message": "Automatiskt",
     "description": "Auto detect dark mode"
   },
   "auto_enable_modify_body": {
@@ -259,7 +263,7 @@
     "description": "Extension version"
   },
   "feedback": {
-    "message": "Feedback",
+    "message": "Återkoppling",
     "description": "Feedback link"
   },
   "filename": {
@@ -269,6 +273,27 @@
   "filesize": {
     "message": "Filstorlek",
     "description": "File size title"
+  },
+  "filter_delete_saved": {
+    "message": "Ta bort $name$",
+    "description": "Delete a saved filter",
+    "placeholders": {
+      "name": {
+        "content": "$1"
+      }
+    }
+  },
+  "filter_rules": {
+    "message": "Filtrera regler",
+    "description": "Button in the rule list toolbar to open the filter panel"
+  },
+  "filter_save_item": {
+    "message": "Spara filterobjekt",
+    "description": "Button to save the current filter inputs"
+  },
+  "filter_saved_list": {
+    "message": "Sparade filterobjekt",
+    "description": "Dropdown listing saved filters"
   },
   "group": {
     "message": "Grupp",
@@ -498,6 +523,10 @@
     "message": "Förfrågningssteg",
     "description": "Request stage"
   },
+  "reset": {
+    "message": "Återställ",
+    "description": "Button to clear all filter inputs and results"
+  },
   "resourceType_csp_report": {
     "message": "CSP-rapport (anges i Content-Security-Policy-huvudet)",
     "description": "Resource type"
@@ -594,6 +623,10 @@
     "message": "Omdirigera förfrågan",
     "description": "Redirect option in modal"
   },
+  "rule_redirectAtResponse": {
+    "message": "Omdirigering (svarssteg)",
+    "description": "Redirect at response option in modal"
+  },
   "rule_switch": {
     "message": "Aktivera snabbväxling av regler",
     "description": "Use the menu to switch rule content"
@@ -607,7 +640,7 @@
     "description": "Run mode for rule"
   },
   "run_mode_auto": {
-    "message": "Auto",
+    "message": "Automatiskt",
     "description": "auto mode"
   },
   "run_mode_dnr": {
@@ -683,7 +716,7 @@
     "description": "Label to test a redirect rule"
   },
   "test_exclude": {
-    "message": "Matchade men undantogs",
+    "message": "Undantagen",
     "description": "Label to test a redirect rule"
   },
   "test_invalid_regexp": {
@@ -721,6 +754,10 @@
   "upload": {
     "message": "Ladda upp",
     "description": "Upload button"
+  },
+  "url_required": {
+    "message": "Please enter a URL",
+    "description": "Validation message when URL is empty"
   },
   "username": {
     "message": "Användarnamn",
