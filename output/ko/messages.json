@@ -756,7 +756,7 @@
     "description": "Upload button"
   },
   "url_required": {
-    "message": "Please enter a URL",
+    "message": "URL을 입력하세요.",
     "description": "Validation message when URL is empty"
   },
   "username": {
