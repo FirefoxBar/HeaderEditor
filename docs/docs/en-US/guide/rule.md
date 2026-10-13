@@ -17,6 +17,7 @@ Rules will apply to the URL that meets the matching criteria. If multiple condit
 	* Supports standard JS regular expressions. For example, the regular expression you entered is `str`, then, in fact, the program will use the internal `new RegExp(str)` to initialize the regular expression.
 	* If the match rule is a regular expression, the modification result (currently including redirect to) supports the use placeholder like `$1`
 	* Learn more about regular expression on [Mozilla Developer Network](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/RegExp)
+* URL Filter: See [URL Filter](./url-filter)
 * URL prefix: Including `http://` URL prefix
 * Domain name: The full domain name that contains the subdomain
 * URL: Including "?" And the full address of all subsequent content
@@ -45,12 +46,14 @@ Configuration rules for response header matching:
 ### Exclude
 
 Regardless of whether the matching rules are met, as long as any exclusion condition is met, this item will not take effect on the current URL.
-* The Lite version does not support configuring regular expressions in exclusion.
+
+> The Lite version does not support configuring regular expressions in exclusion.
 
 ### Custom function
 
 Through a custom function to realize a more flexible function, the specific use please see [here](./custom-function)
-* This feature is not supported in the Lite version.
+
+> This feature is not supported in the Lite version.
 
 ### Run Mode
 
@@ -59,15 +62,15 @@ Rules have two run modes: DNR mode (declarativeNetRequest) and Web Request mode.
 * DNR mode: offers better performance, but does not support automatic decoding, custom function, regular expression exclusions.
 * Web Request mode: Offers slightly lower performance but provides comprehensive functionality.
 
-## Other special features
+## Special features
 
 * When using "Modify request header" or "Modify response header", set the header content to `_header_editor_remove_` will remove this header (valid since 3.0.5)
 * When using "Redirect request" with custom function, return `_header_editor_cancel_` will cancel this request  (valid since 4.0.3)
 
-## Other considerations
+## Considerations
 
 * If you want to set a header content to empty, different browsers have different behaviors. Chrome will keep this header but its content will be empty. Firefox will remove this header
-* Browsers restrict modification of specific URLs. For example, in Chrome and similar browsers (such as 360 Browser), extensions do not have permission to modify any request starting with `chrome.google.com/webstore`.
+* Browsers restrict modification of specific URLs. For example, in Chrome and similar browsers (such as Edge), extensions do not have permission to modify any request starting with `chrome.google.com/webstore`.
 
 ## A common feature example
 
