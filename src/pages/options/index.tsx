@@ -84,7 +84,7 @@ const Options = () => {
           onSelect={handleSwitch}
           header={{
             logo: (
-              <img src="/assets/images/128.png" style={{ width: '36px' }} />
+              <img src="/assets/images/logo.svg" style={{ width: '36px' }} />
             ),
             text: 'Header Editor',
           }}
