@@ -2,7 +2,8 @@ import * as path from 'node:path';
 import { defineConfig } from 'rspress/config';
 
 const logo =
-  'https://img14.360buyimg.com/ddimg/jfs/t1/539011/8/12727/2697/6ad0fa0fF2d6e89e5/001508008040a2cf.jpg';
+  'https://img13.360buyimg.com/ddimg/jfs/t1/548794/3/3631/2695/6ad5ffcbFfc80ae59/0015080080a72d05.jpg';
+
 const rawLogo =
   'https://raw.githubusercontent.com/FirefoxBar/HeaderEditor/refs/heads/master/public/assets/images/128.png';
 
