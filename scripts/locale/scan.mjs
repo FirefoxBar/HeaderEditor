@@ -6,11 +6,11 @@ const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
 const ROOT = path.resolve(__dirname, '..', '..');
 
-const ORIGINAL_FILE = path.join(ROOT, 'locale', 'original', 'messages.json');
-const LOCALES_DIR = path.join(ROOT, 'public', '_locales');
+const LOCALES_DIR = path.join(ROOT, 'locales');
 const ZH_FILE = path.join(LOCALES_DIR, 'zh_CN', 'messages.json');
 const EN_FILE = path.join(LOCALES_DIR, 'en', 'messages.json');
-const OUT_DIR = path.join(ROOT, 'temp', 'locale');
+const OUT_DIR = path.join(ROOT, 'temp', 'locale-text');
+const NEW_DIR = path.join(ROOT, 'temp', 'new-locale');
 
 const localeMap = {
   en: '英文',
@@ -39,6 +39,14 @@ const SKIP_KEYS = new Set([
   'run_mode_web_request',
 ]);
 
+function tryRm(filePath) {
+  try {
+    fs.rmSync(filePath, { recursive: true });
+  } catch (_) {
+    // ignore
+  }
+}
+
 function readJSON(filePath) {
   return JSON.parse(fs.readFileSync(filePath, { encoding: 'utf8' }));
 }
@@ -66,17 +74,9 @@ function escapeField(value) {
 function main() {
   const isAllInOne = process.argv.some(x => x === '--all-in-one');
 
-  const original = readJSON(ORIGINAL_FILE);
+  const original = readJSON(EN_FILE);
   const zhMap = fs.existsSync(ZH_FILE) ? readJSON(ZH_FILE) : {};
-  // 英文文案以原始语言文件为准，public/_locales/en 仅作回退
-  let enMap = original;
-  if (fs.existsSync(EN_FILE)) {
-    try {
-      enMap = readJSON(EN_FILE);
-    } catch {
-      enMap = original;
-    }
-  }
+  const enMap = original;
 
   const originalKeys = Object.keys(original);
   const originalMessages = new Map();
@@ -94,7 +94,11 @@ function main() {
     )
     .sort();
 
+  // clean old contents
+  tryRm(OUT_DIR);
   fs.mkdirSync(OUT_DIR, { recursive: true });
+  tryRm(NEW_DIR);
+  fs.mkdirSync(NEW_DIR, { recursive: true });
 
   let totalLangs = 0;
   const allLangs = {};
@@ -126,6 +130,21 @@ function main() {
         translated.push(key);
       }
     }
+
+    let deleted = 0;
+    for (const key in current) {
+      if (!(key in original)) {
+        delete current[key];
+        deleted++;
+      }
+    }
+    if (deleted > 0) {
+      fs.writeFileSync(localeFile, JSON.stringify(current, null, 2), {
+        encoding: 'utf8',
+      });
+      console.log(`[${lang}] deleted=${deleted}`);
+    }
+
     translated.sort();
     untranslated.sort((a, b) => (a.key < b.key ? -1 : a.key > b.key ? 1 : 0));
 
@@ -177,6 +196,8 @@ function main() {
       const { untranslated, translated } = allLangs[lang];
       const lines = [];
       if (translated.length > 0) {
+        const localeFile = path.join(LOCALES_DIR, lang, 'messages.json');
+        const current = readJSON(localeFile);
         lines.push('已翻译文案');
         for (const key of translated) {
           lines.push(
@@ -187,13 +208,22 @@ function main() {
       }
       if (untranslated.length > 0) {
         lines.push('待翻译文案');
+        const untranslatedJson = {};
         for (const { key } of untranslated) {
           const en = getMessage(enMap[key]) ?? getMessage(original[key]) ?? '';
           const zh = getMessage(zhMap[key]) ?? '';
           lines.push(
             `key:${escapeField(key)}\t英文:${escapeField(en)}\t中文:${escapeField(zh)}`,
           );
+          untranslatedJson[key] = { message: '', en, zh };
         }
+        fs.writeFileSync(
+          path.join(NEW_DIR, `${lang}.json`),
+          JSON.stringify(untranslatedJson, null, 2),
+          {
+            encoding: 'utf8',
+          },
+        );
       }
 
       if (lines.length > 0) {
@@ -212,7 +242,7 @@ function main() {
   fs.writeFileSync(
     path.join(OUT_DIR, '_new.txt'),
     Object.keys(original)
-      .filter(x => !SKIP_KEYS.has(x) && !x.startsWith('url_'))
+      .filter(x => !SKIP_KEYS.has(x))
       .map(
         key =>
           `key:${escapeField(key)}\t英文:${escapeField(getMessage(enMap[key]))}\t中文:${escapeField(getMessage(zhMap[key]))}`,

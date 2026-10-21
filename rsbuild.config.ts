@@ -25,6 +25,14 @@ function getGlobalVars() {
   );
 }
 
+function transformLocale(content: Buffer) {
+  const c = JSON.parse(content.toString());
+  Object.keys(c).forEach(key => {
+    delete c[key].description;
+  });
+  return JSON.stringify(c);
+}
+
 export default defineConfig({
   source: {
     define: getGlobalVars(),
@@ -107,6 +115,15 @@ export default defineConfig({
           {
             from: './public',
             to: '.',
+          },
+          {
+            from: './locales',
+            to: './locales',
+            transform(content, absoluteFilename) {
+              return absoluteFilename.endsWith('messages.json')
+                ? transformLocale(content)
+                : content;
+            },
           },
         ],
       },

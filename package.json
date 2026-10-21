@@ -19,7 +19,10 @@
     "format": "biome format",
     "run-test-server": "php -S 0.0.0.0:8899 -t tests/simple-server",
     "test:e2e": "cross-env NODE_OPTIONS=\"$NODE_OPTIONS --experimental-vm-modules\" npx mocha --config ./tests/e2e/.mocharc.json",
-    "test:unit": "cross-env NODE_OPTIONS=\"$NODE_OPTIONS --experimental-vm-modules\" npx mocha --config ./tests/unit/.mocharc.json"
+    "test:unit": "cross-env NODE_OPTIONS=\"$NODE_OPTIONS --experimental-vm-modules\" npx mocha --config ./tests/unit/.mocharc.json",
+    "locale:sort": "node ./scripts/locale/sort.mjs",
+    "locale:scan": "node ./scripts/locale/scan.mjs",
+    "locale:transform": "node ./scripts/locale/transform-new.mjs"
   },
   "dependencies": {
     "@bradenmacdonald/s3-lite-client": "^1.0.0",
