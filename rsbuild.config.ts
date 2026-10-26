@@ -118,7 +118,7 @@ export default defineConfig({
           },
           {
             from: './locales',
-            to: './locales',
+            to: './_locales',
             transform(content, absoluteFilename) {
               return absoluteFilename.endsWith('messages.json')
                 ? transformLocale(content)
