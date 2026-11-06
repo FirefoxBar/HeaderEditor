@@ -651,6 +651,14 @@
     "message": "Web Request",
     "description": "web_request mode"
   },
+  "apply": {
+    "message": "Apply",
+    "description": "Button to save a rule without closing the editor"
+  },
+  "save_and_close": {
+    "message": "Save and close",
+    "description": "Button to save a rule and closing the editor"
+  },
   "save": {
     "message": "Save",
     "description": "Button to save a rule"

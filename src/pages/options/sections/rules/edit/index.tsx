@@ -47,7 +47,7 @@ const Edit = ({ visible, rule: ruleProp, onClose }: EditProps) => {
   }, [initInput]);
 
   const { run: doSubmit, loading } = useRequest(
-    async () => {
+    async (closeAfterSave: boolean) => {
       if (!formApi.current) {
         throw new Error('No form api');
       }
@@ -131,7 +131,11 @@ const Edit = ({ visible, rule: ruleProp, onClose }: EditProps) => {
     },
     {
       manual: true,
-      onSuccess: () => onClose(),
+      onSuccess: (_, [closeAfterSave]) => {
+        if (closeAfterSave) {
+          onClose();
+        }
+      },
       onError: e => Toast.error(e.message),
     },
   );
@@ -198,12 +202,20 @@ const Edit = ({ visible, rule: ruleProp, onClose }: EditProps) => {
               {t('help')}
             </Button>
             <Button
-              theme="solid"
-              onClick={doSubmit}
+              type="tertiary"
+              onClick={() => doSubmit(false)}
               icon={<IconSave />}
               loading={loading}
             >
-              {t('save')}
+              {t('apply')}
+            </Button>
+            <Button
+              theme="solid"
+              onClick={() => doSubmit(true)}
+              icon={<IconSave />}
+              loading={loading}
+            >
+              {t('save_and_close')}
             </Button>
           </Space>
         </div>
