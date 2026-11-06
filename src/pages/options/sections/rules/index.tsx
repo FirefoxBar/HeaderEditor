@@ -42,6 +42,7 @@ import { batchShare, remove } from './utils';
 interface RulesProps {
   visible: boolean;
   onEdit: (rule?: Rule) => void;
+  targetRule?: { table: string; id: number };
 }
 
 interface GroupItem {
@@ -62,6 +63,8 @@ interface RulesState {
 class Rules extends React.Component<RulesProps, RulesState> {
   // 默认展开/收起
   private isCollapse = true;
+  private listRef = React.createRef<HTMLDivElement>();
+  private handledTargetKey?: string;
 
   constructor(props: any) {
     super(props);
@@ -105,6 +108,98 @@ class Rules extends React.Component<RulesProps, RulesState> {
     // console.log()
     notify.event.off(EVENTs.RULE_UPDATE, this.handleRuleUpdateEvent);
     notify.event.off(EVENTs.RULE_DELETE, this.handleRuleDeleteEvent);
+  }
+
+  componentDidUpdate(prevProps: RulesProps, prevState: RulesState) {
+    const target = this.props.targetRule;
+
+    if (!target || this.state.loading) {
+      return;
+    }
+
+    const targetKey = `${target.table}-${target.id}`;
+
+    // 防止同一规则重复定位和重复打开编辑窗口
+    if (this.handledTargetKey === targetKey) {
+      return;
+    }
+
+    // 仅在目标参数变化或规则列表加载完成时执行
+    const targetChanged =
+      prevProps.targetRule?.table !== target.table ||
+      prevProps.targetRule?.id !== target.id;
+    const rulesLoaded = prevState.loading && !this.state.loading;
+
+    if (!targetChanged && !rulesLoaded) {
+      return;
+    }
+
+    // 查找目标规则所属分组
+    const group = Object.values(this.state.group).find(item =>
+      item.rules.some(rule => rule[VIRTUAL_KEY] === targetKey),
+    );
+
+    if (!group) {
+      return;
+    }
+
+    const rule = group.rules.find(item => item[VIRTUAL_KEY] === targetKey);
+
+    if (!rule) {
+      return;
+    }
+
+    // 必须在 setState 之前标记，防止再次进入时重复处理
+    this.handledTargetKey = targetKey;
+
+    const scrollAndEdit = () => {
+      requestAnimationFrame(() => {
+        const container = this.listRef.current;
+
+        // 优先通过 Table 的 data-row-key 定位
+        let row = Array.from(
+          container?.querySelectorAll<HTMLElement>('[data-row-key]') ?? [],
+        ).find(item => item.getAttribute('data-row-key') === targetKey);
+
+        // 如果当前 Semi Table 没有输出 data-row-key，
+        // 则通过分组位置和规则位置定位
+        if (!row && container) {
+          const groups = Object.values(this.state.group);
+          const groupIndex = groups.findIndex(item => item.name === group.name);
+          const ruleIndex = group.rules.findIndex(
+            item => item[VIRTUAL_KEY] === targetKey,
+          );
+
+          const cards = container.querySelectorAll<HTMLElement>('.semi-card');
+          const rows = cards[groupIndex]?.querySelectorAll<HTMLElement>(
+            '.semi-table-tbody tr',
+          );
+
+          row = rows?.[ruleIndex];
+        }
+
+        // 滚动到目标规则
+        row?.scrollIntoView({
+          behavior: 'smooth',
+          block: 'center',
+        });
+
+        // 打开编辑窗口
+        this.props.onEdit(rule);
+      });
+    };
+
+    // collapsed 数组实际保存的是已展开分组
+    if (!this.state.collapsed.includes(group.name)) {
+      this.setState(
+        prevState => ({
+          collapsed: [...prevState.collapsed, group.name],
+        }),
+        scrollAndEdit,
+      );
+    } else {
+      scrollAndEdit();
+    }
   }
 
   // 事件响应 - 通知 - 规则更新
@@ -475,6 +570,7 @@ class Rules extends React.Component<RulesProps, RulesState> {
         </div>
         <Spin size="large" spinning={this.state.loading}>
           <div
+            ref={this.listRef}
             className={css`
               height: calc(100vh - 88px);
               overflow: auto;
