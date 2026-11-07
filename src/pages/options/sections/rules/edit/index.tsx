@@ -11,7 +11,7 @@ import type { FormApi } from '@douyinfe/semi-ui/lib/es/form';
 import { css } from '@emotion/css';
 import { useRequest } from 'ahooks';
 import { RE2JS } from 're2js';
-import { useEffect, useMemo, useRef } from 'react';
+import { useEffect, useMemo, useRef, useState } from 'react';
 import { withErrorBoundary } from '@/share/components/error-boundary';
 import { t } from '@/share/core/browser';
 import { RULE_TYPE } from '@/share/core/constant';
@@ -34,7 +34,7 @@ interface EditProps {
 const Edit = ({ visible, rule: ruleProp, onClose }: EditProps) => {
   const formApi = useRef<FormApi>();
 
-  const isEdit = Boolean(ruleProp);
+  const [isEdit, setIsEdit] = useState(Boolean(ruleProp));
 
   const initInput = useMemo(() => {
     const rule = ruleProp || EMPTY_RULE;
@@ -44,6 +44,7 @@ const Edit = ({ visible, rule: ruleProp, onClose }: EditProps) => {
   useEffect(() => {
     formApi.current?.reset();
     formApi.current?.setValues(initInput);
+    setIsEdit(Boolean(ruleProp));
   }, [initInput]);
 
   const { run: doSubmit, loading } = useRequest(
@@ -131,10 +132,16 @@ const Edit = ({ visible, rule: ruleProp, onClose }: EditProps) => {
     },
     {
       manual: true,
-      onSuccess: (_, [closeAfterSave]) => {
+      onSuccess: (savedRule, [closeAfterSave]) => {
         if (closeAfterSave) {
           onClose();
+          return;
         }
+        // 保留新建规则时生成的 ID，避免再次 Apply 时重复创建
+        formApi.current?.setValue('id', savedRule.id);
+
+        // 保存成功后切换为编辑模式
+        setIsEdit(true);
       },
       onError: e => Toast.error(e.message),
     },
