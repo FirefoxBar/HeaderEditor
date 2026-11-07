@@ -33,6 +33,13 @@ interface EditProps {
 
 const Edit = ({ visible, rule: ruleProp, onClose }: EditProps) => {
   const formApi = useRef<FormApi>();
+  // 标识当前编辑器会话，防止旧请求影响新打开的编辑器
+  const editorSessionRef = useRef(0);
+
+  const handleClose = () => {
+    editorSessionRef.current += 1;
+    onClose();
+  };
 
   const [isEdit, setIsEdit] = useState(Boolean(ruleProp));
 
@@ -42,13 +49,24 @@ const Edit = ({ visible, rule: ruleProp, onClose }: EditProps) => {
   }, [ruleProp]);
 
   useEffect(() => {
+    if (!visible) {
+      return;
+    }
+    const sessionId = ++editorSessionRef.current;
+
     formApi.current?.reset();
     formApi.current?.setValues(initInput);
     setIsEdit(Boolean(ruleProp));
-  }, [initInput]);
+    return () => {
+      // 关闭或切换编辑器时，使当前会话失效
+      if (editorSessionRef.current === sessionId) {
+        editorSessionRef.current += 1;
+      }
+    };
+  }, [visible, initInput, ruleProp]);
 
   const { run: doSubmit, loading } = useRequest(
-    async (closeAfterSave: boolean) => {
+    async (closeAfterSave: boolean, sessionId: number) => {
       if (!formApi.current) {
         throw new Error('No form api');
       }
@@ -128,13 +146,19 @@ const Edit = ({ visible, rule: ruleProp, onClose }: EditProps) => {
         }
       }
 
-      return Api.saveRule(rule);
+      const savedRule = await Api.saveRule(rule);
+      return { savedRule, sessionId };
     },
     {
       manual: true,
-      onSuccess: (savedRule, [closeAfterSave]) => {
+      onSuccess: ({ savedRule, sessionId }, [closeAfterSave]) => {
+        // 忽略已经关闭或切换编辑器会话的旧请求
+        if (sessionId !== editorSessionRef.current) {
+          return;
+        }
+
         if (closeAfterSave) {
-          onClose();
+          handleClose();
           return;
         }
         // 保留新建规则时生成的 ID，避免再次 Apply 时重复创建
@@ -143,7 +167,13 @@ const Edit = ({ visible, rule: ruleProp, onClose }: EditProps) => {
         // 保存成功后切换为编辑模式
         setIsEdit(true);
       },
-      onError: e => Toast.error(e.message),
+      onError: (e, params) => {
+        if (params[1] !== editorSessionRef.current) {
+          return;
+        }
+
+        Toast.error(e.message);
+      },
     },
   );
 
@@ -151,7 +181,7 @@ const Edit = ({ visible, rule: ruleProp, onClose }: EditProps) => {
     <SideSheet
       placement="right"
       visible={visible}
-      onCancel={onClose}
+      onCancel={handleClose}
       title={isEdit ? t('edit') : t('add')}
       keepDOM={false}
       width="100vw"
@@ -210,7 +240,7 @@ const Edit = ({ visible, rule: ruleProp, onClose }: EditProps) => {
             </Button>
             <Button
               type="tertiary"
-              onClick={() => doSubmit(false)}
+              onClick={() => doSubmit(false, editorSessionRef.current)}
               icon={<IconSave />}
               loading={loading}
             >
@@ -218,7 +248,7 @@ const Edit = ({ visible, rule: ruleProp, onClose }: EditProps) => {
             </Button>
             <Button
               theme="solid"
-              onClick={() => doSubmit(true)}
+              onClick={() => doSubmit(true, editorSessionRef.current)}
               icon={<IconSave />}
               loading={loading}
             >
