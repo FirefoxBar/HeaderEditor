@@ -11,7 +11,7 @@ import type { FormApi } from '@douyinfe/semi-ui/lib/es/form';
 import { css } from '@emotion/css';
 import { useRequest } from 'ahooks';
 import { RE2JS } from 're2js';
-import { useEffect, useMemo, useRef } from 'react';
+import { useEffect, useMemo, useRef, useState } from 'react';
 import { withErrorBoundary } from '@/share/components/error-boundary';
 import { t } from '@/share/core/browser';
 import { RULE_TYPE } from '@/share/core/constant';
@@ -33,8 +33,15 @@ interface EditProps {
 
 const Edit = ({ visible, rule: ruleProp, onClose }: EditProps) => {
   const formApi = useRef<FormApi>();
+  // 标识当前编辑器会话，防止旧请求影响新打开的编辑器
+  const editorSessionRef = useRef(0);
 
-  const isEdit = Boolean(ruleProp);
+  const handleClose = () => {
+    editorSessionRef.current += 1;
+    onClose();
+  };
+
+  const [isEdit, setIsEdit] = useState(Boolean(ruleProp));
 
   const initInput = useMemo(() => {
     const rule = ruleProp || EMPTY_RULE;
@@ -42,12 +49,24 @@ const Edit = ({ visible, rule: ruleProp, onClose }: EditProps) => {
   }, [ruleProp]);
 
   useEffect(() => {
+    if (!visible) {
+      return;
+    }
+    const sessionId = ++editorSessionRef.current;
+
     formApi.current?.reset();
     formApi.current?.setValues(initInput);
-  }, [initInput]);
+    setIsEdit(Boolean(ruleProp));
+    return () => {
+      // 关闭或切换编辑器时，使当前会话失效
+      if (editorSessionRef.current === sessionId) {
+        editorSessionRef.current += 1;
+      }
+    };
+  }, [visible, initInput, ruleProp]);
 
   const { run: doSubmit, loading } = useRequest(
-    async () => {
+    async (closeAfterSave: boolean, sessionId: number) => {
       if (!formApi.current) {
         throw new Error('No form api');
       }
@@ -127,12 +146,34 @@ const Edit = ({ visible, rule: ruleProp, onClose }: EditProps) => {
         }
       }
 
-      return Api.saveRule(rule);
+      const savedRule = await Api.saveRule(rule);
+      return { savedRule, sessionId };
     },
     {
       manual: true,
-      onSuccess: () => onClose(),
-      onError: e => Toast.error(e.message),
+      onSuccess: ({ savedRule, sessionId }, [closeAfterSave]) => {
+        // 忽略已经关闭或切换编辑器会话的旧请求
+        if (sessionId !== editorSessionRef.current) {
+          return;
+        }
+
+        if (closeAfterSave) {
+          handleClose();
+          return;
+        }
+        // 保留新建规则时生成的 ID，避免再次 Apply 时重复创建
+        formApi.current?.setValue('id', savedRule.id);
+
+        // 保存成功后切换为编辑模式
+        setIsEdit(true);
+      },
+      onError: (e, params) => {
+        if (params[1] !== editorSessionRef.current) {
+          return;
+        }
+
+        Toast.error(e.message);
+      },
     },
   );
 
@@ -140,7 +181,7 @@ const Edit = ({ visible, rule: ruleProp, onClose }: EditProps) => {
     <SideSheet
       placement="right"
       visible={visible}
-      onCancel={onClose}
+      onCancel={handleClose}
       title={isEdit ? t('edit') : t('add')}
       keepDOM={false}
       width="100vw"
@@ -198,12 +239,20 @@ const Edit = ({ visible, rule: ruleProp, onClose }: EditProps) => {
               {t('help')}
             </Button>
             <Button
-              theme="solid"
-              onClick={doSubmit}
+              type="tertiary"
+              onClick={() => doSubmit(false, editorSessionRef.current)}
               icon={<IconSave />}
               loading={loading}
             >
-              {t('save')}
+              {t('apply')}
+            </Button>
+            <Button
+              theme="solid"
+              onClick={() => doSubmit(true, editorSessionRef.current)}
+              icon={<IconSave />}
+              loading={loading}
+            >
+              {t('save_and_close')}
             </Button>
           </Space>
         </div>
