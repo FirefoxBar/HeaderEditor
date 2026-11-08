@@ -10,6 +10,7 @@ import {
 import type { FormApi } from '@douyinfe/semi-ui/lib/es/form';
 import { css } from '@emotion/css';
 import { useRequest } from 'ahooks';
+import isEqual from 'fast-deep-equal';
 import { RE2JS } from 're2js';
 import { useEffect, useMemo, useRef, useState } from 'react';
 import { withErrorBoundary } from '@/share/components/error-boundary';
@@ -33,8 +34,13 @@ interface EditProps {
 
 const Edit = ({ visible, rule: ruleProp, onClose }: EditProps) => {
   const formApi = useRef<FormApi>();
+  // 最近一次成功保存的表单值
+  const initialValuesRef = useRef<ReturnType<typeof getInput>>();
+  const [isDirty, setIsDirty] = useState(false);
   // 标识当前编辑器会话，防止旧请求影响新打开的编辑器
   const editorSessionRef = useRef(0);
+  // 防止同一时间重复提交
+  const isSubmittingRef = useRef(false);
 
   const handleClose = () => {
     editorSessionRef.current += 1;
@@ -54,6 +60,8 @@ const Edit = ({ visible, rule: ruleProp, onClose }: EditProps) => {
     }
     const sessionId = ++editorSessionRef.current;
 
+    initialValuesRef.current = initInput;
+    setIsDirty(false);
     formApi.current?.reset();
     formApi.current?.setValues(initInput);
     setIsEdit(Boolean(ruleProp));
@@ -65,7 +73,7 @@ const Edit = ({ visible, rule: ruleProp, onClose }: EditProps) => {
     };
   }, [visible, initInput, ruleProp]);
 
-  const { run: doSubmit, loading } = useRequest(
+  const { runAsync: submitAsync, loading } = useRequest(
     async (closeAfterSave: boolean, sessionId: number) => {
       if (!formApi.current) {
         throw new Error('No form api');
@@ -163,6 +171,8 @@ const Edit = ({ visible, rule: ruleProp, onClose }: EditProps) => {
         }
         // 保留新建规则时生成的 ID，避免再次 Apply 时重复创建
         formApi.current?.setValue('id', savedRule.id);
+        initialValuesRef.current = formApi.current?.getValues();
+        setIsDirty(false);
 
         // 保存成功后切换为编辑模式
         setIsEdit(true);
@@ -176,6 +186,18 @@ const Edit = ({ visible, rule: ruleProp, onClose }: EditProps) => {
       },
     },
   );
+
+  // 同步拦截重复提交，成功或失败后释放锁
+  const doSubmit = (closeAfterSave: boolean, sessionId: number) => {
+    if (isSubmittingRef.current) {
+      return;
+    }
+
+    isSubmittingRef.current = true;
+    void submitAsync(closeAfterSave, sessionId).finally(() => {
+      isSubmittingRef.current = false;
+    });
+  };
 
   return (
     <SideSheet
@@ -243,6 +265,7 @@ const Edit = ({ visible, rule: ruleProp, onClose }: EditProps) => {
               onClick={() => doSubmit(false, editorSessionRef.current)}
               icon={<IconSave />}
               loading={loading}
+              disabled={!isDirty || loading}
             >
               {t('apply')}
             </Button>
@@ -251,6 +274,7 @@ const Edit = ({ visible, rule: ruleProp, onClose }: EditProps) => {
               onClick={() => doSubmit(true, editorSessionRef.current)}
               icon={<IconSave />}
               loading={loading}
+              disabled={loading}
             >
               {t('save_and_close')}
             </Button>
@@ -261,6 +285,9 @@ const Edit = ({ visible, rule: ruleProp, onClose }: EditProps) => {
       <Form
         labelCol={{ fixedSpan: 4 }}
         getFormApi={api => (formApi.current = api)}
+        onValueChange={values => {
+          setIsDirty(!isEqual(values, initialValuesRef.current));
+        }}
         labelPosition="left"
         labelAlign="right"
         labelWidth={140}
