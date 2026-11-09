@@ -11,6 +11,9 @@
   "all_rules": {
     "message": "所有規則"
   },
+  "apply": {
+    "message": "套用"
+  },
   "auto": {
     "message": "自動"
   },
@@ -145,6 +148,9 @@
   },
   "edit": {
     "message": "編輯"
+  },
+  "edit_on_options": {
+    "message": "在選項頁中編輯"
   },
   "enable": {
     "message": "啟用"
@@ -376,6 +382,9 @@
   "popupPanel": {
     "message": "彈出式面板"
   },
+  "popup_rule_actions": {
+    "message": "彈出面板規則操作"
+  },
   "quick_edit": {
     "message": "快速編輯"
   },
@@ -492,6 +501,9 @@
   },
   "save": {
     "message": "儲存"
+  },
+  "save_and_close": {
+    "message": "儲存並關閉"
   },
   "save_to": {
     "message": "儲存至"

@@ -11,6 +11,9 @@
   "all_rules": {
     "message": "Все правила"
   },
+  "apply": {
+    "message": "Применить"
+  },
   "auto": {
     "message": "Авто"
   },
@@ -145,6 +148,9 @@
   },
   "edit": {
     "message": "Изменить"
+  },
+  "edit_on_options": {
+    "message": "Редактировать на странице настроек"
   },
   "enable": {
     "message": "Включить"
@@ -376,6 +382,9 @@
   "popupPanel": {
     "message": "Всплывающая панель"
   },
+  "popup_rule_actions": {
+    "message": "Действия правил всплывающей панели"
+  },
   "quick_edit": {
     "message": "Быстрое редактирование"
   },
@@ -492,6 +501,9 @@
   },
   "save": {
     "message": "Сохранить"
+  },
+  "save_and_close": {
+    "message": "Сохранить и закрыть"
   },
   "save_to": {
     "message": "Сохранить в"

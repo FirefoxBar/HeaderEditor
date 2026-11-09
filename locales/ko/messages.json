@@ -11,6 +11,9 @@
   "all_rules": {
     "message": "모든 규칙"
   },
+  "apply": {
+    "message": "적용"
+  },
   "auto": {
     "message": "자동"
   },
@@ -145,6 +148,9 @@
   },
   "edit": {
     "message": "편집"
+  },
+  "edit_on_options": {
+    "message": "옵션 페이지에서 편집"
   },
   "enable": {
     "message": "활성화"
@@ -376,6 +382,9 @@
   "popupPanel": {
     "message": "팝업 패널"
   },
+  "popup_rule_actions": {
+    "message": "팝업 패널 규칙 작업"
+  },
   "quick_edit": {
     "message": "빠른 편집"
   },
@@ -492,6 +501,9 @@
   },
   "save": {
     "message": "저장"
+  },
+  "save_and_close": {
+    "message": "저장 및 닫기"
   },
   "save_to": {
     "message": "저장 위치"

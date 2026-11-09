@@ -11,6 +11,9 @@
   "all_rules": {
     "message": "Alla regler"
   },
+  "apply": {
+    "message": "Verkställ"
+  },
   "auto": {
     "message": "Automatiskt"
   },
@@ -145,6 +148,9 @@
   },
   "edit": {
     "message": "Redigera"
+  },
+  "edit_on_options": {
+    "message": "Redigera på alternativsidan"
   },
   "enable": {
     "message": "Aktivera"
@@ -376,6 +382,9 @@
   "popupPanel": {
     "message": "Popup-panel"
   },
+  "popup_rule_actions": {
+    "message": "Regelåtgärder för popup-panelen"
+  },
   "quick_edit": {
     "message": "Snabbredigering"
   },
@@ -492,6 +501,9 @@
   },
   "save": {
     "message": "Spara"
+  },
+  "save_and_close": {
+    "message": "Spara och stäng"
   },
   "save_to": {
     "message": "Spara till"

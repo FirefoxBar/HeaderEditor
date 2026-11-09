@@ -11,6 +11,9 @@
   "all_rules": {
     "message": "すべてのルール"
   },
+  "apply": {
+    "message": "適用"
+  },
   "auto": {
     "message": "自動"
   },
@@ -145,6 +148,9 @@
   },
   "edit": {
     "message": "編集"
+  },
+  "edit_on_options": {
+    "message": "オプションページで編集"
   },
   "enable": {
     "message": "有効"
@@ -376,6 +382,9 @@
   "popupPanel": {
     "message": "ポップアップパネル"
   },
+  "popup_rule_actions": {
+    "message": "ポップアップパネルのルール操作"
+  },
   "quick_edit": {
     "message": "クイック編集"
   },
@@ -492,6 +501,9 @@
   },
   "save": {
     "message": "保存"
+  },
+  "save_and_close": {
+    "message": "保存して閉じる"
   },
   "save_to": {
     "message": "保存先"

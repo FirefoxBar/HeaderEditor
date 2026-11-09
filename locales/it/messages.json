@@ -11,6 +11,9 @@
   "all_rules": {
     "message": "Tutte le regole"
   },
+  "apply": {
+    "message": "Applica"
+  },
   "auto": {
     "message": "Automatico"
   },
@@ -145,6 +148,9 @@
   },
   "edit": {
     "message": "Modifica"
+  },
+  "edit_on_options": {
+    "message": "Modifica nella pagina delle opzioni"
   },
   "enable": {
     "message": "Abilita"
@@ -376,6 +382,9 @@
   "popupPanel": {
     "message": "Pannello a comparsa"
   },
+  "popup_rule_actions": {
+    "message": "Azioni delle regole del pannello a comparsa"
+  },
   "quick_edit": {
     "message": "Modifica rapida"
   },
@@ -492,6 +501,9 @@
   },
   "save": {
     "message": "Salva"
+  },
+  "save_and_close": {
+    "message": "Salva e chiudi"
   },
   "save_to": {
     "message": "Salva in"
