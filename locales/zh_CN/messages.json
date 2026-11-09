@@ -11,6 +11,9 @@
   "all_rules": {
     "message": "所有规则"
   },
+  "apply": {
+    "message": "应用"
+  },
   "auto": {
     "message": "自动"
   },
@@ -495,6 +498,9 @@
   },
   "save": {
     "message": "保存"
+  },
+  "save_and_close": {
+    "message": "保存并关闭"
   },
   "save_to": {
     "message": "保存至"
