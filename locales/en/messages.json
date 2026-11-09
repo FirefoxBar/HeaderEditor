@@ -11,6 +11,9 @@
   "all_rules": {
     "message": "All rules"
   },
+  "apply": {
+    "message": "Apply"
+  },
   "auto": {
     "message": "Auto"
   },
@@ -495,6 +498,9 @@
   },
   "save": {
     "message": "Save"
+  },
+  "save_and_close": {
+    "message": "Save and close"
   },
   "save_to": {
     "message": "Save to"
