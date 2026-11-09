@@ -51,10 +51,6 @@ const prefItems: Partial<Record<keyof PrefValue, PrefItem>> = {
     langKey: 'rule_history',
     type: 'switch',
   },
-  'quick-edit': {
-    langKey: 'quick_edit',
-    type: 'switch',
-  },
   'dark-mode': {
     langKey: 'dark_mode',
     type: 'select',
@@ -115,6 +111,33 @@ const prefItems: Partial<Record<keyof PrefValue, PrefItem>> = {
     min: 200,
     max: 800,
     disabled: IS_ANDROID,
+  },
+  'popup-rule-actions': {
+    langKey: 'popup_rule_actions',
+    type: 'select',
+    multiple: true,
+    optionList: [
+      {
+        label: t('quick_edit'),
+        value: 'edit',
+      },
+      {
+        label: t('edit_on_options'),
+        value: 'edit-on-options',
+      },
+      {
+        label: t('switch_title'),
+        value: 'quick-switch',
+      },
+      {
+        label: t('clone'),
+        value: 'clone',
+      },
+      {
+        label: t('delete'),
+        value: 'delete',
+      },
+    ],
   },
 };
 

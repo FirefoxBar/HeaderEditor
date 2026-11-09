@@ -379,9 +379,6 @@
   "quick_edit": {
     "message": "빠른 편집"
   },
-  "quick_edit_help": {
-    "message": "팝업 패널에 편집 버튼 표시"
-  },
   "redirectTo": {
     "message": "리디렉션 대상"
   },

@@ -8,6 +8,7 @@ import notify from '@/share/core/notify';
 import type { RuleWithVirtualKey } from '@/share/core/types';
 import { getVirtualKey } from '@/share/core/utils';
 import Api from '@/share/pages/api';
+import { ActionContext, useRuleActionsContext } from './actions';
 import GroupItem from './common/group-item';
 
 const AllRules = withErrorBoundary(() => {
@@ -28,6 +29,8 @@ const AllRules = withErrorBoundary(() => {
       manual: false,
     },
   );
+
+  const actionContext = useRuleActionsContext();
 
   useEffect(() => {
     const handleRuleUpdate = (request: any) => {
@@ -99,11 +102,13 @@ const AllRules = withErrorBoundary(() => {
 
   return (
     <Spin spinning={loading}>
-      <div className="main-list">
-        {Object.entries(data).map(([group, rules]) => (
-          <GroupItem key={group} group={group} rules={rules} hasToggle />
-        ))}
-      </div>
+      <ActionContext.Provider value={actionContext}>
+        <div className="main-list">
+          {Object.entries(data).map(([group, rules]) => (
+            <GroupItem key={group} group={group} rules={rules} hasToggle />
+          ))}
+        </div>
+      </ActionContext.Provider>
     </Spin>
   );
 });

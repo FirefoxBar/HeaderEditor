@@ -50,11 +50,11 @@ export const defaultPrefValue: PrefValue = {
   'dark-mode': 'auto',
   'rule-switch': true,
   'rule-history': true,
-  'quick-edit': true,
   'popup-show-rules': 'common',
   'show-quick-preview': ['popup', 'manage'],
   'popup-height': 460,
   'popup-width': 380,
+  'popup-rule-actions': ['edit', 'edit-on-options', 'quick-switch'],
 };
 
 export enum APIs {

@@ -379,9 +379,6 @@
   "quick_edit": {
     "message": "Édition rapide"
   },
-  "quick_edit_help": {
-    "message": "Afficher le bouton d'édition sur le panneau popup"
-  },
   "redirectTo": {
     "message": "Rediriger vers"
   },

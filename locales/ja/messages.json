@@ -379,9 +379,6 @@
   "quick_edit": {
     "message": "クイック編集"
   },
-  "quick_edit_help": {
-    "message": "ポップアップパネルに編集ボタンを表示"
-  },
   "redirectTo": {
     "message": "リダイレクト先"
   },

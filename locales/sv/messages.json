@@ -379,9 +379,6 @@
   "quick_edit": {
     "message": "Snabbredigering"
   },
-  "quick_edit_help": {
-    "message": "Visa redigeringsknappen på popup-panelen"
-  },
   "redirectTo": {
     "message": "Omdirigera till"
   },

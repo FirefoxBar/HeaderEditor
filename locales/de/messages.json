@@ -379,9 +379,6 @@
   "quick_edit": {
     "message": "Schnellbearbeitung"
   },
-  "quick_edit_help": {
-    "message": "Schaltfläche „Bearbeiten“ im Popup-Panel anzeigen"
-  },
   "redirectTo": {
     "message": "Weiterleiten an"
   },

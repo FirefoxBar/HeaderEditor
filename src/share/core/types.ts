@@ -116,9 +116,11 @@ export interface PrefValue {
   'dark-mode': 'auto' | 'on' | 'off';
   'rule-switch': boolean; // Enable rule quick switch
   'rule-history': boolean; // Auto save rule history into quick switch
-  'quick-edit': boolean; // Quick edit rule in popup panel
   'popup-show-rules': 'all' | 'common'; // Which rules to show in popup panel
   'show-quick-preview': Array<'popup' | 'manage'>;
   'popup-width'?: number;
   'popup-height'?: number;
+  'popup-rule-actions': Array<
+    'edit' | 'edit-on-options' | 'quick-switch' | 'clone' | 'delete'
+  >;
 }

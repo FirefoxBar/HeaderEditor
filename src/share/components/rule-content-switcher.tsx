@@ -23,7 +23,6 @@ import {
 import useStorage from '@/share/hooks/use-storage';
 import Api from '@/share/pages/api';
 import { Toast } from '@/share/pages/toast';
-import usePref from '../hooks/use-pref';
 import { tagList } from '../pages/styles';
 import HeaderField from './header-field';
 import Modal from './modal';
@@ -143,8 +142,6 @@ const RuleContentSwitcher: FC<RuleContentSwitcherProps> = props => {
   const { value, setValue } = useStorage<
     Array<string | Record<string, string>>
   >(`rule_switch_${key}`, []);
-
-  const [isEnable] = usePref('rule-switch');
 
   const menu = useMemo(() => {
     const isHeader = isModifyHeaderRule(rule.ruleType);
@@ -295,7 +292,7 @@ const RuleContentSwitcher: FC<RuleContentSwitcherProps> = props => {
     return result;
   }, [add, value]);
 
-  if (!isEnable || menu.length === 0) {
+  if (menu.length === 0) {
     return null;
   }
 

@@ -149,6 +149,9 @@
   "edit": {
     "message": "编辑"
   },
+  "edit_on_options": {
+    "message": "在选项页中编辑"
+  },
   "enable": {
     "message": "启用"
   },
@@ -379,11 +382,11 @@
   "popupPanel": {
     "message": "弹出面板"
   },
+  "popup_rule_actions": {
+    "message": "弹出面板规则操作"
+  },
   "quick_edit": {
     "message": "快捷编辑"
-  },
-  "quick_edit_help": {
-    "message": "在弹出面板上显示编辑按钮"
   },
   "redirectTo": {
     "message": "重定向至"

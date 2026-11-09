@@ -149,6 +149,9 @@
   "edit": {
     "message": "Edit"
   },
+  "edit_on_options": {
+    "message": "Edit on options page"
+  },
   "enable": {
     "message": "Enable"
   },
@@ -379,11 +382,11 @@
   "popupPanel": {
     "message": "Popup panel"
   },
+  "popup_rule_actions": {
+    "message": "Popup panel rule actions"
+  },
   "quick_edit": {
     "message": "Quick edit"
-  },
-  "quick_edit_help": {
-    "message": "Display edit button on the popup panel"
   },
   "redirectTo": {
     "message": "Redirect to"

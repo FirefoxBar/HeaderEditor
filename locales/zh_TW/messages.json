@@ -379,9 +379,6 @@
   "quick_edit": {
     "message": "快速編輯"
   },
-  "quick_edit_help": {
-    "message": "在彈出式視窗中顯示編輯按鈕"
-  },
   "redirectTo": {
     "message": "重新導向至"
   },

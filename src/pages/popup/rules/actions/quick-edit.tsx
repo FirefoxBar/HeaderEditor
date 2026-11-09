@@ -1,20 +1,14 @@
 import { IconEdit } from '@douyinfe/semi-icons';
-import { Button, Form, Input } from '@douyinfe/semi-ui';
+import { Form, Input } from '@douyinfe/semi-ui';
 import { css } from '@emotion/css';
-import { useLatest } from 'ahooks';
-import { type ReactNode, useCallback } from 'react';
+import type { ReactNode } from 'react';
 import HeaderField from '@/share/components/header-field';
 import Modal from '@/share/components/modal';
 import { t } from '@/share/core/browser';
-import type { Rule } from '@/share/core/types';
 import { isModifyHeaderRule, isRedirectRule } from '@/share/core/utils';
-import usePref from '@/share/hooks/use-pref';
 import Api from '@/share/pages/api';
 import { Toast } from '@/share/pages/toast';
-
-interface QuickEditProps {
-  rule: Rule;
-}
+import type { RuleAction } from './types';
 
 const modalCls = css`
   .semi-modal-content > .semi-modal-footer {
@@ -22,14 +16,15 @@ const modalCls = css`
     margin-bottom: 12px;
   }
 `;
-const QuickEdit = ({ rule }: QuickEditProps) => {
-  const { isFunction, ruleType } = rule;
-  const ruleRef = useLatest(rule);
 
-  const [isEnable] = usePref('quick-edit');
-
-  const handleEdit = useCallback(() => {
-    const newRule = { ...ruleRef.current };
+export const quickEditAction: RuleAction = {
+  key: 'edit',
+  icon: <IconEdit />,
+  title: t('quick_edit'),
+  visible: rule =>
+    isModifyHeaderRule(rule.ruleType) || isRedirectRule(rule.ruleType),
+  onClick: rule => {
+    const newRule = { ...rule };
 
     let content: ReactNode = null;
     if (isRedirectRule(newRule.ruleType)) {
@@ -100,28 +95,5 @@ const QuickEdit = ({ rule }: QuickEditProps) => {
         }
       },
     });
-  }, []);
-
-  if (!isEnable) {
-    return null;
-  }
-
-  if (
-    isFunction ||
-    (!isModifyHeaderRule(ruleType) && !isRedirectRule(ruleType))
-  ) {
-    return null;
-  }
-
-  return (
-    <Button
-      theme="borderless"
-      type="tertiary"
-      size="small"
-      icon={<IconEdit />}
-      onClick={handleEdit}
-    />
-  );
+  },
 };
-
-export default QuickEdit;
