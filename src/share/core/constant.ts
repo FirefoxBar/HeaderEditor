@@ -42,6 +42,7 @@ export enum RULE_MATCH_TYPE {
 export const defaultPrefValue: PrefValue = {
   'disable-all': false,
   'manage-collapse-group': true,
+  'rule-sort': 'id-asc',
   'exclude-he': true,
   'show-common-header': true,
   'include-headers': false,

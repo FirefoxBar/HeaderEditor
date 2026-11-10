@@ -493,6 +493,12 @@
   "rule_redirectAtResponse": {
     "message": "Redirect at response"
   },
+  "rule_sort": {
+    "message": "Rule order"
+  },
+  "rule_sort_help": {
+    "message": "Rules are sorted once when the list loads. Refresh the page to apply changes; adding or editing rules will not re-sort the list."
+  },
   "rule_switch": {
     "message": "Enable rule quick switching"
   },
@@ -540,6 +546,12 @@
   },
   "show_rules_on_popup": {
     "message": "Display these rules on a popup"
+  },
+  "sort_added_asc": {
+    "message": "Added time (oldest first)"
+  },
+  "sort_added_desc": {
+    "message": "Added time (newest first)"
   },
   "sort_groups": {
     "message": "Sort groups"

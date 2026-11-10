@@ -9,6 +9,7 @@ import {
 import emitter from '@/share/core/emitter';
 import logger from '@/share/core/logger';
 import notify from '@/share/core/notify';
+import { getRuleSortOrder, sortRules } from '@/share/core/sort';
 import type { Rule, RuleWithVirtualKey } from '@/share/core/types';
 import { getVirtualKey } from '@/share/core/utils';
 import Api from '@/share/pages/api';
@@ -110,12 +111,17 @@ export default function useRuleGroups() {
           result[item.group].rules.push(item as RuleWithVirtualKey);
         });
       });
-    Promise.all(TABLE_NAMES_ARR.map(requestRules)).then(() => {
-      loadingRef.current = false;
-      if (mountedRef.current) {
-        dispatch({ type: 'loaded', group: result });
-      }
-    });
+    Promise.all(TABLE_NAMES_ARR.map(requestRules))
+      .then(() => getRuleSortOrder())
+      .then(order => {
+        loadingRef.current = false;
+        if (mountedRef.current) {
+          Object.values(result).forEach(item => {
+            item.rules = sortRules(item.rules, order);
+          });
+          dispatch({ type: 'loaded', group: result });
+        }
+      });
   }, []);
 
   useEffect(() => {

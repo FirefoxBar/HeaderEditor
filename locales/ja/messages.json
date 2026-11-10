@@ -493,6 +493,12 @@
   "rule_redirectAtResponse": {
     "message": "リダイレクト（レスポンス段階）"
   },
+  "rule_sort": {
+    "message": "ルールの順序"
+  },
+  "rule_sort_help": {
+    "message": "ルールはリストの読み込み時に1回だけソートされます。変更を適用するにはページを更新してください。ルールの追加や編集ではリストは再ソートされません。"
+  },
   "rule_switch": {
     "message": "ルールのクイック切り替えを有効にする"
   },
@@ -540,6 +546,12 @@
   },
   "show_rules_on_popup": {
     "message": "ポップアップにこれらのルールを表示"
+  },
+  "sort_added_asc": {
+    "message": "追加日時（古い順）"
+  },
+  "sort_added_desc": {
+    "message": "追加日時（新しい順）"
   },
   "sort_groups": {
     "message": "グループを並べ替え"

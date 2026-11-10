@@ -1,10 +1,11 @@
 import { Spin } from '@douyinfe/semi-ui';
 import { useRequest } from 'ahooks';
-import { flatten, groupBy } from 'lodash-es';
+import { flatten, groupBy, mapValues } from 'lodash-es';
 import { useEffect } from 'react';
 import { withErrorBoundary } from '@/share/components/error-boundary';
 import { EVENTs, VIRTUAL_KEY } from '@/share/core/constant';
 import notify from '@/share/core/notify';
+import { getRuleSortOrder, sortRules } from '@/share/core/sort';
 import type { RuleWithVirtualKey } from '@/share/core/types';
 import { getVirtualKey } from '@/share/core/utils';
 import useGroupOrder from '@/share/hooks/use-group-order';
@@ -18,14 +19,20 @@ const AllRules = withErrorBoundary(() => {
     loading,
     mutate,
   } = useRequest(
-    async () =>
-      groupBy(
-        flatten(Object.values(await Api.getAllRules())).map(x => ({
+    async () => {
+      const [order, allRules] = await Promise.all([
+        getRuleSortOrder(),
+        Api.getAllRules(),
+      ]);
+      const grouped = groupBy(
+        flatten(Object.values(allRules)).map(x => ({
           ...x,
           [VIRTUAL_KEY]: getVirtualKey(x),
         })),
         'group',
-      ),
+      );
+      return mapValues(grouped, rules => sortRules(rules, order));
+    },
     {
       manual: false,
     },

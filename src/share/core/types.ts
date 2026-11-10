@@ -110,9 +110,13 @@ export interface InitdRule extends Rule {
   _response_headers_filter?: CompiledCondition;
 }
 
+/** 组内规则的排序方式 */
+export type RuleSortOrder = 'id-asc' | 'id-desc' | 'name-asc' | 'name-desc';
+
 export interface PrefValue {
   'disable-all': boolean;
   'manage-collapse-group': boolean; // Collapse groups
+  'rule-sort': RuleSortOrder; // Order of rules inside a group
   'exclude-he': boolean; // rules take no effect on HE or not
   'show-common-header': boolean;
   'include-headers': boolean; // Include headers in custom function

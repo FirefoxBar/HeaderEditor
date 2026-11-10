@@ -2,6 +2,7 @@ import { createPrefsComponent } from './base-prefs';
 
 const Prefs = createPrefsComponent([
   'manage-collapse-group',
+  'rule-sort',
   'show-common-header',
   'include-headers',
   'modify-body',

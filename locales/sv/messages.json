@@ -493,6 +493,12 @@
   "rule_redirectAtResponse": {
     "message": "Omdirigering (svarssteg)"
   },
+  "rule_sort": {
+    "message": "Regelordning"
+  },
+  "rule_sort_help": {
+    "message": "Regler sorteras endast en gång när listan laddas. Uppdatera sidan för att tillämpa ändringar; att lägga till eller redigera regler kommer inte att sortera om listan."
+  },
   "rule_switch": {
     "message": "Aktivera snabbväxling av regler"
   },
@@ -540,6 +546,12 @@
   },
   "show_rules_on_popup": {
     "message": "Visa dessa regler på popup-panelen"
+  },
+  "sort_added_asc": {
+    "message": "Tillagd tid (äldsta först)"
+  },
+  "sort_added_desc": {
+    "message": "Tillagd tid (nyaste först)"
   },
   "sort_groups": {
     "message": "Sortera grupper"

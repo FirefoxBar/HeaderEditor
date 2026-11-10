@@ -493,6 +493,12 @@
   "rule_redirectAtResponse": {
     "message": "Weiterleitung (Antwortphase)"
   },
+  "rule_sort": {
+    "message": "Regelreihenfolge"
+  },
+  "rule_sort_help": {
+    "message": "Regeln werden nur einmal beim Laden der Liste sortiert. Aktualisieren Sie die Seite, um Änderungen zu übernehmen; das Hinzufügen oder Bearbeiten von Regeln sortiert die Liste nicht neu."
+  },
   "rule_switch": {
     "message": "Schnelles Umschalten von Regeln aktivieren"
   },
@@ -540,6 +546,12 @@
   },
   "show_rules_on_popup": {
     "message": "Diese Regeln in einem Popup anzeigen"
+  },
+  "sort_added_asc": {
+    "message": "Hinzugefügt (älteste zuerst)"
+  },
+  "sort_added_desc": {
+    "message": "Hinzugefügt (neueste zuerst)"
   },
   "sort_groups": {
     "message": "Gruppen sortieren"

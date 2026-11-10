@@ -3,6 +3,7 @@ import { Button, List, Modal, Space } from '@douyinfe/semi-ui';
 import { css } from '@emotion/css';
 import { useEffect, useState } from 'react';
 import { t } from '@/share/core/browser';
+import { compareNames } from '@/share/core/sort';
 
 interface GroupSortModalProps {
   visible: boolean;
@@ -40,7 +41,7 @@ const GroupSortModal = ({
   const sortByName = (descending: boolean) => {
     setDraft(prev =>
       [...prev].sort((a, b) =>
-        descending ? b.localeCompare(a) : a.localeCompare(b),
+        descending ? compareNames(b, a) : compareNames(a, b),
       ),
     );
   };

@@ -493,6 +493,12 @@
   "rule_redirectAtResponse": {
     "message": "Redirection (phase de réponse)"
   },
+  "rule_sort": {
+    "message": "Ordre des règles"
+  },
+  "rule_sort_help": {
+    "message": "Les règles sont triées une seule fois lors du chargement de la liste. Actualisez la page pour appliquer les modifications ; l'ajout ou la modification de règles ne triera pas à nouveau la liste."
+  },
   "rule_switch": {
     "message": "Activer le basculement rapide des règles"
   },
@@ -540,6 +546,12 @@
   },
   "show_rules_on_popup": {
     "message": "Afficher ces règles dans un popup"
+  },
+  "sort_added_asc": {
+    "message": "Date d'ajout (les plus anciennes d'abord)"
+  },
+  "sort_added_desc": {
+    "message": "Date d'ajout (les plus récentes d'abord)"
   },
   "sort_groups": {
     "message": "Trier les groupes"

@@ -114,7 +114,8 @@ async function transformLangs() {
 }
 
 function main() {
-  const isAllInOne = process.argv.some(x => x === '--all-in-one');
+  const isAllInOne = process.argv.some(x => x === '--all-in-one' || x === '-a');
+  console.log('all in one mode:', isAllInOne);
 
   if (isAllInOne) {
     return transformAllInOne();

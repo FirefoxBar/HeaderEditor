@@ -72,7 +72,8 @@ function escapeField(value) {
 }
 
 function main() {
-  const isAllInOne = process.argv.some(x => x === '--all-in-one');
+  const isAllInOne = process.argv.some(x => x === '--all-in-one' || x === '-a');
+  console.log('all in one mode:', isAllInOne);
 
   const original = readJSON(EN_FILE);
   const zhMap = fs.existsSync(ZH_FILE) ? readJSON(ZH_FILE) : {};

@@ -493,6 +493,12 @@
   "rule_redirectAtResponse": {
     "message": "重新導向（回應階段）"
   },
+  "rule_sort": {
+    "message": "規則排序"
+  },
+  "rule_sort_help": {
+    "message": "僅在規則清單載入時排序一次。修改後重新載入頁面生效；新增或修改規則不會即時重新排序。"
+  },
   "rule_switch": {
     "message": "開啟規則快速切換"
   },
@@ -540,6 +546,12 @@
   },
   "show_rules_on_popup": {
     "message": "在彈出式視窗中顯示規則"
+  },
+  "sort_added_asc": {
+    "message": "按新增時間正序"
+  },
+  "sort_added_desc": {
+    "message": "按新增時間倒序"
   },
   "sort_groups": {
     "message": "分組排序"

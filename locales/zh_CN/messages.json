@@ -493,6 +493,12 @@
   "rule_redirectAtResponse": {
     "message": "重定向（响应阶段）"
   },
+  "rule_sort": {
+    "message": "规则排序"
+  },
+  "rule_sort_help": {
+    "message": "仅在规则列表加载时排序一次。修改后刷新页面生效；新增或修改规则不会实时重排。"
+  },
   "rule_switch": {
     "message": "开启规则快捷切换"
   },
@@ -540,6 +546,12 @@
   },
   "show_rules_on_popup": {
     "message": "在弹出面板上显示规则"
+  },
+  "sort_added_asc": {
+    "message": "按添加时间正序"
+  },
+  "sort_added_desc": {
+    "message": "按添加时间倒序"
   },
   "sort_groups": {
     "message": "分组排序"

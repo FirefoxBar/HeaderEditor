@@ -25,6 +25,28 @@ const prefItems: Partial<Record<keyof PrefValue, PrefItem>> = {
     langKey: 'manage_collapse_group',
     type: 'switch',
   },
+  'rule-sort': {
+    langKey: 'rule_sort',
+    type: 'select',
+    optionList: [
+      {
+        label: t('sort_added_asc'),
+        value: 'id-asc',
+      },
+      {
+        label: t('sort_added_desc'),
+        value: 'id-desc',
+      },
+      {
+        label: t('sort_name_asc'),
+        value: 'name-asc',
+      },
+      {
+        label: t('sort_name_desc'),
+        value: 'name-desc',
+      },
+    ],
+  },
   'show-common-header': {
     langKey: 'display_common_header',
     type: 'switch',

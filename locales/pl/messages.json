@@ -493,6 +493,12 @@
   "rule_redirectAtResponse": {
     "message": "Przekierowanie (etap odpowiedzi)"
   },
+  "rule_sort": {
+    "message": "Kolejność reguł"
+  },
+  "rule_sort_help": {
+    "message": "Reguły są sortowane tylko raz podczas ładowania listy. Odśwież stronę, aby zastosować zmiany; dodawanie lub edytowanie reguł nie posortuje listy ponownie."
+  },
   "rule_switch": {
     "message": "Włącz szybkie przełączanie reguł"
   },
@@ -540,6 +546,12 @@
   },
   "show_rules_on_popup": {
     "message": "Wyświetl te reguły w wyskakującym panelu"
+  },
+  "sort_added_asc": {
+    "message": "Czas dodania (najpierw najstarsze)"
+  },
+  "sort_added_desc": {
+    "message": "Czas dodania (najpierw najnowsze)"
   },
   "sort_groups": {
     "message": "Sortuj grupy"

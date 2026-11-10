@@ -493,6 +493,12 @@
   "rule_redirectAtResponse": {
     "message": "Redireccionar (fase de respuesta)"
   },
+  "rule_sort": {
+    "message": "Orden de reglas"
+  },
+  "rule_sort_help": {
+    "message": "Las reglas se ordenan una vez cuando se carga la lista. Actualice la página para aplicar los cambios; agregar o editar reglas no volverá a ordenar la lista."
+  },
   "rule_switch": {
     "message": "Habilitar cambio rápido de reglas"
   },
@@ -540,6 +546,12 @@
   },
   "show_rules_on_popup": {
     "message": "Mostrar estas reglas en un panel emergente"
+  },
+  "sort_added_asc": {
+    "message": "Fecha de adición (más antiguas primero)"
+  },
+  "sort_added_desc": {
+    "message": "Fecha de adición (más recientes primero)"
   },
   "sort_groups": {
     "message": "Ordenar grupos"
