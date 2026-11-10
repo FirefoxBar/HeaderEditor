@@ -6,7 +6,7 @@ title: 安裝
 
 請根據您的平台不同，選擇不同的安裝方式：
 
-| | 瀏覽器 | 精簡版(Lite) | 完整版 |
+| | 瀏覽器 | 精簡版(Lite/MV3) | 完整版(MV2) |
 | --- | --- | --- | --- |
 | ![Firefox Logo](https://cdnjs.cloudflare.com/ajax/libs/browser-logos/75.0.1/firefox/firefox_16x16.png) | Firefox | [官方下載](https://github.com/FirefoxBar/HeaderEditor/releases) 或 [Mozilla Add-ons](https://addons.mozilla.org/en-US/firefox/addon/header-editor-lite/) | [官方下載](https://github.com/FirefoxBar/HeaderEditor/releases) 或 [Mozilla Add-ons](https://addons.mozilla.org/en-US/firefox/addon/header-editor/) |
 | ![Chrome Logo](https://cdnjs.cloudflare.com/ajax/libs/browser-logos/75.0.1/chrome/chrome_16x16.png) | Chrome | [Chrome Web Store](https://chrome.google.com/webstore/detail/header-editor/eningockdidmgiojffjmkdblpjocbhgh) | [安裝完整版](./install-full-version) |
