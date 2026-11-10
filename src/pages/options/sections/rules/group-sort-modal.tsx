@@ -1,5 +1,6 @@
 import { IconArrowDown, IconArrowUp } from '@douyinfe/semi-icons';
 import { Button, List, Modal, Space } from '@douyinfe/semi-ui';
+import { css } from '@emotion/css';
 import { useEffect, useState } from 'react';
 import { t } from '@/share/core/browser';
 
@@ -64,11 +65,31 @@ const GroupSortModal = ({
       </Space>
       <List
         dataSource={draft}
+        size="small"
         renderItem={(name, index) => (
           <List.Item
+            style={{ paddingLeft: 0, paddingRight: 0 }}
             main={
-              <div style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
-                <span style={{ flexGrow: 1 }}>{name}</span>
+              <div
+                className={css`
+                  display: flex;
+                  align-items: center;
+                  gap: 8px;
+
+                  > .semi-button {
+                    flex-grow: 0;
+                    flex-shrink: 0;
+                  }
+
+                  > span {
+                    flex-grow: 1;
+                    flex-shrink: 1;
+                    overflow: hidden;
+                    text-overflow: ellipsis;
+                    white-space: nowrap;
+                  }
+                `}
+              >
                 <Button
                   theme="borderless"
                   type="tertiary"
@@ -76,6 +97,7 @@ const GroupSortModal = ({
                   disabled={index === 0}
                   onClick={() => move(index, -1)}
                   aria-label={t('move_up')}
+                  size="small"
                 />
                 <Button
                   theme="borderless"
@@ -84,7 +106,9 @@ const GroupSortModal = ({
                   disabled={index === draft.length - 1}
                   onClick={() => move(index, 1)}
                   aria-label={t('move_down')}
+                  size="small"
                 />
+                <span>{name}</span>
               </div>
             }
           />
