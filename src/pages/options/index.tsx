@@ -80,6 +80,8 @@ const Options = () => {
     setEditRule(undefined);
 
     const url = new URL(window.location.href);
+    url.searchParams.delete('table');
+    url.searchParams.delete('ruleId');
     url.searchParams.delete('edit');
     window.history.replaceState(window.history.state, '', url.toString());
   }, []);

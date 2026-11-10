@@ -17,7 +17,7 @@ import {
   Tooltip,
 } from '@douyinfe/semi-ui';
 import type { ColumnProps } from '@douyinfe/semi-ui/lib/es/table';
-import { css } from '@emotion/css';
+import { css, cx } from '@emotion/css';
 import { useResponsive } from 'ahooks';
 import { selectGroup } from '@/pages/options/utils';
 import Modal from '@/share/components/modal';
@@ -96,10 +96,14 @@ export function useRuleColumns({
             style={{ maxWidth: '300px' }}
             autoAdjustOverflow
           >
-            <div className={textEllipsis}>{value}</div>
+            <div className={cx(`rule-item-${item[VIRTUAL_KEY]}`, textEllipsis)}>
+              {value}
+            </div>
           </Popover>
         ) : (
-          <div className={textEllipsis}>{value}</div>
+          <div className={cx(`rule-item-${item[VIRTUAL_KEY]}`, textEllipsis)}>
+            {value}
+          </div>
         ),
     },
     {

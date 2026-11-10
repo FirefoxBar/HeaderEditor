@@ -7,6 +7,7 @@ import { EVENTs, VIRTUAL_KEY } from '@/share/core/constant';
 import notify from '@/share/core/notify';
 import type { RuleWithVirtualKey } from '@/share/core/types';
 import { getVirtualKey } from '@/share/core/utils';
+import useGroupOrder from '@/share/hooks/use-group-order';
 import Api from '@/share/pages/api';
 import { ActionContext, useRuleActionsContext } from './actions';
 import GroupItem from './common/group-item';
@@ -31,6 +32,7 @@ const AllRules = withErrorBoundary(() => {
   );
 
   const actionContext = useRuleActionsContext();
+  const { orderedNames } = useGroupOrder(Object.keys(data));
 
   useEffect(() => {
     const handleRuleUpdate = (request: any) => {
@@ -98,15 +100,23 @@ const AllRules = withErrorBoundary(() => {
       notify.event.off(EVENTs.RULE_UPDATE, handleRuleUpdate);
       notify.event.off(EVENTs.RULE_DELETE, handleRuleDelete);
     };
-  }, []);
+  }, [mutate]);
 
   return (
     <Spin spinning={loading}>
       <ActionContext.Provider value={actionContext}>
         <div className="main-list">
-          {Object.entries(data).map(([group, rules]) => (
-            <GroupItem key={group} group={group} rules={rules} hasToggle />
-          ))}
+          {orderedNames.map(
+            group =>
+              data[group] && (
+                <GroupItem
+                  key={group}
+                  group={group}
+                  rules={data[group]}
+                  hasToggle
+                />
+              ),
+          )}
         </div>
       </ActionContext.Provider>
     </Spin>

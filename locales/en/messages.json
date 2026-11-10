@@ -352,6 +352,12 @@
   "more_information": {
     "message": "More Information"
   },
+  "move_down": {
+    "message": "Move down"
+  },
+  "move_up": {
+    "message": "Move up"
+  },
   "name": {
     "message": "Name"
   },
@@ -528,6 +534,15 @@
   },
   "show_rules_on_popup": {
     "message": "Display these rules on a popup"
+  },
+  "sort_groups": {
+    "message": "Sort groups"
+  },
+  "sort_name_asc": {
+    "message": "Name A-Z"
+  },
+  "sort_name_desc": {
+    "message": "Name Z-A"
   },
   "stage_request": {
     "message": "Request"

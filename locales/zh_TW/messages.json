@@ -352,6 +352,12 @@
   "more_information": {
     "message": "詳細資訊"
   },
+  "move_down": {
+    "message": "下移"
+  },
+  "move_up": {
+    "message": "上移"
+  },
   "name": {
     "message": "名稱"
   },
@@ -528,6 +534,15 @@
   },
   "show_rules_on_popup": {
     "message": "在彈出式視窗中顯示規則"
+  },
+  "sort_groups": {
+    "message": "分組排序"
+  },
+  "sort_name_asc": {
+    "message": "按名稱正序"
+  },
+  "sort_name_desc": {
+    "message": "按名稱倒序"
   },
   "stage_request": {
     "message": "要求"

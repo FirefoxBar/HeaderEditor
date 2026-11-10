@@ -352,6 +352,12 @@
   "more_information": {
     "message": "Подробнее"
   },
+  "move_down": {
+    "message": "Переместить вниз"
+  },
+  "move_up": {
+    "message": "Переместить вверх"
+  },
   "name": {
     "message": "Имя"
   },
@@ -528,6 +534,15 @@
   },
   "show_rules_on_popup": {
     "message": "Показывать эти правила во всплывающем окне"
+  },
+  "sort_groups": {
+    "message": "Сортировать группы"
+  },
+  "sort_name_asc": {
+    "message": "Имя A-Z"
+  },
+  "sort_name_desc": {
+    "message": "Имя Z-A"
   },
   "stage_request": {
     "message": "Запрос"

@@ -6,6 +6,7 @@ import { EVENTs, VIRTUAL_KEY } from '@/share/core/constant';
 import notify from '@/share/core/notify';
 import type { Rule } from '@/share/core/types';
 import { getVirtualKey, isValidArray } from '@/share/core/utils';
+import useGroupOrder from '@/share/hooks/use-group-order';
 import useMarkCommon from '@/share/hooks/use-mark-common';
 import Api from '@/share/pages/api';
 import GroupItem from './group-item';
@@ -75,6 +76,7 @@ const GroupLoader: FC<GroupLoaderProps> = ({ group }) => {
 
 const Group = () => {
   const { keys } = useMarkCommon('group');
+  const { orderedNames } = useGroupOrder(isValidArray(keys) ? keys : []);
 
   if (!isValidArray(keys)) {
     return null;
@@ -82,7 +84,7 @@ const Group = () => {
 
   return (
     <div className="item-block">
-      {keys.map(key => (
+      {orderedNames.map(key => (
         <GroupLoader key={key} group={key} />
       ))}
     </div>

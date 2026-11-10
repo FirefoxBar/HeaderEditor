@@ -352,6 +352,12 @@
   "more_information": {
     "message": "Mais informações"
   },
+  "move_down": {
+    "message": "Mover para baixo"
+  },
+  "move_up": {
+    "message": "Mover para cima"
+  },
   "name": {
     "message": "Nome"
   },
@@ -528,6 +534,15 @@
   },
   "show_rules_on_popup": {
     "message": "Exibir estas regras em um pop-up"
+  },
+  "sort_groups": {
+    "message": "Ordenar grupos"
+  },
+  "sort_name_asc": {
+    "message": "Nome A-Z"
+  },
+  "sort_name_desc": {
+    "message": "Nome Z-A"
   },
   "stage_request": {
     "message": "Solicitação"

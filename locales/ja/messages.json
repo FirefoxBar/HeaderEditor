@@ -352,6 +352,12 @@
   "more_information": {
     "message": "詳細情報"
   },
+  "move_down": {
+    "message": "下へ移動"
+  },
+  "move_up": {
+    "message": "上へ移動"
+  },
   "name": {
     "message": "名前"
   },
@@ -528,6 +534,15 @@
   },
   "show_rules_on_popup": {
     "message": "ポップアップにこれらのルールを表示"
+  },
+  "sort_groups": {
+    "message": "グループを並べ替え"
+  },
+  "sort_name_asc": {
+    "message": "名前 A-Z"
+  },
+  "sort_name_desc": {
+    "message": "名前 Z-A"
   },
   "stage_request": {
     "message": "リクエスト"

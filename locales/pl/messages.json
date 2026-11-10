@@ -352,6 +352,12 @@
   "more_information": {
     "message": "Więcej informacji"
   },
+  "move_down": {
+    "message": "Przenieś w dół"
+  },
+  "move_up": {
+    "message": "Przenieś w górę"
+  },
   "name": {
     "message": "Nazwa"
   },
@@ -528,6 +534,15 @@
   },
   "show_rules_on_popup": {
     "message": "Wyświetl te reguły w wyskakującym panelu"
+  },
+  "sort_groups": {
+    "message": "Sortuj grupy"
+  },
+  "sort_name_asc": {
+    "message": "Nazwa A-Z"
+  },
+  "sort_name_desc": {
+    "message": "Nazwa Z-A"
   },
   "stage_request": {
     "message": "Żądanie"

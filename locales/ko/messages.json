@@ -352,6 +352,12 @@
   "more_information": {
     "message": "추가 정보"
   },
+  "move_down": {
+    "message": "아래로 이동"
+  },
+  "move_up": {
+    "message": "위로 이동"
+  },
   "name": {
     "message": "이름"
   },
@@ -528,6 +534,15 @@
   },
   "show_rules_on_popup": {
     "message": "팝업에 이 규칙 표시"
+  },
+  "sort_groups": {
+    "message": "그룹 정렬"
+  },
+  "sort_name_asc": {
+    "message": "이름 A-Z"
+  },
+  "sort_name_desc": {
+    "message": "이름 Z-A"
   },
   "stage_request": {
     "message": "요청"

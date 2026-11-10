@@ -1,43 +1,20 @@
-import {
-  IconCheckList,
-  IconDelete,
-  IconFavoriteList,
-  IconFilter,
-  IconList,
-  IconPlusCircle,
-  IconSend,
-  IconUnlock,
-} from '@douyinfe/semi-icons';
-import {
-  Button,
-  ButtonGroup,
-  Space,
-  Spin,
-  Typography,
-} from '@douyinfe/semi-ui';
+import { Spin } from '@douyinfe/semi-ui';
 import { css, cx } from '@emotion/css';
-import * as React from 'react';
-import { selectGroup } from '@/pages/options/utils';
+import { useCallback, useEffect, useRef, useState } from 'react';
 import { withErrorBoundary } from '@/share/components/error-boundary';
-import Modal from '@/share/components/modal';
-import { t } from '@/share/core/browser';
-import {
-  EVENTs,
-  type TABLE_NAMES,
-  TABLE_NAMES_ARR,
-  VIRTUAL_KEY,
-} from '@/share/core/constant';
-import emitter from '@/share/core/emitter';
-import logger from '@/share/core/logger';
-import notify from '@/share/core/notify';
+import { VIRTUAL_KEY } from '@/share/core/constant';
 import { prefs } from '@/share/core/prefs';
 import type { Rule, RuleWithVirtualKey } from '@/share/core/types';
-import { getVirtualKey } from '@/share/core/utils';
-import Api from '@/share/pages/api';
+import useGroupOrder from '@/share/hooks/use-group-order';
 import RuleFilterPanel from './filter';
 import Float from './float';
+import GroupSortModal from './group-sort-modal';
+import useExpanded from './hooks/use-expanded';
+import useRuleGroups from './hooks/use-rule-groups';
+import useSelection from './hooks/use-selection';
+import useTargetRule from './hooks/use-target-rule';
 import RuleGroupCard from './rule-group-card';
-import { batchShare, remove } from './utils';
+import RulesToolbar from './rules-toolbar';
 
 interface RulesProps {
   visible: boolean;
@@ -45,572 +22,135 @@ interface RulesProps {
   targetRule?: { table: string; id: number };
 }
 
-interface GroupItem {
-  name: string;
-  rules: RuleWithVirtualKey[];
-}
+const Rules = ({ visible, onEdit, targetRule }: RulesProps) => {
+  const { loading, group } = useRuleGroups();
+  const { expanded, setExpanded, toggle, expand } = useExpanded();
+  const selection = useSelection(group);
+  const groupNames = Object.keys(group);
+  const { orderedNames, saveOrder } = useGroupOrder(groupNames);
 
-interface RulesState {
-  loading: boolean;
-  group: { [key: string]: GroupItem };
-  isEnableSelect: boolean;
-  selectedKeys: string[];
-  float: RuleWithVirtualKey[];
-  collapsed: string[];
-  filterVisible: boolean;
-}
+  const [float, setFloat] = useState<RuleWithVirtualKey[]>([]);
+  const [filterVisible, setFilterVisible] = useState(false);
+  const [sortVisible, setSortVisible] = useState(false);
+  const listRef = useRef<HTMLDivElement>(null);
+  const initializedRef = useRef(false);
 
-class Rules extends React.Component<RulesProps, RulesState> {
-  // 默认展开/收起
-  private isCollapse = true;
-  private listRef = React.createRef<HTMLDivElement>();
-  private handledTargetKey?: string;
-
-  constructor(props: any) {
-    super(props);
-
-    this.handleSelect = this.handleSelect.bind(this);
-    this.handleRuleUpdateEvent = this.handleRuleUpdateEvent.bind(this);
-    this.handleRuleDeleteEvent = this.handleRuleDeleteEvent.bind(this);
-    this.handleHasRuleUpdate = this.handleHasRuleUpdate.bind(this);
-    this.toggleSelect = this.toggleSelect.bind(this);
-    this.handleToggleSelectAll = this.handleToggleSelectAll.bind(this);
-    this.handleBatchEnable = this.handleBatchEnable.bind(this);
-    this.handleBatchMove = this.handleBatchMove.bind(this);
-    this.handleBatchShare = this.handleBatchShare.bind(this);
-    this.handleBatchDelete = this.handleBatchDelete.bind(this);
-    this.handlePreview = this.handlePreview.bind(this);
-    this.handleToggleFilter = this.handleToggleFilter.bind(this);
-    this.handleCloseFilter = this.handleCloseFilter.bind(this);
-
-    this.state = {
-      loading: false,
-      group: {},
-      isEnableSelect: false,
-      selectedKeys: [],
-      float: [],
-      collapsed: [],
-      filterVisible: false,
-    };
-
+  // 首次加载完成后，按偏好决定默认展开还是收起
+  useEffect(() => {
+    if (loading || initializedRef.current || groupNames.length === 0) {
+      return;
+    }
+    initializedRef.current = true;
     prefs.ready(() => {
-      this.isCollapse = Boolean(prefs.get('manage-collapse-group'));
+      setExpanded(prefs.get('manage-collapse-group') ? [] : groupNames);
     });
-  }
+  }, [loading, groupNames, setExpanded]);
 
-  componentDidMount() {
-    prefs.ready(() => this.load());
-    notify.event.on(EVENTs.RULE_UPDATE, this.handleRuleUpdateEvent);
-    notify.event.on(EVENTs.RULE_DELETE, this.handleRuleDeleteEvent);
-  }
+  useTargetRule({
+    targetRule,
+    loading,
+    group,
+    orderedNames,
+    listRef,
+    expandGroup: expand,
+    onEdit,
+  });
 
-  componentWillUnmount() {
-    // console.log()
-    notify.event.off(EVENTs.RULE_UPDATE, this.handleRuleUpdateEvent);
-    notify.event.off(EVENTs.RULE_DELETE, this.handleRuleDeleteEvent);
-  }
-
-  componentDidUpdate(prevProps: RulesProps, prevState: RulesState) {
-    const target = this.props.targetRule;
-
-    if (!target || this.state.loading) {
-      return;
-    }
-
-    const targetKey = `${target.table}-${target.id}`;
-
-    // 防止同一规则重复定位和重复打开编辑窗口
-    if (this.handledTargetKey === targetKey) {
-      return;
-    }
-
-    // 仅在目标参数变化或规则列表加载完成时执行
-    const targetChanged =
-      prevProps.targetRule?.table !== target.table ||
-      prevProps.targetRule?.id !== target.id;
-    const rulesLoaded = prevState.loading && !this.state.loading;
-
-    if (!targetChanged && !rulesLoaded) {
-      return;
-    }
-
-    // 查找目标规则所属分组
-    const group = Object.values(this.state.group).find(item =>
-      item.rules.some(rule => rule[VIRTUAL_KEY] === targetKey),
+  const handlePreview = useCallback((item: RuleWithVirtualKey) => {
+    setFloat(prev =>
+      prev.includes(item) ? prev.filter(it => it !== item) : [...prev, item],
     );
+  }, []);
 
-    if (!group) {
-      return;
-    }
+  const handleToggleFilter = useCallback(() => {
+    setFilterVisible(prev => !prev);
+  }, []);
 
-    const rule = group.rules.find(item => item[VIRTUAL_KEY] === targetKey);
+  const handleCloseFilter = useCallback(() => {
+    setFilterVisible(false);
+  }, []);
 
-    if (!rule) {
-      return;
-    }
+  const handleSortGroups = useCallback(() => {
+    setSortVisible(true);
+  }, []);
 
-    // 必须在 setState 之前标记，防止再次进入时重复处理
-    this.handledTargetKey = targetKey;
+  const handleCloseSort = useCallback(() => {
+    setSortVisible(false);
+  }, []);
 
-    const scrollAndEdit = () => {
-      requestAnimationFrame(() => {
-        const container = this.listRef.current;
-
-        // 优先通过 Table 的 data-row-key 定位
-        let row = Array.from(
-          container?.querySelectorAll<HTMLElement>('[data-row-key]') ?? [],
-        ).find(item => item.getAttribute('data-row-key') === targetKey);
-
-        // 如果当前 Semi Table 没有输出 data-row-key，
-        // 则通过分组位置和规则位置定位
-        if (!row && container) {
-          const groups = Object.values(this.state.group);
-          const groupIndex = groups.findIndex(item => item.name === group.name);
-          const ruleIndex = group.rules.findIndex(
-            item => item[VIRTUAL_KEY] === targetKey,
-          );
-
-          const cards = container.querySelectorAll<HTMLElement>('.semi-card');
-          const rows = cards[groupIndex]?.querySelectorAll<HTMLElement>(
-            '.semi-table-tbody tr',
-          );
-
-          row = rows?.[ruleIndex];
-        }
-
-        // 滚动到目标规则
-        row?.scrollIntoView({
-          behavior: 'smooth',
-          block: 'center',
-        });
-
-        // 打开编辑窗口
-        this.props.onEdit(rule);
-      });
-    };
-
-    // collapsed 数组实际保存的是已展开分组
-    if (!this.state.collapsed.includes(group.name)) {
-      this.setState(
-        prevState => ({
-          collapsed: [...prevState.collapsed, group.name],
-        }),
-        scrollAndEdit,
-      );
-    } else {
-      scrollAndEdit();
-    }
-  }
-
-  // 事件响应 - 通知 - 规则更新
-  handleRuleUpdateEvent(request: any) {
-    logger.debug('[options/rules] rules update', () => [request]);
-    const rule: Rule = request.target;
-    // 寻找ID相同的
-    let sameItem: Rule | null = null;
-    const fromGroupKey = '';
-    let fromGroup: Rule[] | null = null;
-    let toGroup: Rule[] | null = null;
-    const groupKeys = Object.keys(this.state.group);
-    for (const key of groupKeys) {
-      const group = this.state.group[key];
-      for (const currentRule of group.rules) {
-        if (getVirtualKey(currentRule) === getVirtualKey(rule)) {
-          sameItem = currentRule;
-          fromGroup = group.rules;
-          break;
-        }
-      }
-      // 另外找一下同名的group
-      if (group.name === rule.group) {
-        toGroup = group.rules;
-      }
-      if (sameItem && toGroup) {
-        break;
-      }
-    }
-    const displayRule = { ...rule, [VIRTUAL_KEY]: getVirtualKey(rule) };
-    // 新的分组
-    if (!toGroup) {
-      // 插入一个新的Group
-      this.state.group[rule.group] = {
-        name: rule.group,
-        rules: [],
-      };
-      toGroup = this.state.group[rule.group].rules;
-    }
-    // 新的规则，直接插入
-    if (!sameItem) {
-      toGroup.push(displayRule);
-    } else if (fromGroup === toGroup) {
-      // 在同一个Group里面，直接替换掉就行了
-      fromGroup.splice(fromGroup.indexOf(sameItem), 1, displayRule);
-    } else {
-      // 不同的Group
-      if (fromGroup) {
-        fromGroup.splice(fromGroup.indexOf(sameItem), 1);
-      }
-      toGroup.push(displayRule);
-    }
-    // 分组没了？
-    if (
-      fromGroup &&
-      fromGroup.length === 0 &&
-      fromGroupKey !== t('ungrouped')
-    ) {
-      delete this.state.group[fromGroupKey];
-    }
-    this.forceUpdate();
-  }
-
-  // 事件响应 - 通知 - 规则删除
-  handleRuleDeleteEvent(request: any) {
-    const { id, table } = request;
-    const virtualKey = `${table}-${id}`;
-    // 寻找key相同的
-    let sameItem: Rule | null = null;
-    let fromGroupKey = '';
-    let fromGroup: Rule[] | null = null;
-    const groupKeys = Object.keys(this.state.group);
-    for (const key of groupKeys) {
-      const group = this.state.group[key];
-      const currentRule = group.rules.find(x => x[VIRTUAL_KEY] === virtualKey);
-      if (currentRule) {
-        sameItem = currentRule;
-        fromGroup = group.rules;
-        fromGroupKey = key;
-        break;
-      }
-    }
-    if (fromGroup) {
-      if (sameItem) {
-        fromGroup.splice(fromGroup.indexOf(sameItem), 1);
-      }
-      // 分组没了？
-      if (fromGroup.length === 0 && fromGroupKey !== t('ungrouped')) {
-        delete this.state.group[fromGroupKey];
-      }
-    }
-    this.forceUpdate();
-  }
-
-  handleHasRuleUpdate() {
-    this.load();
-  }
-
-  // 多选相关
-  handleSelect(selectedRowKeys?: any[]) {
-    this.setState({
-      selectedKeys: selectedRowKeys || [],
-    });
-  }
-
-  // 预览
-  handlePreview(item: RuleWithVirtualKey) {
-    this.setState(prevState => {
-      const newFloat = [...prevState.float];
-      if (!newFloat.includes(item)) {
-        newFloat.push(item);
-      } else {
-        newFloat.splice(newFloat.indexOf(item), 1);
-      }
-      return {
-        float: newFloat,
-      };
-    });
-  }
-
-  // 切换多选状态
-  toggleSelect() {
-    this.setState(prevState => ({
-      isEnableSelect: !prevState.isEnableSelect,
-      selectedKeys: [],
-    }));
-  }
-
-  // 规则筛选相关
-  handleToggleFilter() {
-    this.setState(prevState => ({
-      filterVisible: !prevState.filterVisible,
-    }));
-  }
-
-  handleCloseFilter() {
-    this.setState({
-      filterVisible: false,
-    });
-  }
-
-  getSelectedRules() {
-    const { selectedKeys, group } = this.state;
-    if (selectedKeys.length === 0) {
-      return [];
-    }
-    // 通过 VIRTUAL_KEY 筛选出所需要的
-    const batch = ([] as RuleWithVirtualKey[])
-      .concat(...Object.values(group).map(it => it.rules))
-      .filter(it => selectedKeys.includes(it[VIRTUAL_KEY]));
-    return batch;
-  }
-
-  // 切换全选/全不选
-  handleToggleSelectAll() {
-    if (this.state.selectedKeys.length > 0) {
-      this.setState({
-        selectedKeys: [],
-      });
-    } else {
-      const keys: string[] = [];
-      Object.values(this.state.group).forEach(g => {
-        g.rules.forEach(it => {
-          keys.push(it[VIRTUAL_KEY]);
-        });
-      });
-      this.setState({
-        selectedKeys: keys,
-      });
-    }
-  }
-
-  // 切换开启、关闭状态
-  async handleBatchEnable() {
-    const batch = this.getSelectedRules();
-    if (batch.length === 0) {
-      return;
-    }
-    const setTo = !batch[0].enable;
-    batch.forEach(rule => {
-      if (rule.enable === setTo) {
-        return;
-      }
-      rule.enable = setTo;
-      Api.saveRule(rule);
-    });
-  }
-  // 批量移动群组
-  handleBatchMove() {
-    selectGroup().then(newGroup => {
-      const batch = this.getSelectedRules().filter(it => it.group !== newGroup);
-      batch.forEach(it => {
-        it.group = newGroup;
-        Api.saveRule(it);
-      });
-    });
-  }
-  // 批量分享
-  handleBatchShare() {
-    batchShare(this.getSelectedRules());
-  }
-  // 批量删除
-  handleBatchDelete() {
-    Modal.warning({
-      title: t('delete_confirm'),
-      onOk: async () => {
-        const batch = this.getSelectedRules();
-        batch.forEach(item => remove(item));
-      },
-    });
-  }
-
-  handleCollapse(name: string) {
-    this.setState(prevState => {
-      const collapsed = [...prevState.collapsed];
-      if (collapsed.includes(name)) {
-        collapsed.splice(collapsed.indexOf(name), 1);
-      } else {
-        collapsed.push(name);
-      }
-      return { collapsed };
-    });
-  }
-
-  load() {
-    if (this.state.loading) {
-      return;
-    }
-    this.setState({
-      group: {},
-      loading: true,
-    });
-    const result = {
-      [t('ungrouped')]: {
-        name: t('ungrouped'),
-        rules: [] as RuleWithVirtualKey[],
-      },
-    };
-    // 记录总数
-    let finishCount = 0;
-    const checkResult = (table: TABLE_NAMES, response: Rule[] | null) => {
-      if (!response) {
-        // Browser is starting up
-        requestRules(table);
-        return;
-      }
-      response.forEach(item => {
-        if (typeof result[item.group] === 'undefined') {
-          result[item.group] = {
-            name: item.group,
-            rules: [],
-          };
-        }
-        (item as RuleWithVirtualKey)[VIRTUAL_KEY] = getVirtualKey(item);
-        result[item.group].rules.push(item as RuleWithVirtualKey);
-      });
-      // 加载完成啦
-      if (++finishCount >= TABLE_NAMES_ARR.length) {
-        // 默认是否展开
-        const collapsed = this.isCollapse ? [] : Object.keys(result);
-        this.setState({
-          group: result,
-          collapsed,
-          loading: false,
-        });
-        emitter.emit(emitter.EVENT_GROUP_UPDATE, Object.keys(result));
-      }
-    };
-    const requestRules = (table: TABLE_NAMES) => {
-      setTimeout(() => {
-        Api.getRules(table).then(res => checkResult(table, res));
-      });
-    };
-    TABLE_NAMES_ARR.forEach(table => requestRules(table));
-  }
-
-  render() {
-    const { collapsed } = this.state;
-
-    return (
-      <section
-        className={cx('section-rules', {
-          visible: this.props.visible,
-          'in-visible': !this.props.visible,
-        })}
-      >
+  return (
+    <section
+      className={cx('section-rules', {
+        visible,
+        'in-visible': !visible,
+      })}
+      style={{ paddingBottom: 0 }}
+    >
+      <RulesToolbar
+        isEnableSelect={selection.isEnableSelect}
+        onToggleSelect={selection.toggleSelect}
+        onToggleSelectAll={selection.toggleSelectAll}
+        onBatchEnable={selection.batchEnable}
+        onBatchMove={selection.batchMove}
+        onBatchShare={selection.batchShare}
+        onBatchDelete={selection.batchDelete}
+        onToggleFilter={handleToggleFilter}
+        onSortGroups={handleSortGroups}
+        onAdd={() => onEdit()}
+      />
+      <Spin size="large" spinning={loading}>
         <div
+          ref={listRef}
           className={css`
-            display: flex;
-            flex-direction: row;
-            padding-bottom: 16px;
+            height: calc(100vh - 72px);
+            box-sizing: border-box;
+            padding-bottom: 4px;
+            overflow: auto;
           `}
         >
-          <Typography.Title heading={2}>{t('rule_list')}</Typography.Title>
-          <div style={{ flexGrow: 1 }} />
-          <Space>
-            <ButtonGroup>
-              {this.state.isEnableSelect && (
-                <React.Fragment>
-                  <Button
-                    theme="light"
-                    type="tertiary"
-                    onClick={this.handleToggleSelectAll}
-                    icon={<IconCheckList />}
-                  >
-                    {t('select_all')}
-                  </Button>
-                  <Button
-                    theme="light"
-                    type="tertiary"
-                    onClick={this.handleBatchEnable}
-                    icon={<IconUnlock />}
-                  >
-                    {t('enable')}
-                  </Button>
-                  <Button
-                    theme="light"
-                    type="tertiary"
-                    onClick={this.handleBatchMove}
-                    icon={<IconFavoriteList />}
-                  >
-                    {t('group')}
-                  </Button>
-                  <Button
-                    theme="light"
-                    type="tertiary"
-                    onClick={this.handleBatchShare}
-                    icon={<IconSend />}
-                  >
-                    {t('share')}
-                  </Button>
-                  <Button
-                    theme="light"
-                    type="tertiary"
-                    onClick={this.handleBatchDelete}
-                    icon={<IconDelete />}
-                  >
-                    {t('delete')}
-                  </Button>
-                </React.Fragment>
-              )}
-              <Button
-                theme="light"
-                type="tertiary"
-                onClick={this.toggleSelect}
-                icon={<IconList />}
-              >
-                {t('batch_mode')}
-              </Button>
-            </ButtonGroup>
-            <Button
-              theme="light"
-              type="tertiary"
-              onClick={this.handleToggleFilter}
-              icon={<IconFilter />}
-            >
-              {t('filter_rules')}
-            </Button>
-            <Button
-              type="primary"
-              theme="solid"
-              onClick={() => this.props.onEdit()}
-              icon={<IconPlusCircle />}
-            >
-              {t('add')}
-            </Button>
-          </Space>
+          {orderedNames.map(name => {
+            const item = group[name];
+            if (!item) {
+              return null;
+            }
+            return (
+              <RuleGroupCard
+                key={name}
+                name={name}
+                expanded={expanded.includes(name)}
+                rules={item.rules}
+                isEnableSelect={selection.isEnableSelect}
+                onSelect={selection.handleSelect}
+                selectedKeys={selection.selectedKeys}
+                onCollapse={toggle}
+                onRuleEdit={onEdit}
+                onRulePreview={handlePreview}
+              />
+            );
+          })}
         </div>
-        <Spin size="large" spinning={this.state.loading}>
-          <div
-            ref={this.listRef}
-            className={css`
-              height: calc(100vh - 88px);
-              overflow: auto;
-            `}
-          >
-            {Object.values(this.state.group).map(group => {
-              const { name } = group;
-              return (
-                <RuleGroupCard
-                  key={name}
-                  name={group.name}
-                  collapsed={collapsed.includes(name)}
-                  rules={group.rules}
-                  isEnableSelect={this.state.isEnableSelect}
-                  onSelect={this.handleSelect}
-                  selectedKeys={this.state.selectedKeys}
-                  onCollapse={() => this.handleCollapse(name)}
-                  onRuleEdit={this.props.onEdit}
-                  onRulePreview={this.handlePreview}
-                />
-              );
-            })}
-          </div>
-        </Spin>
-        {this.state.float.map(it => (
-          <Float
-            key={it[VIRTUAL_KEY]}
-            rule={it}
-            onClose={() => this.handlePreview(it)}
-          />
-        ))}
-        <RuleFilterPanel
-          visible={this.state.filterVisible}
-          onClose={this.handleCloseFilter}
-          onRuleEdit={this.props.onEdit}
-          onRulePreview={this.handlePreview}
+      </Spin>
+      {float.map(it => (
+        <Float
+          key={it[VIRTUAL_KEY]}
+          rule={it}
+          onClose={() => handlePreview(it)}
         />
-      </section>
-    );
-  }
-}
+      ))}
+      <RuleFilterPanel
+        visible={filterVisible}
+        onClose={handleCloseFilter}
+        onRuleEdit={onEdit}
+        onRulePreview={handlePreview}
+      />
+      <GroupSortModal
+        visible={sortVisible}
+        names={orderedNames}
+        onSave={saveOrder}
+        onClose={handleCloseSort}
+      />
+    </section>
+  );
+};
 
 export default withErrorBoundary(Rules);

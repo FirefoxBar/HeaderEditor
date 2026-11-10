@@ -352,6 +352,12 @@
   "more_information": {
     "message": "Mer information"
   },
+  "move_down": {
+    "message": "Flytta ned"
+  },
+  "move_up": {
+    "message": "Flytta upp"
+  },
   "name": {
     "message": "Namn"
   },
@@ -528,6 +534,15 @@
   },
   "show_rules_on_popup": {
     "message": "Visa dessa regler på popup-panelen"
+  },
+  "sort_groups": {
+    "message": "Sortera grupper"
+  },
+  "sort_name_asc": {
+    "message": "Namn A-Z"
+  },
+  "sort_name_desc": {
+    "message": "Namn Z-A"
   },
   "stage_request": {
     "message": "Förfrågan"

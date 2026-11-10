@@ -11,6 +11,7 @@ import {
 import { Button, ButtonGroup, Card, Dropdown, Table } from '@douyinfe/semi-ui';
 import type { RowSelectionProps } from '@douyinfe/semi-ui/lib/es/table';
 import { css } from '@emotion/css';
+import { memo } from 'react';
 import { getExportName, selectGroup } from '@/pages/options/utils';
 import Modal from '@/share/components/modal';
 import { t } from '@/share/core/browser';
@@ -26,7 +27,7 @@ import { remove, toggleRule } from './utils';
 
 interface RuleCardProps {
   name: string;
-  collapsed: boolean;
+  expanded: boolean;
 
   rules: RuleWithVirtualKey[];
 
@@ -34,7 +35,7 @@ interface RuleCardProps {
   onSelect?: RowSelectionProps<RuleWithVirtualKey>['onChange'];
   selectedKeys: string[];
 
-  onCollapse: () => void;
+  onCollapse: (name: string) => void;
 
   onRuleEdit: (rule: RuleWithVirtualKey) => void;
   onRulePreview: (rule: RuleWithVirtualKey) => void;
@@ -43,7 +44,7 @@ interface RuleCardProps {
 const RuleGroupCard = (props: RuleCardProps) => {
   const {
     name,
-    collapsed,
+    expanded,
     rules,
     isEnableSelect,
     onCollapse,
@@ -86,7 +87,7 @@ const RuleGroupCard = (props: RuleCardProps) => {
 
       .semi-card-body {
         padding: 0;
-        display: ${!collapsed ? 'none' : 'block'}
+        display: ${expanded ? 'block' : 'none'}
       }
 
       .switch-container {
@@ -155,12 +156,11 @@ const RuleGroupCard = (props: RuleCardProps) => {
                   if (name === newGroup) {
                     return;
                   }
-                  // 鏇存柊瑙勫垯
+                  // 更新规则
                   return Promise.all(
-                    rules.map(item => {
-                      item.group = newGroup;
-                      return Api.saveRule(item);
-                    }),
+                    rules.map(item =>
+                      Api.saveRule({ ...item, group: newGroup }),
+                    ),
                   );
                 },
                 disabled: name === t('ungrouped'),
@@ -191,7 +191,7 @@ const RuleGroupCard = (props: RuleCardProps) => {
             icon={
               <IconChevronDown
                 style={{
-                  transform: collapsed ? 'rotateZ(180deg)' : 'rotateZ(0deg)',
+                  transform: expanded ? 'rotateZ(180deg)' : 'rotateZ(0deg)',
                 }}
                 className={css`
                   display: inline-block;
@@ -200,7 +200,7 @@ const RuleGroupCard = (props: RuleCardProps) => {
               />
             }
             type="tertiary"
-            onClick={onCollapse}
+            onClick={() => onCollapse(name)}
           />
         </ButtonGroup>
       }
@@ -218,4 +218,4 @@ const RuleGroupCard = (props: RuleCardProps) => {
   );
 };
 
-export default RuleGroupCard;
+export default memo(RuleGroupCard);
