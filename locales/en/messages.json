@@ -277,6 +277,12 @@
   "import_override": {
     "message": "Override existing"
   },
+  "import_paste_json": {
+    "message": "Paste JSON"
+  },
+  "import_paste_json_placeholder": {
+    "message": "Paste the exported JSON content here"
+  },
   "import_success": {
     "message": "Successfully imported"
   },

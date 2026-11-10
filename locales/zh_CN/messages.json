@@ -277,6 +277,12 @@
   "import_override": {
     "message": "覆盖已有"
   },
+  "import_paste_json": {
+    "message": "粘贴JSON"
+  },
+  "import_paste_json_placeholder": {
+    "message": "在此粘贴导出的 JSON 内容"
+  },
   "import_success": {
     "message": "导入成功"
   },
