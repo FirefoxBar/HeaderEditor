@@ -85,6 +85,15 @@
   "common_unmark": {
     "message": "Unmark"
   },
+  "copy_as_json": {
+    "message": "Copy as JSON"
+  },
+  "copy_failed": {
+    "message": "Copy failed"
+  },
+  "copy_success": {
+    "message": "Copied to clipboard"
+  },
   "created_time": {
     "message": "Created time"
   },

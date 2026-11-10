@@ -85,6 +85,15 @@
   "common_unmark": {
     "message": "よく使うを解除"
   },
+  "copy_as_json": {
+    "message": "JSON としてコピー"
+  },
+  "copy_failed": {
+    "message": "コピーに失敗しました"
+  },
+  "copy_success": {
+    "message": "クリップボードにコピーしました"
+  },
   "created_time": {
     "message": "作成日時"
   },
@@ -276,6 +285,12 @@
   },
   "import_override": {
     "message": "既存を上書き"
+  },
+  "import_paste_json": {
+    "message": "JSON を貼り付け"
+  },
+  "import_paste_json_placeholder": {
+    "message": "エクスポートした JSON コンテンツをここに貼り付けてください"
   },
   "import_success": {
     "message": "インポートしました"

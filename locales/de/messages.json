@@ -85,6 +85,15 @@
   "common_unmark": {
     "message": "Favoritenmarkierung aufheben"
   },
+  "copy_as_json": {
+    "message": "Als JSON kopieren"
+  },
+  "copy_failed": {
+    "message": "Kopieren fehlgeschlagen"
+  },
+  "copy_success": {
+    "message": "In die Zwischenablage kopiert"
+  },
   "created_time": {
     "message": "Erstellungszeit"
   },
@@ -276,6 +285,12 @@
   },
   "import_override": {
     "message": "Vorhandene überschreiben"
+  },
+  "import_paste_json": {
+    "message": "JSON einfügen"
+  },
+  "import_paste_json_placeholder": {
+    "message": "Fügen Sie den exportierten JSON-Inhalt hier ein"
   },
   "import_success": {
     "message": "Erfolgreich importiert"

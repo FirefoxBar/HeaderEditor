@@ -15,15 +15,13 @@ import { memo } from 'react';
 import { getExportName, selectGroup } from '@/pages/options/utils';
 import Modal from '@/share/components/modal';
 import { t } from '@/share/core/browser';
-import { TABLE_NAMES_ARR, VIRTUAL_KEY } from '@/share/core/constant';
-import { createExport } from '@/share/core/rule-utils';
+import { VIRTUAL_KEY } from '@/share/core/constant';
 import type { RuleWithVirtualKey } from '@/share/core/types';
-import { getTableName } from '@/share/core/utils';
 import useMarkCommon from '@/share/hooks/use-mark-common';
 import Api from '@/share/pages/api';
 import { save as saveFile } from '@/share/pages/file';
 import { useRuleColumns } from './rule-columns';
-import { remove, toggleRule } from './utils';
+import { createShareJson, remove, toggleRule } from './utils';
 
 interface RuleCardProps {
   name: string;
@@ -124,15 +122,7 @@ const RuleGroupCard = (props: RuleCardProps) => {
                 node: 'item',
                 name: t('share'),
                 onClick: () => {
-                  const result: any = {};
-                  TABLE_NAMES_ARR.forEach(tb => {
-                    result[tb] = [];
-                  });
-                  rules.forEach(e => result[getTableName(e.ruleType)].push(e));
-                  saveFile(
-                    JSON.stringify(createExport(result), null, '\t'),
-                    getExportName(),
-                  );
+                  saveFile(createShareJson(rules), getExportName());
                 },
                 icon: <IconSend />,
               },

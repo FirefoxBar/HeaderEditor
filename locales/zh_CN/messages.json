@@ -85,6 +85,15 @@
   "common_unmark": {
     "message": "取消常用"
   },
+  "copy_as_json": {
+    "message": "复制为JSON"
+  },
+  "copy_failed": {
+    "message": "复制失败"
+  },
+  "copy_success": {
+    "message": "已复制到剪贴板"
+  },
   "created_time": {
     "message": "创建时间"
   },

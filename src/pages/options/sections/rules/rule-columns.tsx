@@ -1,5 +1,6 @@
 import {
   IconBranch,
+  IconCopy,
   IconCopyAdd,
   IconDelete,
   IconEdit,
@@ -31,7 +32,7 @@ import usePref from '@/share/hooks/use-pref';
 import Api from '@/share/pages/api';
 import { clone } from '@/share/pages/rule-utils';
 import { textEllipsis } from '@/share/pages/styles';
-import { remove, toggleRule } from './utils';
+import { copyAsJson, remove, toggleRule } from './utils';
 
 interface RuleColumnsOptions {
   onRuleEdit: (rule: RuleWithVirtualKey) => void;
@@ -185,6 +186,12 @@ export function useRuleColumns({
                   name: t('clone'),
                   onClick: () => clone(item),
                   icon: <IconCopyAdd />,
+                },
+                {
+                  node: 'item',
+                  name: t('copy_as_json'),
+                  onClick: () => copyAsJson([item]),
+                  icon: <IconCopy />,
                 },
                 {
                   node: 'divider',

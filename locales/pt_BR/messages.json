@@ -85,6 +85,15 @@
   "common_unmark": {
     "message": "Desmarcar"
   },
+  "copy_as_json": {
+    "message": "Copiar como JSON"
+  },
+  "copy_failed": {
+    "message": "Falha ao copiar"
+  },
+  "copy_success": {
+    "message": "Copiado para a área de transferência"
+  },
   "created_time": {
     "message": "Data de criação"
   },
@@ -276,6 +285,12 @@
   },
   "import_override": {
     "message": "Sobrescrever existentes"
+  },
+  "import_paste_json": {
+    "message": "Colar JSON"
+  },
+  "import_paste_json_placeholder": {
+    "message": "Cole o conteúdo JSON exportado aqui"
   },
   "import_success": {
     "message": "Importado com sucesso"

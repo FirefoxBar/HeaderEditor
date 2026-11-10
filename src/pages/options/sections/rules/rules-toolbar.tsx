@@ -1,5 +1,6 @@
 import {
   IconCheckList,
+  IconCopy,
   IconDelete,
   IconFavoriteList,
   IconFilter,
@@ -20,6 +21,7 @@ interface RulesToolbarProps {
   onBatchEnable: () => void;
   onBatchMove: () => void;
   onBatchShare: () => void;
+  onBatchCopy: () => void;
   onBatchDelete: () => void;
   onToggleFilter: () => void;
   onSortGroups: () => void;
@@ -33,6 +35,7 @@ const RulesToolbar = ({
   onBatchEnable,
   onBatchMove,
   onBatchShare,
+  onBatchCopy,
   onBatchDelete,
   onToggleFilter,
   onSortGroups,
@@ -82,6 +85,14 @@ const RulesToolbar = ({
               icon={<IconSend />}
             >
               {t('share')}
+            </Button>
+            <Button
+              theme="light"
+              type="tertiary"
+              onClick={onBatchCopy}
+              icon={<IconCopy />}
+            >
+              {t('copy_as_json')}
             </Button>
             <Button
               theme="light"

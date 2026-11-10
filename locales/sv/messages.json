@@ -85,6 +85,15 @@
   "common_unmark": {
     "message": "Ta bort favoritmarkering"
   },
+  "copy_as_json": {
+    "message": "Kopiera som JSON"
+  },
+  "copy_failed": {
+    "message": "Kopieringen misslyckades"
+  },
+  "copy_success": {
+    "message": "Kopierat till urklipp"
+  },
   "created_time": {
     "message": "Skapad"
   },
@@ -276,6 +285,12 @@
   },
   "import_override": {
     "message": "Skriv över befintlig"
+  },
+  "import_paste_json": {
+    "message": "Klistra in JSON"
+  },
+  "import_paste_json_placeholder": {
+    "message": "Klistra in det exporterade JSON-innehållet här"
   },
   "import_success": {
     "message": "Importen lyckades"

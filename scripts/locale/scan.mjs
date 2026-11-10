@@ -191,6 +191,9 @@ function main() {
           encoding: 'utf8',
         },
       );
+      fs.writeFileSync(path.join(NEW_DIR, 'all-in-one.json'), '', {
+        encoding: 'utf8',
+      });
     }
   } else {
     for (const lang of langs) {

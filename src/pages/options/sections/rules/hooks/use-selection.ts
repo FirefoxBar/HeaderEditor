@@ -4,7 +4,7 @@ import Modal from '@/share/components/modal';
 import { t } from '@/share/core/browser';
 import { VIRTUAL_KEY } from '@/share/core/constant';
 import Api from '@/share/pages/api';
-import { batchShare, remove } from '../utils';
+import { batchShare, copyAsJson, remove } from '../utils';
 import type { GroupMap } from './use-rule-groups';
 
 export default function useSelection(group: GroupMap) {
@@ -60,6 +60,13 @@ export default function useSelection(group: GroupMap) {
     batchShare(selectedRules);
   }, [selectedRules]);
 
+  const batchCopyAsJson = useCallback(() => {
+    if (selectedRules.length === 0) {
+      return;
+    }
+    copyAsJson(selectedRules);
+  }, [selectedRules]);
+
   const batchDelete = useCallback(() => {
     Modal.warning({
       title: t('delete_confirm'),
@@ -79,6 +86,7 @@ export default function useSelection(group: GroupMap) {
     batchEnable,
     batchMove,
     batchShare: batchShareRules,
+    batchCopy: batchCopyAsJson,
     batchDelete,
   };
 }

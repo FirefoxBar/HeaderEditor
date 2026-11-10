@@ -85,6 +85,15 @@
   "common_unmark": {
     "message": "Rimuovi contrassegno"
   },
+  "copy_as_json": {
+    "message": "Copia come JSON"
+  },
+  "copy_failed": {
+    "message": "Copia non riuscita"
+  },
+  "copy_success": {
+    "message": "Copiato negli appunti"
+  },
   "created_time": {
     "message": "Data di creazione"
   },
@@ -276,6 +285,12 @@
   },
   "import_override": {
     "message": "Sovrascrivi esistenti"
+  },
+  "import_paste_json": {
+    "message": "Incolla JSON"
+  },
+  "import_paste_json_placeholder": {
+    "message": "Incolla qui il contenuto JSON esportato"
   },
   "import_success": {
     "message": "Importazione riuscita"

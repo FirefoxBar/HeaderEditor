@@ -93,6 +93,7 @@ const Rules = ({ visible, onEdit, targetRule }: RulesProps) => {
         onBatchEnable={selection.batchEnable}
         onBatchMove={selection.batchMove}
         onBatchShare={selection.batchShare}
+        onBatchCopy={selection.batchCopy}
         onBatchDelete={selection.batchDelete}
         onToggleFilter={handleToggleFilter}
         onSortGroups={handleSortGroups}

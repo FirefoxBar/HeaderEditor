@@ -85,6 +85,15 @@
   "common_unmark": {
     "message": "Убрать из избранного"
   },
+  "copy_as_json": {
+    "message": "Копировать как JSON"
+  },
+  "copy_failed": {
+    "message": "Не удалось скопировать"
+  },
+  "copy_success": {
+    "message": "Скопировано в буфер обмена"
+  },
   "created_time": {
     "message": "Время создания"
   },
@@ -276,6 +285,12 @@
   },
   "import_override": {
     "message": "Перезаписать существующее"
+  },
+  "import_paste_json": {
+    "message": "Вставить JSON"
+  },
+  "import_paste_json_placeholder": {
+    "message": "Вставьте сюда экспортированный JSON-код"
   },
   "import_success": {
     "message": "Импорт выполнен успешно"

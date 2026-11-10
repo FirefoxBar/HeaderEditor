@@ -85,6 +85,15 @@
   "common_unmark": {
     "message": "즐겨찾기 해제"
   },
+  "copy_as_json": {
+    "message": "JSON으로 복사"
+  },
+  "copy_failed": {
+    "message": "복사 실패"
+  },
+  "copy_success": {
+    "message": "클립보드에 복사됨"
+  },
   "created_time": {
     "message": "생성 시간"
   },
@@ -276,6 +285,12 @@
   },
   "import_override": {
     "message": "기존 항목 덮어쓰기"
+  },
+  "import_paste_json": {
+    "message": "JSON 붙여넣기"
+  },
+  "import_paste_json_placeholder": {
+    "message": "내보낸 JSON 콘텐츠를 여기에 붙여넣으세요"
   },
   "import_success": {
     "message": "성공적으로 가져왔습니다."
