@@ -41,6 +41,9 @@
   "cancel": {
     "message": "Отмена"
   },
+  "case_sensitive": {
+    "message": "С учётом регистра"
+  },
   "check_update": {
     "message": "Проверить обновления"
   },
@@ -249,6 +252,9 @@
   },
   "help": {
     "message": "Справка"
+  },
+  "ignore_case": {
+    "message": "Без учёта регистра"
   },
   "import": {
     "message": "Импорт"

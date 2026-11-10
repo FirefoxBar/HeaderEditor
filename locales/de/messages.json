@@ -41,6 +41,9 @@
   "cancel": {
     "message": "Abbrechen"
   },
+  "case_sensitive": {
+    "message": "Groß-/Kleinschreibung beachten"
+  },
   "check_update": {
     "message": "Nach Updates suchen"
   },
@@ -249,6 +252,9 @@
   },
   "help": {
     "message": "Hilfe"
+  },
+  "ignore_case": {
+    "message": "Groß-/Kleinschreibung ignorieren"
   },
   "import": {
     "message": "Importieren"

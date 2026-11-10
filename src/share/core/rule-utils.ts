@@ -25,6 +25,22 @@ export function isSupportHeaderMatch() {
   return chromeVersion >= 128;
 }
 
+/**
+ * 正则 / URLFilter 是否忽略大小写。
+ *
+ * 默认 true，与 declarativeNetRequest 的 isUrlFilterCaseSensitive
+ * 默认值 false（不区分大小写）保持一致；显式设为 false 时才区分大小写。
+ * 仅对 condition.regex 与 condition.urlFilter 生效。
+ */
+export function isIgnoreCase(rule: Pick<BasicRule, 'condition'>): boolean {
+  return rule.condition?.ignoreCase !== false;
+}
+
+/** 生成 JS RegExp 的 flags：正则需要 g 才能用于 replaceAll */
+export function getRegexFlags(ignoreCase: boolean, global = false): string {
+  return `${global ? 'g' : ''}${ignoreCase ? 'i' : ''}`;
+}
+
 export function detectRunner(rule: BasicRule): 'web_request' | 'dnr' {
   if (rule.forceRunner && rule.forceRunner !== 'auto') {
     if (rule.forceRunner === 'web_request' && ENABLE_WEB_REQUEST) {
@@ -82,11 +98,12 @@ export function initRule(
         responseHeaders,
         excludeResponseHeaders,
       } = rule.condition;
+      const ignoreCase = isIgnoreCase(rule);
       if (urlFilter) {
-        initd._filter_reg = createUrlFilterRegex(urlFilter);
+        initd._filter_reg = createUrlFilterRegex(urlFilter, ignoreCase);
       }
       if (regex) {
-        initd._reg = new RegExp(regex, 'g');
+        initd._reg = new RegExp(regex, getRegexFlags(ignoreCase, true));
       }
       if (excludeRegex) {
         initd._exclude = new RegExp(excludeRegex);
@@ -243,7 +260,10 @@ export function upgradeRuleFormat(s: OldRule) {
   return s;
 }
 
-export function createUrlFilterRegex(filter: string): RegExp {
+export function createUrlFilterRegex(
+  filter: string,
+  ignoreCase = true,
+): RegExp {
   if (!filter) {
     return /.*/;
   }
@@ -300,7 +320,7 @@ export function createUrlFilterRegex(filter: string): RegExp {
     }
   }
 
-  return new RegExp(regex, 'i');
+  return new RegExp(regex, ignoreCase ? 'i' : '');
 }
 
 export function isMatchUrl(rule: InitdRule, url: string): IS_MATCH {
@@ -329,7 +349,7 @@ export function isMatchUrl(rule: InitdRule, url: string): IS_MATCH {
     }
     if (urlFilter) {
       if (!rule._filter_reg) {
-        rule._filter_reg = createUrlFilterRegex(urlFilter);
+        rule._filter_reg = createUrlFilterRegex(urlFilter, isIgnoreCase(rule));
       }
       result = result && rule._filter_reg.test(url);
     }
@@ -337,7 +357,8 @@ export function isMatchUrl(rule: InitdRule, url: string): IS_MATCH {
       if (detectRunner(rule) === 'dnr' && rule._re2 && ENABLE_DNR) {
         result = rule._re2.matches(url);
       } else {
-        const reg = rule._reg || new RegExp(regex);
+        const reg =
+          rule._reg || new RegExp(regex, getRegexFlags(isIgnoreCase(rule)));
         reg.lastIndex = 0;
         result = result && reg.test(url);
       }

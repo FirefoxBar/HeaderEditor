@@ -17,6 +17,7 @@ import { withErrorBoundary } from '@/share/components/error-boundary';
 import { t } from '@/share/core/browser';
 import { RULE_TYPE } from '@/share/core/constant';
 import { prefs } from '@/share/core/prefs';
+import { isIgnoreCase } from '@/share/core/rule-utils';
 import type { Rule } from '@/share/core/types';
 import { isModifyHeaderRule, isRedirectRule } from '@/share/core/utils';
 import Api from '@/share/pages/api';
@@ -89,7 +90,10 @@ const Edit = ({ visible, rule: ruleProp, onClose }: EditProps) => {
       if (rule.condition.regex) {
         let err: Error | undefined;
         try {
-          RE2JS.compile(rule.condition.regex);
+          RE2JS.compile(
+            rule.condition.regex,
+            isIgnoreCase(rule) ? RE2JS.CASE_INSENSITIVE : 0,
+          );
         } catch (e) {
           err = e as Error;
         }

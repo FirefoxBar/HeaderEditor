@@ -41,6 +41,9 @@
   "cancel": {
     "message": "Avbryt"
   },
+  "case_sensitive": {
+    "message": "Skiftlägeskänsligt"
+  },
   "check_update": {
     "message": "Sök efter uppdateringar"
   },
@@ -249,6 +252,9 @@
   },
   "help": {
     "message": "Hjälp"
+  },
+  "ignore_case": {
+    "message": "Ignorera skiftläge"
   },
   "import": {
     "message": "Importera"

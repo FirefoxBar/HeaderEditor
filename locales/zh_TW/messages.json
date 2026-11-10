@@ -41,6 +41,9 @@
   "cancel": {
     "message": "取消"
   },
+  "case_sensitive": {
+    "message": "區分大小寫"
+  },
   "check_update": {
     "message": "檢查更新"
   },
@@ -249,6 +252,9 @@
   },
   "help": {
     "message": "說明"
+  },
+  "ignore_case": {
+    "message": "忽略大小寫"
   },
   "import": {
     "message": "匯入"

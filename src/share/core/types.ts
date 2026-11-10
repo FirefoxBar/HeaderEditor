@@ -57,6 +57,11 @@ export interface BasicRule {
     excludeDomain: string[];
     urlFilter: string;
     regex: string;
+    /**
+     * 是否忽略大小写，仅作用于 regex 与 urlFilter。
+     * 默认 true，对应 DNR 的 isUrlFilterCaseSensitive 默认值 false。
+     */
+    ignoreCase?: boolean;
     excludeRegex: string;
     excludeMethod: string[];
     resourceTypes: DeclarativeNetRequest.ResourceType[];

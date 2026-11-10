@@ -41,6 +41,9 @@
   "cancel": {
     "message": "취소"
   },
+  "case_sensitive": {
+    "message": "대소문자 구분"
+  },
   "check_update": {
     "message": "업데이트 확인"
   },
@@ -249,6 +252,9 @@
   },
   "help": {
     "message": "도움말"
+  },
+  "ignore_case": {
+    "message": "대소문자 구분 안 함"
   },
   "import": {
     "message": "가져오기"

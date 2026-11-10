@@ -105,6 +105,14 @@ const Match = () => {
               formApi.setValue('condition.domain', ['']);
             }
           }
+          // 首次启用正则 / URL Filter 时，开关默认与 DNR 一致：忽略大小写
+          if (
+            (value.includes(RULE_MATCH_TYPE.REGEXP) ||
+              value.includes(RULE_MATCH_TYPE.URL_FILTER)) &&
+            typeof formApi.getValue('condition.ignoreCase') === 'undefined'
+          ) {
+            formApi.setValue('condition.ignoreCase', true);
+          }
         }}
       />
       {editMatchType.includes(RULE_MATCH_TYPE.REGEXP) && (
@@ -112,6 +120,10 @@ const Match = () => {
       )}
       {editMatchType.includes(RULE_MATCH_TYPE.URL_FILTER) && (
         <Form.Input label={t('match_url_filter')} field="condition.urlFilter" />
+      )}
+      {(editMatchType.includes(RULE_MATCH_TYPE.REGEXP) ||
+        editMatchType.includes(RULE_MATCH_TYPE.URL_FILTER)) && (
+        <Form.Switch label={t('ignore_case')} field="condition.ignoreCase" />
       )}
       {editMatchType.includes(RULE_MATCH_TYPE.DOMAIN) && (
         <Form.Slot label={t('match_domain')}>

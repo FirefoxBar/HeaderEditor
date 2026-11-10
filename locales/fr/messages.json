@@ -41,6 +41,9 @@
   "cancel": {
     "message": "Annuler"
   },
+  "case_sensitive": {
+    "message": "Sensible à la casse"
+  },
   "check_update": {
     "message": "Vérifier les mises à jour"
   },
@@ -249,6 +252,9 @@
   },
   "help": {
     "message": "Aide"
+  },
+  "ignore_case": {
+    "message": "Ignorer la casse"
   },
   "import": {
     "message": "Importer"

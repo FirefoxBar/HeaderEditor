@@ -41,6 +41,9 @@
   "cancel": {
     "message": "キャンセル"
   },
+  "case_sensitive": {
+    "message": "大文字と小文字を区別する"
+  },
   "check_update": {
     "message": "更新を確認"
   },
@@ -249,6 +252,9 @@
   },
   "help": {
     "message": "ヘルプ"
+  },
+  "ignore_case": {
+    "message": "大文字と小文字を区別しない"
   },
   "import": {
     "message": "インポート"

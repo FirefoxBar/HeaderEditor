@@ -41,6 +41,9 @@
   "cancel": {
     "message": "Cancelar"
   },
+  "case_sensitive": {
+    "message": "Diferenciar maiúsculas e minúsculas"
+  },
   "check_update": {
     "message": "Verificar atualizações"
   },
@@ -249,6 +252,9 @@
   },
   "help": {
     "message": "Ajuda"
+  },
+  "ignore_case": {
+    "message": "Ignorar maiúsculas e minúsculas"
   },
   "import": {
     "message": "Importar"

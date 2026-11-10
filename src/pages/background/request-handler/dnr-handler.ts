@@ -11,7 +11,11 @@ import {
 import emitter from '@/share/core/emitter';
 import logger from '@/share/core/logger';
 import { prefs } from '@/share/core/prefs';
-import { detectRunner, isSupportHeaderMatch } from '@/share/core/rule-utils';
+import {
+  detectRunner,
+  isIgnoreCase,
+  isSupportHeaderMatch,
+} from '@/share/core/rule-utils';
 import SessionMessage from '@/share/core/session-message';
 import type { InitdRule, RULE_ACTION_OBJ, Rule } from '@/share/core/types';
 import {
@@ -45,6 +49,9 @@ function createDNR(rule: Rule, id: number) {
   };
 
   let isRegex = false;
+  // DNR 的 isUrlFilterCaseSensitive 同时作用于 urlFilter 与 regexFilter，
+  // 该字段默认 false（忽略大小写），显式写出可避免不同浏览器版本的默认值差异。
+  const caseSensitive = !isIgnoreCase(rule);
   if (rule.condition) {
     const {
       all,
@@ -67,8 +74,10 @@ function createDNR(rule: Rule, id: number) {
     // 只能指定 urlFilter 或 regexFilter 中的一项。
     if (urlFilter) {
       res.condition.urlFilter = urlFilter;
+      res.condition.isUrlFilterCaseSensitive = caseSensitive;
     } else if (regex) {
       res.condition.regexFilter = regex;
+      res.condition.isUrlFilterCaseSensitive = caseSensitive;
       isRegex = true;
     } else if (all) {
       res.condition.urlFilter = '*';
@@ -131,6 +140,7 @@ function createDNR(rule: Rule, id: number) {
       case RULE_MATCH_TYPE.REGEXP:
         isRegex = true;
         res.condition.regexFilter = rule.pattern;
+        res.condition.isUrlFilterCaseSensitive = caseSensitive;
         break;
       default:
         break;

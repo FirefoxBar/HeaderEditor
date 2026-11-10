@@ -34,6 +34,10 @@ export const isAllowFilterResponseHeaders = (ruleType: RULE_TYPE) => {
 
 export function getInput(rule: BasicRule) {
   const res: RuleInput = { ...rule };
+  // 复制 condition，避免补全默认值时改动原始规则对象
+  if (res.condition) {
+    res.condition = { ...res.condition };
+  }
   if (res.headers) {
     res.editHeader = Object.entries(res.headers).map(([name, value]) => ({
       name,
@@ -56,6 +60,7 @@ export function getInput(rule: BasicRule) {
       excludeRegex,
       excludeResourceTypes,
       urlFilter,
+      ignoreCase,
     } = res.condition;
     if (all) {
       res.editMatchType.push(RULE_MATCH_TYPE.ALL);
@@ -90,6 +95,10 @@ export function getInput(rule: BasicRule) {
     if (excludeResourceTypes) {
       res.editExcludeType.push('resourceType');
     }
+    if (regex || urlFilter) {
+      // 旧规则未配置时沿用默认行为：忽略大小写（与 DNR 默认值一致）
+      res.condition.ignoreCase = ignoreCase !== false;
+    }
   }
   if (res.encoding) {
     res.encoding = res.encoding.toLowerCase();
@@ -99,7 +108,8 @@ export function getInput(rule: BasicRule) {
 
 export function getRuleFromInput(input: RuleInput): BasicRule {
   const { editMatchType = [], editExcludeType = [], condition = {} } = input;
-  const res = { ...input };
+  // 复制 condition，避免清理/补全字段时直接改动表单内部状态
+  const res = { ...input, condition: { ...input.condition } };
   if (
     res.ruleType === RULE_TYPE.MODIFY_SEND_HEADER ||
     res.ruleType === RULE_TYPE.MODIFY_RECV_HEADER ||
@@ -114,8 +124,14 @@ export function getRuleFromInput(input: RuleInput): BasicRule {
   // 非 header 类型不需要 editHeader，避免切换规则类型后残留入库
   delete res.editHeader;
 
-  if (!res.condition) {
-    res.condition = {};
+  // 忽略大小写只对正则与 URL Filter 有意义，其它匹配类型不保留该字段
+  if (
+    editMatchType.includes(RULE_MATCH_TYPE.REGEXP) ||
+    editMatchType.includes(RULE_MATCH_TYPE.URL_FILTER)
+  ) {
+    res.condition.ignoreCase = condition.ignoreCase !== false;
+  } else {
+    delete res.condition.ignoreCase;
   }
 
   if (editMatchType.includes(RULE_MATCH_TYPE.ALL)) {

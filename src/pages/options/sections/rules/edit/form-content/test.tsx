@@ -10,7 +10,9 @@ import { t } from '@/share/core/browser';
 import { IS_MATCH } from '@/share/core/constant';
 import {
   detectRunner,
+  getRegexFlags,
   initRule,
+  isIgnoreCase,
   isMatchRule,
   isSupportHeaderMatch,
 } from '@/share/core/rule-utils';
@@ -55,7 +57,10 @@ const Test = () => {
 
           if (err && ENABLE_WEB_REQUEST) {
             try {
-              rule.current._reg = new RegExp(ruleContent.condition.regex, 'g');
+              rule.current._reg = new RegExp(
+                ruleContent.condition.regex,
+                getRegexFlags(isIgnoreCase(ruleContent), true),
+              );
               rule.current.forceRunner = 'web_request';
               err = undefined;
             } catch (e) {

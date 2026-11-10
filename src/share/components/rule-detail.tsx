@@ -77,6 +77,14 @@ const RuleDetail = (props: RuleDetailProps) => {
               </Tag>
             </p>
           )}
+          {condition.urlFilter && (
+            <p>
+              {t('match_url_filter')}
+              <Tag color="grey" size="small" shape="circle">
+                {condition.urlFilter}
+              </Tag>
+            </p>
+          )}
           {condition.domain && (
             <p>
               {t('match_domain')}
@@ -121,6 +129,14 @@ const RuleDetail = (props: RuleDetailProps) => {
               </div>
             </p>
           )}
+          {(condition.regex || condition.urlFilter) &&
+            condition.ignoreCase === false && (
+              <p>
+                <Tag color="grey" size="small" shape="circle">
+                  {t('case_sensitive')}
+                </Tag>
+              </p>
+            )}
         </div>
       ),
     },

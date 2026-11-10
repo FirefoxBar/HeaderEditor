@@ -1,6 +1,10 @@
 import { RE2JS } from 're2js';
 import { TABLE_NAMES_ARR } from '@/share/core/constant';
-import { createExport, detectRunner } from '@/share/core/rule-utils';
+import {
+  createExport,
+  detectRunner,
+  isIgnoreCase,
+} from '@/share/core/rule-utils';
 import type { InitdRule, Rule } from '@/share/core/types';
 import { getTableName } from '@/share/core/utils';
 import { save as saveFile } from '@/share/pages/file';
@@ -20,7 +24,10 @@ export function compileRe2(initd: InitdRule): Error | undefined {
     return;
   }
   try {
-    initd._re2 = RE2JS.compile(initd.condition.regex);
+    initd._re2 = RE2JS.compile(
+      initd.condition.regex,
+      isIgnoreCase(initd) ? RE2JS.CASE_INSENSITIVE : 0,
+    );
   } catch (e) {
     return e as Error;
   }

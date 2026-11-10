@@ -24,6 +24,8 @@ Rules will apply to the URL that meets the matching criteria. If multiple condit
 * Method: GET/POST and other request methods.
 * Resource type: web page, image, CSS style, etc.
 
+> Both "Regular expression" and "URL Filter" provide an **Ignore case** switch. It is on by default (case insensitive), matching the default of `declarativeNetRequest.isUrlFilterCaseSensitive`. Turn it off to make matching case sensitive. Other match types are not affected.
+
 Note:
 * The method and resource type can only be configured in either match or exclude.
 
