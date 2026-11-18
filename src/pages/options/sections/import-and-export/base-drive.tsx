@@ -6,6 +6,7 @@ import {
   IconSave,
 } from '@douyinfe/semi-icons';
 import { Button, Input, Space, Spin, Table } from '@douyinfe/semi-ui';
+import { css } from '@emotion/css';
 import { useRequest } from 'ahooks';
 import { useEffect, useState } from 'react';
 import browser, { type Runtime } from 'webextension-polyfill';
@@ -297,7 +298,7 @@ const createDriveComponent = (drive: Drive) => {
     return (
       <div>
         {isLoggedIn ? (
-          <Space>
+          <Space style={{ flexWrap: 'wrap' }}>
             <Button
               onClick={() => {
                 let fileName = getExportName();

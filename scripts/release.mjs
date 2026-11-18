@@ -34,10 +34,11 @@ export const run = async ({ getVersion, readJSON, release }) => {
   }
 
   return await release({
-    token: process.env.TOKEN,
-    gitHubApi: process.env.GITHUB_API_URL,
-    gitHubRepo: process.env.GITHUB_REPOSITORY,
-    gitHubToken: process.env.GITHUB_TOKEN,
+    ghApi: process.env.GITHUB_API_URL,
+    ghRepo: process.env.GITHUB_REPOSITORY,
+    ghToken: process.env.GITHUB_TOKEN,
+    ghAppId: process.env.GITHUB_APP_ID,
+    ghAppSecret: process.env.GITHUB_APP_SECRET,
     version,
     browserConfig,
     tagName,

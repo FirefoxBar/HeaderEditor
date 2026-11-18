@@ -24,6 +24,18 @@ const style = css`
       font-size: 12px;
     }
   }
+
+  @media screen and (max-width: 600px) {
+    .semi-list-item {
+      flex-direction: column;
+      align-items: flex-start;
+      gap: 4px;
+
+      .semi-list-item-extra {
+        margin-left: 0;
+      }
+    }
+  }
 `;
 
 const Options = withErrorBoundary(({ visible }: OptionsProps) => (

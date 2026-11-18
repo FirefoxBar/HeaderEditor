@@ -16,9 +16,9 @@ export const run = async ({ getSnapshotVersion }) => {
 
   return await getSnapshotVersion({
     token,
-    gitHubApi: process.env.GITHUB_API_URL,
-    gitHubRepo: process.env.GITHUB_REPOSITORY,
-    gitHubToken: process.env.GITHUB_TOKEN,
+    ghApi: process.env.GITHUB_API_URL,
+    ghRepo: process.env.GITHUB_REPOSITORY,
+    ghToken: process.env.GITHUB_TOKEN,
     extName: 'header-editor',
     writeTo: filePath,
   });

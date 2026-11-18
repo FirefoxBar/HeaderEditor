@@ -234,17 +234,30 @@ const Edit = ({ visible, rule: ruleProp, onClose }: EditProps) => {
                 width: 100%;
               }
             }
+            .semi-form-field-label {
+              width: 140px;
+
+              @media screen and (max-width: 600px) {
+                width: 100px;
+              }
+            }
           }
         }
       `}
       footer={
         <div
-          style={{
-            display: 'flex',
-            justifyContent: 'space-between',
-            gap: '8px',
-            alignItems: 'center',
-          }}
+          className={css`
+            gap: 8px;
+            display: flex;
+            flex-direction: row;
+            justify-content: space-between;
+            align-items: center;
+
+            @media screen and (max-width: 600px) {
+              flex-direction: column;
+              align-items: flex-end;
+            }
+          `}
         >
           <span>
             {MANIFEST_VER === 'v3' && (
@@ -294,7 +307,6 @@ const Edit = ({ visible, rule: ruleProp, onClose }: EditProps) => {
         }}
         labelPosition="left"
         labelAlign="right"
-        labelWidth={140}
         initValues={initInput}
       >
         <FormContent isEdit={isEdit} />

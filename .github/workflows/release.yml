@@ -69,5 +69,6 @@ jobs:
         script: ${{ github.workspace }}/scripts/release.mjs
       env:
         GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-        TOKEN: ${{ secrets.SNAPSHOT_TOKEN }}
+        GITHUB_APP_ID: ${{ secrets.ORG_GH_APPID }}
+        GITHUB_APP_SECRET: ${{ secrets.ORG_GH_APPKEY }}
         INPUT_RELEASE_TAG: ${{ github.event.inputs.release_tag }}

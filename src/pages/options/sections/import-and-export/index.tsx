@@ -39,7 +39,7 @@ const ImportAndExport = ({ visible }: Props) => {
       >
         <div>
           <Card title={t('local_file')}>
-            <Space>
+            <Space style={{ flexWrap: 'wrap' }}>
               <LocalFile />
               <BrowserSync />
             </Space>

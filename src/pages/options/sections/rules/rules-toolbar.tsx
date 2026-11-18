@@ -46,11 +46,20 @@ const RulesToolbar = ({
       display: flex;
       flex-direction: row;
       padding-bottom: 16px;
+
+      @media screen and (max-width: 992px) {
+        flex-direction: column;
+        gap: 8px;
+
+        > .buttons {
+          flex-wrap: wrap;
+        }
+      }
     `}
   >
     <Typography.Title heading={2}>{t('rule_list')}</Typography.Title>
     <div style={{ flexGrow: 1 }} />
-    <Space>
+    <Space className="buttons">
       <ButtonGroup>
         {isEnableSelect && (
           <>
