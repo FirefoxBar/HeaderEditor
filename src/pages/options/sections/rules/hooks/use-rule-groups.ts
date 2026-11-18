@@ -57,13 +57,34 @@ function reducer(state: GroupsState, action: GroupsAction): GroupsState {
         [VIRTUAL_KEY]: virtualKey,
       };
       const group: GroupMap = {};
+      // 记录规则在原分组中的下标，同分组更新时原位放回
+      let sourceIndex = -1;
       for (const [key, item] of Object.entries(state.group)) {
-        const rules = item.rules.filter(it => it[VIRTUAL_KEY] !== virtualKey);
-        group[key] =
-          rules.length === item.rules.length ? item : { ...item, rules };
+        const index = item.rules.findIndex(
+          it => it[VIRTUAL_KEY] === virtualKey,
+        );
+        if (index === -1) {
+          group[key] = item;
+          continue;
+        }
+        if (key === rule.group) {
+          sourceIndex = index;
+        }
+        group[key] = {
+          ...item,
+          rules: item.rules.filter(it => it[VIRTUAL_KEY] !== virtualKey),
+        };
       }
       const target = group[rule.group] ?? { name: rule.group, rules: [] };
-      group[rule.group] = { ...target, rules: [...target.rules, displayRule] };
+      const rules = [...target.rules];
+      // 分组未变时保持原位置，避免开关等操作把规则挤到分组末尾；
+      // 新规则或换分组时追加到末尾
+      rules.splice(
+        sourceIndex === -1 ? rules.length : sourceIndex,
+        0,
+        displayRule,
+      );
+      group[rule.group] = { ...target, rules };
       return { ...state, group: withoutEmptyGroups(group) };
     }
     case 'remove': {
